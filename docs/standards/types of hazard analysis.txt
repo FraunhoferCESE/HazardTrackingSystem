@@ -1,4 +1,0 @@
-Preliminary
-Subsystem HA
-System HAzard Analysis
-Operating and Support HA (O&SHA)
