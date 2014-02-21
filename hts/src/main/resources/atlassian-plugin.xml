@@ -36,4 +36,5 @@
     <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
     <url-pattern>/hazardservlet</url-pattern>
   </servlet>
+  <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.HazardServiceImpl"/>
 </atlassian-plugin>

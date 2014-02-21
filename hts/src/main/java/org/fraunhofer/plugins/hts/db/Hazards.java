@@ -18,20 +18,19 @@ import net.java.ao.schema.NotNull;
 @Table("Hazards")
 //TODO Enable the rest of the fields and get them working with the HTML page
 public interface Hazards extends Entity {
-/*	@NotNull
-	@Unique
-	String getNumber();
-	void setNumber(String number);
-	*/
-	@NotNull
+	
+	//@NotNull
 	String getTitle();
 	void setTitle(String title);
-	/*
-	String getDescription();
-	void setDescription(String description);
+	
+	String getHazardDesc();
+	void setHazardDesc(String description);
 	
 	String getPreparer();
 	void setPreparer(String preparer);
+	
+	String getHazardNum();
+	void setHazardNum(String number);
 	
 	Date getInitiationDate();
 	void setInitiationDate(Date created);
@@ -40,7 +39,7 @@ public interface Hazards extends Entity {
 	void setRevisionDate(Date lastEdit);
 	
 	Date getCompletionDate();
-	void setCommpletionDate(Date completed);
-	*/
+	void setCompletionDate(Date completed);
+	
 	//TODO FOREIGN KEYS
 }
