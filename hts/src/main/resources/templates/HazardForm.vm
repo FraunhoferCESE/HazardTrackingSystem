@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<title>Hazard Form</title>
+		<meta name="decorator" content="atl.general">
+	</head>
+<body class="aui-layout aui-theme-default">
+	<h2>Hazard Form</h2>
+	<form class="aui" method="POST">
+	    <div class="field-group">
+	        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
+	        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number">
+	        <!--div class="description">Your primary email address.</div-->
+	    </div>
+	        <div class="field-group">
+	        <label for="hazard-title">Title <span class="aui-icon icon-required">(required)</span></label>
+	        <input class="text medium-field" type="text" id="hazard-title" name="hazard-title">
+	        <!--div class="description">Your primary email address.</div-->
+	    </div>
+	    <div class="field-group">
+	        <label for="hazard-description">Comment</label>
+	        <textarea class="textarea" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
+	    </div>
+	    <div class="field-group">
+	        <label for="hazard-initation">Initiation Date</label>
+	        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
+	    </div>
+	    <div class="field-group">
+	        <label for="hazard-completion">Completion Date</label>
+	        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
+	    </div>
+	    <div class="buttons-container">
+	        <div class="buttons">
+	            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+	            <a class="cancel" href="#">Cancel</a>
+	        </div>
+	    </div>
+	</form>
+	#foreach($variableName in $ctx.keySet())
+		$variableName.toString() - $ctx.get($variableName).getClass().getName()<br/>
+	#end
+</body>
+</html>

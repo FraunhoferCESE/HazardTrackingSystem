@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db;
 import java.util.Date;
 
 import net.java.ao.Entity;
+import net.java.ao.OneToOne;
 import net.java.ao.Preload;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.Unique;

@@ -37,4 +37,5 @@
     <url-pattern>/hazardservlet</url-pattern>
   </servlet>
   <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.HazardServiceImpl"/>
+  <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
 </atlassian-plugin>
