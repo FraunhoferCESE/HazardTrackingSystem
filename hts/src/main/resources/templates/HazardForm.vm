@@ -37,7 +37,7 @@
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
-					        <label for="hazard-description">Comment</label>
+					        <label for="hazard-description">Description</label>
 					        <textarea class="textarea" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="field-group">
@@ -64,7 +64,7 @@
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
-					        <label for="cause-description">Comment</label>
+					        <label for="cause-description">Description</label>
 					        <textarea class="textarea" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
@@ -83,7 +83,21 @@
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
-					        <label for="control-description">Comment</label>
+						    <label for="control-group">Control group</label>
+						    <select class="select" id="control-group" name="control-group">
+						        <option>Three Independent Inhibits</option>
+						        <option>Two steo commanding</option>
+						        <option>Training</option>
+						        <optgroup label="Group 1">
+						            <option>Option one</option>
+						            <option>Option two</option>
+						        </optgroup>
+						        <option>Option 3</option>
+						        <option>Option 4</option>
+						    </select>
+						</div>
+					    <div class="field-group">
+					        <label for="control-description">Description</label>
 					        <textarea class="textarea" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
@@ -102,8 +116,34 @@
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
-					        <label for="verification-description">Comment</label>
+						    <label for="verification-group">Verification status</label>
+						    <select class="select" id="verification-group" name="verification-group">
+						        <option>Open</option>
+						        <option>Close to VTL</option>
+						        <option>Closed</option>
+						    </select>
+						</div>
+						<div class="field-group">
+						    <label for="verification-type">Verification group</label>
+						    <select class="select" id="verification-type" name="verification-type">
+								<option>Select</option>
+						        <option>Option 1</option>
+						        <option>Option 2</option>
+						        <optgroup label="Group 1">
+						            <option>Option one</option>
+						            <option>Option two</option>
+						        </optgroup>
+						        <option>Option 3</option>
+						        <option>Option 4</option>
+						    </select>
+						</div>
+					    <div class="field-group">
+					        <label for="verification-description">Description</label>
 					        <textarea class="textarea" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="field-group">
+					        <label for="verification-completion">Completion Date</label>
+					        <input class="aui-date-picker" name="verification-completion" id="verification-completion" type="date"/>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">

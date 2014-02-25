@@ -15,8 +15,10 @@
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <resource type="download" name="hts.css" location="/css/hts.css"/>
     <resource type="download" name="hts.js" location="/js/hts.js"/>
+    <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
     <resource type="download" name="images/" location="/images"/>
     <context>hts</context>
+    <context>atl.general</context>
   </web-resource>
   <!-- import from the product container -->
   <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>

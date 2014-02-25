@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.*;
 public final class HazardServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer;
-
+	
 	public HazardServlet(HazardService hazardService, TemplateRenderer templateRenderer) {
 		this.hazardService = checkNotNull(hazardService);
 		this.templateRenderer = templateRenderer;
