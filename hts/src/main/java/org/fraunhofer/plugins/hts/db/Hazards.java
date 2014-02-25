@@ -17,7 +17,7 @@ import net.java.ao.schema.NotNull;
  */
 @Preload
 @Table("Hazards")
-//TODO Enable the rest of the fields and get them working with the HTML page
+//TODO restrictions
 public interface Hazards extends Entity {
 	
 	//@NotNull

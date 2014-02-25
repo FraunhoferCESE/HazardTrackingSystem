@@ -4,37 +4,119 @@
 		<meta name="decorator" content="atl.general">
 	</head>
 <body class="aui-layout aui-theme-default">
-	<h2>Hazard Form</h2>
-	<form class="aui" method="POST">
-	    <div class="field-group">
-	        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
-	        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number">
-	        <!--div class="description">Your primary email address.</div-->
-	    </div>
-	        <div class="field-group">
-	        <label for="hazard-title">Title <span class="aui-icon icon-required">(required)</span></label>
-	        <input class="text medium-field" type="text" id="hazard-title" name="hazard-title">
-	        <!--div class="description">Your primary email address.</div-->
-	    </div>
-	    <div class="field-group">
-	        <label for="hazard-description">Comment</label>
-	        <textarea class="textarea" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
-	    </div>
-	    <div class="field-group">
-	        <label for="hazard-initation">Initiation Date</label>
-	        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
-	    </div>
-	    <div class="field-group">
-	        <label for="hazard-completion">Completion Date</label>
-	        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
-	    </div>
-	    <div class="buttons-container">
-	        <div class="buttons">
-	            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-	            <a class="cancel" href="#">Cancel</a>
-	        </div>
-	    </div>
-	</form>
+	<header class="aui-page-header">
+		<div class="aui-page-header-inner">
+			<h2>Hazard Form</h2>
+		</div>
+	</header>
+	<nav id="main-nav" class="aui-navgroup aui-navgroup-horizontal">
+        <div class="aui-navgroup-inner">
+            <div class="aui-navgroup-primary">
+                <ul class="aui-nav">
+                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="#">Hazard form</a></li>
+                    <li id="cause-nav-item"><a href="#">Causes</a></li>
+                    <li id="control-nav-item"><a href="#">Controls</a></li>
+                    <li id="verification-nav-item"><a href="#">Verifications</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="aui-page-panel">
+        <div class="aui-page-panel-inner">
+            <section class="aui-page-panel-content">
+                <div class="nav-content" id="content-1">
+	                <form class="aui" method="POST">
+					    <div class="field-group">
+					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					        <div class="field-group">
+					        <label for="hazard-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="hazard-title" name="hazard-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+					        <label for="hazard-description">Comment</label>
+					        <textarea class="textarea" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="field-group">
+					        <label for="hazard-initation">Initiation Date</label>
+					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
+					    </div>
+					    <div class="field-group">
+					        <label for="hazard-completion">Completion Date</label>
+					        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-2">
+                    <form class="aui">
+					    <div class="field-group">
+					        <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="cause-title" name="cause-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+					        <label for="cause-description">Comment</label>
+					        <textarea class="textarea" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-3">
+                	<form class="aui">
+					    <div class="field-group">
+					        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="control-title" name="control-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+					        <label for="control-description">Comment</label>
+					        <textarea class="textarea" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-4">
+                	<form class="aui">
+					    <div class="field-group">
+					        <label for="verification-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="verification-title" name="verification-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+					        <label for="verification-description">Comment</label>
+					        <textarea class="textarea" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+            </section>
+        </div>
+    </div>
+	
 	#foreach($variableName in $ctx.keySet())
 		$variableName.toString() - $ctx.get($variableName).getClass().getName()<br/>
 	#end
