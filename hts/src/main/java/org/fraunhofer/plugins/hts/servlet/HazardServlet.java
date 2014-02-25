@@ -4,12 +4,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
 
 import static com.google.common.base.Preconditions.*;
@@ -32,10 +34,11 @@ public final class HazardServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		final String title = req.getParameter("task");
-		final String description = req.getParameter("task");
-
-		hazardService.add(title, description, "preparer", "hazardNum", new Date(), new Date(), new Date());
+		final String hazardNum = req.getParameter("hazard-number");
+		final String title = req.getParameter("hazard-title");
+		final String description = req.getParameter("hazard-description");
+		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName();
+		hazardService.add(title, description, preparer, hazardNum, new Date(), DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH), new Date());
 
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardservlet");
 	}

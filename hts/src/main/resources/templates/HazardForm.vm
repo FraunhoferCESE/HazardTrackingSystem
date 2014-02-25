@@ -156,9 +156,5 @@
             </section>
         </div>
     </div>
-	
-	#foreach($variableName in $ctx.keySet())
-		$variableName.toString() - $ctx.get($variableName).getClass().getName()<br/>
-	#end
 </body>
 </html>

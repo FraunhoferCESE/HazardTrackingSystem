@@ -20,4 +20,4 @@ AJS.$(function(){
         AJS.$(".nav-content").hide();
         AJS.$("#" + contentId).show();
     }
-})
+});
