@@ -26,9 +26,13 @@
   <ao key="ao-module">
     <description>The module configuring active objects service</description>
     <entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
-    <!--entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
-    <entity>org.fraunhofer.plugins.hts.db.Verifications</entity-->
+    <entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
+
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
