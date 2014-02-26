@@ -44,10 +44,13 @@ public interface Hazards extends Entity {
 	void setCompletionDate(Date completed);
 	
 	//TODO FOREIGN KEYS
+		
+	void setHazardGroup(Hazard_Group group);
+	Hazard_Group getHazardGroup();
 	
-	@OneToMany
-	Risk_Categories[] getRiskCategories();
+	void setRiskCategory(Risk_Categories risk);
+	Risk_Categories getRiskCategory();
 	
-	@OneToMany
-	Risk_Likelihoods[] getRiskLikelihoods();
+	void setRiskLikelihood(Risk_Likelihoods likelihood);
+	Risk_Likelihoods getRiskLikelihood();
 }

@@ -1,6 +1,7 @@
 package org.fraunhofer.plugins.hts.db;
 
 import net.java.ao.Entity;
+import net.java.ao.OneToOne;
 import net.java.ao.Preload;
 import net.java.ao.schema.Table;
 
@@ -9,8 +10,8 @@ import net.java.ao.schema.Table;
 public interface Hazard_Group extends Entity{
 
 	String getLabel();
-	void setLabel();
+	void setLabel(String label);
 	
+	@OneToOne
 	Hazards getHazards();
-	void setHazards(Hazards hazard);
 }

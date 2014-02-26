@@ -48,6 +48,30 @@
 					        <label for="hazard-completion">Completion Date</label>
 					        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
 					    </div>
+					    <div class="field-group">
+						    <label for="hazard-likelihood">Risk Likelihood</label>
+						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+						    	#foreach( $likelihood in $riskLikelihoods )
+						    	<option>$likelihood.getValue()</option>
+						    	#end
+						    </select>
+						</div>
+					    <div class="field-group">
+						    <label for="hazard-risk">Risk Category</label>
+						    <select class="select" id="hazard-risk" name="hazard-risk">
+						    	#foreach( $risk in $riskCategories )
+						    	<option>$risk.getValue()</option>
+						    	#end
+						    </select>
+						</div>
+						<div class="field-group">
+						    <label for="hazard-group">Hazard Group</label>
+						    <select class="select" id="hazard-group" name="hazard-group">
+						    	#foreach( $group in $hazardGroups )
+						    	<option>$group.getLabel()</option>
+						    	#end
+						    </select>
+						</div>
 					    <div class="buttons-container">
 					        <div class="buttons">
 					            <input class="button submit" type="submit" value="Save" id="comment-save-button">

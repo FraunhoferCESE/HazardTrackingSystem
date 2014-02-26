@@ -1,6 +1,7 @@
 package org.fraunhofer.plugins.hts.db;
 
 import net.java.ao.Entity;
+import net.java.ao.OneToOne;
 import net.java.ao.Preload;
 import net.java.ao.schema.Table;
 
@@ -11,10 +12,9 @@ public interface Risk_Likelihoods extends Entity {
 	String getValue();
 	void setValue(String value);
 	
-	//TODO see if needed
-	String getRiskDesc();
-	void setRiskDesc();
+	String getLikelihoodDesc();
+	void setLikelihoodDesc(String likeliHoodDesc);
 	
+	@OneToOne
 	Hazards getHazards();
-	void setHazards(Hazards hazard);
 }
