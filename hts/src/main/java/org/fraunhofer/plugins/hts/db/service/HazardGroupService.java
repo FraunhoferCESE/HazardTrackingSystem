@@ -10,5 +10,6 @@ import com.atlassian.activeobjects.tx.Transactional;
 @Transactional
 public interface HazardGroupService {
 	Hazard_Group add(String label);
+	Hazard_Group getHazardGroupByID(String id);
 	List<Hazard_Group> all();
 }

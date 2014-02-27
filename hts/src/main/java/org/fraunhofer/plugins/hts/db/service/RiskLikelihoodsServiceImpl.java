@@ -5,6 +5,8 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import net.java.ao.Query;
+
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 
@@ -28,6 +30,13 @@ public class RiskLikelihoodsServiceImpl implements RiskLikelihoodsService {
 	@Override
 	public List<Risk_Likelihoods> all() {
 		return newArrayList(ao.find(Risk_Likelihoods.class));
+	}
+
+	@Override
+	public Risk_Likelihoods getLikelihoodByID(String id) {
+		// TODO Auto-generated method stub
+		final Risk_Likelihoods[] likelihood = ao.find(Risk_Likelihoods.class, Query.select().where("ID=?", id));
+		return likelihood.length > 0 ? likelihood[0] : null;
 	}
 
 }

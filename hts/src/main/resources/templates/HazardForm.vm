@@ -52,7 +52,7 @@
 						    <label for="hazard-likelihood">Risk Likelihood</label>
 						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
 						    	#foreach( $likelihood in $riskLikelihoods )
-						    	<option>$likelihood.getValue()</option>
+						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
 						    	#end
 						    </select>
 						</div>
@@ -60,7 +60,7 @@
 						    <label for="hazard-risk">Risk Category</label>
 						    <select class="select" id="hazard-risk" name="hazard-risk">
 						    	#foreach( $risk in $riskCategories )
-						    	<option>$risk.getValue()</option>
+						    	<option value="$risk.getID()">$risk.getValue()</option>
 						    	#end
 						    </select>
 						</div>
@@ -68,7 +68,7 @@
 						    <label for="hazard-group">Hazard Group</label>
 						    <select class="select" id="hazard-group" name="hazard-group">
 						    	#foreach( $group in $hazardGroups )
-						    	<option>$group.getLabel()</option>
+						    	<option value="$group.getID()">$group.getLabel()</option>
 						    	#end
 						    </select>
 						</div>

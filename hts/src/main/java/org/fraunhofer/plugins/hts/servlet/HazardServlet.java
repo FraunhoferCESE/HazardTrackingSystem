@@ -10,7 +10,9 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
@@ -55,9 +57,12 @@ public final class HazardServlet extends HttpServlet {
 		final String hazardNum = req.getParameter("hazard-number");
 		final String title = req.getParameter("hazard-title");
 		final String description = req.getParameter("hazard-description");
-		Risk_Categories risk = null;
-		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName();
-		hazardService.add(title, description, preparer, hazardNum, new Date(), DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH), new Date(), risk);
+		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
+		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazard-risk"));
+		final Risk_Likelihoods likelihood = riskLikelihood.getLikelihoodByID(req.getParameter("hazard-likelihood"));
+		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
+		hazardService.add(title, description, preparer, hazardNum, new Date(), DateUtils.truncate(new Date(), 
+				java.util.Calendar.DAY_OF_MONTH), new Date(), risk, likelihood, group);
 
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardservlet");
 	}

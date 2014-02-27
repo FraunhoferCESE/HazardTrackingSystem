@@ -1,6 +1,9 @@
 package org.fraunhofer.plugins.hts.db.service;
 
+import java.sql.SQLException;
 import java.util.List;
+
+import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 
@@ -26,6 +29,13 @@ public class RiskCategoryServiceImpl implements RiskCategoryService {
 	@Override
 	public List<Risk_Categories> all() {
 		return newArrayList(ao.find(Risk_Categories.class));
+	}
+
+	@Override
+	//TODO error handling
+	public Risk_Categories getRiskByID(String id) {
+		final Risk_Categories[] risk = ao.find(Risk_Categories.class, Query.select().where("ID=?", id));
+		return risk.length > 0 ? risk[0] : null;
 	}
 
 }
