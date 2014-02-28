@@ -5,6 +5,12 @@ import net.java.ao.OneToOne;
 import net.java.ao.Preload;
 import net.java.ao.schema.Table;
 
+/**
+ * The table definition for the Risk_Likelihoods table.
+ * It extends Entity which provides the ID field and getID method.
+ * @author ASkulason
+ *
+ */
 @Preload
 @Table("Risk_Likelihoods")
 public interface Risk_Likelihoods extends Entity {

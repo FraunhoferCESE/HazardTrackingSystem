@@ -32,7 +32,7 @@
     <entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
     <entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
     <entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
-
+    <entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">

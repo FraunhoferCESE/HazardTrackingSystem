@@ -23,7 +23,7 @@ public class HazardServiceImpl implements HazardService {
 	
 	//TODO add javadoc and fix the remaining fields.
 	@Override
-	public Hazards add(String title, String description, String preparer, String hazardNum, Date created, Date lastEdit, Date completed, 
+	public Hazards add(String title, String description, String preparer, String hazardNum, String created, String completed, Date lastEdit, 
 			Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group group) {
 		final Hazards hazard = ao.create(Hazards.class);
 		hazard.setHazardNum(hazardNum);
@@ -31,8 +31,8 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setHazardDesc(description);
 		hazard.setPreparer(preparer);
 		hazard.setInitiationDate(created);
-		hazard.setRevisionDate(lastEdit);
 		hazard.setCompletionDate(completed);
+		hazard.setRevisionDate(lastEdit);
 		hazard.setRiskCategory(risk);
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);

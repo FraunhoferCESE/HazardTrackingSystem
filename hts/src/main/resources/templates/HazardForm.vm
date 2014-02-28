@@ -25,20 +25,20 @@
         <div class="aui-page-panel-inner">
             <section class="aui-page-panel-content">
                 <div class="nav-content" id="content-1">
-	                <form class="aui" method="POST">
+	                <form class="aui" method="POST" id="subForm">
 					    <div class="field-group">
 					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number">
+					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number" required>
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					        <div class="field-group">
-					        <label for="hazard-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="hazard-title" name="hazard-title">
+					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span></label>
+					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title" required>
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
 					        <label for="hazard-description">Description</label>
-					        <textarea class="textarea" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
+					        <textarea class="textarea long-field" name="hazard-description" id="hazard-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="field-group">
 					        <label for="hazard-initation">Initiation Date</label>
@@ -49,18 +49,18 @@
 					        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
 					    </div>
 					    <div class="field-group">
-						    <label for="hazard-likelihood">Risk Likelihood</label>
-						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
-						    	#foreach( $likelihood in $riskLikelihoods )
-						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
-						    	#end
-						    </select>
-						</div>
-					    <div class="field-group">
 						    <label for="hazard-risk">Risk Category</label>
 						    <select class="select" id="hazard-risk" name="hazard-risk">
 						    	#foreach( $risk in $riskCategories )
 						    	<option value="$risk.getID()">$risk.getValue()</option>
+						    	#end
+						    </select>
+						</div>
+					    <div class="field-group">
+						    <label for="hazard-likelihood">Risk Likelihood</label>
+						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+						    	#foreach( $likelihood in $riskLikelihoods )
+						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
 						    	#end
 						    </select>
 						</div>
@@ -84,12 +84,12 @@
                     <form class="aui">
 					    <div class="field-group">
 					        <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="cause-title" name="cause-title">
+					        <input class="text long-field" type="text" id="cause-title" name="cause-title">
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
 					        <label for="cause-description">Description</label>
-					        <textarea class="textarea" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
+					        <textarea class="textarea long-field" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">
@@ -103,7 +103,7 @@
                 	<form class="aui">
 					    <div class="field-group">
 					        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="control-title" name="control-title">
+					        <input class="text long-field" type="text" id="control-title" name="control-title">
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
@@ -122,7 +122,7 @@
 						</div>
 					    <div class="field-group">
 					        <label for="control-description">Description</label>
-					        <textarea class="textarea" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
+					        <textarea class="textarea long-field" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">
@@ -136,7 +136,7 @@
                 	<form class="aui">
 					    <div class="field-group">
 					        <label for="verification-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="verification-title" name="verification-title">
+					        <input class="text long-field" type="text" id="verification-title" name="verification-title">
 					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
@@ -161,13 +161,13 @@
 						        <option>Option 4</option>
 						    </select>
 						</div>
-					    <div class="field-group">
-					        <label for="verification-description">Description</label>
-					        <textarea class="textarea" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
-					    </div>
-					    <div class="field-group">
+						<div class="field-group">
 					        <label for="verification-completion">Completion Date</label>
 					        <input class="aui-date-picker" name="verification-completion" id="verification-completion" type="date"/>
+					    </div>
+					    <div class="field-group">
+					        <label for="verification-description">Description</label>
+					        <textarea class="textarea long-field" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">
