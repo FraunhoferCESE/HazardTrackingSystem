@@ -21,6 +21,7 @@ public class HazardGroupServiceImpl implements HazardGroupService{
 	public Hazard_Group add(String label) {
 		final Hazard_Group group = ao.create(Hazard_Group.class);
 		group.setLabel(label);
+		group.save();
 		return group;
 	}
 

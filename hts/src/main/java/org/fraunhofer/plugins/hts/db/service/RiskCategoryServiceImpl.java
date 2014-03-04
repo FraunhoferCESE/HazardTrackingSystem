@@ -23,6 +23,7 @@ public class RiskCategoryServiceImpl implements RiskCategoryService {
 		final Risk_Categories risk = ao.create(Risk_Categories.class);
 		risk.setValue(value);
 		risk.setRiskDesc(riskDesc);
+		risk.save();
 		return risk;
 	}
 
