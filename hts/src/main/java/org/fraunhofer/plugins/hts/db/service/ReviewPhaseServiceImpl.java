@@ -8,6 +8,7 @@ import org.fraunhofer.plugins.hts.db.Review_Phases;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+
 import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class ReviewPhaseServiceImpl implements ReviewPhaseService{

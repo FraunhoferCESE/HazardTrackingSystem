@@ -3,6 +3,7 @@ package ut.org.fraunhofer.plugins.hts.servlet;
 import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class HazardsTest {
     @Test
     public void testSomething() {
         String expected = "test";
-        when(mockRequest.getParameter(Mockito.anyString())).thenReturn(expected);
+        when(mockRequest.getParameter(Matchers.anyString())).thenReturn(expected);
         assertEquals(expected,mockRequest.getParameter("some string"));
 
     }

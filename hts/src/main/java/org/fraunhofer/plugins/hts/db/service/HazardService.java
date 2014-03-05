@@ -8,9 +8,6 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.db.Subsystems;
-
-
 import com.atlassian.activeobjects.tx.Transactional;
 
 @Transactional

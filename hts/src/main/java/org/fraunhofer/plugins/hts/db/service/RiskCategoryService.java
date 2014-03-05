@@ -1,6 +1,5 @@
 package org.fraunhofer.plugins.hts.db.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.fraunhofer.plugins.hts.db.Risk_Categories;

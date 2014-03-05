@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Group;
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -19,8 +19,9 @@ public class SubsystemServiceImpl implements SubsystemService {
 		this.ao = checkNotNull(ao);
 	}
 	@Override
-	public Subsystems add(String label, String subsysDesc) {
+	public Subsystems add(Hazards hazard, String label, String subsysDesc) {
 		final Subsystems subsys = ao.create(Subsystems.class);
+		subsys.setHazard(hazard);
 		subsys.setLabel(label);
 		subsys.setDescription(subsysDesc);
 		subsys.save();

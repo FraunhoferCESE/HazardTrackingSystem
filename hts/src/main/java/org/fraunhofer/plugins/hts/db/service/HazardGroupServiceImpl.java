@@ -5,9 +5,9 @@ import java.util.List;
 import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 

@@ -10,25 +10,24 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.velocity.exception.ParseErrorException;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
-import org.ofbiz.core.entity.jdbc.dbtype.SimpleDatabaseType;
+
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -45,16 +44,18 @@ public final class HazardServlet extends HttpServlet {
 	private final RiskLikelihoodsService riskLikelihoodService;
 	private final SubsystemService subsystemService;
 	private final ReviewPhaseService reviewPhaseService;
+	private final MissionPayloadService missionPayloadService;
 	private final TemplateRenderer templateRenderer;
 	
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService, TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService, 
-			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService, ReviewPhaseService reviewPhaseService) {
+			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService, ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
 		this.subsystemService = checkNotNull(subsystemService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
+		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.templateRenderer = templateRenderer;
 	}
 
@@ -86,8 +87,14 @@ public final class HazardServlet extends HttpServlet {
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazard-likelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
 		final Date lastEdit = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
-		hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
-				res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardservlet");
+		
+		//TODO see if they want to pull in the jira project name as payload
+		final String payload = req.getParameter("hazard-payload");
+		final String subsystem = req.getParameter("hazard-subsystem");
+		Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
+		missionPayloadService.add(hazard, payload);
+		subsystemService.add(hazard, subsystem, subsystem);
+		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardservlet");
 	}
 	
 	private String changeDateFormat(String date) {

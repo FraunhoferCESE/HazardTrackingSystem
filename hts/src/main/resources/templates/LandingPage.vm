@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<title>Hazard Form</title>
+		<meta name="decorator" content="atl.general">
+	</head>
+<body class="aui-layout aui-theme-default">
+	<header class="aui-page-header">
+		<div class="aui-page-header-inner">
+			<h2>Landing Page</h2>
+		</div>
+	</header>
+
+	<div class="aui-message success">
+    	<p class="title">
+        	<span class="aui-icon icon-success"></span>
+        	<strong>Success!</strong>
+    	</p>
+    	<p>$report.getTitle() was just created</p>
+	</div>
+
+	<ul>
+		#foreach( $hazardreport in $hazardReports )
+		<li><a href="$hazardreport.getID()"> $hazardreport.getTitle()</a></li>
+		#end
+	</ul>
+</body>
+</html>

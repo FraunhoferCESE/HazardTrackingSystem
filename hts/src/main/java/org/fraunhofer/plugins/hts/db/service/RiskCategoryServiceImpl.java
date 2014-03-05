@@ -1,6 +1,5 @@
 package org.fraunhofer.plugins.hts.db.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import net.java.ao.Query;
@@ -8,6 +7,7 @@ import net.java.ao.Query;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
