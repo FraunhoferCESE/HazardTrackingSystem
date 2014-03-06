@@ -1,9 +1,6 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
@@ -31,8 +28,6 @@ public class LandingPageServlet extends HttpServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
     	Map<String, Object> context = Maps.newHashMap();
-    	int numberOfReports = hazardService.all().size();
-    	context.put("lastCreated", hazardService.all().get(numberOfReports - 1));
     	context.put("hazardReports", hazardService.all());
         resp.setContentType("text/html");
         templateRenderer.render("templates/LandingPage.vm", context, resp.getWriter());

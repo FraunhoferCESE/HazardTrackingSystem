@@ -37,10 +37,10 @@ public interface Hazards extends Entity {
 	void setHazardNum(String number);
 	
 	String getInitiationDate();
-	void setInitiationDate(String created);
+	void setInitiationDate(Date created);
 	
 	String getCompletionDate();
-	void setCompletionDate(String completed);
+	void setCompletionDate(Date completed);
 		
 	Date getRevisionDate();
 	void setRevisionDate(Date lastEdit);

@@ -80,12 +80,12 @@ public final class HazardServlet extends HttpServlet {
 		final String title = req.getParameter("hazard-title");
 		final String description = req.getParameter("hazard-description");
 		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
-		final String created = changeDateFormat(req.getParameter("hazard-initation"));
-		final String completed = changeDateFormat(req.getParameter("hazard-initation"));
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazard-reviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazard-risk"));
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazard-likelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
+		final Date created = changeDateFormat(req.getParameter("hazard-initation"));
+		final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
 		final Date lastEdit = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
 		
 		//TODO see if they want to pull in the jira project name as payload
@@ -97,16 +97,17 @@ public final class HazardServlet extends HttpServlet {
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
 	
-	private String changeDateFormat(String date) {
+	private Date changeDateFormat(String date) {
 		SimpleDateFormat fromForm = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat wantedForm = new SimpleDateFormat("MM/dd/yyyy");
 		try {
 			String reformatted = wantedForm.format(fromForm.parse(date));
-			return reformatted;
+			Date converted = wantedForm.parse(reformatted);
+			return converted;
 		} catch (ParseException e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return date;
+		return null;
 	}
 }

@@ -17,11 +17,38 @@
     	</p>
     	<p>$lastCreated.getTitle() was just created</p>
 	</div-->
+	<h1>#if($hazardReports.size()==0)No Hazard reports have been created#end</h1>
+	#if ( $hazardReports.size() > 0 )
+	<table class="aui" id="hazard-table">
+	    <thead>
+	        <tr id="hazard-row">
+	            <th id="hazard-number">Hazard #</th>
+	            <th id="hazard-title">Title</th>
+	            <th id="hazard-lastEdit">Last revision</th>
+	            <th id="action">Action</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    	#foreach( $hazardreport in $hazardReports )
+	        <tr>
+	            <td headers="hazard-number">$hazardreport.getHazardNum()</td>
+	            <td headers="hazard-title">$hazardreport.getTitle()</td>
+	            <td id="hazard-lastEdit" headers="hazard-lastEdit">$hazardreport.getRevisionDate()</td>
 
-	<ul>
-		#foreach( $hazardreport in $hazardReports )
-		<li><a href="$hazardreport.getID()"> $hazardreport.getTitle()</a></li>
-		#end
-	</ul>
+	            <td class="action" headers="action">
+	                <ul class="menu">
+	                    <li>
+	                        <a href="#">Edit</a>
+	                    </li>
+	                    <li>
+	                 		<a href="#">PDF</a>
+	                 	</li>
+	                </ul>
+	            </td>
+	        </tr>
+	        #end
+	    </tbody>
+	</table>
+	#end
 </body>
 </html>

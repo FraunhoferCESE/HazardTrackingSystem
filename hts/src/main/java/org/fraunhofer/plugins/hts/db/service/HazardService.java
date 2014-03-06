@@ -12,7 +12,7 @@ import com.atlassian.activeobjects.tx.Transactional;
 
 @Transactional
 public interface HazardService {
-	Hazards add(String title, String description, String preparer, String hazardNum, String created, String completed, Date lastEdit,
+	Hazards add(String title, String description, String preparer, String hazardNum, Date created, Date completed, Date lastEdit,
 			Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase);
 	List<Hazards> all();
 }
