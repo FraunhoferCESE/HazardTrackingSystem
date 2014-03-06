@@ -6,17 +6,17 @@
 <body class="aui-layout aui-theme-default">
 	<header class="aui-page-header">
 		<div class="aui-page-header-inner">
-			<h2>Landing Page</h2>
+			<h2>List of all Hazard reports</h2>
 		</div>
 	</header>
 
-	<div class="aui-message success">
+	<!--div class="aui-message success">
     	<p class="title">
         	<span class="aui-icon icon-success"></span>
         	<strong>Success!</strong>
     	</p>
-    	<p>$report.getTitle() was just created</p>
-	</div>
+    	<p>$lastCreated.getTitle() was just created</p>
+	</div-->
 
 	<ul>
 		#foreach( $hazardreport in $hazardReports )

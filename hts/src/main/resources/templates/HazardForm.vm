@@ -29,69 +29,85 @@
 					    <div class="field-group">
 					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
 					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number" required/>
-					        <!--div class="description">Your primary email address.</div-->
 					    </div>
-					        <div class="field-group">
+					    <div class="field-group">
 					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span></label>
 					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title" required/>
-					        <!--div class="description">Your primary email address.</div-->
 					    </div>
+					    <div class="aui-group">
+							<div class="aui-item">
+								<div class="field-group">
+							        <label for="hazard-payload">Mission Payload</label>
+							        <input class="text long-field" name="hazard-payload" id="hazard-payload"/>
+							    </div>
+						    </div>
+						    <div class="aui-item">
+								<div class="field-group">
+							        <label for="hazard-subsystem">System/Subsystems</label>
+							        <input class="text long-field" name="hazard-subsystem" id="hazard-subsystem"/>
+							    </div>
+						    </div>
+						    <div class="aui-item">
+							    <div class="field-group">
+		        					<label for="hazard-preparer">Preparer</label>
+		        					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
+		    					</div>
+	    					</div>
+    					</div>
+					    <div class="aui-group">
+					    	<div class="aui-item">
+							    <div class="field-group">
+								    <label for="hazard-reviewphase">Review Phase</label>
+								    <select class="select" id="hazard-reviewphase" name="hazard-reviewphase">
+								    	#foreach( $reviewPhase in $reviewPhases )
+								    	<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
+								    	#end
+								    </select>
+								</div>
+							</div>
+					    	<div class="aui-item">
+							    <div class="field-group">
+								    <label for="hazard-risk">Risk Category</label>
+								    <select class="select" id="hazard-risk" name="hazard-risk">
+								    	#foreach( $risk in $riskCategories )
+								    	<option value="$risk.getID()">$risk.getValue()</option>
+								    	#end
+								    </select>
+								</div>
+							</div>
+							<div class="aui-item">
+							    <div class="field-group">
+								    <label for="hazard-likelihood">Risk Likelihood</label>
+								    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+								    	#foreach( $likelihood in $riskLikelihoods )
+								    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
+								    	#end
+								    </select>
+								</div>
+							</div>
+							<div class="aui-item">
+								<div class="field-group">
+								    <label for="hazard-group">Hazard Group</label>
+								    <select class="select" id="hazard-group" name="hazard-group">
+								    	#foreach( $group in $hazardGroups )
+								    	<option value="$group.getID()">$group.getLabel()</option>
+								    	#end
+								    </select>
+								</div>
+							</div>
+						</div>
 						<div class="field-group">
-					        <label for="hazard-payload">Mission Payload</label>
-					        <input class="text long-field" name="hazard-payload" id="hazard-payload"/>
+					        <label for="hazard-initation">Initiation Date</label>
+					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
 					    </div>
-						<div class="field-group">
-					        <label for="hazard-subsystem">System/Subsystems</label>
-					        <input class="text long-field" name="hazard-subsystem" id="hazard-subsystem"/>
-					    </div>
+			   			<div class="field-group">
+			        		<label for="hazard-completion">Completion Date</label>
+			        		<input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
+			    		</div>
 					    <div class="field-group">
 					        <label for="hazard-description">Description</label>
 					        <textarea class="textarea long-field" name="hazard-description" id="hazard-description"></textarea>
 					    </div>
-					    <div class="field-group">
-        					<label for="hazard-preparer">Preparer</label>
-        					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
-    					</div>
-    					<div class="field-group">
-						    <label for="hazard-reviewphase">Review Phase</label>
-						    <select class="select" id="hazard-reviewphase" name="hazard-reviewphase">
-						    	#foreach( $reviewPhase in $reviewPhases )
-						    	<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
-						    	#end
-						    </select>
-						</div>
-					    <div class="field-group">
-					        <label for="hazard-initation">Initiation Date</label>
-					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
-					    </div>
-					    <div class="field-group">
-					        <label for="hazard-completion">Completion Date</label>
-					        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
-					    </div>
-					    <div class="field-group">
-						    <label for="hazard-risk">Risk Category</label>
-						    <select class="select" id="hazard-risk" name="hazard-risk">
-						    	#foreach( $risk in $riskCategories )
-						    	<option value="$risk.getID()">$risk.getValue()</option>
-						    	#end
-						    </select>
-						</div>
-					    <div class="field-group">
-						    <label for="hazard-likelihood">Risk Likelihood</label>
-						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
-						    	#foreach( $likelihood in $riskLikelihoods )
-						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
-						    	#end
-						    </select>
-						</div>
-						<div class="field-group">
-						    <label for="hazard-group">Hazard Group</label>
-						    <select class="select" id="hazard-group" name="hazard-group">
-						    	#foreach( $group in $hazardGroups )
-						    	<option value="$group.getID()">$group.getLabel()</option>
-						    	#end
-						    </select>
-						</div>
 					    <div class="buttons-container">
 					        <div class="buttons">
 					            <input class="button submit" type="submit" value="Save" id="comment-save-button">

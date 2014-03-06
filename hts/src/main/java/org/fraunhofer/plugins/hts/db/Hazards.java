@@ -63,7 +63,7 @@ public interface Hazards extends Entity {
 	Subsystems[] getSubsystems();
 	
 	@OneToOne
-	Mission_Payload getMissionPlayload();
+	Mission_Payload getMissionPayload();
 
 }
 

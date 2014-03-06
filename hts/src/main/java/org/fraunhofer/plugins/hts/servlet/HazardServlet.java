@@ -94,7 +94,7 @@ public final class HazardServlet extends HttpServlet {
 		Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
 		missionPayloadService.add(hazard, payload);
 		subsystemService.add(hazard, subsystem, subsystem);
-		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardservlet");
+		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
 	
 	private String changeDateFormat(String date) {

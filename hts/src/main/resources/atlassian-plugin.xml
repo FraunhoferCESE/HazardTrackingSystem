@@ -42,7 +42,7 @@
   </component>
   <servlet name="Hazard Servlet" i18n-name-key="hazard-servlet.name" key="hazard-servlet" class="org.fraunhofer.plugins.hts.servlet.HazardServlet">
     <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
-    <url-pattern>/hazardservlet</url-pattern>
+    <url-pattern>/hazardform</url-pattern>
   </servlet>
   <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.HazardServiceImpl"/>
   <component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.HazardGroupServiceImpl"/>
@@ -52,4 +52,8 @@
   <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.ReviewPhaseServiceImpl"/>
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.MissionPayloadServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
+  <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
+    <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
+    <url-pattern>/hazardlist</url-pattern>
+  </servlet>
 </atlassian-plugin>
