@@ -56,4 +56,25 @@
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
     <url-pattern>/hazardlist</url-pattern>
   </servlet>
+  <web-section name="hazardSection" i18n-name-key="hazard-section.name" key="hazard-section" location="hazard-sites-link" weight="1000">
+    <description key="hazard-section.description">The hazardSection Plugin</description>
+    <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+    	<param name="permission">user</param>
+    </condition>
+  </web-section>
+  <web-item name="Hazard Sites" i18n-name-key="hazard-sites.name" key="hazard-sites" section="system.top.navigation.bar" weight="1000">
+    <description key="hazard-sites.description">The Hazard Sites Plugin</description>
+    <label key="hazard-sites.label"/>
+    <link linkId="hazard-sites-link"/>
+  </web-item>
+  <web-item name="Create a Hazard report" i18n-name-key="createa-hazardreport.name" key="createa-hazardreport" section="hazard-sites-link/hazard-section" weight="1000">
+    <description key="createa-hazardreport.description">The Create a Hazard report Plugin</description>
+    <label key="createa-hazardreport.label"/>
+    <link linkId="createa-hazardreport-link">/plugins/servlet/hazardform</link>
+  </web-item>
+  <web-item name="View all Hazard reports" i18n-name-key="viewall-hazardreports.name" key="viewall-hazardreports" section="hazard-sites-link/hazard-section" weight="1000">
+    <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
+    <label key="viewall-hazardreports.label"></label>
+    <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
+  </web-item>
 </atlassian-plugin>
