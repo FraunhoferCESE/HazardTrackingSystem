@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
@@ -12,6 +13,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang.time.DateUtils;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
@@ -22,6 +24,8 @@ import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
+
+
 
 
 import java.io.IOException;
@@ -79,21 +83,40 @@ public final class HazardServlet extends HttpServlet {
 		final String hazardNum = req.getParameter("hazard-number");
 		final String title = req.getParameter("hazard-title");
 		final String description = req.getParameter("hazard-description");
-		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
+		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName() + " (" + ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress() + ")";
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazard-reviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazard-risk"));
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazard-likelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
-		final Date created = changeDateFormat(req.getParameter("hazard-initation"));
-		final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
 		final Date lastEdit = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
+		final String payload = req.getParameter("hazard-payload");
 		
 		//TODO see if they want to pull in the jira project name as payload
-		final String payload = req.getParameter("hazard-payload");
-		final String subsystem = req.getParameter("hazard-subsystem");
-		Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
-		missionPayloadService.add(hazard, payload);
-		subsystemService.add(hazard, subsystem, subsystem);
+		if("y".equals(req.getParameter("edit"))) {
+			//TODO move to the correct service
+			Hazards old = hazardService.getHazardByID(req.getParameter("key"));
+			old.setHazardNum(hazardNum);
+			old.setTitle(title);
+			old.setHazardDesc(description);
+			old.setReviewPhase(reviewPhase);
+			old.setRiskCategory(risk);
+			old.setRiskLikelihood(likelihood);
+			old.setHazardGroup(group);
+			old.setRevisionDate(lastEdit);
+			Mission_Payload current = old.getMissionPayload();
+			current.setName(payload);
+			current.save();
+			old.save();
+		}
+		else {
+			final Date created = changeDateFormat(req.getParameter("hazard-initation"));
+			final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
+
+			final String subsystem = req.getParameter("hazard-subsystem");
+			Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
+			missionPayloadService.add(hazard, payload);
+			subsystemService.add(hazard, subsystem, subsystem);
+		}
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
 	

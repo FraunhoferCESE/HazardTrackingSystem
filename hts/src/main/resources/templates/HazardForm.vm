@@ -47,8 +47,8 @@
         					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
     					</div>
 					    <div class="field-group">
-						    <label for="hazard-reviewphase">Review Phase</label>
-						    <select class="select" id="hazard-reviewphase" name="hazard-reviewphase">
+						    <label for="hazard-reviewPhase">Review Phase</label>
+						    <select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
 						    	#foreach( $reviewPhase in $reviewPhases )
 						    	<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
 						    	#end

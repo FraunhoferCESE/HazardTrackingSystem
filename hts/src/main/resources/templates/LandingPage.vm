@@ -10,13 +10,6 @@
 		</div>
 	</header>
 
-	<!--div class="aui-message success">
-    	<p class="title">
-        	<span class="aui-icon icon-success"></span>
-        	<strong>Success!</strong>
-    	</p>
-    	<p>$lastCreated.getTitle() was just created</p>
-	</div-->
 	<h1>#if($hazardReports.size()==0)No Hazard reports have been created#end</h1>
 	#if ( $hazardReports.size() > 0 )
 	<table class="aui" id="hazard-table">
@@ -38,7 +31,7 @@
 	            <td class="action" headers="action">
 	                <ul class="menu">
 	                    <li>
-	                        <a href="#">Edit</a>
+	                        <a href="hazardlist?edit=y&key=$hazardreport.getID()">Edit</a>
 	                    </li>
 	                    <li>
 	                 		<a href="#">PDF</a>

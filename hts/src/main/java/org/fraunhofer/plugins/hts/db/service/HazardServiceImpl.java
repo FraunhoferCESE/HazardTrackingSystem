@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db.service;
 import com.atlassian.activeobjects.external.ActiveObjects;
 
 import net.java.ao.DBParam;
+import net.java.ao.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,17 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public List<Hazards> all() {
 		return newArrayList(ao.find(Hazards.class));
+	}
+
+	@Override
+	public Hazards getHazardByID(String id) {
+		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", id));
+		return hazards.length > 0 ? hazards[0] : null;
+	}
+
+	@Override
+	public Hazards update(Hazards updated) {
+		return updated;
 	}
 	
 	
