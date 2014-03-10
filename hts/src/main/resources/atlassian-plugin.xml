@@ -17,6 +17,7 @@
     <resource type="download" name="hts.js" location="/js/hts.js"/>
     <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
     <resource type="download" name="images/" location="/images"/>
+    <resource type="download" name="jquery.form.js" location="/js/jquery-validation-1.11.1/lib/jquery.form.js"/>
     <context>hts</context>
     <context>atl.general</context>
   </web-resource>

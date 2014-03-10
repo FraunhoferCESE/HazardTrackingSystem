@@ -3,106 +3,107 @@
     <title>Edit Hazard report</title>
     <meta name="decorator" content="atl.general">
 </head>
-<body class="page-type-admin">
-<div class="content-container">
- 
-    <div class="aui-layout aui-theme-default">
-        <h1>Edit $hazard.getTitle()</h1>
- 
-        <div class="create-issue-panel">
- 
-            <form method="post" action="hazardform" class="aui">
-                <input type="hidden" name="edit" value="y">
-                <input type="hidden" name="key" value="$hazard.getID()">
-                <div class="field-group">
-					<label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
-					<input class="text medium-field" type="text" id="hazard-number" name="hazard-number" value="$hazard.getHazardNum()" required/>
-				</div>
-				<div class="field-group">
-					<label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span></label>
-					<input class="text long-field" type="text" id="hazard-title" name="hazard-title" value="$hazard.getTitle()"required/>
-				</div>
-				<div class="field-group">
-					<label for="hazard-payload">Mission Payload</label>
-					<input class="text long-field" name="hazard-payload" id="hazard-payload" value="$hazard.getMissionPayload().getName()"/>
-				</div>
-				<div class="field-group">
-					<label for="hazard-subsystem">System/Subsystems</label>
-					<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" disabled/>
-				</div>
-				<div class="field-group">
-        			<label for="hazard-preparer">Preparer</label>
-        			<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$hazard.getPreparer()" disabled/>
-    			</div>
-				<div class="field-group">
-					<label for="hazard-reviewPhase">Review Phase</label>
-					<select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
-						#foreach( $reviewPhase in $reviewPhases )
-							#if($reviewPhase.getID() == $hazard.getReviewPhase().getID())
-								<option value="$reviewPhase.getID()" selected>$reviewPhase.getLabel()</option>
-							#else
-								<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
-							#end
-						#end
-					</select>
-				</div>
-				<div class="field-group">
-					<label for="hazard-risk">Risk Category</label>
-						<select class="select" id="hazard-risk" name="hazard-risk">
-					    	#foreach( $risk in $riskCategories )
-						    	#if($risk.getID() == $hazard.getRiskCategory().getID())
-									<option value="$risk.getID()" selected>$risk.getValue()</option>
+<body class="aui-layout aui-theme-default">
+ 	<header class="aui-page-header">
+		<div class="aui-page-header-inner">
+			<h2>Edit $hazard.getTitle()</h2>
+		</div>
+	</header>
+    <div class="aui-page-panel">
+		<div class="aui-page-panel-inner">
+			<section class="aui-page-panel-content">
+	            <form method="post" action="hazardform" class="aui">
+	                <input type="hidden" name="edit" value="y">
+	                <input type="hidden" name="key" value="$hazard.getID()">
+	                <div class="field-group">
+						<label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
+						<input class="text medium-field" type="text" id="hazard-number" name="hazard-number" value="$hazard.getHazardNum()" required/>
+					</div>
+					<div class="field-group">
+						<label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span></label>
+						<input class="text long-field" type="text" id="hazard-title" name="hazard-title" value="$hazard.getTitle()"required/>
+					</div>
+					<div class="field-group">
+						<label for="hazard-payload">Mission/Payload</label>
+						<input class="text long-field" name="hazard-payload" id="hazard-payload" value="$hazard.getMissionPayload().getName()"/>
+					</div>
+					<div class="field-group">
+						<label for="hazard-subsystem">System/Subsystems</label>
+						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" disabled/>
+					</div>
+					<div class="field-group">
+	        			<label for="hazard-preparer">Preparer</label>
+	        			<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$hazard.getPreparer()" disabled/>
+	    			</div>
+					<div class="field-group">
+						<label for="hazard-reviewPhase">Review Phase</label>
+						<select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
+							#foreach( $reviewPhase in $reviewPhases )
+								#if($reviewPhase.getID() == $hazard.getReviewPhase().getID())
+									<option value="$reviewPhase.getID()" selected>$reviewPhase.getLabel()</option>
 								#else
-									<option value="$risk.getID()">$risk.getValue()</option>
+									<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
 								#end
-					    	#end
+							#end
 						</select>
 					</div>
-				<div class="field-group">
-				    <label for="hazard-likelihood">Risk Likelihood</label>
-				    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
-				    	#foreach( $likelihood in $riskLikelihoods )
-			    			#if($likelihood.getID() == $hazard.getRiskLikelihood().getID())
-								<option value="$likelihood.getID()" selected>$likelihood.getValue()</option>
-							#else
-								<option value="$likelihood.getID()">$likelihood.getValue()</option>
-							#end
-				    	#end
-				    </select>
-				</div>
-				<div class="field-group">
-				    <label for="hazard-group">Hazard Group</label>
-				    <select class="select" id="hazard-group" name="hazard-group">
-				    	#foreach( $group in $hazardGroups )
-				    		#if($group.getID() == $hazard.getHazardGroup().getID())
-								<option value="$group.getID()" selected>$group.getLabel()</option>
-							#else
-								<option value="$group.getID()">$group.getLabel()</option>
-							#end
-				    	#end
-				    </select>
-				</div>
-				<div class="field-group">
-				    <label for="hazard-description">Description</label>
-				    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$hazard.getHazardDesc()</textarea>
-				</div>
-				<div class="field-group">
-				    <label for="hazard-initation">Initiation Date</label>
-				    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date" disabled />
-				</div>
-			   	<div class="field-group">
-			    	<label for="hazard-completion">Completion Date</label>
-			        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" disabled />
-			    </div>
-				<div class="buttons-container">
-					<div class="buttons">
-				        <input class="button submit" type="submit" value="Save" id="comment-save-button">
-				        <a class="cancel" href="hazardlist">Cancel</a>
+					<div class="field-group">
+						<label for="hazard-risk">Risk Category</label>
+							<select class="select" id="hazard-risk" name="hazard-risk">
+						    	#foreach( $risk in $riskCategories )
+							    	#if($risk.getID() == $hazard.getRiskCategory().getID())
+										<option value="$risk.getID()" selected>$risk.getValue()</option>
+									#else
+										<option value="$risk.getID()">$risk.getValue()</option>
+									#end
+						    	#end
+							</select>
+						</div>
+					<div class="field-group">
+					    <label for="hazard-likelihood">Risk Likelihood</label>
+					    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+					    	#foreach( $likelihood in $riskLikelihoods )
+				    			#if($likelihood.getID() == $hazard.getRiskLikelihood().getID())
+									<option value="$likelihood.getID()" selected>$likelihood.getValue()</option>
+								#else
+									<option value="$likelihood.getID()">$likelihood.getValue()</option>
+								#end
+					    	#end
+					    </select>
+					</div>
+					<div class="field-group">
+					    <label for="hazard-group">Hazard Group</label>
+					    <select class="select" id="hazard-group" name="hazard-group">
+					    	#foreach( $group in $hazardGroups )
+					    		#if($group.getID() == $hazard.getHazardGroup().getID())
+									<option value="$group.getID()" selected>$group.getLabel()</option>
+								#else
+									<option value="$group.getID()">$group.getLabel()</option>
+								#end
+					    	#end
+					    </select>
+					</div>
+					<div class="field-group">
+					    <label for="hazard-description">Description</label>
+					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$hazard.getHazardDesc()</textarea>0
+					</div>
+					<div class="field-group">
+					    <label for="hazard-initation">Initiation Date</label>
+					    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date" disabled />
+					</div>
+				   	<div class="field-group">
+				    	<label for="hazard-completion">Completion Date</label>
+				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" disabled />
 				    </div>
-				</div>
-            </form>
+					<div class="buttons-container">
+						<div class="buttons">
+					        <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					        <a class="cancel" href="hazardlist">Cancel</a>
+					    </div>
+					</div>
+	            </form>
+	        </section>
         </div>
-    </div>
 </div>
 </body>
 </html>

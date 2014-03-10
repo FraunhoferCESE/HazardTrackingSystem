@@ -2,6 +2,8 @@ AJS.$(function(){
     AJS.$("#content-2").hide();
     AJS.$("#content-3").hide();
     AJS.$("#content-4").hide();
+    AJS.$(".error").hide();
+    AJS.$("#initError").hide();
     AJS.$("#hazard-nav-item").click(function(e){
         navigateTo(e.target, "content-1");
     });
@@ -14,6 +16,30 @@ AJS.$(function(){
     AJS.$("#verification-nav-item").click(function(e){
         navigateTo(e.target, "content-4");
     });
+
+    AJS.$("#hazard-save-button").click(function(e){
+        var initationVal = AJS.$("#hazard-initation").val();
+        var completionVal = AJS.$("#hazard-completion").val();
+        if(ValidateDate(initationVal, completionVal) || completionVal === "" ){
+            AJS.$(".error").hide();
+            AJS.$("#initError").hide();
+        }
+        else if(initationVal === "" && completionVal !== ""){
+            AJS.$("#initError").show();
+            e.preventDefault();     
+        }
+        else{
+            AJS.$(".error").show();
+            e.preventDefault();
+        }
+    });
+
+    function ValidateDate(initationVal, completionVal){
+        var x = new Date(initationVal);
+        var y = new Date(completionVal);
+        return x < y;
+    }
+
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");
         AJS.$(trigger).parent().addClass("aui-nav-selected");

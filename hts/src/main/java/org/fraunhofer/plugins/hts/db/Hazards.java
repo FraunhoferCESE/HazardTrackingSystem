@@ -31,6 +31,9 @@ public interface Hazards extends Entity {
 	String getPreparer();
 	void setPreparer(String preparer);
 	
+	String getEmail();
+	void setEmail(String email);
+	
 	@NotNull
 	@Unique
 	String getHazardNum();

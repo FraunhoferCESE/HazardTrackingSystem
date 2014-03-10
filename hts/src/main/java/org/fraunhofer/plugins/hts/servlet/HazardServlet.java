@@ -88,7 +88,7 @@ public final class HazardServlet extends HttpServlet {
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazard-risk"));
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazard-likelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
-		final Date lastEdit = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
+		final Date lastEdit = new Date();
 		final String payload = req.getParameter("hazard-payload");
 		
 		//TODO see if they want to pull in the jira project name as payload
