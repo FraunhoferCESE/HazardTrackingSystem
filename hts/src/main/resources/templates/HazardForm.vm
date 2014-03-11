@@ -35,7 +35,7 @@
 					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title" required/>
 					    </div>
 						<div class="field-group">
-					        <label for="hazard-payload">Mission Payload</label>
+					        <label for="hazard-payload">Mission/Payload</label>
 					        <input class="text long-field" name="hazard-payload" id="hazard-payload"/>
 					    </div>
 						<div class="field-group">
@@ -79,11 +79,11 @@
 						    </select>
 						</div>
 						<div class="field-group">
-					        <label for="hazard-initation">Initiation Date</span></label>
+					        <label for="hazard-initation">Initiation Date</label>
 					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
 					    </div>
 			   			<div class="field-group">
-			        		<label for="hazard-completion">Completion Date <span class="error">Completion date can't precede Initiation date</span>  <span class="error" id="initError">Completion date can't be set without an initation date</span></label>
+			        		<label for="hazard-completion">Completion Date <span class="error">Completion date can't precede Initiation date</span> <span id="initError">Completion date can't be set without an initation date</span></label>
 			        		<input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
 			    		</div>
 					    <div class="field-group">

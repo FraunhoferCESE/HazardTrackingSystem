@@ -13,8 +13,8 @@
 		<div class="aui-page-panel-inner">
 			<section class="aui-page-panel-content">
 	            <form method="post" action="hazardform" class="aui">
-	                <input type="hidden" name="edit" value="y">
-	                <input type="hidden" name="key" value="$hazard.getID()">
+	                <input type="hidden" name="edit" value="y"/>
+	                <input type="hidden" name="key" value="$hazard.getID()"/>
 	                <div class="field-group">
 						<label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
 						<input class="text medium-field" type="text" id="hazard-number" name="hazard-number" value="$hazard.getHazardNum()" required/>
@@ -85,7 +85,7 @@
 					</div>
 					<div class="field-group">
 					    <label for="hazard-description">Description</label>
-					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$hazard.getHazardDesc()</textarea>0
+					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$hazard.getHazardDesc()</textarea>
 					</div>
 					<div class="field-group">
 					    <label for="hazard-initation">Initiation Date</label>
@@ -93,7 +93,7 @@
 					</div>
 				   	<div class="field-group">
 				    	<label for="hazard-completion">Completion Date</label>
-				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" disabled />
+				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" placeholder="derpderperp" disabled />
 				    </div>
 					<div class="buttons-container">
 						<div class="buttons">

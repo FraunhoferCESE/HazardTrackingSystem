@@ -1,5 +1,10 @@
-.error{
-    color: red;
+.error, #initError{
+    color: #D04437;
     font-family : Verdana;
     font-size : 8pt;
+}
+
+#hazard-table {
+	width: 65%;
+	margin-right: auto;	
 }

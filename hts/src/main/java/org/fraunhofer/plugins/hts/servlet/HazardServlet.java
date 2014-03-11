@@ -90,6 +90,8 @@ public final class HazardServlet extends HttpServlet {
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
 		final Date lastEdit = new Date();
 		final String payload = req.getParameter("hazard-payload");
+		final Date created = changeDateFormat(req.getParameter("hazard-initation"));
+		final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
 		
 		//TODO see if they want to pull in the jira project name as payload
 		if("y".equals(req.getParameter("edit"))) {
@@ -109,9 +111,6 @@ public final class HazardServlet extends HttpServlet {
 			old.save();
 		}
 		else {
-			final Date created = changeDateFormat(req.getParameter("hazard-initation"));
-			final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
-
 			final String subsystem = req.getParameter("hazard-subsystem");
 			Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payload);

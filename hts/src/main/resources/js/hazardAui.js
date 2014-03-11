@@ -26,9 +26,11 @@ AJS.$(function(){
         }
         else if(initationVal === "" && completionVal !== ""){
             AJS.$("#initError").show();
+            AJS.$(".error").hide();
             e.preventDefault();     
         }
         else{
+            AJS.$("#initError").hide();
             AJS.$(".error").show();
             e.preventDefault();
         }
@@ -39,6 +41,8 @@ AJS.$(function(){
         var y = new Date(completionVal);
         return x < y;
     }
+
+    AJS.$('table tr td:nth-child('+3+')');
 
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");
