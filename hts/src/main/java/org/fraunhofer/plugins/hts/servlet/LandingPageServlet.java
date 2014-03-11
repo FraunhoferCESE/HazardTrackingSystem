@@ -37,7 +37,7 @@ public class LandingPageServlet extends HttpServlet{
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
-		this.templateRenderer = templateRenderer;
+		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
     @Override
@@ -47,6 +47,7 @@ public class LandingPageServlet extends HttpServlet{
     		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
     		Map<String, Object> context = Maps.newHashMap();
     		context.put("hazard", hazard);
+    		hazard.getSubsystems();
     		context.put("hazardGroups", hazardGroupService.all());
     		context.put("riskCategories", riskCategoryService.all());
     		context.put("riskLikelihoods", riskLikelihoodService.all());

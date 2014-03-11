@@ -6,6 +6,7 @@ import net.java.ao.Entity;
 import net.java.ao.OneToMany;
 import net.java.ao.OneToOne;
 import net.java.ao.Preload;
+import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.Unique;
 import net.java.ao.schema.NotNull;
@@ -25,6 +26,7 @@ public interface Hazards extends Entity {
 	String getTitle();
 	void setTitle(String title);
 	
+	@StringLength(value=StringLength.UNLIMITED)
 	String getHazardDesc();
 	void setHazardDesc(String description);
 	
@@ -40,13 +42,13 @@ public interface Hazards extends Entity {
 	void setHazardNum(String number);
 	
 	String getInitiationDate();
-	void setInitiationDate(Date created);
+	void setInitiationDate(Date initationDate);
 	
 	String getCompletionDate();
-	void setCompletionDate(Date completed);
+	void setCompletionDate(Date completionDate);
 		
 	Date getRevisionDate();
-	void setRevisionDate(Date lastEdit);
+	void setRevisionDate(Date revisionDate);
 	
 	//TODO FOREIGN KEYS
 		

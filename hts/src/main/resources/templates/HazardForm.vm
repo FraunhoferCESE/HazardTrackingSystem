@@ -27,12 +27,12 @@
                 <div class="nav-content" id="content-1">
 	                <form class="aui" method="POST" id="hazardForm">
 					    <div class="field-group">
-					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number" required/>
+					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
+					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number"/>
 					    </div>
 					    <div class="field-group">
-					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span></label>
-					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title" required/>
+					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
+					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title"/>
 					    </div>
 						<div class="field-group">
 					        <label for="hazard-payload">Mission/Payload</label>
@@ -79,11 +79,11 @@
 						    </select>
 						</div>
 						<div class="field-group">
-					        <label for="hazard-initation">Initiation Date</label>
+					        <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
 					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
 					    </div>
 			   			<div class="field-group">
-			        		<label for="hazard-completion">Completion Date <span class="error">Completion date can't precede Initiation date</span> <span id="initError">Completion date can't be set without an initation date</span></label>
+			        		<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
 			        		<input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
 			    		</div>
 					    <div class="field-group">

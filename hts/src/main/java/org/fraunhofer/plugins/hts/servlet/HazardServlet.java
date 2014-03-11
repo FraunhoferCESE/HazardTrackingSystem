@@ -60,7 +60,7 @@ public final class HazardServlet extends HttpServlet {
 		this.subsystemService = checkNotNull(subsystemService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
-		this.templateRenderer = templateRenderer;
+		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
 	// TODO 
@@ -79,19 +79,18 @@ public final class HazardServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//TODO clean up
+		//TODO clean up and see if there is a better way to get the parameters
 		final String hazardNum = req.getParameter("hazard-number");
 		final String title = req.getParameter("hazard-title");
 		final String description = req.getParameter("hazard-description");
-		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName() + " (" + ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress() + ")";
+		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
+		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazard-reviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazard-risk"));
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazard-likelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
-		final Date lastEdit = new Date();
+		final Date revisionDate = new Date();
 		final String payload = req.getParameter("hazard-payload");
-		final Date created = changeDateFormat(req.getParameter("hazard-initation"));
-		final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
 		
 		//TODO see if they want to pull in the jira project name as payload
 		if("y".equals(req.getParameter("edit"))) {
@@ -104,15 +103,18 @@ public final class HazardServlet extends HttpServlet {
 			old.setRiskCategory(risk);
 			old.setRiskLikelihood(likelihood);
 			old.setHazardGroup(group);
-			old.setRevisionDate(lastEdit);
+			old.setRevisionDate(revisionDate);
 			Mission_Payload current = old.getMissionPayload();
 			current.setName(payload);
 			current.save();
 			old.save();
 		}
 		else {
+			//TODO do the edit part properly
+			final Date created = changeDateFormat(req.getParameter("hazard-initation"));
+			final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
 			final String subsystem = req.getParameter("hazard-subsystem");
-			Hazards hazard = hazardService.add(title, description, preparer, hazardNum, created, completed, lastEdit, risk, likelihood, group, reviewPhase);
+			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payload);
 			subsystemService.add(hazard, subsystem, subsystem);
 		}

@@ -11,7 +11,7 @@
 		</header>
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
-				<h1>#if($hazardReports.size()==0)No Hazard reports have been created#end</h1>
+				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
 				#if ( $hazardReports.size() > 0 )
 				<table class="aui" id="hazard-table">
 				    <thead>

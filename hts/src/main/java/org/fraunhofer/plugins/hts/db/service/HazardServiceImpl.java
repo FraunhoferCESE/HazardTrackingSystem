@@ -26,15 +26,16 @@ public class HazardServiceImpl implements HazardService {
 	
 	//TODO add javadoc and fix the remaining fields.
 	@Override
-	public Hazards add(String title, String description, String preparer, String hazardNum, Date created, Date completed, Date lastEdit, 
+	public Hazards add(String title, String description, String preparer, String email, String hazardNum, Date initationDate, Date completionDate, Date revisionDate, 
 			Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase) {
 		final Hazards hazard = ao.create(Hazards.class, 
 				new DBParam("TITLE", title), new DBParam("HAZARD_NUM", hazardNum));
 		hazard.setHazardDesc(description);
 		hazard.setPreparer(preparer);
-		hazard.setInitiationDate(created);
-		hazard.setCompletionDate(completed);
-		hazard.setRevisionDate(lastEdit);
+		hazard.setEmail(email);
+		hazard.setInitiationDate(initationDate);
+		hazard.setCompletionDate(completionDate);
+		hazard.setRevisionDate(revisionDate);
 		hazard.setRiskCategory(risk);
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);
