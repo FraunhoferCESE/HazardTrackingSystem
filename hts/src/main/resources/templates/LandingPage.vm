@@ -2,6 +2,7 @@
 	<head>
 		<title>Hazard Form</title>
 		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("hts")
 	</head>
 	<body class="aui-layout aui-theme-default">
 		<header class="aui-page-header">

@@ -23,6 +23,7 @@ import net.java.ao.schema.NotNull;
 //TODO restrictions
 public interface Hazards extends Entity {
 	@NotNull
+	@StringLength(value=512)
 	String getTitle();
 	void setTitle(String title);
 	
