@@ -32,10 +32,16 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 		final Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("ID=?", id));
 		return missionPayload.length > 0 ? missionPayload[0] : null;
 	}
+	
+	@Override
+	public Mission_Payload update(Mission_Payload payloadToUpdate, String name) {
+		payloadToUpdate.setName(name);
+		payloadToUpdate.save();
+		return payloadToUpdate;
+	}
 
 	@Override
 	public List<Mission_Payload> all() {
 		return newArrayList(ao.find(Mission_Payload.class));
 	}
-
 }

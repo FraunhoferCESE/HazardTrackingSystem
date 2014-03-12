@@ -2,6 +2,7 @@
 	<head>
 		<title>Hazard Form</title>
 		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("hts")
 	</head>
 <body class="aui-layout aui-theme-default">
 	<header class="aui-page-header">
@@ -28,11 +29,11 @@
 	                <form class="aui" method="POST" id="hazardForm">
 					    <div class="field-group">
 					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
-					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number"/>
+					        <input class="text medium-field" type="text" id="hazard-number" name="hazardNumber"/>
 					    </div>
 					    <div class="field-group">
 					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
-					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title"/>
+					        <input class="text long-field" type="text" id="hazard-title" name="hazardTitle"/>
 					    </div>
 						<div class="field-group">
 					        <label for="hazard-payload">Mission/Payload</label>

@@ -39,12 +39,12 @@ public interface Hazards extends Entity {
 	@NotNull
 	@Unique
 	String getHazardNum();
-	void setHazardNum(String number);
+	void setHazardNum(String hazardNum);
 	
-	String getInitiationDate();
+	Date getInitiationDate();
 	void setInitiationDate(Date initationDate);
 	
-	String getCompletionDate();
+	Date getCompletionDate();
 	void setCompletionDate(Date completionDate);
 		
 	Date getRevisionDate();

@@ -9,6 +9,7 @@ import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
@@ -41,25 +42,30 @@ public class LandingPageServlet extends HttpServlet{
 	}
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
-    	if ("y".equals(req.getParameter("edit"))) {
-    		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
-    		Map<String, Object> context = Maps.newHashMap();
-    		context.put("hazard", hazard);
-    		hazard.getSubsystems();
-    		context.put("hazardGroups", hazardGroupService.all());
-    		context.put("riskCategories", riskCategoryService.all());
-    		context.put("riskLikelihoods", riskLikelihoodService.all());
-    		context.put("reviewPhases", reviewPhaseService.all());
-    		resp.setContentType("text/html");
-    		templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
+    	if(ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+    		if ("y".equals(req.getParameter("edit"))) {
+        		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
+        		Map<String, Object> context = Maps.newHashMap();
+        		context.put("hazard", hazard);
+        		hazard.getSubsystems();
+        		context.put("hazardGroups", hazardGroupService.all());
+        		context.put("riskCategories", riskCategoryService.all());
+        		context.put("riskLikelihoods", riskLikelihoodService.all());
+        		context.put("reviewPhases", reviewPhaseService.all());
+        		res.setContentType("text/html");
+        		templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
+        	}
+        	else {
+        		Map<String, Object> context = Maps.newHashMap();
+            	context.put("hazardReports", hazardService.all());
+                res.setContentType("text/html");
+                templateRenderer.render("templates/LandingPage.vm", context, res.getWriter());
+        	}
     	}
     	else {
-    		Map<String, Object> context = Maps.newHashMap();
-        	context.put("hazardReports", hazardService.all());
-            resp.setContentType("text/html");
-            templateRenderer.render("templates/LandingPage.vm", context, resp.getWriter());
+    		res.sendRedirect(req.getContextPath() + "/login.jsp");
     	}
     }
 

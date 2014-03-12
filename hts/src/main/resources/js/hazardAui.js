@@ -1,4 +1,4 @@
-AJS.$(function(){
+AJS.$(document).ready(function(){
     AJS.$("#content-2").hide();
     AJS.$("#content-3").hide();
     AJS.$("#content-4").hide();
@@ -58,6 +58,22 @@ AJS.$(function(){
         }
     });
 
+    AJS.$('#hazardForm').validate({ // initialize the plugin
+        rules: {
+            hazardNumer: {
+                required: true,
+            },
+            hazardTitle: {
+                required: true,
+                minlength: 5
+            }
+        },
+        submitHandler: function (form) { // for demo
+            alert('valid form submitted'); // for demo
+            return false; // for demo
+        }
+    });
+
     function ValidateDate(initationVal, completionVal){
         var x = new Date(initationVal);
         var y = new Date(completionVal);
@@ -69,8 +85,6 @@ AJS.$(function(){
         }
         return x < y;
     }
-
-    AJS.$('table tr td:nth-child('+3+')');
 
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");
