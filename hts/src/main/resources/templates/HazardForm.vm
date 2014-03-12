@@ -1,0 +1,203 @@
+<html>
+	<head>
+		<title>Hazard Form</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("hts")
+	</head>
+<body class="aui-layout aui-theme-default">
+	<header class="aui-page-header">
+		<div class="aui-page-header-inner">
+			<h2>Hazard Form</h2>
+		</div>
+	</header>
+	<nav id="main-nav" class="aui-navgroup aui-navgroup-horizontal">
+        <div class="aui-navgroup-inner">
+            <div class="aui-navgroup-primary">
+                <ul class="aui-nav">
+                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="#">Hazard form</a></li>
+                    <li id="cause-nav-item"><a href="#">Causes</a></li>
+                    <li id="control-nav-item"><a href="#">Controls</a></li>
+                    <li id="verification-nav-item"><a href="#">Verifications</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="aui-page-panel">
+        <div class="aui-page-panel-inner">
+            <section class="aui-page-panel-content">
+                <div class="nav-content" id="content-1">
+	                <form class="aui" method="POST" id="hazardForm">
+					    <div class="field-group">
+					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
+					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number"/>
+					    </div>
+					    <div class="field-group">
+					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
+					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title"/>
+					    </div>
+						<div class="field-group">
+					        <label for="hazard-payload">Mission/Payload</label>
+					        <input class="text long-field" name="hazard-payload" id="hazard-payload"/>
+					    </div>
+						<div class="field-group">
+					        <label for="hazard-subsystem">System/Subsystems</label>
+					        <input class="text long-field" name="hazard-subsystem" id="hazard-subsystem"/>
+					    </div>
+					    <div class="field-group">
+        					<label for="hazard-preparer">Preparer</label>
+        					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
+    					</div>
+					    <div class="field-group">
+						    <label for="hazard-reviewPhase">Review Phase</label>
+						    <select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
+						    	#foreach( $reviewPhase in $reviewPhases )
+						    	<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
+						    	#end
+						    </select>
+						</div>
+					    <div class="field-group">
+						    <label for="hazard-risk">Risk Category</label>
+						    <select class="select" id="hazard-risk" name="hazard-risk">
+						    	#foreach( $risk in $riskCategories )
+						    	<option value="$risk.getID()">$risk.getValue()</option>
+						    	#end
+						    </select>
+						</div>
+					    <div class="field-group">
+						    <label for="hazard-likelihood">Risk Likelihood</label>
+						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+						    	#foreach( $likelihood in $riskLikelihoods )
+						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
+						    	#end
+						    </select>
+						</div>
+						<div class="field-group">
+						    <label for="hazard-group">Hazard Group</label>
+						    <select class="select" id="hazard-group" name="hazard-group">
+						    	#foreach( $group in $hazardGroups )
+						    	<option value="$group.getID()">$group.getLabel()</option>
+						    	#end
+						    </select>
+						</div>
+						<div class="field-group">
+					        <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
+					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
+					    </div>
+			   			<div class="field-group">
+			        		<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
+			        		<input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
+			    		</div>
+					    <div class="field-group">
+					        <label for="hazard-description">Description</label>
+					        <textarea class="textarea long-field" name="hazard-description" id="hazard-description"></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="hazard-save-button">
+					            <a class="cancel" href="hazardform">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-2">
+                    <form class="aui">
+					    <div class="field-group">
+					        <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text long-field" type="text" id="cause-title" name="cause-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+					        <label for="cause-description">Description</label>
+					        <textarea class="textarea long-field" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-3">
+                	<form class="aui">
+					    <div class="field-group">
+					        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text long-field" type="text" id="control-title" name="control-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+						    <label for="control-group">Control group</label>
+						    <select class="select" id="control-group" name="control-group">
+						        <option>Three Independent Inhibits</option>
+						        <option>Two steo commanding</option>
+						        <option>Training</option>
+						        <optgroup label="Group 1">
+						            <option>Option one</option>
+						            <option>Option two</option>
+						        </optgroup>
+						        <option>Option 3</option>
+						        <option>Option 4</option>
+						    </select>
+						</div>
+					    <div class="field-group">
+					        <label for="control-description">Description</label>
+					        <textarea class="textarea long-field" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+                <div class="nav-content" id="content-4">
+                	<form class="aui">
+					    <div class="field-group">
+					        <label for="verification-title">Title <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text long-field" type="text" id="verification-title" name="verification-title">
+					        <!--div class="description">Your primary email address.</div-->
+					    </div>
+					    <div class="field-group">
+						    <label for="verification-group">Verification status</label>
+						    <select class="select" id="verification-group" name="verification-group">
+						        <option>Open</option>
+						        <option>Close to VTL</option>
+						        <option>Closed</option>
+						    </select>
+						</div>
+						<div class="field-group">
+						    <label for="verification-type">Verification group</label>
+						    <select class="select" id="verification-type" name="verification-type">
+								<option>Select</option>
+						        <option>Option 1</option>
+						        <option>Option 2</option>
+						        <optgroup label="Group 1">
+						            <option>Option one</option>
+						            <option>Option two</option>
+						        </optgroup>
+						        <option>Option 3</option>
+						        <option>Option 4</option>
+						    </select>
+						</div>
+						<div class="field-group">
+					        <label for="verification-completion">Completion Date</label>
+					        <input class="aui-date-picker" name="verification-completion" id="verification-completion" type="date"/>
+					    </div>
+					    <div class="field-group">
+					        <label for="verification-description">Description</label>
+					        <textarea class="textarea long-field" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
+					    </div>
+					    <div class="buttons-container">
+					        <div class="buttons">
+					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
+					            <a class="cancel" href="#">Cancel</a>
+					        </div>
+					    </div>
+					</form>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

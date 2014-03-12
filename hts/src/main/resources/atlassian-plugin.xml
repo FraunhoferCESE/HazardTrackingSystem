@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="hts"/>
+  <!-- add our web resources -->
+  <web-resource key="hts-resources" name="hts Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="hts.css" location="/css/hts.css"/>
+    <resource type="download" name="hts.js" location="/js/hts.js"/>
+    <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
+    <resource type="download" name="images/" location="/images"/>
+    <resource type="download" name="jquery.form.js" location="/js/jquery.form.js"/>
+    <context>hts</context>
+  </web-resource>
+  <!-- import from the product container -->
+  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+  <!-- Here are all Active objects declarations -->
+  <ao key="ao-module">
+    <description>The module configuring active objects service</description>
+    <entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
+  </ao>
+  <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
+  <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+    <decription>Processes @Transactional annotations.</decription>
+  </component>
+  <servlet name="Hazard Servlet" i18n-name-key="hazard-servlet.name" key="hazard-servlet" class="org.fraunhofer.plugins.hts.servlet.HazardServlet">
+    <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
+    <url-pattern>/hazardform</url-pattern>
+  </servlet>
+  <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.HazardServiceImpl"/>
+  <component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.HazardGroupServiceImpl"/>
+  <component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.db.service.RiskCategoryServiceImpl"/>
+  <component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsServiceImpl"/>
+  <component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.SubsystemServiceImpl"/>
+  <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.ReviewPhaseServiceImpl"/>
+  <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.MissionPayloadServiceImpl"/>
+  <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
+  <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
+    <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
+    <url-pattern>/hazardlist</url-pattern>
+  </servlet>
+  <web-section name="hazardSection" i18n-name-key="hazard-section.name" key="hazard-section" location="hazard-sites-link" weight="1000">
+    <description key="hazard-section.description">The hazardSection Plugin</description>
+    <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+    	<param name="permission">user</param>
+    </condition>
+  </web-section>
+  <web-item name="Hazard Sites" i18n-name-key="hazard-sites.name" key="hazard-sites" section="system.top.navigation.bar" weight="1000">
+    <description key="hazard-sites.description">The Hazard Sites Plugin</description>
+    <label key="hazard-sites.label"/>
+    <link linkId="hazard-sites-link"/>
+  </web-item>
+  <web-item name="Create a Hazard report" i18n-name-key="createa-hazardreport.name" key="createa-hazardreport" section="hazard-sites-link/hazard-section" weight="1000">
+    <description key="createa-hazardreport.description">The Create a Hazard report Plugin</description>
+    <label key="createa-hazardreport.label"/>
+    <link linkId="createa-hazardreport-link">/plugins/servlet/hazardform</link>
+  </web-item>
+  <web-item name="View all Hazard reports" i18n-name-key="viewall-hazardreports.name" key="viewall-hazardreports" section="hazard-sites-link/hazard-section" weight="1000">
+    <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
+    <label key="viewall-hazardreports.label"></label>
+    <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
+  </web-item>
+</atlassian-plugin>

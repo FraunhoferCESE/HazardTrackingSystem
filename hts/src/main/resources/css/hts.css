@@ -1,0 +1,13 @@
+.error, #initError{
+    color: #D04437;
+    font-family : Verdana;
+    font-size : 8pt;
+}
+
+#hazard-table, .noHazard {
+	width: 65%;
+	margin-right: auto;
+	margin-left: 0.83em;	
+}
+
+

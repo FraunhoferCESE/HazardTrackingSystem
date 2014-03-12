@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<title>Hazard Form</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("hts")
+	</head>
+	<body class="aui-layout aui-theme-default">
+		<header class="aui-page-header">
+			<div class="aui-page-header-inner">
+				<h2>List of all Hazard reports</h2>
+			</div>
+		</header>
+		<div class="aui-page-panel">
+        	<div class="aui-page-panel-inner">
+				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
+				#if ( $hazardReports.size() > 0 )
+				<table class="aui" id="hazard-table">
+				    <thead>
+				        <tr id="hazard-row">
+				            <th id="hazard-number">Hazard #</th>
+				            <th id="hazard-title">Title</th>
+				            <th id="hazard-lastEdit">Last revision</th>
+				            <th id="action">Action</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	#foreach( $hazardreport in $hazardReports )
+				        <tr>
+				            <td headers="hazard-number">$hazardreport.getHazardNum()</td>
+				            <td headers="hazard-title">$hazardreport.getTitle()</td>
+				            <td id="hazard-lastEdit-field" headers="hazard-lastEdit">$hazardreport.getRevisionDate()</td>
+
+				            <td class="action" headers="action">
+				                <ul class="menu">
+				                    <li>
+				                        <a href="hazardlist?edit=y&key=$hazardreport.getID()">Edit</a>
+				                    </li>
+				                    <li>
+				                 		<a href="#">PDF</a>
+				                 	</li>
+				                </ul>
+				            </td>
+				        </tr>
+				        #end
+				    </tbody>
+				</table>
+				#end
+			</div>
+		</div>
+	</body>
+</html>
