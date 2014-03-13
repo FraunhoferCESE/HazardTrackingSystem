@@ -58,6 +58,8 @@ public class LandingPageServlet extends HttpServlet{
         		context.put("riskCategories", riskCategoryService.all());
         		context.put("riskLikelihoods", riskLikelihoodService.all());
         		context.put("reviewPhases", reviewPhaseService.all());
+        		context.put("initDate", hazard.getInitiationDate().toString().substring(0, 10));
+        		context.put("compDate", hazard.getCompletionDate().toString().substring(0, 10));
         		//TODO change when hazard report can have more than one subsystem
         		List<Subsystems> subsys = Arrays.asList(hazard.getSubsystems());
         		context.put("subsystem", subsys.get(0).getLabel());

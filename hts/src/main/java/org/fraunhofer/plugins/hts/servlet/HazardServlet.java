@@ -106,11 +106,13 @@ public final class HazardServlet extends HttpServlet {
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazard-payload");
 		final String subsystem = req.getParameter("hazard-subsystem");
+		final Date created = changeToDate(req.getParameter("hazard-initation"));
+		final Date completed = changeToDate(req.getParameter("hazard-completion"));
 		
 		//TODO see if they want to pull in the jira project name as payload
 		if("y".equals(req.getParameter("edit"))) {
 			String id  = req.getParameter("key");
-			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, revisionDate, risk, likelihood, group, reviewPhase);
+			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
 			Mission_Payload payloadToUpdate = updated.getMissionPayload();
 			List<Subsystems> subsystemsListToUpdate = Arrays.asList(updated.getSubsystems());
 			missionPayloadService.update(payloadToUpdate, payloadName);
@@ -119,8 +121,6 @@ public final class HazardServlet extends HttpServlet {
 		}
 		else {
 			//TODO do the edit part properly
-			final Date created = changeToDate(req.getParameter("hazard-initation"));
-			final Date completed = changeToDate(req.getParameter("hazard-completion"));
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);

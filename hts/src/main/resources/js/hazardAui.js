@@ -57,23 +57,8 @@ AJS.$(document).ready(function(){
             e.preventDefault();
         }
     });
-
-    AJS.$('#hazardForm').validate({ // initialize the plugin
-        rules: {
-            hazardNumer: {
-                required: true,
-            },
-            hazardTitle: {
-                required: true,
-                minlength: 5
-            }
-        },
-        submitHandler: function (form) { // for demo
-            alert('valid form submitted'); // for demo
-            return false; // for demo
-        }
-    });
-
+ 
+    
     function ValidateDate(initationVal, completionVal){
         var x = new Date(initationVal);
         var y = new Date(completionVal);
