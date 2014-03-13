@@ -89,11 +89,11 @@
 					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$!hazard.getHazardDesc()</textarea>
 					</div>
 					<div class="field-group">
-					    <label for="hazard-initation">Initiation Date</label>
+					    <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
 					    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" value="$!initDate" type="date"/>
 					</div>
 				   	<div class="field-group">
-				    	<label for="hazard-completion">Completion Date</label>
+				    	<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
 				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" value="$!compDate"/>
 				    </div>
 					<div class="buttons-container">
