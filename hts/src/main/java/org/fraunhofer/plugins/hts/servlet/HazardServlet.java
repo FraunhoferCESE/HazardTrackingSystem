@@ -15,6 +15,7 @@ import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -29,10 +30,15 @@ import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 
 
+
+
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -99,19 +105,22 @@ public final class HazardServlet extends HttpServlet {
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazard-group"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazard-payload");
+		final String subsystem = req.getParameter("hazard-subsystem");
 		
 		//TODO see if they want to pull in the jira project name as payload
 		if("y".equals(req.getParameter("edit"))) {
 			String id  = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, revisionDate, risk, likelihood, group, reviewPhase);
 			Mission_Payload payloadToUpdate = updated.getMissionPayload();
+			List<Subsystems> subsystemsListToUpdate = Arrays.asList(updated.getSubsystems());
 			missionPayloadService.update(payloadToUpdate, payloadName);
+			//TODO change when hazard reports can belong to more than one subsystem
+			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
 		}
 		else {
 			//TODO do the edit part properly
-			final Date created = changeDateFormat(req.getParameter("hazard-initation"));
-			final Date completed = changeDateFormat(req.getParameter("hazard-completion"));
-			final String subsystem = req.getParameter("hazard-subsystem");
+			final Date created = changeToDate(req.getParameter("hazard-initation"));
+			final Date completed = changeToDate(req.getParameter("hazard-completion"));
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
@@ -120,12 +129,12 @@ public final class HazardServlet extends HttpServlet {
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
 	
-	private Date changeDateFormat(String date) {
-		SimpleDateFormat fromForm = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat wantedForm = new SimpleDateFormat("MM/dd/yyyy");
+	private Date changeToDate(String date) {
+		SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
 		try {
-			String reformatted = wantedForm.format(fromForm.parse(date));
-			Date converted = wantedForm.parse(reformatted);
+			String reformatted = newFormat.format(oldFormat.parse(date));
+			Date converted = newFormat.parse(reformatted);
 			return converted;
 		} catch (ParseException e) {
 			// TODO: handle exception

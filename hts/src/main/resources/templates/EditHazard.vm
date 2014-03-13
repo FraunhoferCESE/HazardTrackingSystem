@@ -30,7 +30,7 @@
 					</div>
 					<div class="field-group">
 						<label for="hazard-subsystem">System/Subsystems</label>
-						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" disabled/>
+						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" value="$subsystem"/>
 					</div>
 					<div class="field-group">
 	        			<label for="hazard-preparer">Preparer</label>

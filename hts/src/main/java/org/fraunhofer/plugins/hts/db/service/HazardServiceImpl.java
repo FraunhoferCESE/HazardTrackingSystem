@@ -13,6 +13,7 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.db.Subsystems;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -76,5 +77,9 @@ public class HazardServiceImpl implements HazardService {
 		return updated;
 	}
 	
-	
+	@Override
+	public Subsystems[] getSubsystems(){
+		return null;
+		
+	}
 }

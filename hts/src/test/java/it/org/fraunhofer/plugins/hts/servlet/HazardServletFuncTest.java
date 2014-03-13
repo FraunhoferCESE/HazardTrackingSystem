@@ -24,7 +24,7 @@ public class HazardServletFuncTest {
     public void setup() {
         httpClient = new DefaultHttpClient();
         baseUrl = System.getProperty("baseurl");
-        servletUrl = baseUrl + "/plugins/servlet/hazardservlet";
+        servletUrl = baseUrl + "/plugins/servlet/hazardform";
     }
 
     @After

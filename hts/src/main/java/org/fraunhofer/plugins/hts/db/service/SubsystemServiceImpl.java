@@ -33,10 +33,17 @@ public class SubsystemServiceImpl implements SubsystemService {
 		final Subsystems[] subsys = ao.find(Subsystems.class, Query.select().where("ID=?", id));
 		return subsys.length > 0 ? subsys[0] : null;
 	}
-
+	
 	@Override
 	public List<Subsystems> all() {
 		return newArrayList(ao.find(Subsystems.class));
+	}
+	
+	@Override
+	public Subsystems update(Subsystems subsystemToUpdate, String label) {
+		subsystemToUpdate.setLabel(label);
+		subsystemToUpdate.save();
+		return null;
 	}
 
 }
