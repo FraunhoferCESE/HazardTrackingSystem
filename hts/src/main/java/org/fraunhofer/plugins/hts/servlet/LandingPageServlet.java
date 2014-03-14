@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,8 +59,8 @@ public class LandingPageServlet extends HttpServlet{
         		context.put("riskCategories", riskCategoryService.all());
         		context.put("riskLikelihoods", riskLikelihoodService.all());
         		context.put("reviewPhases", reviewPhaseService.all());
-        		context.put("initDate", hazard.getInitiationDate().toString().substring(0, 10));
-        		context.put("compDate", hazard.getCompletionDate().toString().substring(0, 10));
+        		context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
+        		context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
         		//TODO change when hazard report can have more than one subsystem
         		List<Subsystems> subsys = Arrays.asList(hazard.getSubsystems());
         		context.put("subsystem", subsys.get(0).getLabel());
@@ -77,5 +78,12 @@ public class LandingPageServlet extends HttpServlet{
     		res.sendRedirect(req.getContextPath() + "/login.jsp");
     	}
     }
-
+    
+    private String removeTimeFromDate(Date date) {
+    	if(date != null) {
+    		return date.toString().substring(0, 10);
+    	}
+    	
+    	return null;    	
+    }
 }

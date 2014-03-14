@@ -61,19 +61,21 @@ public class HazardServiceImpl implements HazardService {
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum, Date initationDate, Date completionDate, Date revisionDate, 
 			Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase) {
 		Hazards updated = getHazardByID(id);
-		updated.setTitle(title);
-		updated.setHazardNum(hazardNum);
-		updated.setHazardDesc(description);
-		updated.setPreparer(preparer);
-		updated.setEmail(email);
-		updated.setInitiationDate(initationDate);
-		updated.setCompletionDate(completionDate);
-		updated.setRevisionDate(revisionDate);
-		updated.setRiskCategory(risk);
-		updated.setRiskLikelihood(likelihood);
-		updated.setHazardGroup(group);
-		updated.setReviewPhase(reviewPhase);
-		updated.save();	
+		if(updated != null) {
+			updated.setTitle(title);
+			updated.setHazardNum(hazardNum);
+			updated.setHazardDesc(description);
+			updated.setPreparer(preparer);
+			updated.setEmail(email);
+			updated.setInitiationDate(initationDate);
+			updated.setCompletionDate(completionDate);
+			updated.setRevisionDate(revisionDate);
+			updated.setRiskCategory(risk);
+			updated.setRiskLikelihood(likelihood);
+			updated.setHazardGroup(group);
+			updated.setReviewPhase(reviewPhase);
+			updated.save();
+		}
 		return updated;
 	}
 	
