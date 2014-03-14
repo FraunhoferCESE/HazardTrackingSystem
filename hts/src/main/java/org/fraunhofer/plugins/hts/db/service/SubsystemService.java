@@ -7,7 +7,8 @@ import org.fraunhofer.plugins.hts.db.Subsystems;
 
 
 public interface SubsystemService {
-	Subsystems add(Hazards hazard, String value, String subsysDesc);
+	Subsystems add(Hazards hazard, String label, String subsysDesc);
 	Subsystems getSubsystemByID(String id);
+	Subsystems update(Subsystems subsystemToUpdate, String label);
 	List<Subsystems> all();
 }

@@ -24,7 +24,7 @@ public class LandingPageServletFuncTest {
     public void setup() {
         httpClient = new DefaultHttpClient();
         baseUrl = System.getProperty("baseurl");
-        servletUrl = baseUrl + "/plugins/servlet/landingpageservlet";
+        servletUrl = baseUrl + "/plugins/servlet/hazardlist";
     }
 
     @After

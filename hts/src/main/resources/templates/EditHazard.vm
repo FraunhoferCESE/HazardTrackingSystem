@@ -26,11 +26,11 @@
 					</div>
 					<div class="field-group">
 						<label for="hazard-payload">Mission/Payload</label>
-						<input class="text long-field" name="hazard-payload" id="hazard-payload" value="$hazard.getMissionPayload().getName()"/>
+						<input class="text long-field" name="hazard-payload" id="hazard-payload" value="$!hazard.getMissionPayload().getName()"/>
 					</div>
 					<div class="field-group">
 						<label for="hazard-subsystem">System/Subsystems</label>
-						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" disabled/>
+						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" value="$!subsystem"/>
 					</div>
 					<div class="field-group">
 	        			<label for="hazard-preparer">Preparer</label>
@@ -63,11 +63,11 @@
 					<div class="field-group">
 					    <label for="hazard-likelihood">Risk Likelihood</label>
 					    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
-					    	#foreach( $likelihood in $riskLikelihoods )
-				    			#if($likelihood.getID() == $hazard.getRiskLikelihood().getID())
-									<option value="$likelihood.getID()" selected>$likelihood.getValue()</option>
+					    	#foreach( $!likelihood in $!riskLikelihoods )
+				    			#if($!likelihood.getID() == $!hazard.getRiskLikelihood().getID())
+									<option value="$likelihood.getID()" selected>$!likelihood.getValue()</option>
 								#else
-									<option value="$likelihood.getID()">$likelihood.getValue()</option>
+									<option value="$likelihood.getID()">$!likelihood.getValue()</option>
 								#end
 					    	#end
 					    </select>
@@ -75,26 +75,26 @@
 					<div class="field-group">
 					    <label for="hazard-group">Hazard Group</label>
 					    <select class="select" id="hazard-group" name="hazard-group">
-					    	#foreach( $group in $hazardGroups )
-					    		#if($group.getID() == $hazard.getHazardGroup().getID())
-									<option value="$group.getID()" selected>$group.getLabel()</option>
+					    	#foreach( $!group in $!hazardGroups )
+					    		#if($!group.getID() == $hazard.getHazardGroup().getID())
+									<option value="$!group.getID()" selected>$!group.getLabel()</option>
 								#else
-									<option value="$group.getID()">$group.getLabel()</option>
+									<option value="$!group.getID()">$!group.getLabel()</option>
 								#end
 					    	#end
 					    </select>
 					</div>
 					<div class="field-group">
 					    <label for="hazard-description">Description</label>
-					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$hazard.getHazardDesc()</textarea>
+					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$!hazard.getHazardDesc()</textarea>
 					</div>
 					<div class="field-group">
-					    <label for="hazard-initation">Initiation Date</label>
-					    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date" disabled />
+					    <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
+					    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" value="$!initDate" type="date"/>
 					</div>
 				   	<div class="field-group">
-				    	<label for="hazard-completion">Completion Date</label>
-				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" placeholder="derpderperp" disabled />
+				    	<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
+				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" value="$!compDate"/>
 				    </div>
 					<div class="buttons-container">
 						<div class="buttons">
