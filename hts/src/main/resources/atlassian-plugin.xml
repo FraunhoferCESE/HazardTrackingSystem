@@ -18,6 +18,7 @@
     <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
     <resource type="download" name="images/" location="/images"/>
     <resource type="download" name="jquery.form.js" location="/js/jquery.form.js"/>
+    <resource type="download" name="date.js" location="/js/date.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->
