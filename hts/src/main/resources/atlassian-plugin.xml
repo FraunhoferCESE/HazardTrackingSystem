@@ -78,4 +78,7 @@
     <label key="viewall-hazardreports.label"></label>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
   </web-item>
+  <rest name="hts Rest" i18n-name-key="hts-rest.name" key="hts-rest" path="/hts" version="1.0">
+    <description key="hts-rest.description">The hts Rest Plugin</description>
+  </rest>
 </atlassian-plugin>
