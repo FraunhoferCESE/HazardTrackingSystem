@@ -120,7 +120,6 @@ public final class HazardServlet extends HttpServlet {
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
 		}
 		else {
-			//TODO do the edit part properly
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
@@ -130,15 +129,17 @@ public final class HazardServlet extends HttpServlet {
 	}
 	
 	private Date changeToDate(String date) {
-		SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
-		try {
-			String reformatted = newFormat.format(oldFormat.parse(date));
-			Date converted = newFormat.parse(reformatted);
-			return converted;
-		} catch (ParseException e) {
-			// TODO: handle exception
-			e.printStackTrace();
+		if(date != null) {
+			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
+			try {
+				String reformatted = newFormat.format(oldFormat.parse(date));
+				Date converted = newFormat.parse(reformatted);
+				return converted;
+			} catch (ParseException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}

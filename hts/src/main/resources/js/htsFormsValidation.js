@@ -23,7 +23,7 @@ AJS.$(document).ready(function(){
 		}
 		var curDate = new Date($(element).val());
 		return minDate <= curDate;
-	}, "Dates cannot precede the year 1940.");
+	}, "Dates cannot precede the year 1940");
 
 	$("#hazardForm").validate({
 		rules: {
@@ -36,10 +36,10 @@ AJS.$(document).ready(function(){
 	    		maxlength: 512
 	    	},
 	    	hazardPayload: {
-	    		maxlength: 512
+	    		maxlength: 255
 	    	},
 	    	hazardSubsystem: {
-	    		maxlength: 512
+	    		maxlength: 255
 	    	},
 	    	hazardInitation: {
 	    		date: true,
@@ -60,6 +60,12 @@ AJS.$(document).ready(function(){
 	    		required: "Title is required.",
 	    		maxlength: "Title should not excede 512 characters."
 	    	},
+	    },
+
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
 	    }
 	});
 
@@ -75,6 +81,7 @@ AJS.$(document).ready(function(){
 		else if(Date.parse(initationVal) && !(Date.parse(completionVal))) {
 			return true;
 		}
+		//initation is not valid but completion is then the form is invalid.
 		else if(!(Date.parse(initationVal)) && Date.parse(completionVal)) {
 			return false;
 		} 
