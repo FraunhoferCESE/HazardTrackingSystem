@@ -52,7 +52,6 @@
   <component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl"/>
   <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl"/>
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
-
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
@@ -61,7 +60,7 @@
   <web-section name="hazardSection" i18n-name-key="hazard-section.name" key="hazard-section" location="hazard-sites-link" weight="1000">
     <description key="hazard-section.description">The hazardSection Plugin</description>
     <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-    	<param name="permission">user</param>
+      <param name="permission">user</param>
     </condition>
   </web-section>
   <web-item name="Hazard Sites" i18n-name-key="hazard-sites.name" key="hazard-sites" section="system.top.navigation.bar" weight="1000">
@@ -76,7 +75,7 @@
   </web-item>
   <web-item name="View all Hazard reports" i18n-name-key="viewall-hazardreports.name" key="viewall-hazardreports" section="hazard-sites-link/hazard-section" weight="1000">
     <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
-    <label key="viewall-hazardreports.label"></label>
+    <label key="viewall-hazardreports.label"/>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
   </web-item>
 </atlassian-plugin>
