@@ -11,25 +11,44 @@ AJS.$(document).ready(function(){
 		return response;
 	}, "Hazard # must be unique");
 
-	//TODO minor fixes
-	$.validator.addMethod("preventIncorrectCompl", function(value, element) {
-		console.log(value);
+	//Custom method to check if completion date is set to precede initation date, which should not be allowed
+	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
 		var initDate = $("#hazardInitation").val();
-		console.log($("#hazardInitation").val());
-		return ValidateDate(initDate, value);
-	}, "Completion date cannot precede initation date.");
+		return ValidateDate(initDate, complDate);
+	}, "Completion date cannot be set before initation date.");
+
+	$.validator.addMethod("mindate", function(val, element, minDate) {
+		if(this.optional(element)) {
+			return true;
+		}
+		var curDate = new Date($(element).val());
+		return minDate <= curDate;
+	}, "Dates cannot precede the year 1940.");
 
 	$("#hazardForm").validate({
 		rules: {
 			hazardNumber: { 
 				required: true,
+				maxlength: 255
 			},
 	    	hazardTitle: { 
 	    		required: true,
 	    		maxlength: 512
 	    	},
+	    	hazardPayload: {
+	    		maxlength: 512
+	    	},
+	    	hazardSubsystem: {
+	    		maxlength: 512
+	    	},
+	    	hazardInitation: {
+	    		date: true,
+	    		mindate: new Date(40, 0, 1)
+	    	},
 	    	hazardCompletion: {
-	    		preventIncorrectCompl: true
+	    		date: true,
+	    		preventIncorrectCompl: true,
+	    		mindate: new Date(40, 0, 1)
 	    	}
 	    },
 
@@ -44,9 +63,24 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
+	//Helper functions
 	function ValidateDate(initationVal, completionVal){
-		var x = new Date(initationVal);
-		var y = new Date(completionVal);
-		return x < y;
+		//Both valid dates
+		if(Date.parse(initationVal) && Date.parse(completionVal)) {
+			var x = new Date(initationVal);
+			var y = new Date(completionVal);
+			return x < y; 
+		}
+		//initation is valid
+		else if(Date.parse(initationVal) && !(Date.parse(completionVal))) {
+			return true;
+		}
+		else if(!(Date.parse(initationVal)) && Date.parse(completionVal)) {
+			return false;
+		} 
+		else {
+			return true;
+		}
 	}
+
 });

@@ -44,8 +44,8 @@
 					        <input class="text long-field" name="hazardSubsystem" id="hazardSubsystem"/>
 					    </div>
 					    <div class="field-group">
-        					<label for="hazard-preparer">Preparer</label>
-        					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
+        					<label for="hazardPreparer">Preparer</label>
+        					<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
     					</div>
 					    <div class="field-group">
 						    <label for="hazardReviewPhase">Review Phase</label>
