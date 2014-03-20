@@ -21,7 +21,7 @@ public class HazardResource {
 	}
 	
     @GET
-    @Path("{hazardNumber}")
+    @Path("hazardnumber/{hazardNumber}")
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response checkHazardNum(@PathParam("hazardNumber") String hazardNumber) {
