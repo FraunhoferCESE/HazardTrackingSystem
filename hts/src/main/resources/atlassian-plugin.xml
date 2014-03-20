@@ -78,4 +78,7 @@
     <label key="viewall-hazardreports.label"/>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
   </web-item>
+  <rest name="Hazard Resource" i18n-name-key="hazard-resource.name" key="hazard-resource" path="/htsrest" version="1.0">
+    <description key="hazard-resource.description">The Hazard Resource Plugin</description>
+  </rest>
 </atlassian-plugin>

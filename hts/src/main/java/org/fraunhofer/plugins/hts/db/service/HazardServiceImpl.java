@@ -84,4 +84,11 @@ public class HazardServiceImpl implements HazardService {
 		return null;
 		
 	}
+
+	@Override
+	public Boolean hazardNumberExists(String hazardNumber) {
+		// TODO Auto-generated method stub
+		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
+		return hazards.length > 0 ? true : false;
+	}
 }
