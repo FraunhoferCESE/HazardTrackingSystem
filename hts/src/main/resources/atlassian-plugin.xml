@@ -45,13 +45,13 @@
     <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
     <url-pattern>/hazardform</url-pattern>
   </servlet>
-  <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl"/>
-  <component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl"/>
-  <component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.db.service.impl.RiskCategoryServiceImpl"/>
-  <component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl"/>
-  <component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl"/>
-  <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl"/>
-  <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
+  <component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.HazardServiceImpl"/>
+  <component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.HazardGroupServiceImpl"/>
+  <component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.db.service.RiskCategoryServiceImpl"/>
+  <component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsServiceImpl"/>
+  <component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.SubsystemServiceImpl"/>
+  <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.ReviewPhaseServiceImpl"/>
+  <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.MissionPayloadServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
