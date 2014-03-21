@@ -24,15 +24,6 @@ import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
-
-
-
-
-
-
-
-
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,10 +35,13 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * Takes care of handling the requests. Loading the Hazard form and allowing user to save to the database.
+ * Takes care of handling the requests. Loading the Hazard form and allowing
+ * user to save to the database.
+ * 
  * @author ASkulason
- *
+ * 
  */
+@SuppressWarnings("serial")
 public final class HazardServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final HazardGroupService hazardGroupService;
@@ -57,9 +51,11 @@ public final class HazardServlet extends HttpServlet {
 	private final ReviewPhaseService reviewPhaseService;
 	private final MissionPayloadService missionPayloadService;
 	private final TemplateRenderer templateRenderer;
-	
-	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService, TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService, 
-			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService, ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService) {
+
+	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
+			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
+			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService,
+			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -70,10 +66,10 @@ public final class HazardServlet extends HttpServlet {
 		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
-	// TODO 
+	// TODO
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		if(ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("hazardGroups", hazardGroupService.all());
 			context.put("riskCategories", riskCategoryService.all());
@@ -81,19 +77,18 @@ public final class HazardServlet extends HttpServlet {
 			context.put("reviewPhases", reviewPhaseService.all());
 			context.put("PreparerName", ComponentAccessor.getJiraAuthenticationContext().getUser().getName());
 			context.put("PreparerEmail", ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress());
-			
+
 			res.setContentType("text/html;charset=utf-8");
 			templateRenderer.render("templates/HazardForm.vm", context, res.getWriter());
-			
-		}
-		else {
+
+		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
-		}	
+		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//TODO clean up and see if there is a better way to get the parameters
+		// TODO clean up and see if there is a better way to get the parameters
 		final String hazardNum = req.getParameter("hazardNumber");
 		final String title = req.getParameter("hazardTitle");
 		final String description = req.getParameter("hazardDescription");
@@ -101,35 +96,38 @@ public final class HazardServlet extends HttpServlet {
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
-		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
+		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req
+				.getParameter("hazardLikelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
 		final String subsystem = req.getParameter("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
-		
-		//TODO see if they want to pull in the jira project name as payload
-		if("y".equals(req.getParameter("edit"))) {
-			String id  = req.getParameter("key");
-			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
+
+		// TODO see if they want to pull in the jira project name as payload
+		if ("y".equals(req.getParameter("edit"))) {
+			String id = req.getParameter("key");
+			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
+					completed, revisionDate, risk, likelihood, group, reviewPhase);
 			Mission_Payload payloadToUpdate = updated.getMissionPayload();
 			List<Subsystems> subsystemsListToUpdate = Arrays.asList(updated.getSubsystems());
 			missionPayloadService.update(payloadToUpdate, payloadName);
-			//TODO change when hazard reports can belong to more than one subsystem
+			// TODO change when hazard reports can belong to more than one
+			// subsystem
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
-		}
-		else {
-			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed, revisionDate, risk, likelihood, group, reviewPhase);
+		} else {
+			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
+					revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
 		}
-		
+
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
-	
+
 	private Date changeToDate(String date) {
-		if(date != null) {
+		if (date != null) {
 			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
 			try {

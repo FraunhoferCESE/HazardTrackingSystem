@@ -14,10 +14,11 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class MissionPayloadServiceImpl implements MissionPayloadService {
 	private final ActiveObjects ao;
-	
+
 	public MissionPayloadServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
+
 	@Override
 	public Mission_Payload add(Hazards hazard, String name) {
 		final Mission_Payload missionPayload = ao.create(Mission_Payload.class);
@@ -32,7 +33,7 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 		final Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("ID=?", id));
 		return missionPayload.length > 0 ? missionPayload[0] : null;
 	}
-	
+
 	@Override
 	public Mission_Payload update(Mission_Payload payloadToUpdate, String name) {
 		payloadToUpdate.setName(name);

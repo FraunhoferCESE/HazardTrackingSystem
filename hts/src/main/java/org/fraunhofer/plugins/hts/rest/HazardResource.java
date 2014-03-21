@@ -15,23 +15,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Path("/report")
 public class HazardResource {
 	private final HazardService hazardService;
-	
+
 	public HazardResource(HazardService hazardService) {
 		this.hazardService = checkNotNull(hazardService);
 	}
-	
-    @GET
-    @Path("hazardnumber/{hazardNumber}")
-    @AnonymousAllowed
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response checkHazardNum(@PathParam("hazardNumber") String hazardNumber) {
-    	if(!hazardService.hazardNumberExists(hazardNumber)) {
-    		return Response.ok(new HazardResourceModel("Hazard # is available")).build();
-    	}
-    	else {
-    		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new HazardResourceModel("Hazard # exists")).build();
-    	}
-    	
-    }
-    
+
+	@GET
+	@Path("hazardnumber/{hazardNumber}")
+	@AnonymousAllowed
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response checkHazardNum(@PathParam("hazardNumber") String hazardNumber) {
+		if (!hazardService.hazardNumberExists(hazardNumber)) {
+			return Response.ok(new HazardResourceModel("Hazard # is available")).build();
+		} else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(new HazardResourceModel("Hazard # exists")).build();
+		}
+
+	}
+
 }

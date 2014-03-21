@@ -11,13 +11,15 @@ import net.java.ao.schema.Table;
 public interface Review_Phases extends Entity {
 
 	String getLabel();
+
 	void setLabel(String label);
-	
-	@StringLength(value=StringLength.UNLIMITED)
+
+	@StringLength(value = StringLength.UNLIMITED)
 	String getDescription();
+
 	void setDescription(String description);
-	
-	//TODO maybe fix the relation to the database(oneToMany)
+
+	// TODO maybe fix the relation to the database(oneToMany)
 	@OneToOne
 	Hazards getHazards();
 }

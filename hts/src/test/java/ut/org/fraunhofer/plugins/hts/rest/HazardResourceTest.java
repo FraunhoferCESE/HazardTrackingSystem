@@ -6,18 +6,18 @@ import org.junit.Before;
 
 public class HazardResourceTest {
 
-    @Before
-    public void setup() {
+	@Before
+	public void setup() {
 
-    }
+	}
 
-    @After
-    public void tearDown() {
+	@After
+	public void tearDown() {
 
-    }
+	}
 
-    @Test
-    public void messageIsValid() {
+	@Test
+	public void messageIsValid() {
 
-    }
+	}
 }

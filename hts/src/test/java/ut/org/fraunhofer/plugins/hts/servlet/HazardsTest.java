@@ -12,25 +12,25 @@ import static org.mockito.Mockito.*;
 
 public class HazardsTest {
 
-    HttpServletRequest mockRequest;
-    HttpServletResponse mockResponse;
+	HttpServletRequest mockRequest;
+	HttpServletResponse mockResponse;
 
-    @Before
-    public void setup() {
-        mockRequest = mock(HttpServletRequest.class);
-        mockResponse = mock(HttpServletResponse.class);
-    }
+	@Before
+	public void setup() {
+		mockRequest = mock(HttpServletRequest.class);
+		mockResponse = mock(HttpServletResponse.class);
+	}
 
-    @After
-    public void tearDown() {
+	@After
+	public void tearDown() {
 
-    }
+	}
 
-    @Test
-    public void testSomething() {
-        String expected = "test";
-        when(mockRequest.getParameter(Matchers.anyString())).thenReturn(expected);
-        assertEquals(expected,mockRequest.getParameter("some string"));
+	@Test
+	public void testSomething() {
+		String expected = "test";
+		when(mockRequest.getParameter(Matchers.anyString())).thenReturn(expected);
+		assertEquals(expected, mockRequest.getParameter("some string"));
 
-    }
+	}
 }

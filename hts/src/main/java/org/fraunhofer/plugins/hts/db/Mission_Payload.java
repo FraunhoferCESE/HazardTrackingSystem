@@ -6,10 +6,12 @@ import net.java.ao.schema.Table;
 
 @Preload
 @Table("Mission_Payload")
-public interface Mission_Payload extends Entity{
+public interface Mission_Payload extends Entity {
 	String getName();
+
 	void setName(String name);
 
 	Hazards getHazard();
+
 	void setHazard(Hazards hazard);
 }

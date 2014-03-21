@@ -14,11 +14,11 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 //TODO figure out if it is possible to create one basic function accepting objects and then figuring on which object it uses(RiskLikelihood, Subsystems etc..)
 public class RiskLikelihoodsServiceImpl implements RiskLikelihoodsService {
 	private final ActiveObjects ao;
-	
+
 	public RiskLikelihoodsServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
-	
+
 	@Override
 	public Risk_Likelihoods add(String value, String likeliHoodDesc) {
 		final Risk_Likelihoods likelihood = ao.create(Risk_Likelihoods.class);

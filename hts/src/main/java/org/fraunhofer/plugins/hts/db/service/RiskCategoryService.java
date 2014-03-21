@@ -9,6 +9,8 @@ import com.atlassian.activeobjects.tx.Transactional;
 @Transactional
 public interface RiskCategoryService {
 	Risk_Categories add(String value, String riskDesc);
+
 	Risk_Categories getRiskByID(String id);
+
 	List<Risk_Categories> all();
 }
