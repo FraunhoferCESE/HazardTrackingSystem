@@ -22,7 +22,7 @@ AJS.$(document).ready(function(){
 		});
 		console.log(response);
 		return response;
-	}, "Hazard # must be unique");
+	}, "Hazard # is in use.");
 
 	//Custom method to check if completion date is set to precede initation date, which should not be allowed
 	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
