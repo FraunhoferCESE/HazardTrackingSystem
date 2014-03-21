@@ -1,13 +1,26 @@
 AJS.$(document).ready(function(){
 	var $ = AJS.$
-	var url = AJS.params.baseURL + "/plugins/servlet/hazardform";
+	var url = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/";
 	console.log(url);
 	//TODO FIX ajax request
-	var response;
 	$.validator.addMethod("uniqueHazard", function(value, element) {
+		var response = false;
+		var actionUrl = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/" + value;
+		console.log(actionUrl);
 		$.ajax({
-
+			type:"GET",
+			async: false,
+			url: actionUrl,
+			success: function(msg) {
+				console.log("IN SUCCESS");
+				response = true;
+			},
+			error: function(response) {
+				console.log("IN ERROR");
+				response = false;
+			}
 		});
+		console.log(response);
 		return response;
 	}, "Hazard # must be unique");
 
@@ -29,7 +42,8 @@ AJS.$(document).ready(function(){
 		rules: {
 			hazardNumber: { 
 				required: true,
-				maxlength: 255
+				maxlength: 255,
+				uniqueHazard: true
 			},
 	    	hazardTitle: { 
 	    		required: true,
