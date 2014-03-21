@@ -13,11 +13,11 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class RiskCategoryServiceImpl implements RiskCategoryService {
 	private final ActiveObjects ao;
-	
+
 	public RiskCategoryServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
-	
+
 	@Override
 	public Risk_Categories add(String value, String riskDesc) {
 		final Risk_Categories risk = ao.create(Risk_Categories.class);
@@ -33,7 +33,7 @@ public class RiskCategoryServiceImpl implements RiskCategoryService {
 	}
 
 	@Override
-	//TODO error handling
+	// TODO error handling
 	public Risk_Categories getRiskByID(String id) {
 		final Risk_Categories[] risk = ao.find(Risk_Categories.class, Query.select().where("ID=?", id));
 		return risk.length > 0 ? risk[0] : null;

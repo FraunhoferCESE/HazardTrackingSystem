@@ -11,12 +11,13 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
-public class HazardGroupServiceImpl implements HazardGroupService{
+public class HazardGroupServiceImpl implements HazardGroupService {
 	private final ActiveObjects ao;
-	
+
 	public HazardGroupServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
+
 	@Override
 	public Hazard_Group add(String label) {
 		final Hazard_Group group = ao.create(Hazard_Group.class);
@@ -29,7 +30,7 @@ public class HazardGroupServiceImpl implements HazardGroupService{
 	public List<Hazard_Group> all() {
 		return newArrayList(ao.find(Hazard_Group.class));
 	}
-	
+
 	@Override
 	public Hazard_Group getHazardGroupByID(String id) {
 		// TODO Auto-generated method stub

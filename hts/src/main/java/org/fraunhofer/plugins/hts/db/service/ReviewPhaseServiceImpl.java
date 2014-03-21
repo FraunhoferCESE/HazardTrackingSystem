@@ -11,12 +11,13 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 
-public class ReviewPhaseServiceImpl implements ReviewPhaseService{
+public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 	private final ActiveObjects ao;
-	
+
 	public ReviewPhaseServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
+
 	@Override
 	public Review_Phases add(String label, String reviewPhaseDesc) {
 		final Review_Phases reviewPhase = ao.create(Review_Phases.class);
@@ -36,7 +37,5 @@ public class ReviewPhaseServiceImpl implements ReviewPhaseService{
 	public List<Review_Phases> all() {
 		return newArrayList(ao.find(Review_Phases.class));
 	}
-	
-	
 
 }

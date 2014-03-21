@@ -14,11 +14,11 @@
   <web-resource key="hts-resources" name="hts Web Resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <resource type="download" name="hts.css" location="/css/hts.css"/>
-    <resource type="download" name="hts.js" location="/js/hts.js"/>
+    <resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js"/>
     <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
     <resource type="download" name="images/" location="/images"/>
-    <resource type="download" name="jquery.form.js" location="/js/jquery.form.js"/>
     <resource type="download" name="date.js" location="/js/date.js"/>
+    <resource type="download" name="formValidation.js" location="/js/formValidation.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->

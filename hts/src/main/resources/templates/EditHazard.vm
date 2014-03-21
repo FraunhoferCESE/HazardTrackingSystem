@@ -2,7 +2,7 @@
 <head>
     <title>Edit Hazard report</title>
     <meta name="decorator" content="atl.general">
-    $webResourceManager.requireResourcesForContext("hts")
+    $webResourceManager.requireResourcesForContext("org.fraunhofer.plugins.hts.hts:hts-resources")
 </head>
 <body class="aui-layout aui-theme-default">
  	<header class="aui-page-header">
@@ -13,32 +13,33 @@
     <div class="aui-page-panel">
 		<div class="aui-page-panel-inner">
 			<section class="aui-page-panel-content">
-	            <form method="post" action="hazardform" class="aui">
-	                <input type="hidden" name="edit" value="y"/>
+	            <form method="post" action="hazardform" class="aui" id="hazardForm">
+	                <input type="hidden" id="edit" name="edit" value="y"/>
 	                <input type="hidden" name="key" value="$hazard.getID()"/>
+	                <input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value="$hazard.getHazardNum()"/>
 	                <div class="field-group">
-						<label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
-						<input class="text medium-field" type="text" id="hazard-number" name="hazard-number" value="$hazard.getHazardNum()"/>
+						<label for="hazardNumber">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
+						<input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber" value="$hazard.getHazardNum()"/>
 					</div>
 					<div class="field-group">
-						<label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
-						<input class="text long-field" type="text" id="hazard-title" name="hazard-title" value="$hazard.getTitle()"/>
+						<label for="hazardTitle">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
+						<input class="text long-field" type="text" id="hazardTitle" name="hazardTitle" value="$hazard.getTitle()"/>
 					</div>
 					<div class="field-group">
-						<label for="hazard-payload">Mission/Payload</label>
-						<input class="text long-field" name="hazard-payload" id="hazard-payload" value="$!hazard.getMissionPayload().getName()"/>
+						<label for="hazardPayload">Mission/Payload</label>
+						<input class="text long-field" name="hazardPayload" id="hazardPayload" value="$!hazard.getMissionPayload().getName()"/>
 					</div>
 					<div class="field-group">
-						<label for="hazard-subsystem">System/Subsystems</label>
-						<input class="text long-field" name="hazard-subsystem" id="hazard-subsystem" value="$!subsystem"/>
+						<label for="hazardSubsystem">System/Subsystems</label>
+						<input class="text long-field" name="hazardSubsystem" id="hazardSubsystem" value="$!subsystem"/>
 					</div>
 					<div class="field-group">
-	        			<label for="hazard-preparer">Preparer</label>
-	        			<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$!hazard.getPreparer() ($!hazard.getEmail())" disabled/>
+	        			<label for="hazardPreparer">Preparer</label>
+	        			<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$!hazard.getPreparer() ($!hazard.getEmail())" disabled/>
 	    			</div>
 					<div class="field-group">
-						<label for="hazard-reviewPhase">Review Phase</label>
-						<select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
+						<label for="hazardReviewPhase">Review Phase</label>
+						<select class="select" id="hazardReviewPhase" name="hazardReviewPhase">
 							#foreach( $reviewPhase in $reviewPhases )
 								#if($reviewPhase.getID() == $hazard.getReviewPhase().getID())
 									<option value="$reviewPhase.getID()" selected>$reviewPhase.getLabel()</option>
@@ -49,8 +50,8 @@
 						</select>
 					</div>
 					<div class="field-group">
-						<label for="hazard-risk">Risk Category</label>
-							<select class="select" id="hazard-risk" name="hazard-risk">
+						<label for="hazardRisk">Risk Category</label>
+							<select class="select" id="hazardRisk" name="hazardRisk">
 						    	#foreach( $risk in $riskCategories )
 							    	#if($risk.getID() == $hazard.getRiskCategory().getID())
 										<option value="$risk.getID()" selected>$risk.getValue()</option>
@@ -61,8 +62,8 @@
 							</select>
 						</div>
 					<div class="field-group">
-					    <label for="hazard-likelihood">Risk Likelihood</label>
-					    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+					    <label for="hazardLikelihood">Risk Likelihood</label>
+					    <select class="select" id="hazardLikelihood" name="hazardLikelihood">
 					    	#foreach( $!likelihood in $!riskLikelihoods )
 				    			#if($!likelihood.getID() == $!hazard.getRiskLikelihood().getID())
 									<option value="$likelihood.getID()" selected>$!likelihood.getValue()</option>
@@ -73,8 +74,8 @@
 					    </select>
 					</div>
 					<div class="field-group">
-					    <label for="hazard-group">Hazard Group</label>
-					    <select class="select" id="hazard-group" name="hazard-group">
+					    <label for="hazardGroup">Hazard Group</label>
+					    <select class="select" id="hazardGroup" name="hazardGroup">
 					    	#foreach( $!group in $!hazardGroups )
 					    		#if($!group.getID() == $hazard.getHazardGroup().getID())
 									<option value="$!group.getID()" selected>$!group.getLabel()</option>
@@ -85,20 +86,20 @@
 					    </select>
 					</div>
 					<div class="field-group">
-					    <label for="hazard-description">Description</label>
-					    <textarea class="textarea long-field" name="hazard-description" id="hazard-description">$!hazard.getHazardDesc()</textarea>
+					    <label for="hazardDescription">Description</label>
+					    <textarea class="textarea long-field" name="hazardDescription" id="hazardDescription">$!hazard.getHazardDesc()</textarea>
 					</div>
 					<div class="field-group">
-					    <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
-					    <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" value="$!initDate" type="date"/>
+					    <label for="hazardInitation">Initiation Date</label>
+					    <input class="aui-date-picker" name="hazardInitation" id="hazardInitation" value="$!initDate" type="date"/>
 					</div>
 				   	<div class="field-group">
-				    	<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
-				        <input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date" value="$!compDate"/>
+				    	<label for="hazardCompletion">Completion Date</label>
+				        <input class="aui-date-picker" name="hazardCompletion" id="hazardCompletion" type="date" value="$!compDate"/>
 				    </div>
 					<div class="buttons-container">
 						<div class="buttons">
-					        <input class="button submit" type="submit" value="Save" id="hazard-save-button">
+					        <input class="button submit" type="submit" value="Save" id="hazardSaveButton">
 					        <a class="cancel" href="hazardlist">Cancel</a>
 					    </div>
 					</div>

@@ -2,7 +2,7 @@
 	<head>
 		<title>Hazard Form</title>
 		<meta name="decorator" content="atl.general">
-		$webResourceManager.requireResourcesForContext("hts")
+		$webResourceManager.requireResourcesForContext("org.fraunhofer.plugins.hts.hts:hts-resources")
 	</head>
 <body class="aui-layout aui-theme-default">
 	<header class="aui-page-header">
@@ -28,72 +28,72 @@
                 <div class="nav-content" id="content-1">
 	                <form class="aui" method="POST" id="hazardForm">
 					    <div class="field-group">
-					        <label for="hazard-number">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
-					        <input class="text medium-field" type="text" id="hazard-number" name="hazard-number"/>
+					        <label for="hazardNumber">Hazard # <span class="aui-icon icon-required">(required)</span></label>
+					        <input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber"/>
 					    </div>
 					    <div class="field-group">
-					        <label for="hazard-title">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
-					        <input class="text long-field" type="text" id="hazard-title" name="hazard-title"/>
+					        <label for="hazardTitle">Title <span class="required aui-icon icon-required">(required)</span></label>
+					        <input class="text long-field" type="text" id="hazardTitle" name="hazardTitle"/>
 					    </div>
 						<div class="field-group">
-					        <label for="hazard-payload">Mission/Payload</label>
-					        <input class="text long-field" name="hazard-payload" id="hazard-payload"/>
+					        <label for="hazardPayload">Mission/Payload</label>
+					        <input class="text long-field" name="hazardPayload" id="hazardPayload"/>
 					    </div>
 						<div class="field-group">
-					        <label for="hazard-subsystem">System/Subsystems</label>
-					        <input class="text long-field" name="hazard-subsystem" id="hazard-subsystem"/>
+					        <label for="hazardSubsystem">System/Subsystems</label>
+					        <input class="text long-field" name="hazardSubsystem" id="hazardSubsystem"/>
 					    </div>
 					    <div class="field-group">
-        					<label for="hazard-preparer">Preparer</label>
-        					<input class="text long-field" type="text" id="hazard-preparer" name="hazard-preparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
+        					<label for="hazardPreparer">Preparer</label>
+        					<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$PreparerName ($PreparerEmail)" disabled/>
     					</div>
 					    <div class="field-group">
-						    <label for="hazard-reviewPhase">Review Phase</label>
-						    <select class="select" id="hazard-reviewPhase" name="hazard-reviewPhase">
+						    <label for="hazardReviewPhase">Review Phase</label>
+						    <select class="select" id="hazardReviewPhase" name="hazardReviewPhase">
 						    	#foreach( $reviewPhase in $reviewPhases )
 						    	<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
 						    	#end
 						    </select>
 						</div>
 					    <div class="field-group">
-						    <label for="hazard-risk">Risk Category</label>
-						    <select class="select" id="hazard-risk" name="hazard-risk">
+						    <label for="hazardRisk">Risk Category</label>
+						    <select class="select" id="hazardRisk" name="hazardRisk">
 						    	#foreach( $risk in $riskCategories )
 						    	<option value="$risk.getID()">$risk.getValue()</option>
 						    	#end
 						    </select>
 						</div>
 					    <div class="field-group">
-						    <label for="hazard-likelihood">Risk Likelihood</label>
-						    <select class="select" id="hazard-likelihood" name="hazard-likelihood">
+						    <label for="hazardLikelihood">Risk Likelihood</label>
+						    <select class="select" id="hazardLikelihood" name="hazardLikelihood">
 						    	#foreach( $likelihood in $riskLikelihoods )
 						    	<option value="$likelihood.getID()">$likelihood.getValue()</option>
 						    	#end
 						    </select>
 						</div>
 						<div class="field-group">
-						    <label for="hazard-group">Hazard Group</label>
-						    <select class="select" id="hazard-group" name="hazard-group">
+						    <label for="hazardGroup">Hazard Group</label>
+						    <select class="select" id="hazardGroup" name="hazardGroup">
 						    	#foreach( $group in $hazardGroups )
 						    	<option value="$group.getID()">$group.getLabel()</option>
 						    	#end
 						    </select>
 						</div>
 						<div class="field-group">
-					        <label for="hazard-initation">Initiation Date <span class="error" id="incorrectInitYear">Initation date can't precede the year 1950</span></label>
-					        <input class="aui-date-picker" name="hazard-initation" id="hazard-initation" type="date"/>
+					        <label for="hazardInitation">Initiation Date</label>
+					        <input class="aui-date-picker" name="hazardInitation" id="hazardInitation" type="date"/>
 					    </div>
 			   			<div class="field-group">
-			        		<label for="hazard-completion">Completion Date <span class="error" id="compError">Completion date can't precede Initiation date</span> <span class="error" id="initError">Completion date can't be set without an initation date</span> <span class="error" id="incorrectCompYear">Completion date can't precede the year 1950</span></label>
-			        		<input class="aui-date-picker" name="hazard-completion" id="hazard-completion" type="date"/>
+			        		<label for="hazardCompletion">Completion Date</label>
+			        		<input class="aui-date-picker" name="hazardCompletion" id="hazardCompletion" type="date"/>
 			    		</div>
 					    <div class="field-group">
-					        <label for="hazard-description">Description</label>
-					        <textarea class="textarea long-field" name="hazard-description" id="hazard-description"></textarea>
+					        <label for="hazardDescription">Description</label>
+					        <textarea class="textarea long-field" name="hazardDescription" id="hazardDescription"></textarea>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">
-					            <input class="button submit" type="submit" value="Save" id="hazard-save-button">
+					            <input class="button submit" type="submit" value="Save" id="hazardSaveButton">
 					            <a class="cancel" href="hazardform">Cancel</a>
 					        </div>
 					    </div>
@@ -108,7 +108,7 @@
 					    </div>
 					    <div class="field-group">
 					        <label for="cause-description">Description</label>
-					        <textarea class="textarea long-field" name="hazard-description" id="cause-description" placeholder="Your comment here..."></textarea>
+					        <textarea class="textarea long-field" name="hazardDescription" id="cause-description" placeholder="Your comment here..."></textarea>
 					    </div>
 					    <div class="buttons-container">
 					        <div class="buttons">

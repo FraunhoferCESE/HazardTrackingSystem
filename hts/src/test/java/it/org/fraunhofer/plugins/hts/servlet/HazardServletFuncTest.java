@@ -13,32 +13,31 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-
 public class HazardServletFuncTest {
 
-    HttpClient httpClient;
-    String baseUrl;
-    String servletUrl;
+	HttpClient httpClient;
+	String baseUrl;
+	String servletUrl;
 
-    @Before
-    public void setup() {
-        httpClient = new DefaultHttpClient();
-        baseUrl = System.getProperty("baseurl");
-        servletUrl = baseUrl + "/plugins/servlet/hazardform";
-    }
+	@Before
+	public void setup() {
+		httpClient = new DefaultHttpClient();
+		baseUrl = System.getProperty("baseurl");
+		servletUrl = baseUrl + "/plugins/servlet/hazardform";
+	}
 
-    @After
-    public void tearDown() {
-        httpClient.getConnectionManager().shutdown();
-    }
+	@After
+	public void tearDown() {
+		httpClient.getConnectionManager().shutdown();
+	}
 
-    @Test
-    public void testSomething() throws IOException {
-        HttpGet httpget = new HttpGet(servletUrl);
+	@Test
+	public void testSomething() throws IOException {
+		HttpGet httpget = new HttpGet(servletUrl);
 
-        // Create a response handler
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        String responseBody = httpClient.execute(httpget, responseHandler);
-        assertTrue(null != responseBody && !"".equals(responseBody));
-    }
+		// Create a response handler
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String responseBody = httpClient.execute(httpget, responseHandler);
+		assertTrue(null != responseBody && !"".equals(responseBody));
+	}
 }

@@ -10,27 +10,27 @@ import org.apache.wink.client.RestClient;
 
 public class HazardResourceFuncTest {
 
-    @Before
-    public void setup() {
+	@Before
+	public void setup() {
 
-    }
+	}
 
-    @After
-    public void tearDown() {
+	@After
+	public void tearDown() {
 
-    }
+	}
 
-    @Test
-    public void messageIsValid() {
+	@Test
+	public void messageIsValid() {
 
-        String baseUrl = System.getProperty("baseurl");
-        String resourceUrl = baseUrl + "/rest/htsrest/1.0/report";
+		String baseUrl = System.getProperty("baseurl");
+		String resourceUrl = baseUrl + "/rest/htsrest/1.0/report";
 
-        RestClient client = new RestClient();
-        Resource resource = client.resource(resourceUrl);
+		RestClient client = new RestClient();
+		Resource resource = client.resource(resourceUrl);
 
-        HazardResourceModel message = resource.get(HazardResourceModel.class);
+		HazardResourceModel message = resource.get(HazardResourceModel.class);
 
-        assertEquals("wrong message","Hello World",message.getMessage());
-    }
+		assertEquals("wrong message", "Hello World", message.getMessage());
+	}
 }
