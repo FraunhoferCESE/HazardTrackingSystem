@@ -1,23 +1,25 @@
 AJS.$(document).ready(function(){
 	var $ = AJS.$
-	var url = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/";
-	console.log(url);
-	//TODO FIX ajax request
+	//TODO FIX ajax request for edit form
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
+		//Check if hazard is begin edited, if so the hazard # can stay the same.
+		if($("#edit").length > 0) {
+			var oldValue = $("#oldNumber").val();
+			var newValue = value;
+			if(oldValue === newValue) {
+				response = true;
+			}
+		}
+
+		//If the api is updated this url should be updated accordingly
 		var actionUrl = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/" + value;
-		console.log(actionUrl);
 		$.ajax({
 			type:"GET",
 			async: false,
 			url: actionUrl,
 			success: function(msg) {
-				console.log("IN SUCCESS");
 				response = true;
-			},
-			error: function(response) {
-				console.log("IN ERROR");
-				response = false;
 			}
 		});
 		console.log(response);
@@ -30,6 +32,7 @@ AJS.$(document).ready(function(){
 		return ValidateDate(initDate, complDate);
 	}, "Completion date cannot be set before initation date.");
 
+	//Make sure the user can't input years lower than defined
 	$.validator.addMethod("mindate", function(val, element, minDate) {
 		if(this.optional(element)) {
 			return true;
@@ -76,6 +79,7 @@ AJS.$(document).ready(function(){
 	    	},
 	    },
 
+	    //Custom class so error messages are not styled with JIRA's css error style.
 	    errorClass: "validationError",
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
@@ -89,7 +93,7 @@ AJS.$(document).ready(function(){
 		if(Date.parse(initationVal) && Date.parse(completionVal)) {
 			var x = new Date(initationVal);
 			var y = new Date(completionVal);
-			return x < y; 
+			return x <= y; 
 		}
 		//initation is valid
 		else if(Date.parse(initationVal) && !(Date.parse(completionVal))) {
@@ -103,5 +107,4 @@ AJS.$(document).ready(function(){
 			return true;
 		}
 	}
-
 });
