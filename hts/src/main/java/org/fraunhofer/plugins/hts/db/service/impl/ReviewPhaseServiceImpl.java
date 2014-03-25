@@ -15,8 +15,22 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 	private final ActiveObjects ao;
 
+	private static boolean initialized = false;
+	private static Object _lock;
+
 	public ReviewPhaseServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
+		synchronized (_lock) {
+			if (!initialized) {
+				initializeTables();
+				initialized = true;
+			}
+		}
+	}
+
+	private void initializeTables() {
+		// TODO Initialize database tables
+		
 	}
 
 	@Override
@@ -30,7 +44,8 @@ public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 
 	@Override
 	public Review_Phases getReviewPhaseByID(String id) {
-		final Review_Phases[] reviewPhase = ao.find(Review_Phases.class, Query.select().where("ID=?", id));
+		final Review_Phases[] reviewPhase = ao.find(Review_Phases.class, Query
+				.select().where("ID=?", id));
 		return reviewPhase.length > 0 ? reviewPhase[0] : null;
 	}
 

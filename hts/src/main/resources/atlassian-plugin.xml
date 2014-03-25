@@ -82,4 +82,8 @@
   <rest name="Hazard Resource" i18n-name-key="hazard-resource.name" key="hazard-resource" path="/htsrest" version="1.0">
     <description key="hazard-resource.description">The Hazard Resource Plugin</description>
   </rest>
+  <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
+	<component key="eventListener" class="org.fraunhofer.plugins.hts.startup.DatabaseInitializer">
+    <description>Class that listens for plugin startup events to prepopulate database values if necessary.</description>
+	</component>
 </atlassian-plugin>
