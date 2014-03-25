@@ -16,21 +16,23 @@ public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 	private final ActiveObjects ao;
 
 	private static boolean initialized = false;
-	private static Object _lock;
+
+	private static Object _lock = new Object();
 
 	public ReviewPhaseServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
+	}
+
+	void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
-				initializeTables();
+				add("Phase I", "Phase I safety review");
+				add("Phase II", "Phase II safety review");
+				add("Phase III", "Phase III safety review");
 				initialized = true;
 			}
 		}
-	}
 
-	private void initializeTables() {
-		// TODO Initialize database tables
-		
 	}
 
 	@Override
@@ -44,13 +46,17 @@ public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 
 	@Override
 	public Review_Phases getReviewPhaseByID(String id) {
-		final Review_Phases[] reviewPhase = ao.find(Review_Phases.class, Query
-				.select().where("ID=?", id));
+		initializeTable();
+
+		final Review_Phases[] reviewPhase = ao.find(Review_Phases.class,
+				Query.select().where("ID=?", id));
 		return reviewPhase.length > 0 ? reviewPhase[0] : null;
 	}
 
 	@Override
 	public List<Review_Phases> all() {
+		initializeTable();
+
 		return newArrayList(ao.find(Review_Phases.class));
 	}
 
