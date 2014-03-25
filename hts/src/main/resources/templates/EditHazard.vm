@@ -13,10 +13,8 @@
     <div class="aui-page-panel">
 		<div class="aui-page-panel-inner">
 			<section class="aui-page-panel-content">
-			#parse("/templates/HazardForm.vm")
-			    <input type="hidden" id="edit" name="edit" value="y"/>
-    			<input type="hidden" id="key" name="key" value="$hazard.getID()"/>
-    			<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value="$hazard.getHazardNum()"/>
+				#parse("/templates/HazardForm.vm")
+    			<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value="$!hazard.getHazardNum()"/>
 	        </section>
         </div>
 </div>

@@ -19,6 +19,7 @@
     <resource type="download" name="images/" location="/images"/>
     <resource type="download" name="date.js" location="/js/date.js"/>
     <resource type="download" name="formValidation.js" location="/js/formValidation.js"/>
+    <resource type="download" name="purl.js" location="/js/purl.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->

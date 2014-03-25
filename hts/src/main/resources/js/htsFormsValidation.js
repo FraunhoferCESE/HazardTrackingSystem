@@ -4,7 +4,7 @@ AJS.$(document).ready(function(){
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
 		//Check if hazard is begin edited, if so the hazard # can stay the same.
-		if($("#edit").length > 0) {
+		if($("#oldNumber").length > 0) {
 			var oldValue = $("#oldNumber").val();
 			var newValue = value;
 			if(oldValue === newValue) {
