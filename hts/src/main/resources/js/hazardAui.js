@@ -18,7 +18,7 @@ AJS.$(document).ready(function(){
     });
     
     var lastEditColumn = AJS.$('table#hazard-table tbody td:nth-child(3)');
-    lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") })
+    lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
     
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");

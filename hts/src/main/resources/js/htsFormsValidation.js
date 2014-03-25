@@ -22,7 +22,6 @@ AJS.$(document).ready(function(){
 				response = true;
 			}
 		});
-		console.log(response);
 		return response;
 	}, "Hazard # is in use.");
 

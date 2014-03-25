@@ -79,7 +79,7 @@ public final class HazardServlet extends HttpServlet {
 			context.put("PreparerEmail", ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress());
 
 			res.setContentType("text/html;charset=utf-8");
-			templateRenderer.render("templates/HazardForm.vm", context, res.getWriter());
+			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
