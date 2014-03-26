@@ -1,6 +1,7 @@
 AJS.$(document).ready(function(){
 	var $ = AJS.$
-	//TODO FIX ajax request for edit form
+	var baseUrl = AJS.params.baseURL;
+
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
 		//Check if hazard is begin edited, if so the hazard # can stay the same.
@@ -12,7 +13,7 @@ AJS.$(document).ready(function(){
 			}
 		}
 		//If the api is updated this url should be updated accordingly
-		var actionUrl = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/" + value;
+		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardnumber/" + value;
 		$.ajax({
 			type:"GET",
 			async: false,
@@ -91,6 +92,29 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
+	    },
+
+	    submitHandler: function(form) {
+	    	console.log(form);
+	    	console.log(baseUrl);
+
+	    	var postUrl = baseUrl + "/plugins/servlet/hazardform"
+	    	console.log(postUrl);
+	    	console.log(data);
+	    	$.ajax({
+	    		type: 'POST',
+	    		dataType: 'json',
+	    		url: postUrl,
+	    		async: false,
+	    		data: form.serialize(),
+	    		success: function(data) {
+	    			alert("success");
+	    		},
+	    		error: function(data) {
+	    			alert("error");
+	    		}
+	    	});
+	    	return false;
 	    }
 	});
 
