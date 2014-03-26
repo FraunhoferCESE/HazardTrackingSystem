@@ -17,7 +17,11 @@
 	</div>
 	<div class="field-group">
 		<label for="hazardPreparer">Preparer</label>
-		<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$!hazard.getPreparer() ($!hazard.getEmail())" disabled/>
+		#if($!{PreparerName})
+			<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$!PreparerName ($!PreparerEmail)" disabled/>
+		#else
+			<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$!hazard.getPreparer() ($!hazard.getEmail())" disabled/>
+		#end
 	</div>
 	<div class="field-group">
 		<label for="hazardReviewPhase">Review Phase</label>
