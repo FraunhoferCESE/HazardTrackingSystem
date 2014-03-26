@@ -16,6 +16,9 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 public class RiskLikelihoodsServiceImpl implements RiskLikelihoodsService {
 	private final ActiveObjects ao;
 
+	private static boolean initialized = false;
+	private static Object _lock = new Object();
+
 	public RiskLikelihoodsServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
@@ -31,14 +34,43 @@ public class RiskLikelihoodsServiceImpl implements RiskLikelihoodsService {
 
 	@Override
 	public List<Risk_Likelihoods> all() {
+		initializeTable();
 		return newArrayList(ao.find(Risk_Likelihoods.class));
 	}
 
 	@Override
 	public Risk_Likelihoods getLikelihoodByID(String id) {
-		// TODO Auto-generated method stub
+		initializeTable();
 		final Risk_Likelihoods[] likelihood = ao.find(Risk_Likelihoods.class, Query.select().where("ID=?", id));
 		return likelihood.length > 0 ? likelihood[0] : null;
+	}
+
+	public void initializeTable() {
+		synchronized (_lock) {
+			if (!initialized) {
+				if (ao.find(Risk_Likelihoods.class).length == 0) {
+					add("A - Frequent", "Likely to occur repeatedly");
+					add("B - Reasonably probably", "Likely to occur several times");
+					add("C - Occasional", "Likely to occur sometime");
+					add("D - Remote", "Unlikely to occur, but possible");
+					add("E - Extremely improbably", "The probability of occurence cannot be distinguished from zero");
+				}
+				initialized = true;
+			}
+		}
+
+	}
+
+	public static boolean isInitialized() {
+		synchronized (_lock) {
+			return initialized;
+		}
+	}
+
+	public static void reset() {
+		synchronized (_lock) {
+			initialized = false;
+		}
 	}
 
 }
