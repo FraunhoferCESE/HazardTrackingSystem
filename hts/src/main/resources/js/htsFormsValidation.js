@@ -11,7 +11,6 @@ AJS.$(document).ready(function(){
 				response = true;
 			}
 		}
-
 		//If the api is updated this url should be updated accordingly
 		var actionUrl = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/" + value;
 		$.ajax({
@@ -22,6 +21,15 @@ AJS.$(document).ready(function(){
 				response = true;
 			}
 		});
+		
+		//Check to see if we have an error. If so change the color of the input text to be red.
+		if(!response) {
+			$(element).css("color", "#D04437");
+		}
+		else {
+			$(element).css("color", "#333");
+		}
+
 		return response;
 	}, "Hazard # is in use.");
 
