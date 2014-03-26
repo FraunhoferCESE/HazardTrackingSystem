@@ -4,14 +4,13 @@ AJS.$(document).ready(function(){
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
 		//Check if hazard is begin edited, if so the hazard # can stay the same.
-		if($("#edit").length > 0) {
+		if($("#oldNumber").length > 0) {
 			var oldValue = $("#oldNumber").val();
 			var newValue = value;
 			if(oldValue === newValue) {
 				response = true;
 			}
 		}
-
 		//If the api is updated this url should be updated accordingly
 		var actionUrl = AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardnumber/" + value;
 		$.ajax({
@@ -22,7 +21,15 @@ AJS.$(document).ready(function(){
 				response = true;
 			}
 		});
-		console.log(response);
+		
+		//Check to see if we have an error. If so change the color of the input text to be red.
+		if(!response) {
+			$(element).css("color", "#D04437");
+		}
+		else {
+			$(element).css("color", "#333");
+		}
+
 		return response;
 	}, "Hazard # is in use.");
 
