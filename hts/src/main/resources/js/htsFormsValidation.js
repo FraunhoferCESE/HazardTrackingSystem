@@ -28,7 +28,7 @@ AJS.$(document).ready(function(){
 			$(element).css("color", "#D04437");
 		}
 		else {
-			$(element).css("color", "#333");
+			$(element).css("color", "");
 		}
 
 		return response;
@@ -96,7 +96,8 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
-	    		alert("SUCCESS");
+	    		$("#hazardForm").append("<div>Changes were saved successfully</div>").addClass("successMsg");
+	    		$("#hazardForm input, textarea, select").prop("disabled", true);
 	    	});
 	    }
 	});
