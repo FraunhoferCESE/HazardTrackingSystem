@@ -152,6 +152,7 @@ public class RiskCategoryServiceImplTest {
 
 		RiskCategoryServiceImpl test = new RiskCategoryServiceImpl(mockActiveObjects);
 		test.initializeTable();
+		test.initializeTable();
 
 		verify(mockActiveObjects, times(4)).create(eq(Risk_Categories.class), (DBParam[]) anyVararg());
 
