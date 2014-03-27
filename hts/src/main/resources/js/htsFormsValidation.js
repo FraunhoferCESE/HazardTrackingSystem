@@ -95,26 +95,9 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	console.log(form);
-	    	console.log(baseUrl);
-
-	    	var postUrl = baseUrl + "/plugins/servlet/hazardform"
-	    	console.log(postUrl);
-	    	console.log(data);
-	    	$.ajax({
-	    		type: 'POST',
-	    		dataType: 'json',
-	    		url: postUrl,
-	    		async: false,
-	    		data: form.serialize(),
-	    		success: function(data) {
-	    			alert("success");
-	    		},
-	    		error: function(data) {
-	    			alert("error");
-	    		}
+	    	$(form).ajaxSubmit(function(data) {
+	    		alert("SUCCESS");
 	    	});
-	    	return false;
 	    }
 	});
 
