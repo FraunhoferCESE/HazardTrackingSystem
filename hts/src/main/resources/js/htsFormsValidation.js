@@ -97,7 +97,7 @@ AJS.$(document).ready(function(){
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
 	    		var success = $('<div class="successMsg">Changes were saved successfully.</div>')
-	    		var createAnew = $('<a class="button submit" href="">Create a new Hazard</a>');
+	    		var createAnew = $('<a class="button submit" href="hazardform">Create a new Hazard</a>');
 	    		$("#hazardForm").after(success);
 	    		createAnew.insertBefore($(".buttons :last-child"));
 	    	});
