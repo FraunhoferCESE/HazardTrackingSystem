@@ -37,7 +37,7 @@ AJS.$(document).ready(function(){
 	//Custom method to check if completion date is set to precede initation date, which should not be allowed
 	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
 		var initDate = $("#hazardInitation").val();
-		return ValidateDate(initDate, complDate);
+		return validateDate(initDate, complDate);
 	}, "Completion date cannot be set before initation date.");
 
 	//Make sure the user can't input years lower than defined
@@ -96,16 +96,13 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
-	    		var success = $('<div class="successMsg">Changes were saved successfully.</div>')
-	    		var createAnew = $('<a class="button submit" href="hazardform">Create a new Hazard</a>');
-	    		$("#hazardForm").after(success);
-	    		createAnew.insertBefore($(".buttons :last-child"));
+	    		successfulSave()
 	    	});
 	    }
 	});
 
 	//Helper functions
-	function ValidateDate(initationVal, completionVal){
+	function validateDate(initationVal, completionVal) {
 		//Both valid dates
 		if(Date.parse(initationVal) && Date.parse(completionVal)) {
 			var x = new Date(initationVal);
@@ -123,5 +120,18 @@ AJS.$(document).ready(function(){
 		else {
 			return true;
 		}
+	}
+
+	function successfulSave() {
+		var success = $('<div class="successMsg added">Changes were saved successfully.</div>')
+	    if($(".added").length > 0) {
+	    	$(".successMsg").hide();
+	    	setTimeout(function() {
+	    		$(".successMsg").show();
+	    	}, 100);
+	    }
+	    else {
+	    	$("#hazardForm").after(success);
+	    }
 	}
 });
