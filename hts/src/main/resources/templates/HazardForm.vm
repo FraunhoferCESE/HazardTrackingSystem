@@ -86,7 +86,7 @@
 	<div class="buttons-container">
 		<div class="buttons">
 	        <input class="button submit" type="submit" value="Save" id="hazardSaveButton">
-	        <a class="cancel" href="hazardlist">Cancel</a>
+	        <a class="cancel" href="">Cancel</a>
 	    </div>
 	</div>
 </form>
