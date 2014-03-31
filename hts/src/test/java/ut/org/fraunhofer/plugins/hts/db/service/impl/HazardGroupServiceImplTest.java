@@ -115,7 +115,7 @@ public class HazardGroupServiceImplTest {
 	public void testInitializeTables() {
 		Hazard_Group[] mockGroups = {};
 		when(mockActiveObjects.find(eq(Hazard_Group.class))).thenReturn(mockGroups);
-		
+
 		HazardGroupServiceImpl test = new HazardGroupServiceImpl(mockActiveObjects);
 		test.initializeTable();
 
@@ -141,7 +141,7 @@ public class HazardGroupServiceImplTest {
 	public void testInitializeTablesAlreadyInitialized() {
 		Hazard_Group[] mockGroups = {};
 		when(mockActiveObjects.find(eq(Hazard_Group.class))).thenReturn(mockGroups);
-		
+
 		HazardGroupServiceImpl test = new HazardGroupServiceImpl(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();

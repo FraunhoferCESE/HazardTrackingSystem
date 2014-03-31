@@ -6,8 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
@@ -25,6 +31,8 @@ import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -41,8 +49,9 @@ import static com.google.common.base.Preconditions.*;
  * @author ASkulason
  * 
  */
-@SuppressWarnings("serial")
+
 public final class HazardServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private final HazardService hazardService;
 	private final HazardGroupService hazardGroupService;
 	private final RiskCategoryService riskCategoryService;
@@ -88,7 +97,6 @@ public final class HazardServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// TODO clean up and see if there is a better way to get the parameters
 		final String hazardNum = req.getParameter("hazardNumber");
 		final String title = req.getParameter("hazardTitle");
 		final String description = req.getParameter("hazardDescription");
@@ -96,15 +104,13 @@ public final class HazardServlet extends HttpServlet {
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
-		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req
-				.getParameter("hazardLikelihood"));
+		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
 		final String subsystem = req.getParameter("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
-
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
@@ -121,9 +127,20 @@ public final class HazardServlet extends HttpServlet {
 					revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
+			JSONObject json = new JSONObject();
+			try {
+				json.put("hazardContext", hazardService.getHazardByID(Integer.toString(hazard.getID())));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			PrintWriter printout = res.getWriter();
+			printout.print(json);
+			printout.flush();
 		}
-
-		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
+		// TODO allow createAndAdd to use this.
+		// res.sendRedirect(req.getContextPath() +
+		// "/plugins/servlet/hazardform");
 	}
 
 	private Date changeToDate(String date) {
@@ -141,4 +158,5 @@ public final class HazardServlet extends HttpServlet {
 		}
 		return null;
 	}
+	
 }

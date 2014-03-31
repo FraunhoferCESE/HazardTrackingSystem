@@ -26,8 +26,8 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
 
-@SuppressWarnings("serial")
 public class LandingPageServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private final HazardService hazardService;
 	private final HazardGroupService hazardGroupService;
 	private final RiskCategoryService riskCategoryService;
@@ -37,7 +37,7 @@ public class LandingPageServlet extends HttpServlet {
 
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
-			RiskLikelihoodsService riskLikelihoodService, ReviewPhaseService reviewPhaseService, 
+			RiskLikelihoodsService riskLikelihoodService, ReviewPhaseService reviewPhaseService,
 			MissionPayloadService missionPayloadService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);

@@ -96,7 +96,9 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
-	    		successfulSave()
+	    		console.log($.parseJSON(data));
+	    		console.log(data);
+	    		successfulSave();
 	    	});
 	    }
 	});
@@ -123,8 +125,8 @@ AJS.$(document).ready(function(){
 	}
 
 	function successfulSave() {
-		var success = $('<div class="successMsg added">Changes were saved successfully.</div>')
-	    if($(".added").length > 0) {
+		var success = $('<div class="aui-message success successMsg"><p class="title"><span class="aui-icon icon-success"></span><strong>Changes were saved successfully</strong></p></div>');
+	    if($(".successMsg").length > 0) {
 	    	$(".successMsg").hide();
 	    	setTimeout(function() {
 	    		$(".successMsg").show();
