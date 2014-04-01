@@ -10,11 +10,6 @@ import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -31,8 +26,6 @@ import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -129,14 +122,24 @@ public final class HazardServlet extends HttpServlet {
 			subsystemService.add(hazard, subsystem, subsystem);
 			JSONObject json = new JSONObject();
 			try {
-				json.put("hazardContext", hazardService.getHazardByID(Integer.toString(hazard.getID())));
+				json.put("hazardID", hazard.getID());
+				json.put("hazardNumber", hazard.getHazardNum());
+				json.put("hazardTitle", hazard.getTitle());
+				//TODO fix when subsys are fixed
+				json.put("hazardSubsystem", hazard.getSubsystems()[0].getLabel());
+				json.put("hazardPayload", hazard.getMissionPayload().getName());
+				json.put("hazardReviewPhase", hazard.getReviewPhase().getLabel());
+				json.put("hazardRisk", hazard.getRiskCategory().getValue());
+				json.put("hazardLikelihood", hazard.getRiskLikelihood().getValue());
+				json.put("hazardGroup", hazard.getHazardGroup().getLabel());
+				json.put("hazardDescription", hazard.getHazardDesc());
+				json.put("hazardInitation", hazard.getInitiationDate());
+				json.put("hazardCompletion", hazard.getCompletionDate());		
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			PrintWriter printout = res.getWriter();
-			printout.print(json);
-			printout.flush();
+			res.getWriter().println(json);
 		}
 		// TODO allow createAndAdd to use this.
 		// res.sendRedirect(req.getContextPath() +

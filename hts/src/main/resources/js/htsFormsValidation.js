@@ -96,8 +96,16 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
-	    		console.log($.parseJSON(data));
-	    		console.log(data);
+	    		var jsonObj = $.parseJSON(data);
+	    		var keys = Object.keys(jsonObj);
+	    		console.log(keys.length)
+	    		console.log(jsonObj);
+	    		for(var i = 1; i < keys.length; i++) {
+	    			var key = keys[i];
+	    			if(jsonObj[key] !== "") {
+	    				$('[name="' + key + '"]').val(jsonObj[key]);
+	    			}
+	    		}
 	    		successfulSave();
 	    	});
 	    }
