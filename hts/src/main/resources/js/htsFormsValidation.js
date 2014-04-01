@@ -96,16 +96,8 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
-	    		var jsonObj = $.parseJSON(data);
-	    		var keys = Object.keys(jsonObj);
-	    		console.log(keys.length)
-	    		console.log(jsonObj);
-	    		for(var i = 1; i < keys.length; i++) {
-	    			var key = keys[i];
-	    			if(jsonObj[key] !== "") {
-	    				$('[name="' + key + '"]').val(jsonObj[key]);
-	    			}
-	    		}
+	    		console.log($.parseJSON(data).hazardNumber);
+	    		addOrUpdateHazardNum($.parseJSON(data).hazardNumber, $.parseJSON(data).hazardID);
 	    		successfulSave();
 	    	});
 	    }
@@ -143,5 +135,19 @@ AJS.$(document).ready(function(){
 	    else {
 	    	$("#hazardForm").after(success);
 	    }
+	}
+
+	function addOrUpdateHazardNum(hazardNum, id) {
+		if($("#oldNumber").length > 0) {
+			$("#oldNumber").val(hazardNum);
+		}
+		else {
+			$("#hazardForm").append('<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value/>');
+			$("#hazardForm").append('<input type="hidden" id="key" name="key" value/>');
+			$("#hazardForm").append('<input type="hidden" id="edit" name="edit" value/>');
+			$("#oldNumber").val(hazardNum);
+			$("#key").val(id);
+			$("#edit").val("y");		
+		}
 	}
 });

@@ -115,6 +115,26 @@ public final class HazardServlet extends HttpServlet {
 			// TODO change when hazard reports can belong to more than one
 			// subsystem
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
+			JSONObject json = new JSONObject();
+			try {
+				json.put("hazardID", updated.getID());
+				json.put("hazardNumber", updated.getHazardNum());
+				json.put("hazardTitle", updated.getTitle());
+				//TODO fix when subsys are fixed
+				json.put("hazardSubsystem", updated.getSubsystems()[0].getLabel());
+				json.put("hazardPayload", updated.getMissionPayload().getName());
+				json.put("hazardReviewPhase", updated.getReviewPhase().getLabel());
+				json.put("hazardRisk", updated.getRiskCategory().getValue());
+				json.put("hazardLikelihood", updated.getRiskLikelihood().getValue());
+				json.put("hazardGroup", updated.getHazardGroup().getLabel());
+				json.put("hazardDescription", updated.getHazardDesc());
+				json.put("hazardInitation", updated.getInitiationDate());
+				json.put("hazardCompletion", updated.getCompletionDate());		
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			res.getWriter().println(json);
 		} else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase);
