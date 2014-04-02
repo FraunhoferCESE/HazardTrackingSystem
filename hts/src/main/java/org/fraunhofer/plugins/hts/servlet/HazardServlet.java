@@ -105,6 +105,7 @@ public final class HazardServlet extends HttpServlet {
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		JSONObject json = new JSONObject();
+		
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
@@ -123,7 +124,6 @@ public final class HazardServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			res.getWriter().println(json);
 		} else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase);
@@ -136,11 +136,8 @@ public final class HazardServlet extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			res.getWriter().println(json);
 		}
-		// TODO allow createAndAdd to use this.
-		// res.sendRedirect(req.getContextPath() +
-		// "/plugins/servlet/hazardform");
+		res.getWriter().println(json);
 	}
 
 	private Date changeToDate(String date) {

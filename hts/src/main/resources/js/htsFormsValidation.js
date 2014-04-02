@@ -6,6 +6,8 @@ AJS.$(document).ready(function(){
 	var lastEditColumn = AJS.$('table#hazard-table tbody td:nth-child(3)');
     lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
 
+    editForm();
+
 	/**********************************************************
 	*                                                         *
 	*               Form validation below.                    *
@@ -78,7 +80,7 @@ AJS.$(document).ready(function(){
 	    	},
 	    	hazardInitation: {
 	    		date: true,
-	    		//First number is the year, then month and day.
+	    		//First number is the year, then month and day. If the date interval is to be changed, this is the place to do it.
 	    		mindate: new Date(40, 0, 1)
 	    	},
 	    	hazardCompletion: {
@@ -109,7 +111,10 @@ AJS.$(document).ready(function(){
 	    	$(form).ajaxSubmit(function(data) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#hazardForm").removeDirtyWarning();
-	    		addOrUpdateHazardNum($.parseJSON(data).hazardNumber, $.parseJSON(data).hazardID);
+	    		//Retrieving the values from the json response.
+	    		var hazardNumber = $.parseJSON(data).hazardNumber;
+	    		var hazardID = $.parseJSON(data).hazardID;
+	    		addOrUpdateHazardNum(hazardNumber, hazardID);
 	    		successfulSave();
 	    	});
 	    }
@@ -167,6 +172,14 @@ AJS.$(document).ready(function(){
 			$("#oldNumber").val(hazardNum);
 		}
 		addNecessaryInfo(id);
+	}
+
+	//Add fields to the edit form is opened for the first time
+	function editForm() {
+		var id = $.url().param("key");
+		if(typeof id !== 'undefined') {
+			addNecessaryInfo(id);
+		}
 	}
 
 	//Hidden fields to store info about if the form is begin editied and if so, then it also stores the hazard ID.
