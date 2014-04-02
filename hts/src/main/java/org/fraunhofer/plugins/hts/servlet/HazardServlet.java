@@ -104,6 +104,7 @@ public final class HazardServlet extends HttpServlet {
 		final String subsystem = req.getParameter("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
+		final String addNew = req.getParameter("hazardSaveAdd");
 		JSONObject json = new JSONObject();
 		
 		// TODO see if they want to pull in the jira project name as payload
@@ -137,7 +138,14 @@ public final class HazardServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		res.getWriter().println(json);
+		if(addNew != null) {
+			res.setHeader("redirect", "true");
+			res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardform");
+		}
+		else {
+			res.getWriter().println(json);
+		}
+		
 	}
 
 	private Date changeToDate(String date) {

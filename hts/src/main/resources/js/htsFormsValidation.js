@@ -2,10 +2,7 @@ AJS.$(document).ready(function(){
 	var $ = AJS.$
 	var baseUrl = AJS.params.baseURL;
 
-	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
-	var lastEditColumn = AJS.$('table#hazard-table tbody td:nth-child(3)');
-    lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
-
+	dateLayout();
     editForm();
 
 	/**********************************************************
@@ -108,14 +105,19 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit(function(data) {
+	    	$(form).ajaxSubmit(function(data, req) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#hazardForm").removeDirtyWarning();
-	    		//Retrieving the values from the json response.
-	    		var hazardNumber = $.parseJSON(data).hazardNumber;
-	    		var hazardID = $.parseJSON(data).hazardID;
-	    		addOrUpdateHazardNum(hazardNumber, hazardID);
 	    		successfulSave();
+	    		//Retrieving the values from the json response.
+	    		try {
+	    			var hazardNumber = $.parseJSON(data).hazardNumber;
+	    			var hazardID = $.parseJSON(data).hazardID;	
+	    		} catch(error) {
+	    			window.location.replace("hazardform");
+	    		}
+	    		
+	    		addOrUpdateHazardNum(hazardNumber, hazardID);
 	    	});
 	    }
 	});
@@ -174,14 +176,6 @@ AJS.$(document).ready(function(){
 		addNecessaryInfo(id);
 	}
 
-	//Add fields to the edit form is opened for the first time
-	function editForm() {
-		var id = $.url().param("key");
-		if(typeof id !== 'undefined') {
-			addNecessaryInfo(id);
-		}
-	}
-
 	//Hidden fields to store info about if the form is begin editied and if so, then it also stores the hazard ID.
 	function addNecessaryInfo(id) {
         if(AJS.$("#oldNumber").length > 0) {
@@ -201,4 +195,20 @@ AJS.$(document).ready(function(){
         input.value = value;
         form.appendChild(input);
     }
+
+    function dateLayout() {
+    	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
+		var lastEditColumn = $('table#hazard-table tbody td:nth-child(3)');
+		if(lastEditColumn.length > 0) {
+    		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
+    	}
+    }
+
+	//Add fields to the edit form is opened for the first time
+	function editForm() {
+		var id = $.url().param("key");
+		if(typeof id !== 'undefined') {
+			addNecessaryInfo(id);
+		}
+	}
 });
