@@ -96,6 +96,8 @@ AJS.$(document).ready(function(){
 
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit(function(data) {
+	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    		$("#hazardForm").removeDirtyWarning();
 	    		console.log($.parseJSON(data).hazardNumber);
 	    		addOrUpdateHazardNum($.parseJSON(data).hazardNumber, $.parseJSON(data).hazardID);
 	    		successfulSave();
@@ -143,6 +145,7 @@ AJS.$(document).ready(function(){
 		}
 		else {
 			$("#hazardForm").append('<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value/>');
+			//Takes care of adding the two fields after the first post, so saving again is possible through the edit part.
 			$("#hazardForm").append('<input type="hidden" id="key" name="key" value/>');
 			$("#hazardForm").append('<input type="hidden" id="edit" name="edit" value/>');
 			$("#oldNumber").val(hazardNum);
