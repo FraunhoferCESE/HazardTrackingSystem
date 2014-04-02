@@ -105,18 +105,17 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit(function(data, req) {
+	    	$(form).ajaxSubmit(function(data) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#hazardForm").removeDirtyWarning();
 	    		successfulSave();
-	    		//Retrieving the values from the json response.
+	    		//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
 	    		try {
 	    			var hazardNumber = $.parseJSON(data).hazardNumber;
 	    			var hazardID = $.parseJSON(data).hazardID;	
 	    		} catch(error) {
 	    			window.location.replace("hazardform");
 	    		}
-	    		
 	    		addOrUpdateHazardNum(hazardNumber, hazardID);
 	    	});
 	    }

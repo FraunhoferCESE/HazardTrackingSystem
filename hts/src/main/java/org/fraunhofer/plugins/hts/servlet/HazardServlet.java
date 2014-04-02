@@ -122,7 +122,6 @@ public final class HazardServlet extends HttpServlet {
 				json.put("hazardID", updated.getID());
 				json.put("hazardNumber", updated.getHazardNum());	
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -134,10 +133,10 @@ public final class HazardServlet extends HttpServlet {
 				json.put("hazardID", hazard.getID());
 				json.put("hazardNumber", hazard.getHazardNum());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		//If Save and create another was pressed addNew should not contain null
 		if(addNew != null) {
 			res.setHeader("redirect", "true");
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardform");
