@@ -104,6 +104,7 @@ public final class HazardServlet extends HttpServlet {
 		final String subsystem = req.getParameter("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
+		JSONObject json = new JSONObject();
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
@@ -115,21 +116,9 @@ public final class HazardServlet extends HttpServlet {
 			// TODO change when hazard reports can belong to more than one
 			// subsystem
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
-			JSONObject json = new JSONObject();
 			try {
 				json.put("hazardID", updated.getID());
-				json.put("hazardNumber", updated.getHazardNum());
-				json.put("hazardTitle", updated.getTitle());
-				//TODO fix when subsys are fixed
-				json.put("hazardSubsystem", updated.getSubsystems()[0].getLabel());
-				json.put("hazardPayload", updated.getMissionPayload().getName());
-				json.put("hazardReviewPhase", updated.getReviewPhase().getLabel());
-				json.put("hazardRisk", updated.getRiskCategory().getValue());
-				json.put("hazardLikelihood", updated.getRiskLikelihood().getValue());
-				json.put("hazardGroup", updated.getHazardGroup().getLabel());
-				json.put("hazardDescription", updated.getHazardDesc());
-				json.put("hazardInitation", updated.getInitiationDate());
-				json.put("hazardCompletion", updated.getCompletionDate());		
+				json.put("hazardNumber", updated.getHazardNum());	
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -140,21 +129,9 @@ public final class HazardServlet extends HttpServlet {
 					revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
-			JSONObject json = new JSONObject();
 			try {
 				json.put("hazardID", hazard.getID());
 				json.put("hazardNumber", hazard.getHazardNum());
-				json.put("hazardTitle", hazard.getTitle());
-				//TODO fix when subsys are fixed
-				json.put("hazardSubsystem", hazard.getSubsystems()[0].getLabel());
-				json.put("hazardPayload", hazard.getMissionPayload().getName());
-				json.put("hazardReviewPhase", hazard.getReviewPhase().getLabel());
-				json.put("hazardRisk", hazard.getRiskCategory().getValue());
-				json.put("hazardLikelihood", hazard.getRiskLikelihood().getValue());
-				json.put("hazardGroup", hazard.getHazardGroup().getLabel());
-				json.put("hazardDescription", hazard.getHazardDesc());
-				json.put("hazardInitation", hazard.getInitiationDate());
-				json.put("hazardCompletion", hazard.getCompletionDate());		
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

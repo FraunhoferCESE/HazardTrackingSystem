@@ -2,6 +2,16 @@ AJS.$(document).ready(function(){
 	var $ = AJS.$
 	var baseUrl = AJS.params.baseURL;
 
+	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
+	var lastEditColumn = AJS.$('table#hazard-table tbody td:nth-child(3)');
+    lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
+
+	/**********************************************************
+	*                                                         *
+	*               Form validation below.                    *
+	*                                                         *
+	***********************************************************/
+
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
 		//Check if hazard is begin edited, if so the hazard # can stay the same.
@@ -40,7 +50,7 @@ AJS.$(document).ready(function(){
 		return validateDate(initDate, complDate);
 	}, "Completion date cannot be set before initation date.");
 
-	//Make sure the user can't input years lower than defined
+	//Make sure the user can't input years lower than defined.
 	$.validator.addMethod("mindate", function(val, element, minDate) {
 		if(this.optional(element)) {
 			return true;
@@ -68,6 +78,7 @@ AJS.$(document).ready(function(){
 	    	},
 	    	hazardInitation: {
 	    		date: true,
+	    		//First number is the year, then month and day.
 	    		mindate: new Date(40, 0, 1)
 	    	},
 	    	hazardCompletion: {
@@ -98,14 +109,18 @@ AJS.$(document).ready(function(){
 	    	$(form).ajaxSubmit(function(data) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#hazardForm").removeDirtyWarning();
-	    		console.log($.parseJSON(data).hazardNumber);
 	    		addOrUpdateHazardNum($.parseJSON(data).hazardNumber, $.parseJSON(data).hazardID);
 	    		successfulSave();
 	    	});
 	    }
 	});
 
-	//Helper functions
+
+	/**********************************************************
+	*                                                         *
+	*               Helper functions below.                   *
+	*                                                         *
+	***********************************************************/
 	function validateDate(initationVal, completionVal) {
 		//Both valid dates
 		if(Date.parse(initationVal) && Date.parse(completionVal)) {
@@ -126,8 +141,10 @@ AJS.$(document).ready(function(){
 		}
 	}
 
+	//After a successful save message needs to be displayed to the user.
 	function successfulSave() {
-		var success = $('<div class="aui-message success successMsg"><p class="title"><span class="aui-icon icon-success"></span><strong>Changes were saved successfully</strong></p></div>');
+		//Input the successful save frame
+		var success = $('<div class="aui-message success successMsg"><p><span class="aui-icon icon-success"></span>Changes were saved successfully</p></div>');
 	    if($(".successMsg").length > 0) {
 	    	$(".successMsg").hide();
 	    	setTimeout(function() {
@@ -139,6 +156,7 @@ AJS.$(document).ready(function(){
 	    }
 	}
 
+	//Need to store the hazard number specified in the field to see if has been changed. If not saving is okay.
 	function addOrUpdateHazardNum(hazardNum, id) {
 		if($("#oldNumber").length > 0) {
 			$("#oldNumber").val(hazardNum);
@@ -146,11 +164,28 @@ AJS.$(document).ready(function(){
 		else {
 			$("#hazardForm").append('<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value/>');
 			//Takes care of adding the two fields after the first post, so saving again is possible through the edit part.
-			$("#hazardForm").append('<input type="hidden" id="key" name="key" value/>');
-			$("#hazardForm").append('<input type="hidden" id="edit" name="edit" value/>');
 			$("#oldNumber").val(hazardNum);
-			$("#key").val(id);
-			$("#edit").val("y");		
 		}
+		addNecessaryInfo(id);
 	}
+
+	//Hidden fields to store info about if the form is begin editied and if so, then it also stores the hazard ID.
+	function addNecessaryInfo(id) {
+        if(AJS.$("#oldNumber").length > 0) {
+            var form = document.forms["hazardForm"];
+            addHiddenField(form, "edit", "edit", "y");
+            //Retrieving the id from the url
+            addHiddenField(form, "key", "key", id);
+        }
+    }
+
+    //Creating a new hidden field in a form.
+    function addHiddenField(form, key, id, value) {
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.id = id;
+        input.value = value;
+        form.appendChild(input);
+    }
 });
