@@ -6,9 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
-
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -41,8 +42,9 @@ import static com.google.common.base.Preconditions.*;
  * @author ASkulason
  * 
  */
-@SuppressWarnings("serial")
+
 public final class HazardServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private final HazardService hazardService;
 	private final HazardGroupService hazardGroupService;
 	private final RiskCategoryService riskCategoryService;
@@ -66,7 +68,7 @@ public final class HazardServlet extends HttpServlet {
 		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
-	// TODO
+	//TODO
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
@@ -81,14 +83,14 @@ public final class HazardServlet extends HttpServlet {
 			res.setContentType("text/html;charset=utf-8");
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
-		} else {
+		} 
+		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// TODO clean up and see if there is a better way to get the parameters
 		final String hazardNum = req.getParameter("hazardNumber");
 		final String title = req.getParameter("hazardTitle");
 		final String description = req.getParameter("hazardDescription");
@@ -96,15 +98,16 @@ public final class HazardServlet extends HttpServlet {
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
-		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req
-				.getParameter("hazardLikelihood"));
+		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
 		final String subsystem = req.getParameter("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
-
+		final String addNew = req.getParameter("hazardSaveAdd");
+		JSONObject json = new JSONObject();
+		
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
@@ -116,14 +119,24 @@ public final class HazardServlet extends HttpServlet {
 			// TODO change when hazard reports can belong to more than one
 			// subsystem
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
-		} else {
+			
+			createJson(json, "hazardID", updated.getID());
+			createJson(json, "hazardNumber", updated.getHazardNum());		
+		} 
+		else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
+			createJson(json, "hazardID", hazard.getID());
+			createJson(json, "hazardNumber", hazard.getHazardNum());
 		}
-
-		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
+		//If Save and create another was pressed addNew should not contain null
+		if(addNew != null) {
+			createJson(json, "redirect", req.getContextPath() + "/plugins/servlet/hazardform");
+		}
+		
+		res.getWriter().println(json);
 	}
 
 	private Date changeToDate(String date) {
@@ -140,5 +153,15 @@ public final class HazardServlet extends HttpServlet {
 			}
 		}
 		return null;
+	}
+	
+	private JSONObject createJson(JSONObject json, String key, Object value) {
+		try {
+			json.put(key, value);
+		} catch (JSONException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}	
+		return json;
 	}
 }

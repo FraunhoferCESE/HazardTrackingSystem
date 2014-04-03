@@ -94,4 +94,5 @@ public class HazardServiceImpl implements HazardService {
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
 		return hazards.length > 0 ? true : false;
 	}
+	
 }
