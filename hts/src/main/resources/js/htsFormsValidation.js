@@ -174,7 +174,9 @@ AJS.$(document).ready(function(){
 			//Takes care of adding the two fields after the first post, so saving again is possible through the edit part.
 			$("#oldNumber").val(hazardNum);
 		}
-		addNecessaryInfo(id);
+		if(!($("#edit").length > 0 && $("#key").length > 0)) {
+			addNecessaryInfo(id);
+		}
 	}
 
 	//Hidden fields to store info about if the form is begin editied and if so, then it also stores the hazard ID.
