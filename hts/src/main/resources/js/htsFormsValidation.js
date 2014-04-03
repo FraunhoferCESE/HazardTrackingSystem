@@ -110,13 +110,15 @@ AJS.$(document).ready(function(){
 	    		$("#hazardForm").removeDirtyWarning();
 	    		successfulSave();
 	    		//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
-	    		try {
-	    			var hazardNumber = $.parseJSON(data).hazardNumber;
-	    			var hazardID = $.parseJSON(data).hazardID;	
-	    		} catch(error) {
-	    			window.location.replace("hazardform");
+	    		var data = $.parseJSON(data);
+	    		if(data.redirect) {
+	    			window.location.replace(data.redirect);
 	    		}
-	    		addOrUpdateHazardNum(hazardNumber, hazardID);
+	    		else {
+	    			var hazardNumber = data.hazardNumber;
+		    		var hazardID = data.hazardID;
+	    			addOrUpdateHazardNum(hazardNumber, hazardID);
+	    		}
 	    	});
 	    }
 	});

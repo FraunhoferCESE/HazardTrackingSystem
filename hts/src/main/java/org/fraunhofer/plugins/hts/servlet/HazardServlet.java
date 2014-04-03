@@ -68,7 +68,7 @@ public final class HazardServlet extends HttpServlet {
 		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
-	// TODO
+	//TODO
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
@@ -83,7 +83,8 @@ public final class HazardServlet extends HttpServlet {
 			res.setContentType("text/html;charset=utf-8");
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
-		} else {
+		} 
+		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
@@ -118,33 +119,24 @@ public final class HazardServlet extends HttpServlet {
 			// TODO change when hazard reports can belong to more than one
 			// subsystem
 			subsystemService.update(subsystemsListToUpdate.get(0), subsystem);
-			try {
-				json.put("hazardID", updated.getID());
-				json.put("hazardNumber", updated.getHazardNum());	
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		} else {
+			
+			createJson(json, "hazardID", updated.getID());
+			createJson(json, "hazardNumber", updated.getHazardNum());		
+		} 
+		else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase);
 			missionPayloadService.add(hazard, payloadName);
 			subsystemService.add(hazard, subsystem, subsystem);
-			try {
-				json.put("hazardID", hazard.getID());
-				json.put("hazardNumber", hazard.getHazardNum());
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+			createJson(json, "hazardID", hazard.getID());
+			createJson(json, "hazardNumber", hazard.getHazardNum());
 		}
 		//If Save and create another was pressed addNew should not contain null
 		if(addNew != null) {
-			res.setHeader("redirect", "true");
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardform");
-		}
-		else {
-			res.getWriter().println(json);
+			createJson(json, "redirect", req.getContextPath() + "/plugins/servlet/hazardform");
 		}
 		
+		res.getWriter().println(json);
 	}
 
 	private Date changeToDate(String date) {
@@ -163,4 +155,13 @@ public final class HazardServlet extends HttpServlet {
 		return null;
 	}
 	
+	private JSONObject createJson(JSONObject json, String key, Object value) {
+		try {
+			json.put(key, value);
+		} catch (JSONException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}	
+		return json;
+	}
 }
