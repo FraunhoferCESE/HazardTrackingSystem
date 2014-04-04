@@ -30,7 +30,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems subsystems) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -43,6 +43,7 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);
 		hazard.setReviewPhase(reviewPhase);
+		hazard.setSubsystems(subsystems);
 		hazard.save();
 		return hazard;
 	}
@@ -62,7 +63,7 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add init date and completion and error handling
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems subsystems) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -77,15 +78,10 @@ public class HazardServiceImpl implements HazardService {
 			updated.setRiskLikelihood(likelihood);
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
+			updated.setSubsystems(subsystems);
 			updated.save();
 		}
 		return updated;
-	}
-
-	@Override
-	public Subsystems[] getSubsystems() {
-		return null;
-
 	}
 
 	@Override

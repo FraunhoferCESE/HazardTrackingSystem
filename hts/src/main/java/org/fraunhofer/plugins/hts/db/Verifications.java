@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.db;
 
 import net.java.ao.Entity;
-import net.java.ao.Preload;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -13,7 +12,6 @@ import net.java.ao.schema.Table;
  * 
  */
 // TODO
-@Preload
 @Table("Verifications")
 public interface Verifications extends Entity {
 	String getTitle();

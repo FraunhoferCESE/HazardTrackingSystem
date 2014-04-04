@@ -1,7 +1,8 @@
 package org.fraunhofer.plugins.hts.db;
 
 import net.java.ao.Entity;
-import net.java.ao.Preload;
+import net.java.ao.OneToMany;
+import net.java.ao.OneToOne;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -14,7 +15,6 @@ import net.java.ao.schema.Table;
  */
 
 // TODO Connect to hazard for and create a service.
-@Preload
 @Table("Subsystems")
 public interface Subsystems extends Entity {
 	String getLabel();
@@ -25,9 +25,9 @@ public interface Subsystems extends Entity {
 	String getDescription();
 
 	void setDescription(String description);
-
-	// TODO see if relation has to be changed
-	Hazards getHazard();
-
-	void setHazard(Hazards hazard);
+	
+	//TODO Change to allow many subsystem within a hazard.
+	@OneToOne
+	Hazards getHazards();
+	
 }
