@@ -3,9 +3,8 @@ package org.fraunhofer.plugins.hts.db;
 import java.util.Date;
 
 import net.java.ao.Entity;
-import net.java.ao.OneToMany;
+import net.java.ao.ManyToMany;
 import net.java.ao.OneToOne;
-import net.java.ao.Preload;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.Unique;
@@ -19,9 +18,7 @@ import net.java.ao.schema.NotNull;
  * @author ASkulason
  * 
  */
-@Preload
 @Table("Hazards")
-// TODO restrictions
 public interface Hazards extends Entity {
 	@NotNull
 	@StringLength(value = 512)
@@ -77,10 +74,10 @@ public interface Hazards extends Entity {
 	void setReviewPhase(Review_Phases phase);
 
 	Review_Phases getReviewPhase();
-
-	@OneToMany
+	
+	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();
-
+	
 	@OneToOne
 	Mission_Payload getMissionPayload();
 

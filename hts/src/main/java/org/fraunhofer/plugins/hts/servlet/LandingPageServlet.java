@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -19,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -60,10 +57,6 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("reviewPhases", reviewPhaseService.all());
 				context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
-				// TODO change when hazard report can have more than one
-				// subsystem
-				List<Subsystems> subsys = Arrays.asList(hazard.getSubsystems());
-				context.put("subsystem", subsys.get(0).getLabel());
 				res.setContentType("text/html");
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
 			} else {
