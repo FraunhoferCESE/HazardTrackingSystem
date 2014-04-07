@@ -7,6 +7,7 @@ import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
+import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -31,17 +32,19 @@ public class LandingPageServlet extends HttpServlet {
 	private final RiskLikelihoodsService riskLikelihoodService;
 	private final ReviewPhaseService reviewPhaseService;
 	private final TemplateRenderer templateRenderer;
+	private final SubsystemService subsystemService;
 
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService, ReviewPhaseService reviewPhaseService,
-			MissionPayloadService missionPayloadService) {
+			MissionPayloadService missionPayloadService, SubsystemService subsystemService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
+		this.subsystemService = checkNotNull(subsystemService);
 	}
 
 	@Override
@@ -55,6 +58,7 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("reviewPhases", reviewPhaseService.all());
+				context.put("subsystems", subsystemService.all());
 				context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
 				res.setContentType("text/html");
