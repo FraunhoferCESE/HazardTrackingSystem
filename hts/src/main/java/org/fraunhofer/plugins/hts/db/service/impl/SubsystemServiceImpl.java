@@ -1,5 +1,6 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.java.ao.Query;
@@ -44,6 +45,18 @@ public class SubsystemServiceImpl implements SubsystemService {
 		subsystemToUpdate.setLabel(label);
 		subsystemToUpdate.save();
 		return null;
+	}
+
+	@Override
+	public Subsystems[] getSubsystemsByID(String[] id) {
+		ArrayList<Subsystems> subsyslist = new ArrayList<Subsystems>();
+		for(String theID : id) {
+			if(theID != null) {
+				subsyslist.add(getSubsystemByID(theID));
+			}
+		}
+		//TODO validate
+		return (Subsystems[]) subsyslist.toArray();
 	}
 
 }

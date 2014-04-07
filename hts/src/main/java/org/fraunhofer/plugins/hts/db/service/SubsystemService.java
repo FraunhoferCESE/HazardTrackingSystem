@@ -9,6 +9,8 @@ public interface SubsystemService {
 
 	Subsystems getSubsystemByID(String id);
 	
+	Subsystems[] getSubsystemsByID(String[] id);
+
 	Subsystems update(Subsystems subsystemToUpdate, String label);
 
 	List<Subsystems> all();
