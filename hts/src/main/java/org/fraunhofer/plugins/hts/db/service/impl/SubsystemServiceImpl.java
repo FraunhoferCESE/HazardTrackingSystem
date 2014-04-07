@@ -1,6 +1,5 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.java.ao.Query;

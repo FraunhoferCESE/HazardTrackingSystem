@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db;
 import java.util.Date;
 
 import net.java.ao.Entity;
+import net.java.ao.ManyToMany;
 import net.java.ao.OneToOne;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
@@ -74,10 +75,9 @@ public interface Hazards extends Entity {
 
 	Review_Phases getReviewPhase();
 	
-	void setSubsystems(Subsystems subsystem);
+	@ManyToMany(value = SubsystemToHazard.class)
+	Subsystems[] getSubsystems();
 	
-	Subsystems getSubsystems();
-
 	@OneToOne
 	Mission_Payload getMissionPayload();
 

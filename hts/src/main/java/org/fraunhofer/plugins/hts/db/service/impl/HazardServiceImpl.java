@@ -5,6 +5,7 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.db.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
@@ -30,7 +32,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems subsystems) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -43,7 +45,18 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);
 		hazard.setReviewPhase(reviewPhase);
-		hazard.setSubsystems(subsystems);
+		
+		if(subsystems != null) {
+			for(Subsystems subsystem : subsystems) {
+				try {
+					associateSubsystemToHazard(subsystem, hazard);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		hazard.save();
 		return hazard;
 	}
@@ -63,7 +76,7 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add init date and completion and error handling
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems subsystems) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -78,7 +91,6 @@ public class HazardServiceImpl implements HazardService {
 			updated.setRiskLikelihood(likelihood);
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
-			updated.setSubsystems(subsystems);
 			updated.save();
 		}
 		return updated;
@@ -89,6 +101,13 @@ public class HazardServiceImpl implements HazardService {
 		// TODO Auto-generated method stub
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
 		return hazards.length > 0 ? true : false;
+	}
+
+	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
+		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
+		subsystemToHazard.setSubsystem(subsystems);
+		subsystemToHazard.setHazard(hazard);
+		subsystemToHazard.save();
 	}
 	
 }

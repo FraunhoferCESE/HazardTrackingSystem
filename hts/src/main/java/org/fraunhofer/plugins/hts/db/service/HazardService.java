@@ -16,16 +16,19 @@ import com.atlassian.activeobjects.tx.Transactional;
 public interface HazardService {
 	Hazards add(String title, String description, String preparer, String email, String hazardNum, Date initationDate,
 			Date completionDate, Date lastEdit, Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group group,
-			Review_Phases reviewPhase, Subsystems subsystems);
+			Review_Phases reviewPhase, Subsystems[] subsystems);
 
 	Hazards getHazardByID(String id);
 
 	Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems subsystems);
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems);
 
 	List<Hazards> all();
 
 	Boolean hazardNumberExists(String hazardNumber);
-
+	
+	//Takes care of connecting hazard to a subsystem
+	//void associateHazardToSubsystem(Hazards hazard, Subsystems subsystems) throws SQLException;
+	
 }

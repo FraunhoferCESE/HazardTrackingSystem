@@ -1,8 +1,7 @@
 package org.fraunhofer.plugins.hts.db;
 
 import net.java.ao.Entity;
-import net.java.ao.OneToMany;
-import net.java.ao.OneToOne;
+import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -18,7 +17,7 @@ import net.java.ao.schema.Table;
 @Table("Subsystems")
 public interface Subsystems extends Entity {
 	String getLabel();
-
+	//TODO unique
 	void setLabel(String label);
 
 	@StringLength(value = StringLength.UNLIMITED)
@@ -26,8 +25,7 @@ public interface Subsystems extends Entity {
 
 	void setDescription(String description);
 	
-	//TODO Change to allow many subsystem within a hazard.
-	@OneToOne
-	Hazards getHazards();
+	@ManyToMany(value = SubsystemToHazard.class)
+	Hazards[] getHazards();
 	
 }

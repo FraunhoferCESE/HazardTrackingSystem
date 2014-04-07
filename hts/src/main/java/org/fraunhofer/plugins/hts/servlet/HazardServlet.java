@@ -101,7 +101,7 @@ public final class HazardServlet extends HttpServlet {
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
 		//TODO FIX
-		final Subsystems subsystems = null;//subsystemService.getSubsystemByID(req.getParameter("hazardSubsystem"));
+		final Subsystems[] subsystems = null;//subsystemService.getSubsystemByID(req.getParameter("hazardSubsystem"));
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
