@@ -45,7 +45,7 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);
 		hazard.setReviewPhase(reviewPhase);
-		
+		hazard.save();
 		if(subsystems != null) {
 			for(Subsystems subsystem : subsystems) {
 				try {
@@ -56,8 +56,6 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
-		
-		hazard.save();
 		return hazard;
 	}
 

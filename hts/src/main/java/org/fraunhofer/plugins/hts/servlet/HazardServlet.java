@@ -100,8 +100,8 @@ public final class HazardServlet extends HttpServlet {
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
-		//TODO FIX
-		final Subsystems[] subsystems = null;//subsystemService.getSubsystemByID(req.getParameter("hazardSubsystem"));
+		//TODO FIX when multiple select is available
+		final Subsystems[] subsystems = null;//req.getParameterValues("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");

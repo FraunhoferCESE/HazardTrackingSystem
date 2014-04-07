@@ -28,7 +28,4 @@ public interface HazardService {
 
 	Boolean hazardNumberExists(String hazardNumber);
 	
-	//Takes care of connecting hazard to a subsystem
-	//void associateHazardToSubsystem(Hazards hazard, Subsystems subsystems) throws SQLException;
-	
 }
