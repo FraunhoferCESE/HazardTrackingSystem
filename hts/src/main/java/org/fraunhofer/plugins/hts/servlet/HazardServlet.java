@@ -101,7 +101,7 @@ public final class HazardServlet extends HttpServlet {
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
 		//TODO FIX when multiple select is available
-		final Subsystems[] subsystems = null;//req.getParameterValues("hazardSubsystem");
+		final String[] subsystems = req.getParameterValues("hazardSubsystem");//req.getParameterValues("hazardSubsystem");
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
@@ -110,21 +110,21 @@ public final class HazardServlet extends HttpServlet {
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
-			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			Mission_Payload payloadToUpdate = updated.getMissionPayload();
-			missionPayloadService.update(payloadToUpdate, payloadName);
+			//Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
+			//		completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems);
+		//	Mission_Payload payloadToUpdate = updated.getMissionPayload();
+		//	missionPayloadService.update(payloadToUpdate, payloadName);
 			
-			createJson(json, "hazardID", updated.getID());
-			createJson(json, "hazardNumber", updated.getHazardNum());		
+			//createJson(json, "hazardID", updated.getID());
+			//createJson(json, "hazardNumber", updated.getHazardNum());		
 		} 
 		else {
-			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
-					revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			missionPayloadService.add(hazard, payloadName);
+			//Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
+			///		revisionDate, risk, likelihood, group, reviewPhase, subsystems);
+			//missionPayloadService.add(hazard, payloadName);
 			
-			createJson(json, "hazardID", hazard.getID());
-			createJson(json, "hazardNumber", hazard.getHazardNum());
+			//createJson(json, "hazardID", hazard.getID());
+			//createJson(json, "hazardNumber", hazard.getHazardNum());
 		}
 		//If Save and create another was pressed addNew should not contain null
 		if(addNew != null) {

@@ -13,7 +13,12 @@
 	</div>
 	<div class="field-group">
 		<label for="hazardSubsystem">System/Subsystems</label>
-		<input class="text long-field" name="hazardSubsystem" id="hazardSubsystem" value="$!subsystem"/>
+		<select class="multi-select" size="5" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
+			<option>ONE</option>
+			<option>TWO</option>
+			<option>THREE</option>
+			<option>FOUR</option>
+		</select>
 	</div>
 	<div class="field-group">
 		<label for="hazardPreparer">Preparer</label>
@@ -40,9 +45,9 @@
 			<select class="select" id="hazardRisk" name="hazardRisk">
 		    	#foreach( $risk in $riskCategories )
 			    	#if($risk.getID() == $hazard.getRiskCategory().getID())
-						<option value="$risk.getID()" selected>$risk.getValue()</option>
+						<option value="$risk.getID()" selected>$!risk.getValue()</option>
 					#else
-						<option value="$risk.getID()">$risk.getValue()</option>
+						<option value="$risk.getID()">$!risk.getValue()</option>
 					#end
 		    	#end
 			</select>

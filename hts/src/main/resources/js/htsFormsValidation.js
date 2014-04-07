@@ -5,6 +5,15 @@ AJS.$(document).ready(function(){
 	dateLayout();
     editForm();
 
+    $("#hazardSubsystem").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: '',
+		autoSort: true,
+		autoSortAvailable: true
+    });
+
 	/**********************************************************
 	*                                                         *
 	*               Form validation below.                    *
