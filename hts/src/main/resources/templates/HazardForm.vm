@@ -15,13 +15,7 @@
 		<label for="hazardSubsystem">System/Subsystems</label>
 		<select class="multi-select" size="5" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
 			#foreach( $subsystem in $subsystems )
-				#foreach( $selected in hazard.getSubsystems())
-					#if($subsystems.getID() == $selected.getID())
-						<option value="$subsystem.getID()" selected>$!subsystem.getLabel()</option>
-					#else
-						<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
-					#end
-				#end
+				<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
 			#end
 		</select>
 	</div>

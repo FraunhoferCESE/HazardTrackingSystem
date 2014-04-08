@@ -9,7 +9,8 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: '',
+		labeldx: 'Selected',
+		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
     });
