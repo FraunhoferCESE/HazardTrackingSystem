@@ -9,6 +9,7 @@ import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -31,8 +32,8 @@ public class SubsystemServiceImpl implements SubsystemService {
 
 	@Override
 	public Subsystems getSubsystemByID(String id) {
-		final Subsystems[] subsys = ao.find(Subsystems.class, Query.select().where("ID=?", id));
-		return subsys.length > 0 ? subsys[0] : null;
+		final Subsystems[] subsystem = ao.find(Subsystems.class, Query.select().where("ID=?", id));
+		return subsystem.length > 0 ? subsystem[0] : null;
 	}
 
 	@Override
@@ -47,4 +48,16 @@ public class SubsystemServiceImpl implements SubsystemService {
 		return null;
 	}
 
+	@Override
+	public Subsystems[] getSubsystemsByID(int[] id) {
+		if(id != null) {
+			Subsystems[] subsystemArr = new Subsystems[id.length];
+			for(int i = 0; i < id.length; i++) {
+				subsystemArr[i] = ao.get(Subsystems.class, id[i]);
+			}
+			return subsystemArr;
+		}
+		return null;
+	}
+	
 }

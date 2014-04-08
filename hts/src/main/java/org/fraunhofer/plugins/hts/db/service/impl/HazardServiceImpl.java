@@ -90,6 +90,17 @@ public class HazardServiceImpl implements HazardService {
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.save();
+			//TODO CHANGE SO REMOVING IS POSSIBLE AND NO DUPLICATES
+			if(subsystems != null) {
+				for(Subsystems subsystem : subsystems) {
+					try {
+						associateSubsystemToHazard(subsystem, updated);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		return updated;
 	}

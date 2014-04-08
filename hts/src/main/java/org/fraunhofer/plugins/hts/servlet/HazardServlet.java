@@ -101,7 +101,8 @@ public final class HazardServlet extends HttpServlet {
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
-		final String[] subsystems = req.getParameterValues("hazardSubsystem");
+		int[] stringArr = changeStringArray(req.getParameterValues("hazardSubsystem"));
+		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(stringArr);
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
@@ -158,5 +159,16 @@ public final class HazardServlet extends HttpServlet {
 			e.printStackTrace();
 		}	
 		return json;
+	}
+	
+	private int[] changeStringArray(String[] array) {
+		if(array != null) {
+			int intArray[] = new int[array.length];
+			for(int i = 0; i < array.length; i++) {
+				intArray[i] = Integer.parseInt(array[i]);
+			}
+			return intArray;
+		}
+		return null;
 	}
 }
