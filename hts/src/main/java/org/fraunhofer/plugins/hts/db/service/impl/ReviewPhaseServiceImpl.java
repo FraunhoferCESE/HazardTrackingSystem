@@ -69,7 +69,6 @@ public class ReviewPhaseServiceImpl implements ReviewPhaseService {
 	@Override
 	public List<Review_Phases> all() {
 		initializeTable();
-
 		return newArrayList(ao.find(Review_Phases.class));
 	}
 

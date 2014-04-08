@@ -6,6 +6,7 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -94,7 +95,9 @@ public class HazardServiceImpl implements HazardService {
 			if(subsystems != null) {
 				for(Subsystems subsystem : subsystems) {
 					try {
-						associateSubsystemToHazard(subsystem, updated);
+						if(!getAllRegisteredSubsystems(updated).contains(subsystem)) {
+							associateSubsystemToHazard(subsystem, updated);
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -119,4 +122,7 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
+	private List<SubsystemToHazard> getAllRegisteredSubsystems(Hazards hazard) {
+		return newArrayList(ao.get(SubsystemToHazard.class,  hazard.getID()));
+	}
 }
