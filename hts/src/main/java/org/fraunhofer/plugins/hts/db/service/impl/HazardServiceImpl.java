@@ -1,14 +1,11 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.google.common.collect.Lists;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

@@ -13,9 +13,16 @@
 	</div>
 	<div class="field-group">
 		<label for="hazardSubsystem">System/Subsystems</label>
-		<select class="multi-select" size="5" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
+		<select class="multi-select" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
 			#foreach( $subsystem in $subsystems )
-				<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
+				#foreach( $selectedSubsys in $hazard.getSubsystems() )
+					#if( $selectedSubsys.getID() == $subsystem.getID() )
+						<option value="$subsystem.getID()" selected>$!subsystem.getLabel()</option>
+					#else
+						<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
+						#break
+					#end
+				#end
 			#end
 		</select>
 	</div>
