@@ -18,6 +18,7 @@
 				#foreach( $selectedSubsys in $hazard.getSubsystems() )
 					#if( $selectedSubsys.getID() == $subsystem.getID() )
 						<option value="$subsystem.getID()" selected>$!subsystem.getLabel()</option>
+						#break
 					#else
 						<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
 						#break
