@@ -1,6 +1,5 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.java.ao.Query;
@@ -9,7 +8,6 @@ import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -59,5 +57,4 @@ public class SubsystemServiceImpl implements SubsystemService {
 		}
 		return null;
 	}
-	
 }

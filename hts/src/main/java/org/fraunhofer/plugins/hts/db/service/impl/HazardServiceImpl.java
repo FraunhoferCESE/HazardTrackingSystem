@@ -1,12 +1,14 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.google.common.collect.Lists;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -93,11 +95,10 @@ public class HazardServiceImpl implements HazardService {
 			updated.save();
 			//TODO CHANGE SO REMOVING IS POSSIBLE AND NO DUPLICATES
 			if(subsystems != null) {
+				removeSubsystems(updated);
 				for(Subsystems subsystem : subsystems) {
 					try {
-						if(!getAllRegisteredSubsystems(updated).contains(subsystem)) {
-							associateSubsystemToHazard(subsystem, updated);
-						}
+						associateSubsystemToHazard(subsystem, updated);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -122,7 +123,7 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
-	private List<SubsystemToHazard> getAllRegisteredSubsystems(Hazards hazard) {
-		return newArrayList(ao.get(SubsystemToHazard.class,  hazard.getID()));
+	private void removeSubsystems(Hazards hazard) {
+		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
 	}
 }
