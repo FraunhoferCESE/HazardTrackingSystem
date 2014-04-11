@@ -101,6 +101,9 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
+			else {
+				removeSubsystems(updated);
+			}
 		}
 		return updated;
 	}
