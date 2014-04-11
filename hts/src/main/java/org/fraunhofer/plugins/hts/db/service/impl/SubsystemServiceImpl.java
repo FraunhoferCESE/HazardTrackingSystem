@@ -1,6 +1,5 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.java.ao.Query;
@@ -31,8 +30,8 @@ public class SubsystemServiceImpl implements SubsystemService {
 
 	@Override
 	public Subsystems getSubsystemByID(String id) {
-		final Subsystems[] subsys = ao.find(Subsystems.class, Query.select().where("ID=?", id));
-		return subsys.length > 0 ? subsys[0] : null;
+		final Subsystems[] subsystem = ao.find(Subsystems.class, Query.select().where("ID=?", id));
+		return subsystem.length > 0 ? subsystem[0] : null;
 	}
 
 	@Override
@@ -48,15 +47,26 @@ public class SubsystemServiceImpl implements SubsystemService {
 	}
 
 	@Override
-	public Subsystems[] getSubsystemsByID(String[] id) {
-		ArrayList<Subsystems> subsyslist = new ArrayList<Subsystems>();
-		for(String theID : id) {
-			if(theID != null) {
-				subsyslist.add(getSubsystemByID(theID));
+	public Subsystems[] getSubsystemsByID(int[] id) {
+		if(id != null) {
+			Subsystems[] subsystemArr = new Subsystems[id.length];
+			for(int i = 0; i < id.length; i++) {
+				subsystemArr[i] = ao.get(Subsystems.class, id[i]);
 			}
+			return subsystemArr;
 		}
-		//TODO validate
-		return (Subsystems[]) subsyslist.toArray();
+		return null;
 	}
 
+	@Override
+	public List<Subsystems> getRemainingGroups(Subsystems[] currentList) {
+		List<Subsystems> listAll = all();
+		
+		for(Subsystems currRegistered : currentList) {
+			listAll.remove(currRegistered);
+		}
+		
+		return listAll;
+	}
+	
 }

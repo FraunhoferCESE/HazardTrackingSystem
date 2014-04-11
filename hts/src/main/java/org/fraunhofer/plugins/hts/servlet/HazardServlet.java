@@ -75,6 +75,7 @@ public final class HazardServlet extends HttpServlet {
 			context.put("riskCategories", riskCategoryService.all());
 			context.put("riskLikelihoods", riskLikelihoodService.all());
 			context.put("reviewPhases", reviewPhaseService.all());
+			context.put("subsystems", subsystemService.all());
 			context.put("PreparerName", ComponentAccessor.getJiraAuthenticationContext().getUser().getName());
 			context.put("PreparerEmail", ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress());
 
@@ -100,8 +101,8 @@ public final class HazardServlet extends HttpServlet {
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
 		final String payloadName = req.getParameter("hazardPayload");
-		//TODO FIX when multiple select is available
-		final Subsystems[] subsystems = null;//req.getParameterValues("hazardSubsystem");
+		int[] stringArr = changeStringArray(req.getParameterValues("hazardSubsystem"));
+		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(stringArr);
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
@@ -158,5 +159,16 @@ public final class HazardServlet extends HttpServlet {
 			e.printStackTrace();
 		}	
 		return json;
+	}
+	
+	private int[] changeStringArray(String[] array) {
+		if(array != null) {
+			int intArray[] = new int[array.length];
+			for(int i = 0; i < array.length; i++) {
+				intArray[i] = Integer.parseInt(array[i]);
+			}
+			return intArray;
+		}
+		return null;
 	}
 }

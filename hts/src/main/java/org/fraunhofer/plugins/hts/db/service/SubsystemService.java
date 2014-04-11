@@ -9,9 +9,11 @@ public interface SubsystemService {
 
 	Subsystems getSubsystemByID(String id);
 	
-	Subsystems[] getSubsystemsByID(String[] id);
+	Subsystems[] getSubsystemsByID(int[] id);
 
 	Subsystems update(Subsystems subsystemToUpdate, String label);
 
 	List<Subsystems> all();
+
+	List<Subsystems> getRemainingGroups(Subsystems[] currentList);
 }

@@ -13,7 +13,14 @@
 	</div>
 	<div class="field-group">
 		<label for="hazardSubsystem">System/Subsystems</label>
-		<input class="text long-field" name="hazardSubsystem" id="hazardSubsystem" value="$!subsystem"/>
+		<select class="multi-select" size="5" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
+			#foreach( $selectedSubsys in $hazard.getSubsystems() )
+				<option value="$selectedSubsys.getID()" selected>$!selectedSubsys.getLabel()</option>
+			#end
+			#foreach( $subsystem in $subsystems )
+				<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
+			#end
+		</select>
 	</div>
 	<div class="field-group">
 		<label for="hazardPreparer">Preparer</label>
@@ -28,9 +35,9 @@
 		<select class="select" id="hazardReviewPhase" name="hazardReviewPhase">
 			#foreach( $reviewPhase in $reviewPhases )
 				#if($reviewPhase.getID() == $hazard.getReviewPhase().getID())
-					<option value="$reviewPhase.getID()" selected>$reviewPhase.getLabel()</option>
+					<option value="$reviewPhase.getID()" selected>$!reviewPhase.getLabel()</option>
 				#else
-					<option value="$reviewPhase.getID()">$reviewPhase.getLabel()</option>
+					<option value="$reviewPhase.getID()">$!reviewPhase.getLabel()</option>
 				#end
 			#end
 		</select>
@@ -40,9 +47,9 @@
 			<select class="select" id="hazardRisk" name="hazardRisk">
 		    	#foreach( $risk in $riskCategories )
 			    	#if($risk.getID() == $hazard.getRiskCategory().getID())
-						<option value="$risk.getID()" selected>$risk.getValue()</option>
+						<option value="$risk.getID()" selected>$!risk.getValue()</option>
 					#else
-						<option value="$risk.getID()">$risk.getValue()</option>
+						<option value="$risk.getID()">$!risk.getValue()</option>
 					#end
 		    	#end
 			</select>

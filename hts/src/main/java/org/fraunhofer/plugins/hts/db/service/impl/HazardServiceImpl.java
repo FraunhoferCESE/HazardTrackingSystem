@@ -90,6 +90,20 @@ public class HazardServiceImpl implements HazardService {
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.save();
+			if(subsystems != null) {
+				removeSubsystems(updated);
+				for(Subsystems subsystem : subsystems) {
+					try {
+						associateSubsystemToHazard(subsystem, updated);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			else {
+				removeSubsystems(updated);
+			}
 		}
 		return updated;
 	}
@@ -108,4 +122,7 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
+	private void removeSubsystems(Hazards hazard) {
+		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
+	}
 }
