@@ -90,8 +90,8 @@ public class HazardServiceImpl implements HazardService {
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.save();
+			removeSubsystems(updated);
 			if(subsystems != null) {
-				removeSubsystems(updated);
 				for(Subsystems subsystem : subsystems) {
 					try {
 						associateSubsystemToHazard(subsystem, updated);
@@ -100,9 +100,6 @@ public class HazardServiceImpl implements HazardService {
 						e.printStackTrace();
 					}
 				}
-			}
-			else {
-				removeSubsystems(updated);
 			}
 		}
 		return updated;

@@ -36,6 +36,9 @@
 				                        <a href="hazardlist?edit=y&key=$hazardreport.getID()">Edit</a>
 				                    </li>
 				                    <li>
+				                    	<a href="#" class="deleteHazardReport" data-key="$hazardreport.getID()">Delete</a>
+				                    </li>
+				                    <li>
 				                 		<a href="#">PDF</a>
 				                 	</li>
 				                </ul>

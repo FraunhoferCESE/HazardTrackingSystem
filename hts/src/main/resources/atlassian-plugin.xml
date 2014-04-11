@@ -16,6 +16,7 @@
     <resource type="download" name="hts.css" location="/css/hts.css"/>
     <resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css"/>
     <resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js"/>
+    <resource type="download" name="htsHazardReport.js" location="/js/htsHazardReport.js"/>
     <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
     <resource type="download" name="images/" location="/images"/>
     <resource type="download" name="date.js" location="/js/date.js"/>
