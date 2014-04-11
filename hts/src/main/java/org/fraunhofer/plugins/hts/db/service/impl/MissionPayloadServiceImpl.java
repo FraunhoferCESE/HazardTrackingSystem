@@ -46,4 +46,9 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	public List<Mission_Payload> all() {
 		return newArrayList(ao.find(Mission_Payload.class));
 	}
+
+	@Override
+	public void deleteMissionPayload(int id) {
+		ao.delete(ao.find(Mission_Payload.class, Query.select().where("ID=?", id)));
+	}
 }

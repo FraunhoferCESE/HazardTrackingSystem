@@ -134,7 +134,7 @@ public final class HazardServlet extends HttpServlet {
 		
 		res.getWriter().println(json);
 	}
-
+	
 	private Date changeToDate(String date) {
 		if (date != null) {
 			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");

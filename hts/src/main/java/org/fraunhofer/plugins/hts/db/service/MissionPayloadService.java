@@ -13,5 +13,6 @@ public interface MissionPayloadService {
 	Mission_Payload update(Mission_Payload payloadToUpdate, String name);
 
 	List<Mission_Payload> all();
-
+	
+	void deleteMissionPayload(int id);
 }

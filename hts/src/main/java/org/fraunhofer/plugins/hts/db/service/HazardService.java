@@ -28,4 +28,6 @@ public interface HazardService {
 
 	Boolean hazardNumberExists(String hazardNumber);
 	
+	void deleteHazard(int id);
+	
 }

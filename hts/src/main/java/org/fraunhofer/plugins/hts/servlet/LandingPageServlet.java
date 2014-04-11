@@ -1,6 +1,7 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -33,6 +34,7 @@ public class LandingPageServlet extends HttpServlet {
 	private final ReviewPhaseService reviewPhaseService;
 	private final TemplateRenderer templateRenderer;
 	private final SubsystemService subsystemService;
+	private final MissionPayloadService missionPayloadService;
 
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
@@ -45,6 +47,7 @@ public class LandingPageServlet extends HttpServlet {
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.subsystemService = checkNotNull(subsystemService);
+		this.missionPayloadService = checkNotNull(missionPayloadService);
 	}
 
 	@Override
@@ -72,6 +75,24 @@ public class LandingPageServlet extends HttpServlet {
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
+		//TODO SOME VALIDATION THE USER IS ALLOWED TO DELETE 
+		//TODO FIX THE REPLY STRING
+		String respStr = "";
+		
+		if(hazard != null){
+			missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
+			hazardService.deleteHazard(hazard.getID());
+			respStr = "{ \"success\" : \"true\" }";
+		}
+		respStr = "{ \"success\" : \"false\", error: \"Couldn't find issue\"}";
+		res.setContentType("application/json;charset=utf-8");
+	    // Send the raw output string we put together
+	    res.getWriter().write(respStr);
 	}
 
 	private String removeTimeFromDate(Date date) {

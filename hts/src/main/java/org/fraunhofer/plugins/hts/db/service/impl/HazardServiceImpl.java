@@ -90,7 +90,7 @@ public class HazardServiceImpl implements HazardService {
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.save();
-			removeSubsystems(updated);
+			removeSubsystems(updated.getID());
 			if(subsystems != null) {
 				for(Subsystems subsystem : subsystems) {
 					try {
@@ -112,6 +112,12 @@ public class HazardServiceImpl implements HazardService {
 		return hazards.length > 0 ? true : false;
 	}
 
+	@Override
+	public void deleteHazard(int id) {
+		removeSubsystems(id);
+		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
+	}
+
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
 		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
 		subsystemToHazard.setSubsystem(subsystems);
@@ -119,7 +125,8 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
-	private void removeSubsystems(Hazards hazard) {
-		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
+	private void removeSubsystems(int id) {
+		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
+
 }
