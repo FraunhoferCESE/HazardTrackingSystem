@@ -57,4 +57,16 @@ public class SubsystemServiceImpl implements SubsystemService {
 		}
 		return null;
 	}
+
+	@Override
+	public List<Subsystems> getRemainingGroups(Subsystems[] currentList) {
+		List<Subsystems> listAll = all();
+		
+		for(Subsystems currRegistered : currentList) {
+			listAll.remove(currRegistered);
+		}
+		
+		return listAll;
+	}
+	
 }

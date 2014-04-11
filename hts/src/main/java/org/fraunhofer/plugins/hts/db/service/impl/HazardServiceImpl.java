@@ -90,7 +90,6 @@ public class HazardServiceImpl implements HazardService {
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.save();
-			//TODO CHANGE SO REMOVING IS POSSIBLE AND NO DUPLICATES
 			if(subsystems != null) {
 				removeSubsystems(updated);
 				for(Subsystems subsystem : subsystems) {

@@ -58,7 +58,7 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("reviewPhases", reviewPhaseService.all());
-				context.put("subsystems", subsystemService.all());
+				context.put("subsystems", subsystemService.getRemainingGroups(hazard.getSubsystems()));
 				context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
 				res.setContentType("text/html");

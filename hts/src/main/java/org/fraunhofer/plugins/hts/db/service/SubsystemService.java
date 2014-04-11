@@ -14,4 +14,6 @@ public interface SubsystemService {
 	Subsystems update(Subsystems subsystemToUpdate, String label);
 
 	List<Subsystems> all();
+
+	List<Subsystems> getRemainingGroups(Subsystems[] currentList);
 }
