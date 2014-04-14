@@ -12,6 +12,19 @@
 		</header>
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
+        	    <div class="aui-page-panel-nav">
+    				<form>
+    					<div class="field-group">
+							<label for="hazardPayload">Mission/Payload</label>
+							<input class="text long-field" name="hazardPayload" id="hazardPayload" value="$!hazard.getMissionPayload().getName()"/>
+						</div>
+						<div class="buttons-container">
+							<div class="buttons">
+	        					<input class="button submit" type="submit" value="Add" name="PayloadAdd">
+	        				</div>
+	        			</div>
+    				</form>
+    			</div>
 				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
 				#if ( $hazardReports.size() > 0 )
 				<table class="aui" id="hazardTable">
