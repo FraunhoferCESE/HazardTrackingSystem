@@ -212,7 +212,7 @@ AJS.$(document).ready(function(){
 
     function dateLayout() {
     	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
-		var lastEditColumn = $('table#hazard-table tbody td:nth-child(3)');
+		var lastEditColumn = $('table#hazardTable tbody td:nth-child(3)');
 		if(lastEditColumn.length > 0) {
     		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
     	}

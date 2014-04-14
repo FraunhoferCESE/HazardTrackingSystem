@@ -33,6 +33,7 @@ public class LandingPageServlet extends HttpServlet {
 	private final ReviewPhaseService reviewPhaseService;
 	private final TemplateRenderer templateRenderer;
 	private final SubsystemService subsystemService;
+	private final MissionPayloadService missionPayloadService;
 
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
@@ -45,6 +46,7 @@ public class LandingPageServlet extends HttpServlet {
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.subsystemService = checkNotNull(subsystemService);
+		this.missionPayloadService = checkNotNull(missionPayloadService);
 	}
 
 	@Override
@@ -70,6 +72,27 @@ public class LandingPageServlet extends HttpServlet {
 				templateRenderer.render("templates/LandingPage.vm", context, res.getWriter());
 			}
 		} else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
+			//TODO reply string.
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
+		
+			if(hazard != null){
+				missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
+				hazardService.deleteHazard(hazard.getID());
+				respStr = "{ \"success\" : \"true\" }";
+			}
+			res.setContentType("application/json;charset=utf-8");
+			// Send the raw output string 
+			res.getWriter().write(respStr);
+		}
+		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
