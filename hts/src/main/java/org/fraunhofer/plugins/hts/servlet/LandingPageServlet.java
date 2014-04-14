@@ -82,14 +82,13 @@ public class LandingPageServlet extends HttpServlet {
 		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
 		//TODO SOME VALIDATION THE USER IS ALLOWED TO DELETE 
 		//TODO FIX THE REPLY STRING
-		String respStr = "";
+		String respStr = respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
 		
 		if(hazard != null){
 			missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
 			hazardService.deleteHazard(hazard.getID());
 			respStr = "{ \"success\" : \"true\" }";
 		}
-		respStr = "{ \"success\" : \"false\", error: \"Couldn't find issue\"}";
 		res.setContentType("application/json;charset=utf-8");
 	    // Send the raw output string we put together
 	    res.getWriter().write(respStr);

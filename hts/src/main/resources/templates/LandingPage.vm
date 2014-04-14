@@ -14,21 +14,21 @@
         	<div class="aui-page-panel-inner">
 				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
 				#if ( $hazardReports.size() > 0 )
-				<table class="aui" id="hazard-table">
+				<table class="aui" id="hazardTable">
 				    <thead>
 				        <tr id="hazard-row">
-				            <th id="hazard-number">Hazard #</th>
-				            <th id="hazard-title">Title</th>
-				            <th id="hazard-lastEdit">Last revision</th>
+				            <th id="hazardNumber">Hazard #</th>
+				            <th id="hazardTitle">Title</th>
+				            <th id="hazardLastEdit">Last revision</th>
 				            <th id="action">Action</th>
 				        </tr>
 				    </thead>
 				    <tbody>
 				    	#foreach( $hazardreport in $hazardReports )
 				        <tr>
-				            <td headers="hazard-number">$hazardreport.getHazardNum()</td>
-				            <td headers="hazard-title">$hazardreport.getTitle()</td>
-				            <td id="hazard-lastEdit-field" headers="hazard-lastEdit">$hazardreport.getRevisionDate()</td>
+				            <td headers="hazardNumber">$hazardreport.getHazardNum()</td>
+				            <td headers="hazardTitle">$hazardreport.getTitle()</td>
+				            <td id="hazardLastEditField" headers="hazardLastEdit">$hazardreport.getRevisionDate()</td>
 
 				            <td class="action" headers="action">
 				                <ul class="menu">

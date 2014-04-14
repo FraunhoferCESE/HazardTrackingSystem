@@ -9,8 +9,12 @@ AJS.$(document).ready(function() {
 			type: "delete",
 			url: "hazardlist?key=" + self.data("key"),
 			success: function(data) {
+				console.log("success");
 				console.log('dom', self, data);
-				self.parent().parent().remove();
+				self.parent().parent().parent().parent().remove();
+				if($("#hazardTable tr").length === 1) {
+					location.reload();
+				}
 			},
 			error: function() {
 				console.log('error', arguments);
