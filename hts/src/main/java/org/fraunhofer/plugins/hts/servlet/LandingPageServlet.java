@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -79,19 +78,23 @@ public class LandingPageServlet extends HttpServlet {
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
-		//TODO SOME VALIDATION THE USER IS ALLOWED TO DELETE 
-		//TODO FIX THE REPLY STRING
-		String respStr = respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
+			//TODO reply string.
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
 		
-		if(hazard != null){
-			missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
-			hazardService.deleteHazard(hazard.getID());
-			respStr = "{ \"success\" : \"true\" }";
+			if(hazard != null){
+				missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
+				hazardService.deleteHazard(hazard.getID());
+				respStr = "{ \"success\" : \"true\" }";
+			}
+			res.setContentType("application/json;charset=utf-8");
+			// Send the raw output string 
+			res.getWriter().write(respStr);
 		}
-		res.setContentType("application/json;charset=utf-8");
-	    // Send the raw output string we put together
-	    res.getWriter().write(respStr);
+		else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
 	}
 
 	private String removeTimeFromDate(Date date) {
