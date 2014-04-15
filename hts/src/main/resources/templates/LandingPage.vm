@@ -13,14 +13,12 @@
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
         	    <div class="aui-page-panel-nav">
-    				<form>
+    				<form class="PayloadForm">
     					<div class="field-group">
 							<label for="hazardPayload">Mission/Payload</label>
-							<input class="text long-field" name="hazardPayload" id="hazardPayload" value="$!hazard.getMissionPayload().getName()"/>
-						</div>
-						<div class="buttons-container">
-							<div class="buttons">
-	        					<input class="button submit" type="submit" value="Add" name="PayloadAdd">
+							<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd"/>
+							<div>
+	        					<input class="add submit" type="submit" value="Add" name="PayloadAdd">
 	        				</div>
 	        			</div>
     				</form>
