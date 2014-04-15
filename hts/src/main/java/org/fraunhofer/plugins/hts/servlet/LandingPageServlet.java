@@ -77,6 +77,12 @@ public class LandingPageServlet extends HttpServlet {
 	}
 	
 	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		final String payload = req.getParameter("hazardPayloadAdd");
+		missionPayloadService.add(payload);
+	}
+	
+	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));

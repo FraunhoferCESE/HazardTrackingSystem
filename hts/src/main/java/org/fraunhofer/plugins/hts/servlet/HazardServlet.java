@@ -113,8 +113,10 @@ public final class HazardServlet extends HttpServlet {
 			String id = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
 					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			Mission_Payload payloadToUpdate = updated.getMissionPayload();
-			missionPayloadService.update(payloadToUpdate, payloadName);
+			
+			//TODO FIX THIS WHEN MISSION PAYLOAD IS READY
+			//Mission_Payload payloadToUpdate = updated.getMissionPayload();
+			//missionPayloadService.update(payloadToUpdate, payloadName);
 			
 			createJson(json, "hazardID", updated.getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());		
@@ -122,7 +124,7 @@ public final class HazardServlet extends HttpServlet {
 		else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			missionPayloadService.add(hazard, payloadName);
+			//TODO ADD missionPayload when hazard is created;
 			
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "hazardNumber", hazard.getHazardNum());

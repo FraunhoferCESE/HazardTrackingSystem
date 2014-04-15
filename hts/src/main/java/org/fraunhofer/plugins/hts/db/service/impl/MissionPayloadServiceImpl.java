@@ -21,9 +21,8 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	}
 
 	@Override
-	public Mission_Payload add(Hazards hazard, String name) {
+	public Mission_Payload add(String name) {
 		final Mission_Payload missionPayload = ao.create(Mission_Payload.class);
-		missionPayload.setHazard(hazard);
 		missionPayload.setName(name);
 		missionPayload.save();
 		return missionPayload;
@@ -50,5 +49,11 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	@Override
 	public void deleteMissionPayload(int id) {
 		ao.delete(ao.find(Mission_Payload.class, Query.select().where("ID=?", id)));
+	}
+
+	@Override
+	public Mission_Payload LinkHazardToPayload(Hazards hazard, Mission_Payload missionPayload) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

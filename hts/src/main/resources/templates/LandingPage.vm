@@ -13,7 +13,7 @@
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
         	    <div class="aui-page-panel-nav">
-    				<form class="PayloadForm">
+    				<form class="PayloadForm" method="post" action="hazardlist" class="aui" id="PayloadForm">
     					<div class="field-group">
 							<label for="hazardPayload">Mission/Payload</label>
 							<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd"/>
