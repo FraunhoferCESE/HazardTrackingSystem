@@ -80,6 +80,7 @@ public class LandingPageServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		final String payload = req.getParameter("hazardPayloadAdd");
 		missionPayloadService.add(payload);
+		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
 	
 	@Override
