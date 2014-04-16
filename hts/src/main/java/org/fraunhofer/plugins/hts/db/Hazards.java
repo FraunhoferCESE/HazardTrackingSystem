@@ -4,7 +4,6 @@ import java.util.Date;
 
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
-import net.java.ao.OneToOne;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.Unique;
@@ -75,10 +74,12 @@ public interface Hazards extends Entity {
 
 	Review_Phases getReviewPhase();
 	
+	
+	void setMissionPayload(Mission_Payload missionPayload);
+	
+	Mission_Payload getMissionPayload();
+	
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();
 	
-	@OneToOne
-	Mission_Payload getMissionPayload();
-
 }

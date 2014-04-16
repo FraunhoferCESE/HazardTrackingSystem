@@ -75,6 +75,7 @@ public final class HazardServlet extends HttpServlet {
 			context.put("riskCategories", riskCategoryService.all());
 			context.put("riskLikelihoods", riskLikelihoodService.all());
 			context.put("reviewPhases", reviewPhaseService.all());
+			context.put("payloads", missionPayloadService.all());
 			context.put("subsystems", subsystemService.all());
 			context.put("PreparerName", ComponentAccessor.getJiraAuthenticationContext().getUser().getName());
 			context.put("PreparerEmail", ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress());
@@ -100,7 +101,7 @@ public final class HazardServlet extends HttpServlet {
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
 		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
 		final Date revisionDate = new Date();
-		final String payloadName = req.getParameter("hazardPayload");
+		final Mission_Payload payloadName = missionPayloadService.getMissionPayloadByID(req.getParameter("hazardPayload"));
 		int[] stringArr = changeStringArray(req.getParameterValues("hazardSubsystem"));
 		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(stringArr);
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
@@ -112,19 +113,14 @@ public final class HazardServlet extends HttpServlet {
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			
-			//TODO FIX THIS WHEN MISSION PAYLOAD IS READY
-			//Mission_Payload payloadToUpdate = updated.getMissionPayload();
-			//missionPayloadService.update(payloadToUpdate, payloadName);
+					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, payloadName);
 			
 			createJson(json, "hazardID", updated.getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());		
 		} 
 		else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
-					revisionDate, risk, likelihood, group, reviewPhase, subsystems);
-			//TODO ADD missionPayload when hazard is created;
+					revisionDate, risk, likelihood, group, reviewPhase, subsystems, payloadName);
 			
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "hazardNumber", hazard.getHazardNum());
