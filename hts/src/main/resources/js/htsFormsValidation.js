@@ -53,6 +53,27 @@ AJS.$(document).ready(function(){
 		return response;
 	}, "Hazard # is in use.");
 
+	$.validator.addMethod("uniquePayload", function(value, element) {
+		var response = false;
+		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist" + value;
+		$.ajax({
+			type:"GET",
+			async: false,
+			url: actionUrl,
+			success: function(msg) {
+				response = true;
+			}
+		});
+		if(!response) {
+			$(element).css("color", "#D04437");
+		}
+		else {
+			$(element).css("color", "");
+		}
+
+		return response;
+	}, "Mission/Payload already in use.");
+
 	//Custom method to check if completion date is set to precede initation date, which should not be allowed
 	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
 		var initDate = $("#hazardInitation").val();
@@ -133,6 +154,31 @@ AJS.$(document).ready(function(){
 	    	});
 	    }
 	});
+
+	$("#payloadForm").validate({
+		rules: {
+			hazardPayloadAdd: { 
+				maxlength: 255,
+				uniquePayload: true
+			}
+	    },
+
+	    //Custom class so error messages are not styled with JIRA's css error style.
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+
+	    submitHandler: function(form) {
+	    	console.log(form);
+	    	$(form).ajaxSubmit(function(data) {
+	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    		$("#payloadForm").removeDirtyWarning();
+	    	});
+	    }
+	});
+
 
 
 	/**********************************************************

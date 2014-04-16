@@ -15,17 +15,17 @@
 	margin-left: 145px;
 }
 
-.PayloadForm {
+.payloadForm {
 	margin-top: 2px; 
 }
 
-form.PayloadForm .field-group > label {
+form.payloadForm .field-group > label {
 	color: #707070;   
 	word-wrap: break-word;
 	margin-left: 2px;
 }
 
-form.PayloadForm .text {
+form.payloadForm .text {
 	border: 1px solid #ccc;   
     border-radius: 3.01px;   
     box-shadow: inset 0 1px 3px #ccc;   
@@ -43,7 +43,7 @@ form.PayloadForm .text {
 
 }
 
-form.PayloadForm .add {
+form.payloadForm .add {
     background: linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
     background: -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
 	background: -ms-linear-gradient(top, #fff 0%, #f2f2f2 100%);
@@ -67,13 +67,13 @@ form.PayloadForm .add {
     margin-right: -14px;
 }
 
-form.PayloadForm .add:hover, form.PayloadForm .add:focus {
+form.payloadForm .add:hover, form.payloadForm .add:focus {
 	background: linear-gradient(to bottom, #fff 0%, #f7f7f7 100%);
 	border-color: #999;
 	color: #000;
 }
 
-form.PayloadForm .add:active {
+form.payloadForm .add:active {
 	background-color: #f2f2f2;
 	box-shadow: inset 0 3px 6px rgba(0,0,0,.1);
 }
