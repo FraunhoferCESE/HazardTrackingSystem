@@ -2,9 +2,9 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 
 import java.util.List;
 
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
@@ -22,8 +22,7 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 
 	@Override
 	public Mission_Payload add(String name) {
-		final Mission_Payload missionPayload = ao.create(Mission_Payload.class);
-		missionPayload.setName(name);
+		final Mission_Payload missionPayload = ao.create(Mission_Payload.class, new DBParam("NAME", name));
 		missionPayload.save();
 		return missionPayload;
 	}
@@ -52,8 +51,8 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	}
 
 	@Override
-	public Mission_Payload LinkHazardToPayload(Hazards hazard, Mission_Payload missionPayload) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean payloadNameExists(String payloadName) {
+		Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", payloadName));
+		return missionPayload.length > 0 ? true : false;
 	}
 }
