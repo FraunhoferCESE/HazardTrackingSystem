@@ -55,7 +55,7 @@ AJS.$(document).ready(function(){
 
 	$.validator.addMethod("uniquePayload", function(value, element) {
 		var response = false;
-		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist" + value;
+		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
 		$.ajax({
 			type:"GET",
 			async: false,
@@ -171,10 +171,10 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	console.log(form);
 	    	$(form).ajaxSubmit(function(data) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#payloadForm").removeDirtyWarning();
+	    		form.reset();
 	    	});
 	    }
 	});
