@@ -7,10 +7,72 @@
 .validationError {
 	color: #D04437;
 	display: block;
-	margin: 5px 0 0 0;
 }
 
 .successMsg {
 	width: 15%;
 	margin-left: 145px;
+}
+
+.payloadForm {
+	margin-top: 2px; 
+}
+
+form.payloadForm .field-group > label {
+	color: #707070;   
+	word-wrap: break-word;
+	margin-left: 2px;
+}
+
+form.payloadForm .text {
+	border: 1px solid #ccc;   
+    border-radius: 3.01px;   
+    box-shadow: inset 0 1px 3px #ccc;   
+    box-sizing: border-box;   
+    color: #333;   font-size: inherit;   
+    vertical-align: inherit;      
+    padding: 3px 3px;   
+    height: 2.11em;
+    line-height:  1.4285714285714;
+    overflow: hidden;
+    padding-right: .5em;
+    float: left;
+    max-width: 500px;
+    display: inline
+
+}
+
+form.payloadForm .add {
+    background: linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
+    background: -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+	background: -ms-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+	background: -o-linear-gradient(top, #fff 0%, #f2f2f2 100%);      
+    border: 1px solid #ccc;      
+    border-radius: 3.01px;      
+    box-sizing: border-box;      
+    color: #333;            
+    font-variant: normal;      
+    font-weight: normal;            
+    line-height:  1.4285714285714;      
+    height: 2.228571428571em;
+    margin: 0px;      
+    padding: 3px 10px;      
+    text-decoration: none;      
+    text-shadow: 0 1px 0 white;      
+    vertical-align: inherit;      
+    white-space: nowrap;
+    position: relative;
+    float: right;
+    margin-right: -14px;
+}
+
+form.payloadForm .add:hover, form.payloadForm .add:focus {
+	background: linear-gradient(to bottom, #fff 0%, #f7f7f7 100%);
+	border-color: #999;
+	color: #000;
+}
+
+form.payloadForm .add:active {
+	background-color: #f2f2f2;
+	box-shadow: inset 0 3px 6px rgba(0,0,0,.1);
 }

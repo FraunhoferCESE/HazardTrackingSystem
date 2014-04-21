@@ -7,6 +7,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -15,9 +17,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Path("/report")
 public class HazardResource {
 	private final HazardService hazardService;
+	private final MissionPayloadService missionPayloadService;
 
-	public HazardResource(HazardService hazardService) {
+	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService) {
 		this.hazardService = checkNotNull(hazardService);
+		this.missionPayloadService = checkNotNull(missionPayloadService);
 	}
 
 	@GET
@@ -30,6 +34,20 @@ public class HazardResource {
 		} else {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 					.entity(new HazardResourceModel("Hazard # exists")).build();
+		}
+
+	}
+	
+	@GET
+	@Path("hazardlist/{payloadName}")
+	@AnonymousAllowed
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response checkPayloadName(@PathParam("payloadName") String payloadName) {
+		if (!missionPayloadService.payloadNameExists(payloadName)) {
+			return Response.ok(new HazardResourceModel("Payload name is available")).build();
+		} else {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(new HazardResourceModel("Payload name exists")).build();
 		}
 
 	}

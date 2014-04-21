@@ -2,9 +2,9 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 
 import java.util.List;
 
+import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
@@ -21,10 +21,8 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	}
 
 	@Override
-	public Mission_Payload add(Hazards hazard, String name) {
-		final Mission_Payload missionPayload = ao.create(Mission_Payload.class);
-		missionPayload.setHazard(hazard);
-		missionPayload.setName(name);
+	public Mission_Payload add(String name) {
+		final Mission_Payload missionPayload = ao.create(Mission_Payload.class, new DBParam("NAME", name));
 		missionPayload.save();
 		return missionPayload;
 	}
@@ -50,5 +48,11 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	@Override
 	public void deleteMissionPayload(int id) {
 		ao.delete(ao.find(Mission_Payload.class, Query.select().where("ID=?", id)));
+	}
+
+	@Override
+	public Boolean payloadNameExists(String payloadName) {
+		Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", payloadName));
+		return missionPayload.length > 0 ? true : false;
 	}
 }

@@ -61,6 +61,7 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("reviewPhases", reviewPhaseService.all());
 				context.put("subsystems", subsystemService.getRemainingGroups(hazard.getSubsystems()));
+				context.put("payloads", missionPayloadService.all());
 				context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
 				res.setContentType("text/html");
@@ -77,6 +78,13 @@ public class LandingPageServlet extends HttpServlet {
 	}
 	
 	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		final String payload = req.getParameter("hazardPayloadAdd");
+		missionPayloadService.add(payload);
+		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
+	}
+	
+	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
@@ -84,7 +92,6 @@ public class LandingPageServlet extends HttpServlet {
 			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
 		
 			if(hazard != null){
-				missionPayloadService.deleteMissionPayload(hazard.getMissionPayload().getID());
 				hazardService.deleteHazard(hazard.getID());
 				respStr = "{ \"success\" : \"true\" }";
 			}

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
@@ -32,7 +33,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -45,6 +46,7 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setHazardGroup(group);
 		hazard.setReviewPhase(reviewPhase);
+		hazard.setMissionPayload(missionPayload);
 		hazard.save();
 		if(subsystems != null) {
 			for(Subsystems subsystem : subsystems) {
@@ -74,7 +76,7 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add init date and completion and error handling
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems) {
+			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -89,6 +91,7 @@ public class HazardServiceImpl implements HazardService {
 			updated.setRiskLikelihood(likelihood);
 			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
+			updated.setMissionPayload(missionPayload);
 			updated.save();
 			removeSubsystems(updated.getID());
 			if(subsystems != null) {

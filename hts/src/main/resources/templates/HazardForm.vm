@@ -9,7 +9,15 @@
 	</div>
 	<div class="field-group">
 		<label for="hazardPayload">Mission/Payload</label>
-		<input class="text long-field" name="hazardPayload" id="hazardPayload" value="$!hazard.getMissionPayload().getName()"/>
+		<select class="select" id="hazardPayload" name="hazardPayload">
+		   	#foreach( $payload in $payloads )
+		    	#if($payload.getID() == $hazard.getMissionPayload().getID())
+					<option value="$payload.getID()" selected>$!payload.getName()</option>
+				#else
+					<option value="$payload.getID()">$!payload.getName()</option>
+				#end
+		   	#end
+		</select>
 	</div>
 	<div class="field-group">
 		<label for="hazardSubsystem">System/Subsystems</label>
