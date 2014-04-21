@@ -7,8 +7,6 @@
 .validationError {
 	color: #D04437;
 	display: block;
-	margin: 5px 0 0 0;
-	height: 0;
 }
 
 .successMsg {

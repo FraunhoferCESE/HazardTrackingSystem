@@ -133,6 +133,7 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
+	    	$(error).css({"margin-top":'5px'});
 	    },
 
 	    submitHandler: function(form) {
@@ -168,6 +169,7 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
+	    	$(error).css({"height":0});
 	    },
 
 	    submitHandler: function(form) {
