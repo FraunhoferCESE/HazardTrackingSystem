@@ -69,6 +69,7 @@ public class LandingPageServlet extends HttpServlet {
 			} else {
 				Map<String, Object> context = Maps.newHashMap();
 				context.put("hazardReports", hazardService.all());
+				context.put("payloads", missionPayloadService.all());
 				res.setContentType("text/html");
 				templateRenderer.render("templates/LandingPage.vm", context, res.getWriter());
 			}

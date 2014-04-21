@@ -13,8 +13,8 @@
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
         	    <div class="aui-page-panel-nav">
-    				<form class="payloadForm" method="post" action="hazardlist" class="aui" id="payloadForm">
-    					<div class="field-group">
+        	    	<form class="payloadForm" method="post" action="hazardlist" class="aui" id="payloadForm">
+						<div class="field-group">
 							<label for="hazardPayload">Mission/Payload</label>
 							<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd"/>
 							<div>
@@ -22,6 +22,16 @@
 	        				</div>
 	        			</div>
     				</form>
+        	    	<nav class="aui-navgroup aui-navgroup-vertical payloads">
+        	    		<div class="aui-nav-heading">List of Mission/Payloads</div>
+        	    		<div class="aui-navgroup-inner">
+    						<ul class="aui-nav">
+    							#foreach( $payload in $payloads )
+    								<li><a href="#">$!payload.getName()</a></li>
+    							#end
+    						</ul>
+    					</div>
+    				</nav>
     			</div>
 				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
 				#if ( $hazardReports.size() > 0 )
