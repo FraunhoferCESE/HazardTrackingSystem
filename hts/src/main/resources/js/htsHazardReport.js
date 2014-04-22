@@ -43,8 +43,11 @@ AJS.$(document).ready(function() {
 						console.log('error', arguments);
 					}
 				});
-			}
+			}.0
+
 			return false;
 		});
 	});
+
+
 });

@@ -132,9 +132,8 @@ public class HazardServiceImpl implements HazardService {
 	}
 
 	@Override
-	public Hazards[] getHazardsByMissionPayload(int id) {
-		Hazards[] hazardList = ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id));
-		return hazardList.length > 0 ? hazardList : null;
+	public List<Hazards> getHazardsByMissionPayload(String id) {
+		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
 	}
 
 }

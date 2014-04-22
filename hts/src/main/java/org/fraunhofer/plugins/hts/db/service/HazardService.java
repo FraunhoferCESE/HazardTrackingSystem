@@ -29,7 +29,7 @@ public interface HazardService {
 
 	Boolean hazardNumberExists(String hazardNumber);
 	
-	Hazards[] getHazardsByMissionPayload(int id);
+	List<Hazards> getHazardsByMissionPayload(String string);
 	
 	void deleteHazard(int id);
 	
