@@ -40,6 +40,7 @@
 				        <tr id="hazard-row">
 				            <th id="hazardNumber">Hazard #</th>
 				            <th id="hazardTitle">Title</th>
+				            <th id="hazardMissionPayload">Mission/Payload</th>
 				            <th id="hazardLastEdit">Last revision</th>
 				            <th id="action">Action</th>
 				        </tr>
@@ -49,6 +50,7 @@
 				        <tr>
 				            <td headers="hazardNumber">$hazardreport.getHazardNum()</td>
 				            <td headers="hazardTitle">$hazardreport.getTitle()</td>
+				            <td headers="hazardMissionPayload">$hazardreport.getMissionPayload().getName()</td>
 				            <td id="hazardLastEditField" headers="hazardLastEdit">$hazardreport.getRevisionDate()</td>
 
 				            <td class="action" headers="action">
@@ -59,9 +61,6 @@
 				                    <li>
 				                    	<a href="#" class="deleteHazardReport" data-key="$hazardreport.getID()">Delete</a>
 				                    </li>
-				                    <li>
-				                 		<a href="#">PDF</a>
-				                 	</li>
 				                </ul>
 				            </td>
 				        </tr>
