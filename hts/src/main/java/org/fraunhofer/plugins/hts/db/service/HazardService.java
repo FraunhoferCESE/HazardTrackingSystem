@@ -29,6 +29,8 @@ public interface HazardService {
 
 	Boolean hazardNumberExists(String hazardNumber);
 	
+	Hazards[] getHazardsByMissionPayload(int id);
+	
 	void deleteHazard(int id);
 	
 }

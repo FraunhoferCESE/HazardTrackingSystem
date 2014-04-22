@@ -10,6 +10,8 @@ public interface MissionPayloadService {
 	Mission_Payload getMissionPayloadByID(String id);
 
 	Mission_Payload update(Mission_Payload payloadToUpdate, String name);
+	
+	Mission_Payload getMissionPayloadByName(String name);
 
 	List<Mission_Payload> all();
 	
