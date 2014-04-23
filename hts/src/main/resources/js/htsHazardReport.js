@@ -57,8 +57,15 @@ AJS.$(document).ready(function() {
 			url: "hazardlist?key=" + self.data("key"),
 			success: function(html) {
 				var hazardTableHTML = $(html).find("#hazardTable");
-				$("#hazardTableHolder").html(hazardTableHTML);
-				dateLayout();
+				if(hazardTableHTML.length > 0) {
+					$("#hazardTableHolder").html(hazardTableHTML);
+					dateLayout();
+				}
+				else {
+					var noHazardReportCreated = $(html).find(".noHazard");
+					console.log(noHazardReportCreated);
+					$("#hazardTableHolder").html(noHazardReportCreated);
+				}
 			}
 		});
 	});
