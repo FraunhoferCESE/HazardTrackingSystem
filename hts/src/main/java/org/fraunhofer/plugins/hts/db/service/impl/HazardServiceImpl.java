@@ -110,7 +110,6 @@ public class HazardServiceImpl implements HazardService {
 
 	@Override
 	public Boolean hazardNumberExists(String hazardNumber) {
-		// TODO Auto-generated method stub
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
 		return hazards.length > 0 ? true : false;
 	}
@@ -130,6 +129,11 @@ public class HazardServiceImpl implements HazardService {
 	
 	private void removeSubsystems(int id) {
 		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", id)));
+	}
+
+	@Override
+	public List<Hazards> getHazardsByMissionPayload(String id) {
+		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
 	}
 
 }

@@ -1,5 +1,6 @@
 AJS.$(document).ready(function() {
 	var $ = AJS.$;
+	dateLayout();
 
 	function confirmation() {
 		var defer = $.Deferred();
@@ -31,7 +32,7 @@ AJS.$(document).ready(function() {
 		confirmation().then(function(ans) {
 			if(ans){
 				$.ajax({
-					type: "delete",
+					type: "DELETE",
 					url: "hazardlist?key=" + self.data("key"),
 					success: function(data) {
 						self.parent().parent().parent().parent().remove();
@@ -44,7 +45,31 @@ AJS.$(document).ready(function() {
 					}
 				});
 			}
+
 			return false;
 		});
 	});
+
+	$(".getReports").click(function() {
+		var self = $(this);
+		$.ajax({
+			type: "GET",
+			url: "hazardlist?key=" + self.data("key"),
+			success: function(html) {
+				var hazardTableHTML = $(html).find("#hazardTable");
+				$("#hazardTableHolder").html(hazardTableHTML);
+				dateLayout();
+			}
+		});
+	});
+
+
+	function dateLayout() {
+    	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
+		var lastEditColumn = $('table#hazardTable tbody td:nth-child(4)');
+		if(lastEditColumn.length > 0) {
+    		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
+    	}
+    }
+
 });

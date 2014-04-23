@@ -52,7 +52,13 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 
 	@Override
 	public Boolean payloadNameExists(String payloadName) {
-		Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", payloadName));
+		final Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", payloadName));
 		return missionPayload.length > 0 ? true : false;
+	}
+
+	@Override
+	public Mission_Payload getMissionPayloadByName(String name) {
+		final Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", name));
+		return missionPayload.length > 0 ? missionPayload[0] : null;
 	}
 }

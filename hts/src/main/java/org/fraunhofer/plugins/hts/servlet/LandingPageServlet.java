@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -68,7 +69,14 @@ public class LandingPageServlet extends HttpServlet {
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
 			} else {
 				Map<String, Object> context = Maps.newHashMap();
-				context.put("hazardReports", hazardService.all());
+				if(!(req.getParameter("key") == null)) {
+					List<Hazards> hazards = hazardService.getHazardsByMissionPayload(req.getParameter("key"));
+					context.put("hazardReports", hazards);
+				}
+				else {
+					context.put("hazardReports", hazardService.all());
+				}
+				context.put("payloads", missionPayloadService.all());
 				res.setContentType("text/html");
 				templateRenderer.render("templates/LandingPage.vm", context, res.getWriter());
 			}
