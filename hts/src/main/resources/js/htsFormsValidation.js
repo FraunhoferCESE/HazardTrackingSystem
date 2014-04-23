@@ -137,19 +137,24 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit(function(data) {
-	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    		$("#hazardForm").removeDirtyWarning();
-	    		successfulSave(form);
-	    		//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
-	    		var data = $.parseJSON(data);
-	    		if(data.redirect) {
-	    			window.location.replace(data.redirect);
-	    		}
-	    		else {
-	    			var hazardNumber = data.hazardNumber;
-		    		var hazardID = data.hazardID;
-	    			addOrUpdateHazardNum(form, hazardNumber, hazardID);
+	    	$(form).ajaxSubmit({
+	    		success: function(data) {
+	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    			$("#hazardForm").removeDirtyWarning();
+	    			successfulSave(form);
+	    			//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
+	    			var data = $.parseJSON(data);
+	    			if(data.redirect) {
+	    				window.location.replace(data.redirect);
+	    			}
+	    			else {
+	    				var hazardNumber = data.hazardNumber;
+		    			var hazardID = data.hazardID;
+	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
+	    			}	
+	    		},
+	    		error: function(error) {
+	    			console.log(error);
 	    		}
 	    	});
 	    }
@@ -172,13 +177,16 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit(function(data) {
-	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    		console.log(form);
-//	    		console.log(data);
-	    		$("#payloadForm").removeDirtyWarning();
-	    		JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully", {closeable: true});
-	    		form.reset();
+	    	$(form).ajaxSubmit({
+	    		success: function(data) {
+	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    			$("#payloadForm").removeDirtyWarning();
+	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully", {closeable: true});
+	    			form.reset();
+	    		},
+	    		error: function(error) {
+	    			console.log(error);
+	    		}
 	    	});
 	    }
 	});
