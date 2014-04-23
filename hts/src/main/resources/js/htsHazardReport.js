@@ -1,5 +1,6 @@
 AJS.$(document).ready(function() {
 	var $ = AJS.$;
+
 	dateLayout();
 
 	function confirmation() {
@@ -45,7 +46,6 @@ AJS.$(document).ready(function() {
 					}
 				});
 			}
-
 			return false;
 		});
 	});
@@ -57,8 +57,15 @@ AJS.$(document).ready(function() {
 			url: "hazardlist?key=" + self.data("key"),
 			success: function(html) {
 				var hazardTableHTML = $(html).find("#hazardTable");
-				$("#hazardTableHolder").html(hazardTableHTML);
-				dateLayout();
+				if(hazardTableHTML.length > 0) {
+					$("#hazardTableHolder").html(hazardTableHTML);
+					dateLayout();
+				}
+				else {
+					var noHazardReportCreated = $(html).find(".noHazard");
+					console.log(noHazardReportCreated);
+					$("#hazardTableHolder").html(noHazardReportCreated);
+				}
 			}
 		});
 	});
@@ -70,6 +77,9 @@ AJS.$(document).ready(function() {
 		if(lastEditColumn.length > 0) {
     		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
     	}
+    	if(!$.trim($(".noHazard").html())) {
+    		console.log($(".noHazard"));
+			$(".noHazard").remove();
+		}
     }
-
 });
