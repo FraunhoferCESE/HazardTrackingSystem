@@ -57,15 +57,12 @@
 					    <div class="field-group">
 						    <label for="control-group">Control group</label>
 						    <select class="select" id="control-group" name="control-group">
-						        <option>Three Independent Inhibits</option>
-						        <option>Two steo commanding</option>
+						        <option>Hardware certification</option>
+						        <option>Independent inhibits</option>
+						        <option>Multi-step commanding</option>
+						        <option>Software FDIR</option>
+						        <option>Procedure</option>
 						        <option>Training</option>
-						        <optgroup label="Group 1">
-						            <option>Option one</option>
-						            <option>Option two</option>
-						        </optgroup>
-						        <option>Option 3</option>
-						        <option>Option 4</option>
 						    </select>
 						</div>
 					    <div class="field-group">
@@ -98,15 +95,10 @@
 						<div class="field-group">
 						    <label for="verification-type">Verification group</label>
 						    <select class="select" id="verification-type" name="verification-type">
-								<option>Select</option>
-						        <option>Option 1</option>
-						        <option>Option 2</option>
-						        <optgroup label="Group 1">
-						            <option>Option one</option>
-						            <option>Option two</option>
-						        </optgroup>
-						        <option>Option 3</option>
-						        <option>Option 4</option>
+								<option>Certification</option>
+						        <option>Demonstration/Witness</option>
+						        <option>Qualification test</option>
+						        <option>Simulation and analysis</option>
 						    </select>
 						</div>
 						<div class="field-group">
