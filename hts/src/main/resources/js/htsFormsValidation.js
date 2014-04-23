@@ -2,7 +2,6 @@ AJS.$(document).ready(function(){
 	var $ = AJS.$
 	var baseUrl = AJS.params.baseURL;
 
-	dateLayout();
     editForm();
 
     $("#hazardSubsystem").multiselect2side({
@@ -181,8 +180,6 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
-
-
 	/**********************************************************
 	*                                                         *
 	*               Helper functions below.                   *
@@ -256,14 +253,6 @@ AJS.$(document).ready(function(){
         input.id = id;
         input.value = value;
         form.appendChild(input);
-    }
-
-    function dateLayout() {
-    	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
-		var lastEditColumn = $('table#hazardTable tbody td:nth-child(4)');
-		if(lastEditColumn.length > 0) {
-    		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
-    	}
     }
 
 	//Add fields to the edit form is opened for the first time

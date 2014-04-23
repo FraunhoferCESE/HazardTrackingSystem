@@ -27,7 +27,8 @@
         	    		<div class="aui-navgroup-inner">
     						<ul class="aui-nav">
     							#foreach( $payload in $payloads )
-    								<li><a class="getReports" href="hazardlist?key=$payload.getID()">$!payload.getName()</a></li>
+    								<!--li><a class="getReports" href="hazardlist?key=$payload.getID()">$!payload.getName()</a></li-->
+    								<li><a class="getReports" data-key="$payload.getID()">$!payload.getName()</a></li>
     							#end
     						</ul>
     					</div>
@@ -35,38 +36,40 @@
     			</div>
 				<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
 				#if ( $hazardReports.size() > 0 )
-				<table class="aui" id="hazardTable">
-				    <thead>
-				        <tr id="hazard-row">
-				            <th id="hazardNumber">Hazard #</th>
-				            <th id="hazardTitle">Title</th>
-				            <th id="hazardMissionPayload">Mission/Payload</th>
-				            <th id="hazardLastEdit">Last revision</th>
-				            <th id="action">Action</th>
-				        </tr>
-				    </thead>
-				    <tbody>
-				    	#foreach( $hazardreport in $hazardReports )
-				        <tr>
-				            <td headers="hazardNumber">$hazardreport.getHazardNum()</td>
-				            <td headers="hazardTitle">$hazardreport.getTitle()</td>
-				            <td headers="hazardMissionPayload">$hazardreport.getMissionPayload().getName()</td>
-				            <td id="hazardLastEditField" headers="hazardLastEdit">$hazardreport.getRevisionDate()</td>
+				<div id="hazardTableHolder">
+					<table class="aui" id="hazardTable">
+					    <thead>
+					        <tr id="hazard-row">
+					            <th id="hazardNumber">Hazard #</th>
+					            <th id="hazardTitle">Title</th>
+					            <th id="hazardMissionPayload">Mission/Payload</th>
+					            <th id="hazardLastEdit">Last revision</th>
+					            <th id="action">Action</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    	#foreach( $hazardreport in $hazardReports )
+					        <tr>
+					            <td headers="hazardNumber">$hazardreport.getHazardNum()</td>
+					            <td headers="hazardTitle">$hazardreport.getTitle()</td>
+					            <td headers="hazardMissionPayload">$hazardreport.getMissionPayload().getName()</td>
+					            <td id="hazardLastEditField" headers="hazardLastEdit">$hazardreport.getRevisionDate()</td>
 
-				            <td class="action" headers="action">
-				                <ul class="menu">
-				                    <li>
-				                        <a href="hazardlist?edit=y&key=$hazardreport.getID()">Edit</a>
-				                    </li>
-				                    <li>
-				                    	<a href="#" class="deleteHazardReport" data-key="$hazardreport.getID()">Delete</a>
-				                    </li>
-				                </ul>
-				            </td>
-				        </tr>
-				        #end
-				    </tbody>
-				</table>
+					            <td class="action" headers="action">
+					                <ul class="menu">
+					                    <li>
+					                        <a href="hazardlist?edit=y&key=$hazardreport.getID()">Edit</a>
+					                    </li>
+					                    <li>
+					                    	<a href="#" class="deleteHazardReport" data-key="$hazardreport.getID()">Delete</a>
+					                    </li>
+					                </ul>
+					            </td>
+					        </tr>
+					        #end
+					    </tbody>
+					</table>
+				</div>
 				#end
 			</div>
 		</div>

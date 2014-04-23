@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
