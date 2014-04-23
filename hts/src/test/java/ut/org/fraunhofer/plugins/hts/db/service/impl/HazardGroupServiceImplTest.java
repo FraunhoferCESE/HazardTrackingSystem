@@ -119,8 +119,9 @@ public class HazardGroupServiceImplTest {
 		HazardGroupServiceImpl test = new HazardGroupServiceImpl(mockActiveObjects);
 		test.initializeTable();
 
-		verify(mockActiveObjects, times(14)).create(eq(Hazard_Group.class), (DBParam[]) anyVararg());
+		verify(mockActiveObjects, times(15)).create(eq(Hazard_Group.class), (DBParam[]) anyVararg());
 
+		verify(mockGroup).setLabel(null);
 		verify(mockGroup).setLabel("Acceleration");
 		verify(mockGroup).setLabel("Asphyxiation");
 		verify(mockGroup).setLabel("Contamination");
@@ -146,8 +147,9 @@ public class HazardGroupServiceImplTest {
 		test.initializeTable();
 		test.initializeTable();
 
-		verify(mockActiveObjects, times(14)).create(eq(Hazard_Group.class), (DBParam[]) anyVararg());
+		verify(mockActiveObjects, times(15)).create(eq(Hazard_Group.class), (DBParam[]) anyVararg());
 
+		verify(mockGroup).setLabel(null);
 		verify(mockGroup).setLabel("Acceleration");
 		verify(mockGroup).setLabel("Asphyxiation");
 		verify(mockGroup).setLabel("Contamination");

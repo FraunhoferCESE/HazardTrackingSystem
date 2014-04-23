@@ -47,6 +47,7 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Hazard_Group.class).length == 0) {
+					add(null);
 					add("Acceleration");
 					add("Asphyxiation");
 					add("Contamination");

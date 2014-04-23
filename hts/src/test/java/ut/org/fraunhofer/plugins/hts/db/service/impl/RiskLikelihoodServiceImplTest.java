@@ -124,13 +124,13 @@ public class RiskLikelihoodServiceImplTest {
 
 		verify(mockLikelihood).setValue("A - Frequent");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur repeatedly");
-		verify(mockLikelihood).setValue("B - Reasonably probably");
+		verify(mockLikelihood).setValue("B - Reasonably probable");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur several times");
 		verify(mockLikelihood).setValue("C - Occasional");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur sometime");
 		verify(mockLikelihood).setValue("D - Remote");
 		verify(mockLikelihood).setLikelihoodDesc("Unlikely to occur, but possible");
-		verify(mockLikelihood).setValue("E - Extremely improbably");
+		verify(mockLikelihood).setValue("E - Extremely improbable");
 		verify(mockLikelihood).setLikelihoodDesc("The probability of occurence cannot be distinguished from zero");
 	}
 
@@ -147,13 +147,13 @@ public class RiskLikelihoodServiceImplTest {
 
 		verify(mockLikelihood).setValue("A - Frequent");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur repeatedly");
-		verify(mockLikelihood).setValue("B - Reasonably probably");
+		verify(mockLikelihood).setValue("B - Reasonably probable");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur several times");
 		verify(mockLikelihood).setValue("C - Occasional");
 		verify(mockLikelihood).setLikelihoodDesc("Likely to occur sometime");
 		verify(mockLikelihood).setValue("D - Remote");
 		verify(mockLikelihood).setLikelihoodDesc("Unlikely to occur, but possible");
-		verify(mockLikelihood).setValue("E - Extremely improbably");
+		verify(mockLikelihood).setValue("E - Extremely improbable");
 		verify(mockLikelihood).setLikelihoodDesc("The probability of occurence cannot be distinguished from zero");
 	}
 

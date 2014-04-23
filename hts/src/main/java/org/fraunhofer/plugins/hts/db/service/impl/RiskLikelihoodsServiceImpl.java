@@ -50,10 +50,10 @@ public class RiskLikelihoodsServiceImpl implements RiskLikelihoodsService {
 			if (!initialized) {
 				if (ao.find(Risk_Likelihoods.class).length == 0) {
 					add("A - Frequent", "Likely to occur repeatedly");
-					add("B - Reasonably probably", "Likely to occur several times");
+					add("B - Reasonably probable", "Likely to occur several times");
 					add("C - Occasional", "Likely to occur sometime");
 					add("D - Remote", "Unlikely to occur, but possible");
-					add("E - Extremely improbably", "The probability of occurence cannot be distinguished from zero");
+					add("E - Extremely improbable", "The probability of occurence cannot be distinguished from zero");
 				}
 				initialized = true;
 			}
