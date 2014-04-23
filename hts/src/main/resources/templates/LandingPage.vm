@@ -27,7 +27,6 @@
         	    		<div class="aui-navgroup-inner">
     						<ul class="aui-nav">
     							#foreach( $payload in $payloads )
-    								<!--li><a class="getReports" href="hazardlist?key=$payload.getID()">$!payload.getName()</a></li-->
     								<li><a class="getReports" data-key="$payload.getID()">$!payload.getName()</a></li>
     							#end
     						</ul>
