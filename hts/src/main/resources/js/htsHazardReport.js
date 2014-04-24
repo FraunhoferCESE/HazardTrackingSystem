@@ -49,43 +49,43 @@ function initiateDeleteHazardReports () {
 	});
 }
 
-AJS.$(document).ready(function() {
-	var $ = AJS.$;
+function layout() {
+	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
+	var lastEditColumn = AJS.$('table#hazardTable tbody td:nth-child(4)');
+	if(lastEditColumn.length > 0) {
+		lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
+	}
+	if(!AJS.$.trim(AJS.$(".noHazard").html())) {
+		AJS.$(".noHazard").remove();
+	}
+}
 
-	dateLayout();
-	initiateDeleteHazardReports();
-
-	$(".getReports").click(function() {
-		var self = $(this);
-		$.ajax({
+function navigationFilter() {
+	AJS.$(".getReports").live('click', function() {
+		var self = AJS.$(this);
+		AJS.$.ajax({
 			type: "GET",
 			url: "hazardlist?key=" + self.data("key"),
 			success: function(html) {
-				var hazardTableHTML = $(html).find("#hazardTable");
+				var hazardTableHTML = AJS.$(html).find("#hazardTable");
 				if(hazardTableHTML.length > 0) {
-					$("#hazardTableHolder").html(hazardTableHTML);
-					dateLayout();
+					AJS.$("#hazardTableHolder").html(hazardTableHTML);
+					layout();
 					initiateDeleteHazardReports();
 				}
 				else {
-					if(!($(".noHazard").length > 0)) {
-						var noHazardReportCreated = $(html).find(".noHazard");
-						$("#hazardTableHolder").html(noHazardReportCreated);
+					if(!(AJS.$(".noHazard").length > 0)) {
+						var noHazardReportCreated = AJS.$(html).find(".noHazard");
+						AJS.$("#hazardTableHolder").html(noHazardReportCreated);
 					}
 				}
 			}
 		});
 	});
+}
 
-
-	function dateLayout() {
-    	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
-		var lastEditColumn = $('table#hazardTable tbody td:nth-child(4)');
-		if(lastEditColumn.length > 0) {
-    		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
-    	}
-    	if(!$.trim($(".noHazard").html())) {
-			$(".noHazard").remove();
-		}
-    }
+AJS.$(document).ready(function() {
+	layout();
+	initiateDeleteHazardReports();
+	navigationFilter();
 });
