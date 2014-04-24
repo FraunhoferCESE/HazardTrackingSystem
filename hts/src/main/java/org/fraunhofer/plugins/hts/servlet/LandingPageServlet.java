@@ -1,6 +1,7 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -97,7 +98,7 @@ public class LandingPageServlet extends HttpServlet {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
 			//TODO reply string.
-			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";;
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
 		
 			if(hazard != null){
 				hazardService.deleteHazard(hazard.getID());

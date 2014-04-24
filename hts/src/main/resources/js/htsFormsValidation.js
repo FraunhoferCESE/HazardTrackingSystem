@@ -175,6 +175,7 @@ AJS.$(document).ready(function(){
 	    	$(form).ajaxSubmit(function(data) {
 	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    		$("#payloadForm").removeDirtyWarning();
+	    		$("#payloadList").load(document.URL + " #payloadList");
 	    		form.reset();
 	    	});
 	    }
