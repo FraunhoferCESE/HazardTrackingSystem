@@ -1,10 +1,6 @@
-AJS.$(document).ready(function() {
-	var $ = AJS.$;
-
-	dateLayout();
-
+function initiateDeleteHazardReports () {
 	function confirmation() {
-		var defer = $.Deferred();
+		var defer = AJS.$.Deferred();
 		var dialog = new AJS.Dialog({
 			width: 500,
 			height: 190,
@@ -28,17 +24,19 @@ AJS.$(document).ready(function() {
 		return defer.promise();
 	}
 
-	$(".deleteHazardReport").click(function() {
-		var self = $(this);
+	AJS.$(".deleteHazardReport").click(function() {
+		var self = AJS.$(this);
 		confirmation().then(function(ans) {
 			if(ans){
-				$.ajax({
+				AJS.$.ajax({
 					type: "DELETE",
 					url: "hazardlist?key=" + self.data("key"),
 					success: function(data) {
 						self.parent().parent().parent().parent().remove();
-						if($("#hazardTable tr").length === 1) {
-							location.reload();
+						if(AJS.$("#hazardTable tr").length === 1) {
+							//TODO figure out a better way to handle these cases
+							var noHazardReports = '<h2 class="noHazard">No Hazard reports have been created</h2>';
+							AJS.$("#hazardTableHolder").html(noHazardReports);
 						}
 					},
 					error: function() {
@@ -49,6 +47,13 @@ AJS.$(document).ready(function() {
 			return false;
 		});
 	});
+}
+
+AJS.$(document).ready(function() {
+	var $ = AJS.$;
+
+	dateLayout();
+	initiateDeleteHazardReports();
 
 	$(".getReports").click(function() {
 		var self = $(this);
@@ -60,10 +65,10 @@ AJS.$(document).ready(function() {
 				if(hazardTableHTML.length > 0) {
 					$("#hazardTableHolder").html(hazardTableHTML);
 					dateLayout();
+					initiateDeleteHazardReports();
 				}
 				else {
 					var noHazardReportCreated = $(html).find(".noHazard");
-					console.log(noHazardReportCreated);
 					$("#hazardTableHolder").html(noHazardReportCreated);
 				}
 			}
@@ -78,7 +83,6 @@ AJS.$(document).ready(function() {
     		lastEditColumn.each(function () { $(this)[0].innerText = Date.parse($(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
     	}
     	if(!$.trim($(".noHazard").html())) {
-    		console.log($(".noHazard"));
 			$(".noHazard").remove();
 		}
     }
