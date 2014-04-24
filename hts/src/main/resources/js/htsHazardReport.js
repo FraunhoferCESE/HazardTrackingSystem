@@ -68,8 +68,10 @@ AJS.$(document).ready(function() {
 					initiateDeleteHazardReports();
 				}
 				else {
-					var noHazardReportCreated = $(html).find(".noHazard");
-					$("#hazardTableHolder").html(noHazardReportCreated);
+					if(!($(".noHazard").length > 0)) {
+						var noHazardReportCreated = $(html).find(".noHazard");
+						$("#hazardTableHolder").html(noHazardReportCreated);
+					}
 				}
 			}
 		});

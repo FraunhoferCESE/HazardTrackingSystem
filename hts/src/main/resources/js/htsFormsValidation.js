@@ -136,24 +136,20 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit({
-	    		success: function(data) {
-	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    			$("#hazardForm").removeDirtyWarning();
-	    			successfulSave(form);
-	    			//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
-	    			var data = $.parseJSON(data);
-	    			if(data.redirect) {
-	    				window.location.replace(data.redirect);
-	    			}
-	    			else {
-	    				var hazardNumber = data.hazardNumber;
-		    			var hazardID = data.hazardID;
-	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
-	    			}	
-	    		},
-	    		error: function(error) {
-	    			console.log(error);
+	    	console.log(form);
+	    	$(form).ajaxSubmit(function(data) {
+	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    		$("#hazardForm").removeDirtyWarning();
+	    		successfulSave();
+	    		//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
+	    		var data = $.parseJSON(data);
+	    		if(data.redirect) {
+	    			window.location.replace(data.redirect);
+	    		}
+	    		else {
+	    			var hazardNumber = data.hazardNumber;
+		    		var hazardID = data.hazardID;
+	    			addOrUpdateHazardNum(hazardNumber, hazardID);
 	    		}
 	    	});
 	    }
@@ -176,16 +172,11 @@ AJS.$(document).ready(function(){
 	    },
 
 	    submitHandler: function(form) {
-	    	$(form).ajaxSubmit({
-	    		success: function(data) {
-	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    			$("#payloadForm").removeDirtyWarning();
-	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully", {closeable: true});
-	    			form.reset();
-	    		},
-	    		error: function(error) {
-	    			console.log(error);
-	    		}
+	    	$(form).ajaxSubmit(function(data) {
+	    		//To remove jiras dirty warning so navigating from the form after successful post is possible
+	    		$("#payloadForm").removeDirtyWarning();
+	    		$("#payloadList").load(document.URL + " #payloadList");
+	    		form.reset();
 	    	});
 	    }
 	});
@@ -216,7 +207,7 @@ AJS.$(document).ready(function(){
 	}
 
 	//After a successful save message needs to be displayed to the user.
-	function successfulSave(form) {
+	function successfulSave() {
 		//Input the successful save frame
 		var success = $('<div class="aui-message success successMsg"><p><span class="aui-icon icon-success"></span>Changes were saved successfully</p></div>');
 	    if($(".successMsg").length > 0) {
@@ -226,17 +217,17 @@ AJS.$(document).ready(function(){
 	    	}, 100);
 	    }
 	    else {
-	    	$(form).after(success);
+	    	$("#hazardForm").after(success);
 	    }
 	}
 
 	//Need to store the hazard number specified in the field to see if has been changed. If not saving is okay.
-	function addOrUpdateHazardNum(form, hazardNum, id) {
+	function addOrUpdateHazardNum(hazardNum, id) {
 		if($("#oldNumber").length > 0) {
 			$("#oldNumber").val(hazardNum);
 		}
 		else {
-			$(form).append('<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value/>');
+			$("#hazardForm").append('<input type="hidden" id="oldNumber" name="hazardNumberBeforeEdit" value/>');
 			//Takes care of adding the two fields after the first post, so saving again is possible through the edit part.
 			$("#oldNumber").val(hazardNum);
 		}
