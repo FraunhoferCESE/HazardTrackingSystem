@@ -1,0 +1,10 @@
+<nav class="aui-navgroup aui-navgroup-horizontal">
+    <div class="aui-navgroup-inner">
+        <div class="aui-navgroup-primary">
+            <ul class="aui-nav">
+                <li><a href="hazardform">Creata a Hazard Report</a></li>
+                <li><a href="hazardlist">View all Hazard Reports</a></li>
+            </ul>
+        </div><!-- .aui-navgroup-primary -->
+    </div><!-- .aui-navgroup-inner -->
+</nav><!-- .aui-navgroup -->

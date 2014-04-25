@@ -7,6 +7,7 @@
 <body class="aui-layout aui-theme-default">
 	<header class="aui-page-header">
 		<div class="aui-page-header-inner">
+			#parse("/templates/navigation.vm")
 			<h2>Hazard Form</h2>
 		</div>
 	</header>
