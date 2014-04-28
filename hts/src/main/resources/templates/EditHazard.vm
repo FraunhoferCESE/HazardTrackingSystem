@@ -5,6 +5,7 @@
     $webResourceManager.requireResourcesForContext("org.fraunhofer.plugins.hts.hts:hts-resources")
 </head>
 <body class="aui-layout aui-theme-default">
+	#parse("/templates/navigation.vm")
  	<header class="aui-page-header">
 		<div class="aui-page-header-inner">
 			<h2>Edit $!hazard.getHazardNum()</h2>

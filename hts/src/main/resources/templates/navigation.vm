@@ -2,8 +2,8 @@
     <div class="aui-navgroup-inner">
         <div class="aui-navgroup-primary">
             <ul class="aui-nav">
-                <li><a href="hazardform">Creata a Hazard Report</a></li>
-                <li><a href="hazardlist">View all Hazard Reports</a></li>
+                <li id="CreateHazardNav"><a href="hazardform">Create</a></li>
+                <li id="ViewAllNav" class="aui-nav-selected"><a href="hazardlist">View all</a></li>
             </ul>
         </div><!-- .aui-navgroup-primary -->
     </div><!-- .aui-navgroup-inner -->
