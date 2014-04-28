@@ -16,6 +16,18 @@ AJS.$(document).ready(function(){
     AJS.$("#verification-nav-item").click(function(e){
         navigateTo(e.target, "content-4");
     });
+
+    if(window.location.href.indexOf("hazardform") > -1) {
+        AJS.$("#CreateHazardNav").addClass("aui-nav-selected");
+        AJS.$("#ViewAllNav").removeClass("aui-nav-selected");
+    }
+    else if(window.location.href.indexOf("?edit=y") > -1) {
+        AJS.$("#ViewAllNav").removeClass("aui-nav-selected");
+        AJS.$("#CreateHazardNav").removeClass("aui-nav-selected");       
+    }
+    else {
+        
+    }
     
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");

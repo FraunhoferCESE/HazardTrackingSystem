@@ -251,7 +251,6 @@ AJS.$(document).ready(function(){
         if(AJS.$("#oldNumber").length > 0) {
             var form = document.forms["hazardForm"];
             addHiddenField(form, "edit", "edit", "y");
-            //Retrieving the id from the url
             addHiddenField(form, "key", "key", id);
         }
     }
