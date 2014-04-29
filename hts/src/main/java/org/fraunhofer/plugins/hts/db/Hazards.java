@@ -77,6 +77,6 @@ public interface Hazards extends Entity {
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();
 	
-	@ManyToMany(value = HazardGroupToHazard.class)	
-	Hazard_Group[] getHazardGroup();
+	@ManyToMany(value = GroupToHazard.class)	
+	Hazard_Group[] getHazardGroups();
 }

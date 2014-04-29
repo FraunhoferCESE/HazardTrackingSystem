@@ -77,6 +77,9 @@
 	<div class="field-group">
 	    <label for="hazardGroup">Hazard Group</label>
 	    <select class="multi-select" size="5" multiple="multiple" id="hazardGroup" name="hazardGroup">
+			#foreach( $selectedHazardGroups in $hazard.getHazardGroups() )
+				<option value="$selectedHazardGroups.getID()" selected>$!selectedHazardGroups.getLabel()</option>
+			#end
 			#foreach( $!group in $!hazardGroups )
 				<option value="$!group.getID()">$!group.getLabel()</option>
 			#end

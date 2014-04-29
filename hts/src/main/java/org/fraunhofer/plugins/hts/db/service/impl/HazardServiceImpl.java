@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.fraunhofer.plugins.hts.db.HazardGroupToHazard;
+import org.fraunhofer.plugins.hts.db.GroupToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -58,12 +58,11 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
-		if(groups != null) {
+		else if(groups != null) {
 			for(Hazard_Group group : groups) {
 				try {
 					associateHazardGroupToHazard(group, hazard);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -114,6 +113,15 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
+			else if(groups != null) {
+				for(Hazard_Group group : groups) {
+					try {
+						associateHazardGroupToHazard(group, updated);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		return updated;
 	}
@@ -127,7 +135,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public void deleteHazard(int id) {
 		removeSubsystems(id);
-		removeHazardGroups(id);
+		//removeHazardGroups(id);
 		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
 	}
 
@@ -143,10 +151,10 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
-	private void associateHazardGroupToHazard(Hazard_Group hazardGroups, Hazards hazard) throws SQLException {
-		final HazardGroupToHazard hazardGroupToHazard = ao.create(HazardGroupToHazard.class);
+	private void associateHazardGroupToHazard(Hazard_Group hazardGroup, Hazards hazard) throws SQLException {
+		final GroupToHazard hazardGroupToHazard = ao.create(GroupToHazard.class);
 		hazardGroupToHazard.setHazard(hazard);
-		hazardGroupToHazard.setHazardGroup(hazardGroups);
+		hazardGroupToHazard.setHazardGroup(hazardGroup);
 		hazardGroupToHazard.save();
 	}
 	
@@ -155,6 +163,6 @@ public class HazardServiceImpl implements HazardService {
 	}
 	
 	private void removeHazardGroups(int id) {
-		ao.delete(ao.find(HazardGroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
+		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
 }

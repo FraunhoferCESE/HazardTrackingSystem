@@ -18,6 +18,6 @@ public interface Hazard_Group extends Entity {
 
 	void setLabel(String label);
 
-	@ManyToMany(value = HazardGroupToHazard.class)
+	@ManyToMany(value = GroupToHazard.class)
 	Hazards[] getHazards();
 }

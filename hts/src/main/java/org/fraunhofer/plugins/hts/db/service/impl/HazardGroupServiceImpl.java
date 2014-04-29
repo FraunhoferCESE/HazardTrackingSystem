@@ -54,6 +54,17 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 		}
 		return null;
 	}
+	
+	@Override
+	public List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList) {
+		List<Hazard_Group> listAll = all();
+		
+		for(Hazard_Group currRegistered : currentList) {
+			listAll.remove(currRegistered);
+		}
+		
+		return listAll;
+	}
 
 	public void initializeTable() {
 		synchronized (_lock) {
