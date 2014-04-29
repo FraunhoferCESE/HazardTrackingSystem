@@ -13,4 +13,8 @@ public interface HazardGroupService {
 	Hazard_Group getHazardGroupByID(String id);
 
 	List<Hazard_Group> all();
+
+	Hazard_Group[] getHazardGroupsByID(int[] id);
+
+	List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList);
 }

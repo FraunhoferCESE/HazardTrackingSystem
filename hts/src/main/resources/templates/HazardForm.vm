@@ -76,15 +76,14 @@
 	</div>
 	<div class="field-group">
 	    <label for="hazardGroup">Hazard Group</label>
-	    <select class="select" id="hazardGroup" name="hazardGroup">
-	    	#foreach( $!group in $!hazardGroups )
-	    		#if($!group.getID() == $hazard.getHazardGroup().getID())
-					<option value="$!group.getID()" selected>$!group.getLabel()</option>
-				#else
-					<option value="$!group.getID()">$!group.getLabel()</option>
-				#end
-	    	#end
-	    </select>
+	    <select class="multi-select" size="5" multiple="multiple" id="hazardGroup" name="hazardGroup">
+			#foreach( $selectedHazardGroups in $hazard.getHazardGroups() )
+				<option value="$selectedHazardGroups.getID()" selected>$!selectedHazardGroups.getLabel()</option>
+			#end
+			#foreach( $!group in $!hazardGroups )
+				<option value="$!group.getID()">$!group.getLabel()</option>
+			#end
+		</select>
 	</div>
 	<div class="field-group">
 	    <label for="hazardDescription">Description</label>

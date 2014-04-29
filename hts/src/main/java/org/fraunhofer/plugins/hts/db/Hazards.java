@@ -58,10 +58,6 @@ public interface Hazards extends Entity {
 
 	// TODO FOREIGN KEYS
 
-	void setHazardGroup(Hazard_Group group);
-
-	Hazard_Group getHazardGroup();
-
 	void setRiskCategory(Risk_Categories risk);
 
 	Risk_Categories getRiskCategory();
@@ -74,7 +70,6 @@ public interface Hazards extends Entity {
 
 	Review_Phases getReviewPhase();
 	
-	
 	void setMissionPayload(Mission_Payload missionPayload);
 	
 	Mission_Payload getMissionPayload();
@@ -82,4 +77,6 @@ public interface Hazards extends Entity {
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();
 	
+	@ManyToMany(value = GroupToHazard.class)	
+	Hazard_Group[] getHazardGroups();
 }

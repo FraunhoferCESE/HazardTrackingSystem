@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -58,7 +57,7 @@ public class LandingPageServlet extends HttpServlet {
 				Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
 				Map<String, Object> context = Maps.newHashMap();
 				context.put("hazard", hazard);
-				context.put("hazardGroups", hazardGroupService.all());
+				context.put("hazardGroups", hazardGroupService.getRemainingHazardGroups(hazard.getHazardGroups()));
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("reviewPhases", reviewPhaseService.all());
