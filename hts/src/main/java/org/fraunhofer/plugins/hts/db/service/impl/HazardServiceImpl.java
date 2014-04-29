@@ -135,7 +135,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public void deleteHazard(int id) {
 		removeSubsystems(id);
-		//removeHazardGroups(id);
+		removeHazardGroups(id);
 		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
 	}
 
