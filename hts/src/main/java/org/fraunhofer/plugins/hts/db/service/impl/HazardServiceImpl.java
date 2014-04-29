@@ -58,7 +58,7 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
-		else if(groups != null) {
+		if(groups != null) {
 			for(Hazard_Group group : groups) {
 				try {
 					associateHazardGroupToHazard(group, hazard);
@@ -113,7 +113,7 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
-			else if(groups != null) {
+			if(groups != null) {
 				for(Hazard_Group group : groups) {
 					try {
 						associateHazardGroupToHazard(group, updated);

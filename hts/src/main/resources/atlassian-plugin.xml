@@ -41,6 +41,7 @@
     <entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
     <entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
     <entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
+    <entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
