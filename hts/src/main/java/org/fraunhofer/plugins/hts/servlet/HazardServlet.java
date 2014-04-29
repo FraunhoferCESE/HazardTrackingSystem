@@ -99,11 +99,10 @@ public final class HazardServlet extends HttpServlet {
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
 		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
-		final Hazard_Group group = hazardGroupService.getHazardGroupByID(req.getParameter("hazardGroup"));
+		final Hazard_Group[] group = hazardGroupService.getHazardGroupsByID(changeStringArray(req.getParameterValues("hazardGroup")));
 		final Date revisionDate = new Date();
 		final Mission_Payload payloadName = missionPayloadService.getMissionPayloadByID(req.getParameter("hazardPayload"));
-		int[] stringArr = changeStringArray(req.getParameterValues("hazardSubsystem"));
-		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(stringArr);
+		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");

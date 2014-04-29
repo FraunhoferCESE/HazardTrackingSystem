@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.fraunhofer.plugins.hts.db.HazardGroupToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -33,7 +34,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
+			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -44,7 +45,6 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRevisionDate(revisionDate);
 		hazard.setRiskCategory(risk);
 		hazard.setRiskLikelihood(likelihood);
-		hazard.setHazardGroup(group);
 		hazard.setReviewPhase(reviewPhase);
 		hazard.setMissionPayload(missionPayload);
 		hazard.save();
@@ -52,6 +52,16 @@ public class HazardServiceImpl implements HazardService {
 			for(Subsystems subsystem : subsystems) {
 				try {
 					associateSubsystemToHazard(subsystem, hazard);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		if(groups != null) {
+			for(Hazard_Group group : groups) {
+				try {
+					associateHazardGroupToHazard(group, hazard);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -76,7 +86,7 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add init date and completion and error handling
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group group, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
+			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -89,11 +99,11 @@ public class HazardServiceImpl implements HazardService {
 			updated.setRevisionDate(revisionDate);
 			updated.setRiskCategory(risk);
 			updated.setRiskLikelihood(likelihood);
-			updated.setHazardGroup(group);
 			updated.setReviewPhase(reviewPhase);
 			updated.setMissionPayload(missionPayload);
 			updated.save();
 			removeSubsystems(updated.getID());
+			removeHazardGroups(updated.getID());
 			if(subsystems != null) {
 				for(Subsystems subsystem : subsystems) {
 					try {
@@ -117,9 +127,15 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public void deleteHazard(int id) {
 		removeSubsystems(id);
+		removeHazardGroups(id);
 		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
 	}
 
+	@Override
+	public List<Hazards> getHazardsByMissionPayload(String id) {
+		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
+	}
+	
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
 		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
 		subsystemToHazard.setSubsystem(subsystems);
@@ -127,13 +143,18 @@ public class HazardServiceImpl implements HazardService {
 		subsystemToHazard.save();
 	}
 	
+	private void associateHazardGroupToHazard(Hazard_Group hazardGroups, Hazards hazard) throws SQLException {
+		final HazardGroupToHazard hazardGroupToHazard = ao.create(HazardGroupToHazard.class);
+		hazardGroupToHazard.setHazard(hazard);
+		hazardGroupToHazard.setHazardGroup(hazardGroups);
+		hazardGroupToHazard.save();
+	}
+	
 	private void removeSubsystems(int id) {
 		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
-
-	@Override
-	public List<Hazards> getHazardsByMissionPayload(String id) {
-		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
+	
+	private void removeHazardGroups(int id) {
+		ao.delete(ao.find(HazardGroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
-
 }

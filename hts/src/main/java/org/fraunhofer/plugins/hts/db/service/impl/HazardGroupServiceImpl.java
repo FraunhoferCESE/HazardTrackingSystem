@@ -42,12 +42,23 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 		final Hazard_Group[] group = ao.find(Hazard_Group.class, Query.select().where("ID=?", id));
 		return group.length > 0 ? group[0] : null;
 	}
+	
+	@Override
+	public Hazard_Group[] getHazardGroupsByID(int[] id) {
+		if(id !=null) {
+			Hazard_Group[] hazardGroupArr = new Hazard_Group[id.length];
+			for(int i = 0; i < id.length; i++) {
+				hazardGroupArr[i] = ao.get(Hazard_Group.class, id[i]);
+			}
+			return hazardGroupArr;
+		}
+		return null;
+	}
 
 	public void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Hazard_Group.class).length == 0) {
-					add(null);
 					add("Acceleration");
 					add("Asphyxiation");
 					add("Contamination");
