@@ -23,6 +23,16 @@ AJS.$(document).ready(function(){
 		autoSort: true,
 		autoSortAvailable: true
     });
+	
+	$("#hazardPhase").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: 'Selected',
+		'search': 'Search: ',
+		autoSort: true,
+		autoSortAvailable: true
+    });
 
 	/**********************************************************
 	*                                                         *
