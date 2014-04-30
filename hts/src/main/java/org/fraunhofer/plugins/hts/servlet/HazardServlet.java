@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
+import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
@@ -108,6 +109,7 @@ public final class HazardServlet extends HttpServlet {
 		final Date revisionDate = new Date();
 		final Mission_Payload payloadName = missionPayloadService.getMissionPayloadByID(req.getParameter("hazardPayload"));
 		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
+		final Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req.getParameterValues("hazardPhase")));
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
@@ -117,14 +119,14 @@ public final class HazardServlet extends HttpServlet {
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, payloadName);
+					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
 			
 			createJson(json, "hazardID", updated.getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());		
 		} 
 		else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
-					revisionDate, risk, likelihood, group, reviewPhase, subsystems, payloadName);
+					revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
 			
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "hazardNumber", hazard.getHazardNum());

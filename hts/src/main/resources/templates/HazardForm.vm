@@ -77,7 +77,7 @@
 	<div class="field-group">
 	    <label for="hazardPhase">Mission Phase</label>
 	    <select class="multi-select" size="5" multiple="multiple" id="hazardPhase" name="hazardPhase">
-			#foreach( $selectedHazardPhase in $hazard.getHazardPhase() )
+			#foreach( $selectedHazardPhase in $hazard.getMissionPhases() )
 				<option value="$selectedHazardPhase.getID()" selected>$!selectedHazardPhase.getLabel()</option>
 			#end
 			#foreach( $!phase in $!missionPhase )

@@ -4,6 +4,7 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+import org.fraunhofer.plugins.hts.db.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
@@ -34,12 +35,13 @@ public class LandingPageServlet extends HttpServlet {
 	private final ReviewPhaseService reviewPhaseService;
 	private final TemplateRenderer templateRenderer;
 	private final SubsystemService subsystemService;
+	private final MissionPhaseService missionPhaseService;
 	private final MissionPayloadService missionPayloadService;
 
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService, ReviewPhaseService reviewPhaseService,
-			MissionPayloadService missionPayloadService, SubsystemService subsystemService) {
+			MissionPayloadService missionPayloadService, SubsystemService subsystemService, MissionPhaseService missionPhaseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -48,6 +50,7 @@ public class LandingPageServlet extends HttpServlet {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.subsystemService = checkNotNull(subsystemService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
+		this.missionPhaseService = checkNotNull(missionPhaseService);
 	}
 
 	@Override
@@ -62,6 +65,7 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("reviewPhases", reviewPhaseService.all());
 				context.put("subsystems", subsystemService.getRemainingGroups(hazard.getSubsystems()));
+				context.put("missionPhase", missionPhaseService.getRemainingMissionPhases(hazard.getMissionPhases()));
 				context.put("payloads", missionPayloadService.all());
 				context.put("initDate", removeTimeFromDate(hazard.getInitiationDate()));
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
