@@ -133,7 +133,7 @@ public final class HazardServlet extends HttpServlet {
 	}
 	
 	private Date changeToDate(String date) {
-		if (date != null) {
+		if (date != null && !date.isEmpty()) {
 			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
 			try {
