@@ -80,7 +80,7 @@
 			#foreach( $selectedHazardPhase in $hazard.getHazardPhase() )
 				<option value="$selectedHazardPhase.getID()" selected>$!selectedHazardPhase.getLabel()</option>
 			#end
-			#foreach( $!phase in $!hazardPhase )
+			#foreach( $!phase in $!missionPhase )
 				<option value="$!phase.getID()">$!phase.getLabel()</option>
 			#end
 		</select>

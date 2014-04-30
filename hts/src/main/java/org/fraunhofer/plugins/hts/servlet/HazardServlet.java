@@ -10,6 +10,7 @@ import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
+
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -20,6 +21,7 @@ import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+import org.fraunhofer.plugins.hts.db.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
@@ -50,12 +52,13 @@ public final class HazardServlet extends HttpServlet {
 	private final SubsystemService subsystemService;
 	private final ReviewPhaseService reviewPhaseService;
 	private final MissionPayloadService missionPayloadService;
+	private final MissionPhaseService missionPhaseService;
 	private final TemplateRenderer templateRenderer;
 
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService,
-			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService) {
+			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService, MissionPhaseService missionPhaseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -63,6 +66,7 @@ public final class HazardServlet extends HttpServlet {
 		this.subsystemService = checkNotNull(subsystemService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
+		this.missionPhaseService = checkNotNull(missionPhaseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
@@ -77,6 +81,7 @@ public final class HazardServlet extends HttpServlet {
 			context.put("reviewPhases", reviewPhaseService.all());
 			context.put("payloads", missionPayloadService.all());
 			context.put("subsystems", subsystemService.all());
+			context.put("missionPhase", missionPhaseService.all());
 			context.put("PreparerName", ComponentAccessor.getJiraAuthenticationContext().getUser().getName());
 			context.put("PreparerEmail", ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress());
 
