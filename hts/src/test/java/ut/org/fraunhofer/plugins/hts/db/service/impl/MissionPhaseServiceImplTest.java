@@ -70,6 +70,21 @@ public class MissionPhaseServiceImplTest {
 	}
 	
 	@Test
+	public void testGetMissionPhasesByIDNoneFound() {
+		Mission_Phase[] mockMissionPhases = {};
+		int[] ids = { 85 };
+		
+		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
+		
+		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
+		Mission_Phase[] result = test.getMissionPhasesByID(ids);
+		
+		assertTrue(MissionPhaseServiceImpl.isInitialized());
+		verify(mockActiveObjects).get(eq(Mission_Phase.class), eq(ids[0]));
+		assertNull(result[0]);
+	}
+	
+	@Test
 	public void testGetMissionPhaseByIDNoneFound() {
 		Mission_Phase[] mockMissionPhases = {};
 		

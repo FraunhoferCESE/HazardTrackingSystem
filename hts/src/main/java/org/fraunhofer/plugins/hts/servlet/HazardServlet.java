@@ -166,7 +166,7 @@ public final class HazardServlet extends HttpServlet {
 	}
 	
 	private int[] changeStringArray(String[] array) {
-		if(array != null) {
+		if(array.length > 0 && array != null) {
 			int intArray[] = new int[array.length];
 			for(int i = 0; i < array.length; i++) {
 				intArray[i] = Integer.parseInt(array[i]);

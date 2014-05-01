@@ -45,7 +45,8 @@ public class MissionPhaseServiceImpl implements MissionPhaseService {
 	
 	@Override
 	public Mission_Phase[] getMissionPhasesByID(int[] id) {
-		if(id !=null) {
+		initializeTable();
+		if(id.length > 0 && id != null) {
 			Mission_Phase[] missionPhaseArr = new Mission_Phase[id.length];
 			for(int i = 0; i < id.length; i++) {
 				missionPhaseArr[i] = ao.get(Mission_Phase.class, id[i]);
