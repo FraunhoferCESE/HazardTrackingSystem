@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -17,6 +18,7 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl;
@@ -72,7 +74,7 @@ public class MissionPhaseServiceImplTest {
 	@Test
 	public void testGetMissionPhasesByIDNoneFound() {
 		Mission_Phase[] mockMissionPhases = {};
-		int[] ids = { 85 };
+		int[] ids = {};
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		
@@ -80,9 +82,60 @@ public class MissionPhaseServiceImplTest {
 		Mission_Phase[] result = test.getMissionPhasesByID(ids);
 		
 		assertTrue(MissionPhaseServiceImpl.isInitialized());
-		verify(mockActiveObjects).get(eq(Mission_Phase.class), eq(ids[0]));
-		assertNull(result[0]);
+		assertNull(result);
 	}
+
+	@Test
+	public void testGetMissionPhasesByIDMultipleFound() {
+		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
+		Mission_Phase mockGroup3 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2, mockGroup2 };
+		int[] ids = { mockGroup2.getID(), mockGroup3.getID() };
+		
+		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
+		
+		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
+		Mission_Phase[] result = test.getMissionPhasesByID(ids);
+		
+		assertTrue(MissionPhaseServiceImpl.isInitialized());
+		verify(mockActiveObjects, times(2)).get(eq(Mission_Phase.class), anyInt());
+		assertEquals(2, result.length);
+	}
+	
+	@Test
+	public void testGetRemainingMissionPhases() {
+		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2 };
+		Mission_Phase[] mockList = { mockGroup2 };
+		
+		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
+		
+		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
+		List<Mission_Phase> result = test.getRemainingMissionPhases(mockList);
+		
+		assertTrue(MissionPhaseServiceImpl.isInitialized());
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testGetRemainingMissionPhasesAllRemoved() {
+		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2 };
+		
+		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
+		
+		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
+		List<Mission_Phase> result = test.getRemainingMissionPhases(mockMissionPhases);
+		
+		assertTrue(MissionPhaseServiceImpl.isInitialized());
+		assertEquals(0, result.size());
+	}
+	/*
+	@Test
+	public void testGetRemainingMissionPhasesEmptyList() {
+		
+	}*/
+	
 	
 	@Test
 	public void testGetMissionPhaseByIDNoneFound() {
