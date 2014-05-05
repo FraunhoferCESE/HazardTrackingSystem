@@ -19,11 +19,8 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
-import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
-import org.fraunhofer.plugins.hts.db.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl;
-import org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 

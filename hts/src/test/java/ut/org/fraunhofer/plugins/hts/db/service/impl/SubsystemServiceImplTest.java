@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -18,6 +19,7 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.db.Subsystems;
+import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 import org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +57,7 @@ public class SubsystemServiceImplTest {
 	}
 
 	@Test
-	public void testGetHazardGroupByID() {
+	public void testGetSubSystemByID() {
 		Subsystems mockSubsystem2 = mock(Subsystems.class);
 		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2 };
 
@@ -71,7 +73,7 @@ public class SubsystemServiceImplTest {
 	}
 
 	@Test
-	public void testGetHazardGroupByIDNoneFound() {
+	public void testGetSubSystemIDNoneFound() {
 		Subsystems[] mockSubsystems = {};
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
@@ -83,6 +85,79 @@ public class SubsystemServiceImplTest {
 		verify(mockActiveObjects).find(eq(Subsystems.class), any(Query.class));
 		assertNull(result);
 
+	}
+	
+	@Test
+	public void testGetSubsystemsByIDNoneFound() {
+		Subsystems[] mockSubsystems = {};
+		int[] ids = {};
+		
+		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
+		
+		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		Subsystems[] result = test.getSubsystemsByID(ids);
+		
+		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertNull(result);
+	}
+
+	@Test
+	public void testGetSubsystemsByIDMultipleFound() {
+		Subsystems mockSubsystem2 = mock(Subsystems.class);
+		Subsystems mockSubsystem3 = mock(Subsystems.class);
+		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2, mockSubsystem2 };
+		int[] ids = { mockSubsystem2.getID(), mockSubsystem3.getID() };
+		
+		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
+		
+		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		Subsystems[] result = test.getSubsystemsByID(ids);
+		
+		assertTrue(SubsystemServiceImpl.isInitialized());
+		verify(mockActiveObjects, times(2)).get(eq(Subsystems.class), anyInt());
+		assertEquals(2, result.length);
+	}
+	
+	@Test
+	public void testGetRemainingSubsystems() {
+		Subsystems mockSubsystem2 = mock(Subsystems.class);
+		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2 };
+		Subsystems[] mockList = { mockSubsystem2 };
+		
+		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
+		
+		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		List<Subsystems> result = test.getRemainingGroups(mockList);
+		
+		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testGetRemainingMissionPhasesAllRemoved() {
+		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem };
+		
+		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
+		
+		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		List<Subsystems> result = test.getRemainingGroups(mockSubsystems);
+		
+		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void testGetRemainingMissionPhasesEmptyList() {
+		Subsystems[] mockSubsystems = {};
+		Subsystems[] mockList = { mockSubsystem };
+		
+		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
+		
+		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		List<Subsystems> result = test.getRemainingGroups(mockList);
+		
+		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(result.isEmpty());
 	}
 
 	@Test
