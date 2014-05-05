@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -69,7 +70,7 @@ public class HazardGroupServiceImplTest {
 		assertEquals(result, mockGroup);
 
 	}
-
+	
 	@Test
 	public void testGetHazardGroupByIDNoneFound() {
 		Hazard_Group[] mockHazardGroups = {};
@@ -83,6 +84,79 @@ public class HazardGroupServiceImplTest {
 		verify(mockActiveObjects).find(eq(Hazard_Group.class), any(Query.class));
 		assertNull(result);
 
+	}
+	
+	@Test
+	public void testGetHazardGroupsByIDNoneFound() {
+		Hazard_Group[] mockHazardGroups = {};
+		int[] ids = {};
+		
+		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
+		
+		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
+		Hazard_Group[] result = test.getHazardGroupsByID(ids);
+		
+		assertTrue(HazardGroupServiceImpl.isInitialized());
+		assertNull(result);
+	}
+	
+	@Test
+	public void testGetHazardGroupsByIDMultipleFound() {
+		Hazard_Group mockGroup2 = mock(Hazard_Group.class);
+		Hazard_Group mockGroup3 = mock(Hazard_Group.class);
+		Hazard_Group[] mockHazardGroups = { mockGroup, mockGroup2, mockGroup2 };
+		int[] ids = { mockGroup2.getID(), mockGroup3.getID() };
+		
+		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
+		
+		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
+		Hazard_Group[] result = test.getHazardGroupsByID(ids);
+		
+		assertTrue(HazardGroupServiceImpl.isInitialized());
+		verify(mockActiveObjects, times(2)).get(eq(Hazard_Group.class), anyInt());
+		assertEquals(2, result.length);
+	}
+	
+	@Test
+	public void testGetRemainingHazardGroups() {
+		Hazard_Group mockGroup2 = mock(Hazard_Group.class);
+		Hazard_Group[] mockHazardGroups = { mockGroup, mockGroup2 };
+		Hazard_Group[] mockList = { mockGroup2 };
+		
+		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
+		
+		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
+		List<Hazard_Group> result = test.getRemainingHazardGroups(mockList);
+		
+		assertTrue(HazardGroupServiceImpl.isInitialized());
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testGetRemainingHazardGroupsAllRemoved() {
+		Hazard_Group[] mockHazardGroups = { mockGroup, mockGroup };
+		
+		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
+		
+		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
+		List<Hazard_Group> result = test.getRemainingHazardGroups(mockHazardGroups);
+		
+		assertTrue(HazardGroupServiceImpl.isInitialized());
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void testGetRemainingHazardGroupsEmptyList() {
+		Hazard_Group[] mockMissionPhases = {};
+		Hazard_Group[] mockList = { mockGroup };
+		
+		when(mockActiveObjects.find(eq(Hazard_Group.class))).thenReturn(mockMissionPhases);
+		
+		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
+		List<Hazard_Group> result = test.getRemainingHazardGroups(mockList);
+		
+		assertTrue(HazardGroupServiceImpl.isInitialized());
+		assertTrue(result.isEmpty());
 	}
 
 	@Test

@@ -53,7 +53,8 @@ public class SubsystemServiceImpl implements SubsystemService {
 
 	@Override
 	public Subsystems[] getSubsystemsByID(int[] id) {
-		if(id != null) {
+		initializeTable();
+		if(id.length > 0 && id != null) {
 			Subsystems[] subsystemArr = new Subsystems[id.length];
 			for(int i = 0; i < id.length; i++) {
 				subsystemArr[i] = ao.get(Subsystems.class, id[i]);
