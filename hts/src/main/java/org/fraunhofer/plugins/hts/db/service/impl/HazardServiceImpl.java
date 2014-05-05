@@ -13,6 +13,8 @@ import org.fraunhofer.plugins.hts.db.GroupToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
+import org.fraunhofer.plugins.hts.db.Mission_Phase;
+import org.fraunhofer.plugins.hts.db.PhaseToHazard;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
@@ -33,8 +35,9 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add javadoc and fix the remaining fields.
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
+			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk, Risk_Likelihoods likelihood,
+			Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase,
+			Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -67,6 +70,15 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
+		if(missionPhase != null) {
+			for(Mission_Phase phase : missionPhase) {
+				try {
+					associateMissionPhaseToHazard(phase, hazard);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return hazard;
 	}
 
@@ -81,11 +93,12 @@ public class HazardServiceImpl implements HazardService {
 		return hazards.length > 0 ? hazards[0] : null;
 	}
 
-	@Override
 	// TODO add init date and completion and error handling
+	@Override
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Payload missionPayload) {
+			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems,
+			Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -103,6 +116,7 @@ public class HazardServiceImpl implements HazardService {
 			updated.save();
 			removeSubsystems(updated.getID());
 			removeHazardGroups(updated.getID());
+			removeMissionPhase(updated.getID());
 			if(subsystems != null) {
 				for(Subsystems subsystem : subsystems) {
 					try {
@@ -122,6 +136,15 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
+			if(missionPhase != null) {
+				for(Mission_Phase phase: missionPhase) {
+					try {
+						associateMissionPhaseToHazard(phase, updated);
+					} catch (SQLException e) {
+						// TODO: handle exception
+					}
+				}
+			}
 		}
 		return updated;
 	}
@@ -136,6 +159,7 @@ public class HazardServiceImpl implements HazardService {
 	public void deleteHazard(int id) {
 		removeSubsystems(id);
 		removeHazardGroups(id);
+		removeMissionPhase(id);
 		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
 	}
 
@@ -153,9 +177,20 @@ public class HazardServiceImpl implements HazardService {
 	
 	private void associateHazardGroupToHazard(Hazard_Group hazardGroup, Hazards hazard) throws SQLException {
 		final GroupToHazard hazardGroupToHazard = ao.create(GroupToHazard.class);
-		hazardGroupToHazard.setHazard(hazard);
 		hazardGroupToHazard.setHazardGroup(hazardGroup);
+		hazardGroupToHazard.setHazard(hazard);
 		hazardGroupToHazard.save();
+	}
+	
+	private void associateMissionPhaseToHazard(Mission_Phase phase, Hazards hazard) throws SQLException{
+		final PhaseToHazard phaseToHazard = ao.create(PhaseToHazard.class);
+		phaseToHazard.setMissionPhase(phase);
+		phaseToHazard.setHazard(hazard);
+		phaseToHazard.save();
+	}
+	
+	private void removeMissionPhase(int id) {
+		ao.delete(ao.find(PhaseToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
 	
 	private void removeSubsystems(int id) {
