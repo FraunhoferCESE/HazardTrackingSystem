@@ -57,8 +57,8 @@ public class MissionPhaseServiceImplTest {
 	
 	@Test
 	public void testGetMissionPhaseByID() {
-		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
-		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2 };
+		Mission_Phase mockPhase2 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockPhase2 };
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		
@@ -86,10 +86,10 @@ public class MissionPhaseServiceImplTest {
 
 	@Test
 	public void testGetMissionPhasesByIDMultipleFound() {
-		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
-		Mission_Phase mockGroup3 = mock(Mission_Phase.class);
-		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2, mockGroup2 };
-		int[] ids = { mockGroup2.getID(), mockGroup3.getID() };
+		Mission_Phase mockPhase2 = mock(Mission_Phase.class);
+		Mission_Phase mockPhase3 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockPhase2, mockPhase2 };
+		int[] ids = { mockPhase2.getID(), mockPhase3.getID() };
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		
@@ -103,14 +103,15 @@ public class MissionPhaseServiceImplTest {
 	
 	@Test
 	public void testGetRemainingMissionPhases() {
-		Mission_Phase mockGroup2 = mock(Mission_Phase.class);
-		Mission_Phase[] mockMissionPhases = { mockPhase, mockGroup2 };
-		Mission_Phase[] mockList = { mockGroup2 };
+		Mission_Phase mockPhase2 = mock(Mission_Phase.class);
+		Mission_Phase[] mockMissionPhases = { mockPhase, mockPhase2 };
+		Mission_Phase[] mockList = { mockPhase2 };
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		
 		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
-		List<Mission_Phase> result = test.getRemainingMissionPhases(mockList);
+		List<Mission_Phase
+		> result = test.getRemainingMissionPhases(mockList);
 		
 		assertTrue(MissionPhaseServiceImpl.isInitialized());
 		assertEquals(1, result.size());

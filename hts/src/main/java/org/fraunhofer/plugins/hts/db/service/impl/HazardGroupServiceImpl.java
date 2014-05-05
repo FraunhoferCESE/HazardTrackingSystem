@@ -45,7 +45,8 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 	
 	@Override
 	public Hazard_Group[] getHazardGroupsByID(int[] id) {
-		if(id !=null) {
+		initializeTable();
+		if(id.length > 0 && id != null) {
 			Hazard_Group[] hazardGroupArr = new Hazard_Group[id.length];
 			for(int i = 0; i < id.length; i++) {
 				hazardGroupArr[i] = ao.get(Hazard_Group.class, id[i]);
@@ -59,8 +60,10 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 	public List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList) {
 		List<Hazard_Group> listAll = all();
 		
-		for(Hazard_Group currRegistered : currentList) {
-			listAll.remove(currRegistered);
+		if(!listAll.isEmpty()) {
+			for(Hazard_Group currRegistered : currentList) {
+				listAll.remove(currRegistered);
+			}
 		}
 		
 		return listAll;
