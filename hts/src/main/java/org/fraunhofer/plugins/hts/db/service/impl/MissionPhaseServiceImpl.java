@@ -60,8 +60,10 @@ public class MissionPhaseServiceImpl implements MissionPhaseService {
 	public List<Mission_Phase> getRemainingMissionPhases(Mission_Phase[] currentList) {
 		List<Mission_Phase> listAll = all();
 		
-		for(Mission_Phase currRegistered : currentList) {
-			listAll.remove(currRegistered);
+		if(!listAll.isEmpty()) {
+			for(Mission_Phase currRegistered : currentList) {
+				listAll.remove(currRegistered);
+			}
 		}
 		
 		return listAll;
