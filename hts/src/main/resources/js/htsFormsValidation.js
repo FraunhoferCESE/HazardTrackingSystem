@@ -3,7 +3,7 @@ AJS.$(document).ready(function(){
 	var baseUrl = AJS.params.baseURL;
 
     editForm();
-
+    
     $("#hazardSubsystem").multiselect2side({
     	selectedPosition: 'right',
 		moveOptions: false,
@@ -39,6 +39,35 @@ AJS.$(document).ready(function(){
 	*               Form validation below.                    *
 	*                                                         *
 	***********************************************************/
+	$.validator.addMethod("validateDateInput", function(value, element) {
+		console.log($("input#hazardInitation").val().length);
+		console.log($(value));
+		if(value == '') {
+			return false;
+		}
+		var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
+  		var dtArray = value.match(rxDatePattern); // is format OK?
+  		if(dtArray == null) {
+  			return false;
+  		}
+
+  		dtMonth = dtArray[1];
+  		dtDay = dtArray[3];
+  		dtYear = dtArray[5];
+
+		if (dtMonth < 1 || dtMonth > 12)
+			return false;
+		else if (dtDay < 1 || dtDay> 31)
+			return false;
+		else if ((dtMonth==4 || dtMonth==6 || dtMonth==9 || dtMonth==11) && dtDay ==31)
+			return false;
+		else if (dtMonth == 2) {
+			var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+		    if (dtDay> 29 || (dtDay ==29 && !isleap))
+		        return false;
+		}
+		return true;
+	}, "Date format is invalid should be mm/dd/yyyy");
 
 	$.validator.addMethod("uniqueHazard", function(value, element) {
 		var response = false;
@@ -126,7 +155,8 @@ AJS.$(document).ready(function(){
 	    		maxlength: 255
 	    	},
 	    	hazardInitation: {
-	    		date: true,
+	    		validateDateInput: true,
+	    		dateISO: true,
 	    		//First number is the year, then month and day. If the date interval is to be changed, this is the place to do it.
 	    		mindate: new Date(40, 0, 1)
 	    	},
