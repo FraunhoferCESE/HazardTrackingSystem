@@ -102,7 +102,7 @@
 	</div>
 	<div class="field-group">
 	    <label for="hazardInitation">Initiation Date</label>
-	    <input class="aui-date-picker" name="hazardInitation" id="hazardInitation" placeholder="mm/dd/yyyy" value="$!initDate" type="date"/>
+	    <input class="aui-date-picker" name="hazardInitation" id="hazardInitation" value="$!initDate" type="date"/>
 	</div>
    	<div class="field-group">
     	<label for="hazardCompletion">Completion Date</label>

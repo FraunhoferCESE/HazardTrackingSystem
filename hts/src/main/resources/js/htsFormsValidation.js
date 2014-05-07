@@ -3,7 +3,7 @@ AJS.$(document).ready(function(){
 	var baseUrl = AJS.params.baseURL;
 
     editForm();
-    
+
     $("#hazardSubsystem").multiselect2side({
     	selectedPosition: 'right',
 		moveOptions: false,
@@ -40,12 +40,10 @@ AJS.$(document).ready(function(){
 	*                                                         *
 	***********************************************************/
 	$.validator.addMethod("validateDateInput", function(value, element) {
-		console.log($("input#hazardInitation").val().length);
-		console.log($(value));
 		if(value == '') {
-			return false;
+			return true;
 		}
-		var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
+		var rxDatePattern = /^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$/;
   		var dtArray = value.match(rxDatePattern); // is format OK?
   		if(dtArray == null) {
   			return false;
@@ -155,8 +153,8 @@ AJS.$(document).ready(function(){
 	    		maxlength: 255
 	    	},
 	    	hazardInitation: {
-	    		validateDateInput: true,
-	    		dateISO: true,
+	    		//validateDateInput: true,
+	    		date: true,
 	    		//First number is the year, then month and day. If the date interval is to be changed, this is the place to do it.
 	    		mindate: new Date(40, 0, 1)
 	    	},
