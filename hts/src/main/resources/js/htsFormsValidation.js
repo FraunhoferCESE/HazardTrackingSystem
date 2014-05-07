@@ -34,6 +34,8 @@ AJS.$(document).ready(function(){
 		autoSortAvailable: true
     });
 
+    initHazardDateFields();
+
 	/**********************************************************
 	*                                                         *
 	*               Form validation below.                    *
@@ -49,7 +51,9 @@ AJS.$(document).ready(function(){
   			return false;
   		}
 
-  		dtMonth = dtArray[1];
+  		console.log(dtArray);
+  		dtMonth = dtArray[0].substring(0,4);
+  		console.log(dtMonth);
   		dtDay = dtArray[3];
   		dtYear = dtArray[5];
 
@@ -318,6 +322,13 @@ AJS.$(document).ready(function(){
 		var id = $.url().param("key");
 		if(typeof id !== 'undefined') {
 			addNecessaryInfo(id);
+		}
+	}
+
+	function initHazardDateFields() {
+		if($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
+			$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
+			$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
 		}
 	}
 });
