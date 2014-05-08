@@ -90,7 +90,7 @@ public class SubsystemServiceImplTest {
 	@Test
 	public void testGetSubsystemsByIDNoneFound() {
 		Subsystems[] mockSubsystems = {};
-		int[] ids = {};
+		Integer[] ids = null;
 		
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 		
@@ -106,7 +106,7 @@ public class SubsystemServiceImplTest {
 		Subsystems mockSubsystem2 = mock(Subsystems.class);
 		Subsystems mockSubsystem3 = mock(Subsystems.class);
 		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2, mockSubsystem2 };
-		int[] ids = { mockSubsystem2.getID(), mockSubsystem3.getID() };
+		Integer[] ids = { mockSubsystem2.getID(), mockSubsystem3.getID() };
 		
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 		

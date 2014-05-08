@@ -44,16 +44,18 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 	}
 	
 	@Override
-	public Hazard_Group[] getHazardGroupsByID(int[] id) {
+	public Hazard_Group[] getHazardGroupsByID(Integer[] id) {
 		initializeTable();
-		if(id.length > 0 && id != null) {
+		if(id == null) {
+			return null;
+		}
+		else {
 			Hazard_Group[] hazardGroupArr = new Hazard_Group[id.length];
 			for(int i = 0; i < id.length; i++) {
 				hazardGroupArr[i] = ao.get(Hazard_Group.class, id[i]);
 			}
 			return hazardGroupArr;
 		}
-		return null;
 	}
 	
 	@Override

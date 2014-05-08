@@ -9,7 +9,7 @@ public interface SubsystemService {
 
 	Subsystems getSubsystemByID(String id);
 	
-	Subsystems[] getSubsystemsByID(int[] id);
+	Subsystems[] getSubsystemsByID(Integer[] id);
 
 	Subsystems update(Subsystems subsystemToUpdate, String label);
 

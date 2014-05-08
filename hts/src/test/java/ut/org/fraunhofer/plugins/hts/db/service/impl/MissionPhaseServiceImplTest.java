@@ -73,7 +73,7 @@ public class MissionPhaseServiceImplTest {
 	@Test
 	public void testGetMissionPhasesByIDNoneFound() {
 		Mission_Phase[] mockMissionPhases = {};
-		int[] ids = {};
+		Integer[] ids = null;
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		
@@ -89,7 +89,7 @@ public class MissionPhaseServiceImplTest {
 		Mission_Phase mockPhase2 = mock(Mission_Phase.class);
 		Mission_Phase mockPhase3 = mock(Mission_Phase.class);
 		Mission_Phase[] mockMissionPhases = { mockPhase, mockPhase2, mockPhase2 };
-		int[] ids = { mockPhase2.getID(), mockPhase3.getID() };
+		Integer[] ids = { mockPhase2.getID(), mockPhase3.getID() };
 		
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 		

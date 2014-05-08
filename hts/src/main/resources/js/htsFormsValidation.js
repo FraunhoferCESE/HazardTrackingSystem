@@ -34,6 +34,8 @@ AJS.$(document).ready(function(){
 		autoSortAvailable: true
     });
 
+    initHazardDateFields();
+
 	/**********************************************************
 	*                                                         *
 	*               Form validation below.                    *
@@ -108,6 +110,17 @@ AJS.$(document).ready(function(){
 		return minDate <= curDate;
 	}, "Dates cannot precede the year 1940");
 
+	$.validator.addMethod("checkPartialDate", function(value, element) {
+		if(this.optional(element)) {
+			return true;
+		}
+		if($(element).val().length === 10) {
+			var reg = /^(\d{4})(\/|-)(\d{1,2})(\/|-)(\d{1,2})$/
+			return (reg.test($(element).val()));
+		}
+		return false;
+	}, "Date format is invalid should be yyyy-mm-dd");
+
 	$("#hazardForm").validate({
 		rules: {
 			hazardNumber: { 
@@ -126,12 +139,12 @@ AJS.$(document).ready(function(){
 	    		maxlength: 255
 	    	},
 	    	hazardInitation: {
-	    		date: true,
+	    		checkPartialDate: true,
 	    		//First number is the year, then month and day. If the date interval is to be changed, this is the place to do it.
 	    		mindate: new Date(40, 0, 1)
 	    	},
 	    	hazardCompletion: {
-	    		date: true,
+	    		checkPartialDate: true,
 	    		preventIncorrectCompl: true,
 	    		mindate: new Date(40, 0, 1)
 	    	}
@@ -290,6 +303,13 @@ AJS.$(document).ready(function(){
 		var id = $.url().param("key");
 		if(typeof id !== 'undefined') {
 			addNecessaryInfo(id);
+		}
+	}
+
+	function initHazardDateFields() {
+		if($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
+			AJS.$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
+			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
 		}
 	}
 });
