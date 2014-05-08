@@ -308,8 +308,8 @@ AJS.$(document).ready(function(){
 
 	function initHazardDateFields() {
 		if($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
-			$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
-			$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
+			AJS.$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
+			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
 		}
 	}
 });

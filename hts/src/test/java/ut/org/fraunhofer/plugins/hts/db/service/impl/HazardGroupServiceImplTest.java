@@ -89,7 +89,7 @@ public class HazardGroupServiceImplTest {
 	@Test
 	public void testGetHazardGroupsByIDNoneFound() {
 		Hazard_Group[] mockHazardGroups = {};
-		int[] ids = {};
+		Integer[] ids = null;
 		
 		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
 		
@@ -105,7 +105,7 @@ public class HazardGroupServiceImplTest {
 		Hazard_Group mockGroup2 = mock(Hazard_Group.class);
 		Hazard_Group mockGroup3 = mock(Hazard_Group.class);
 		Hazard_Group[] mockHazardGroups = { mockGroup, mockGroup2, mockGroup2 };
-		int[] ids = { mockGroup2.getID(), mockGroup3.getID() };
+		Integer[] ids = { mockGroup2.getID(), mockGroup3.getID() };
 		
 		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
 		
