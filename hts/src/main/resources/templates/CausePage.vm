@@ -1,0 +1,56 @@
+<div id="CauseTableHolder">
+	<table id="causeTable" class="display">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Last revision</th>
+            </tr>
+        </thead>
+        <tbody>
+	        <tr>
+	            <td>Cause 1</td>
+	            <td>Improper materials</td>
+	            <td>May 08, 2014, 11:47</td>
+	        </tr>
+	        <tr>
+	            <td>Cause 2</td>
+	            <td>Improper workmanship</td>
+	            <td>May 08, 2014, 11:48</td>
+	        </tr>
+	        <tr>
+	            <td>Cause 3</td>
+	            <td>Inadequate design to withstand pressures</td>
+	            <td>May 08, 2014, 11:48</td>
+	        </tr>
+	        <tr>
+	            <td>Cause 4</td>
+	            <td>MMOD strike</td>
+	            <td>May 08, 2014, 11:48</td>
+	        </tr>
+	    </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+    			<td>Title</td>
+                <td>Last revision</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<form class="aui">
+	<div class="field-group">
+	    <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
+	    <input class="text long-field" type="text" id="cause-title" name="cause-title">
+	    <!--div class="description">Your primary email address.</div-->
+	</div>
+	<div class="field-group">
+	    <label for="cause-description">Description</label>
+	    <textarea class="textarea long-field" name="hazardDescription" id="cause-description" placeholder="Your comment here..."></textarea>
+	</div>
+	<div class="buttons-container">
+	    <div class="buttons">
+	        <input class="button submit" type="submit" value="Save" id="comment-save-button">
+	    </div>
+	</div>
+</form>

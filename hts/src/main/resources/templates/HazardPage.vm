@@ -30,23 +30,7 @@
 	                #parse("/templates/HazardForm.vm")
                 </div>
                 <div class="nav-content" id="content-2">
-                    <form class="aui">
-					    <div class="field-group">
-					        <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text long-field" type="text" id="cause-title" name="cause-title">
-					        <!--div class="description">Your primary email address.</div-->
-					    </div>
-					    <div class="field-group">
-					        <label for="cause-description">Description</label>
-					        <textarea class="textarea long-field" name="hazardDescription" id="cause-description" placeholder="Your comment here..."></textarea>
-					    </div>
-					    <div class="buttons-container">
-					        <div class="buttons">
-					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-					            <a class="cancel" href="#">Cancel</a>
-					        </div>
-					    </div>
-					</form>
+                   #parse("/templates/CausePage.vm")
                 </div>
                 <div class="nav-content" id="content-3">
                 	<form class="aui">
