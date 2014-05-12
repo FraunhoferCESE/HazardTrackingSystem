@@ -16,7 +16,6 @@
     <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
     <resource type="download" name="hts.css" location="/css/hts.css"/>
     <resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css"/>
-    <resource type="download" name="jquery.dataTables.css" location="/css/jquery.dataTables.css"/>
     <resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js"/>
     <resource type="download" name="htsHazardReport.js" location="/js/htsHazardReport.js"/>
     <resource type="download" name="hazardAui.js" location="/js/hazardAui.js"/>
@@ -25,7 +24,6 @@
     <resource type="download" name="formValidation.js" location="/js/formValidation.js"/>
     <resource type="download" name="purl.js" location="/js/purl.js"/>
     <resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js"/>
-    <resource type="download" name="jquery.dataTables.js" location="/js/jquery.dataTables.js"/>
     <resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js"/>
     <context>hts</context>
   </web-resource>

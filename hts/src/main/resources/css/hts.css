@@ -81,3 +81,11 @@ form.payloadForm .add:active {
 .payloads{
 	margin-top: 32px;
 }
+
+#CauseTableHolder > ul, li {
+    list-style-type: none;
+}
+
+#CauseTableHolder div:last-child {
+    margin-bottom:2.48%;
+}
