@@ -1,33 +1,25 @@
-<div id="CauseTableHolder">
-	<div class="column">
-		<div id="causeHeadings">
-			<h2>Title</h2>
-			<span>Last updated</span>
-		</div>
-	    <ul class="causeFormList">
-	        <li class="causeFormHeading">
-		        <span class="causeNumber">Cause 1</span>Improper workmanship
-		        <span class="causeLastEdit">May 08, 2014, 11:48</span>
-		        <ul class="causeFormData">
-		        	<li>#parse("/templates/causeForm.vm")</li>
-		        </ul>
-		    </li>
-	        <li class="causeFormHeading">
-	        	<span class="causeNumber">Cause 2</span>Inadequate design to withstand pressures
-		        <span class="causeLastEdit">May 08, 2014, 11:48</span>
-		        <ul class="causeFormDropdown">
-		        	<li>#parse("/templates/causeForm.vm")</li>
-		        </ul>
-		    </li>
-	        <li class="causeFormHeading">
-	        	<span class="causeNumber">Cause 3</span>MMOD strike
-	        	<span class="causeLastEdit">May 08, 2014, 11:48</span>
-	        	<ul class="causeFormDropdown">
-		        	<li>#parse("/templates/causeForm.vm")</li>
-		        </ul>
-	        </li>
-	    </ul>
-	</div>
+<div id="CauseTableHolder" class="table">
+	<div class="header">
+    	<div class="cell"></div>
+    	<div class="cell">Title</div>
+    	<div class="cell">Last updated</div>
+  	</div>
+  	<div class="rowGroup">
+    	<div class="row">
+    		<div class="cell">Cause 1</div>
+    		<div class="cell">Inadequate design to withstand pressures</div>
+    		<div class="cell">May 08, 2014, 11:48</div>
+    	</div>
+    	<div class="formContainer">#parse("/templates/causeForm.vm")</div>
+  	</div>
+  	<div class="rowGroup">
+    	<div class="row">
+    		<div class="cell">Cause 1</div>
+    		<div class="cell">Inadequate design to withstand pressures</div>
+    		<div class="cell">May 08, 2014, 11:48</div>
+    	</div>
+    	<div class="row formContainer">#parse("/templates/causeForm.vm")</div>
+  	</div>
 </div>
 <div id="CauseFormHolder">
 	#parse("/templates/causeForm.vm")

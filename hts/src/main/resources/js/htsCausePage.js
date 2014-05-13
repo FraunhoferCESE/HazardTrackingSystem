@@ -1,7 +1,7 @@
 AJS.$(document).ready(function(){
-	AJS.$('.causeFormList ul').hide();
+	AJS.$('.rowGroup .formContainer').hide();
 
-	AJS.$('.causeFormHeading').click(function() {
-	    AJS.$(this).find('ul').slideToggle();
+	AJS.$('.rowGroup').click(function() {
+	    AJS.$(this).find('.formContainer').slideToggle();
 	});
 });

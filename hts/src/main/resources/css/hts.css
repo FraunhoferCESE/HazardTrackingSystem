@@ -82,10 +82,40 @@ form.payloadForm .add:active {
 	margin-top: 32px;
 }
 
-#CauseTableHolder > ul, li {
-    list-style-type: none;
+.table {
+    display:table;
+}
+.header {
+    display:table-header-group;
+    font-weight:bold;
+}
+.row {
+    display:table-row;
+}
+.rowGroup {
+    display:table-row-group;
+}
+.cell {
+    display:table-cell;
 }
 
-#CauseTableHolder div:last-child {
-    margin-bottom:2.48%;
+.formContainer {
+    display: table;
+    width: 500%;
+}
+
+#CauseTableHolder {
+    width: 100%;
+}
+
+.cell:nth-child(1) {
+    width: 13%;
+    padding-left: 3%;
+}
+
+.cell:nth-child(2) {
+    width: 30%;
+}
+.cell:nth-child(3) {
+    width: 74%;
 }
