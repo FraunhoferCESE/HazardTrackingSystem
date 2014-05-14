@@ -6,7 +6,7 @@
   	</div>
   	<div class="rowGroup">
     	<div class="row">
-    		<div class="cell">Cause 1</div>
+    		<div class="cell"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
     		<div class="cell">Inadequate design to withstand pressures</div>
     		<div class="cell">May 08, 2014, 11:48</div>
     	</div>
@@ -14,8 +14,8 @@
   	</div>
   	<div class="rowGroup">
     	<div class="row">
-    		<div class="cell">Cause 1</div>
-    		<div class="cell">Inadequate design to withstand pressures</div>
+    		<div class="cell"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 2</div>
+    		<div class="cell">Inadequate design to withstand pressures and heat</div>
     		<div class="cell">May 08, 2014, 11:48</div>
     	</div>
     	<div class="row formContainer">#parse("/templates/causeForm.vm")</div>

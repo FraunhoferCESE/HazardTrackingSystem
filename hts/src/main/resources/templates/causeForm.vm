@@ -9,6 +9,13 @@
 	    <textarea class="textarea long-field" name="hazardDescription" id="cause-description" placeholder="Your comment here..."></textarea>
 	</div>
 	<div class="buttons-container">
-		<input class="button submit" type="submit" value="Save" id="comment-save-button">
+		<div class="causeButtonTop">
+			<input class="button causeButtons" type="submit" value="Save Changes" id="comment-save-button">
+			<input class="button causeButtons" type="submit" value="Add Cause Link" id="comment-save-button">
+		</div>
+		<div>
+			<input class="button causeButtons" type="submit" value="Add Control" id="comment-save-button">
+			<input class="button causeButtons" type="submit" value="Add Reference Doc" id="comment-save-button">
+		</div>
 	</div>
 </form>
