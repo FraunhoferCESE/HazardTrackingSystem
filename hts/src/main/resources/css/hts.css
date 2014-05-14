@@ -99,28 +99,6 @@ form.payloadForm .add:active {
     display:table-cell;
 }
 
-.formContainer {
-    display: table;
-    width: 500%;
-}
-
-#CauseTableHolder {
-    width: 100%;
-}
-
-.cell:nth-child(1) {
-    width: 13%;
-    padding-left: 1%;
-}
-
-.cell:nth-child(2) {
-    width: 30%;
-}
-
-.cell:nth-child(3) {
-    width: 74%;
-}
-
 .cell > span {
     padding-left: 10px;
 }
