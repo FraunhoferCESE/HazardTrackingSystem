@@ -132,3 +132,8 @@ form.payloadForm .add:active {
 .causeButtonTop {
     margin-bottom: 3px;
 }
+
+.toggle {
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
+}
