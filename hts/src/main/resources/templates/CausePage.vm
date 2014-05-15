@@ -1,32 +1,37 @@
-<div id="CauseTableHolder" class="table">
-	<div class="header">
-    	<div class="cell"></div>
-    	<div class="cell">Title</div>
-    	<div class="cell">Last updated</div>
-  	</div>
-  	<div class="rowGroup">
-    	<div class="row">
-    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
-    		<div class="cell">Inadequate design to withstand pressures</div>
-    		<div class="cell">May 08, 2014, 11:48</div>
-    	</div>
-    	<div class="formContainer row">
-    		<div class="cell"></div>
-    		<div class="cell">#parse("/templates/causeForm.vm")</div>
-    		<div class="cell"></div>
-    	</div>
-  	</div>
-  	<div class="rowGroup">
-    	<div class="row">
-    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 2</div>
-    		<div class="cell">Inadequate design to withstand pressures and heat</div>
-    		<div class="cell">May 08, 2014, 11:48</div>
-    	</div>
-    	<div class="row formContainer">
-    		#parse("/templates/causeForm.vm")
-    	</div>
-  	</div>
-</div>
-<div>
-
+<div class="causeBody">
+	<div id="CauseTableHolder" class="table">
+		<div class="header">
+	    	<div class="cell"></div>
+	    	<div class="cell">Title</div>
+	    	<div class="cell">Last updated</div>
+	  	</div>
+	  	<div class="rowGroup">
+	    	<div class="row">
+	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
+	    		<div class="cell">Inadequate design to withstand pressures</div>
+	    		<div class="cell">May 08, 2014, 11:48</div>
+	    	</div>
+	    	<div class="formContainer row">
+	    		<div class="cell"></div>
+	    		<div class="cell">#parse("/templates/CauseForm.vm")</div>
+	    		<div class="cell"></div>
+	    	</div>
+	  	</div>
+	  	<div class="rowGroup">
+	    	<div class="row">
+	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
+	    		<div class="cell">Inadequate design to withstand pressures and heat</div>
+	    		<div class="cell">May 08, 2014, 11:48</div>
+	    	</div>
+	    	<div class="formContainer row">
+	    		<div class="cell"></div>
+	    		<div class="cell">#parse("/templates/CauseForm.vm")</div>
+	    		<div class="cell"></div>
+	    	</div>
+	  	</div>
+	</div>
+	<div class="newCauseFormHolder">
+		<h3>Add New Cause</h3>
+		#parse("/templates/NewCauseform.vm")
+	</div>
 </div>

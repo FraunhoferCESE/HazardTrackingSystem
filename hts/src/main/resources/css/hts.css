@@ -130,6 +130,18 @@ form.payloadForm .add:active {
 
 #causeForm {
     float: left;
+    margin-bottom: 15px;
     margin-left: -146px;
     width: 536px;
+}
+
+#addNewCauseForm {    
+    width: 545px;
+    margin-left: -19px;
+}
+
+.newCauseFormHolder > h3 {    
+    border-top: black solid 1px;
+    margin-top: 22px;
+    width: 42%;
 }
