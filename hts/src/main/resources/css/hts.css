@@ -81,3 +81,67 @@ form.payloadForm .add:active {
 .payloads{
 	margin-top: 32px;
 }
+
+.table {
+    display:table;
+}
+.header {
+    display:table-header-group;
+    font-weight:bold;
+}
+.row {
+    display:table-row;
+}
+.rowGroup {
+    display:table-row-group;
+}
+.cell {
+    display:table-cell;
+}
+
+.cell > span {
+    padding-left: 10px;
+}
+
+.causeButtons {
+    width: 146px;
+}
+
+.causeButtonTop {
+    margin-bottom: 3px;
+}
+
+.toggle {
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
+}
+
+.row > .cell:nth-child(1) {
+    width: 20%;
+}
+
+.row > .cell:nth-child(2) {
+    width: 60%;
+}
+
+.row > .cell:nth-child(3) {
+    width: 20%;
+}
+
+#causeForm {
+    float: left;
+    margin-bottom: 15px;
+    margin-left: -146px;
+    width: 536px;
+}
+
+#addNewCauseForm {    
+    width: 545px;
+    margin-left: -19px;
+}
+
+.newCauseFormHolder > h3 {    
+    border-top: black solid 1px;
+    margin-top: 22px;
+    width: 42%;
+}

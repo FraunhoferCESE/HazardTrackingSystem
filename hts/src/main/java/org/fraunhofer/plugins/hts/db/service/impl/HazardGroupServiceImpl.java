@@ -43,6 +43,7 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 		return group.length > 0 ? group[0] : null;
 	}
 	
+	//TODO see if a better way is possible
 	@Override
 	public Hazard_Group[] getHazardGroupsByID(Integer[] id) {
 		initializeTable();

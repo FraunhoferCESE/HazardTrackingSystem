@@ -1,0 +1,21 @@
+<form class="aui" id="causeForm">
+	<div class="field-group">
+	    <label for="cause-title">Title <span class="aui-icon icon-required">(required)</span></label>
+	    <input class="text long-field" type="text" id="cause-title" name="cause-title">
+	    <!--div class="description">Your primary email address.</div-->
+	</div>
+	<div class="field-group">
+	    <label for="cause-description">Description</label>
+	    <textarea class="textarea long-field" name="hazardDescription" id="cause-description" placeholder="Your comment here..."></textarea>
+	</div>
+	<div class="buttons-container">
+		<div class="causeButtonTop">
+			<input class="button causeButtons" type="submit" value="Save Changes" id="comment-save-button">
+			<input class="button causeButtons" type="submit" value="Add Cause Link" id="comment-save-button">
+		</div>
+		<div>
+			<input class="button causeButtons" type="submit" value="Add Control" id="comment-save-button">
+			<input class="button causeButtons" type="submit" value="Add Reference Doc" id="comment-save-button">
+		</div>
+	</div>
+</form>
