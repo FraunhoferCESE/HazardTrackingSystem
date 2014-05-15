@@ -115,3 +115,21 @@ form.payloadForm .add:active {
     cursor: pointer;
     -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
 }
+
+.row > .cell:nth-child(1) {
+    width: 20%;
+}
+
+.row > .cell:nth-child(2) {
+    width: 60%;
+}
+
+.row > .cell:nth-child(3) {
+    width: 20%;
+}
+
+#causeForm {
+    float: left;
+    margin-left: -146px;
+    width: 536px;
+}
