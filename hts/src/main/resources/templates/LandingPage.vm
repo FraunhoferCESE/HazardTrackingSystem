@@ -5,7 +5,7 @@
 		$webResourceManager.requireResourcesForContext("hts")
 	</head>
 	<body class="aui-layout aui-theme-default">
-		#parse("/templates/Navigation.vm")
+		#parse("/templates/navigation.vm")
 		<header class="aui-page-header">
 			<div class="aui-page-header-inner">
 				<h2>List of all Hazard Reports</h2>

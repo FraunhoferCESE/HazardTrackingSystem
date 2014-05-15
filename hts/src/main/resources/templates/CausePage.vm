@@ -13,7 +13,7 @@
 	    	</div>
 	    	<div class="formContainer row">
 	    		<div class="cell"></div>
-	    		<div class="cell">#parse("/templates/CauseForm.vm")</div>
+	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
 	    		<div class="cell"></div>
 	    	</div>
 	  	</div>
@@ -25,13 +25,13 @@
 	    	</div>
 	    	<div class="formContainer row">
 	    		<div class="cell"></div>
-	    		<div class="cell">#parse("/templates/CauseForm.vm")</div>
+	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
 	    		<div class="cell"></div>
 	    	</div>
 	  	</div>
 	</div>
 	<div class="newCauseFormHolder">
 		<h3>Add New Cause</h3>
-		#parse("/templates/NewCauseform.vm")
+		#parse("/templates/NewCauseForm.vm")
 	</div>
 </div>
