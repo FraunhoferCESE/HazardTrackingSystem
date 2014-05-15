@@ -6,13 +6,14 @@ AJS.$(document).ready(function(){
 	AJS.$("#expandAll").live('click', function() {
 		console.log(AJS.$(this));
 		AJS.$(".rowGroup .formContainer").slideToggle();
-		console.log(AJS.$(".formContainer").is(":visible"));
 		console.log(AJS.$(this).html());
 		if(AJS.$(this).html() === "Close all") {
-			AJS.$(this).html("Expand all");	
+			AJS.$(this).html("Expand all");
+			console.log(AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add"));	
 		}
 		else {
 			AJS.$(this).html("Close all");
+			AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
 		}
 	});
 
