@@ -84,6 +84,7 @@ form.payloadForm .add:active {
 
 .table {
     display:table;
+    width: 960px;
 }
 .header {
     display:table-header-group;
@@ -117,15 +118,26 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(1) {
-    width: 20%;
+    max-width: 9%;
+    min-width: 9%;
+    width: 9%;
 }
 
 .row > .cell:nth-child(2) {
-    width: 60%;
+    width: 35%;
+    max-width: 50%;
 }
 
 .row > .cell:nth-child(3) {
-    width: 20%;
+    max-width: 6%;
+    min-width: 6%;
+    width: 6%;
+}
+
+.row > .cell:nth-child(4) {
+    max-width: 15%;
+    min-width: 15%;
+    width: 15%;
 }
 
 #causeForm {

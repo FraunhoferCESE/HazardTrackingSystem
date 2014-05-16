@@ -26,10 +26,11 @@ AJS.$(document).ready(function(){
 		var formCont = AJS.$(this).parent().parent().find('.formContainer');
 		if(!(checkElementExpansion(formCont))) {
 			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+			formCont.show();
 		}
 		else {
 			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-add");
+			formCont.hide();
 		}
-	    formCont.slideToggle();
 	});
 });
