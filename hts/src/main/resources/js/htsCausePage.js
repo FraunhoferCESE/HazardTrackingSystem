@@ -5,14 +5,15 @@ function checkElementExpansion(element) {
 AJS.$(document).ready(function(){
 	AJS.$("#expandAll").live('click', function() {
 		console.log(AJS.$(this));
-		AJS.$(".rowGroup .formContainer").slideToggle();
 		console.log(AJS.$(this).html());
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(this).html("Expand all");
+			AJS.$(".rowGroup .formContainer").hide();
 			console.log(AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add"));	
 		}
 		else {
 			AJS.$(this).html("Close all");
+			AJS.$(".rowGroup .formContainer").show();
 			AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
 		}
 	});
