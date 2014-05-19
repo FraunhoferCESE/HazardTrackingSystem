@@ -14,12 +14,9 @@ import net.java.ao.schema.Table;
 @Table("Hazard_Controls")
 public interface Hazard_Controls extends Entity {
 	String getTitle();
-
 	void setTitle(String title);
 
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDescription();
-
 	void setDescription(String description);
-
 }

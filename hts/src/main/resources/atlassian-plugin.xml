@@ -34,6 +34,7 @@
   <ao key="ao-module">
     <description>The module configuring active objects service</description>
     <entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Causes_to_Hazards</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
@@ -46,7 +47,7 @@
     <entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.Mission_Phase</entity>
-    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>   
+    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
@@ -73,11 +74,15 @@
     <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
     <label key="viewall-hazardreports.label"/>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
-      <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-        <param name="permission">user</param>
-      </condition>
+    <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+      <param name="permission">user</param>
+    </condition>
   </web-item>
   <rest name="Hazard Resource" i18n-name-key="hazard-resource.name" key="hazard-resource" path="/htsrest" version="1.0">
     <description key="hazard-resource.description">The Hazard Resource Plugin</description>
   </rest>
+  <servlet name="Cause Servlet" i18n-name-key="cause-servlet.name" key="cause-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
+    <description key="cause-servlet.description">The Cause Servlet Plugin</description>
+    <url-pattern>/causeservlet</url-pattern>
+  </servlet>
 </atlassian-plugin>

@@ -13,7 +13,7 @@
 	</div>
 	<div class="field-group">
 	    <label for="causeDescription">Description</label>
-	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription" placeholder="Your comment here..."></textarea>
+	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription"></textarea>
 	</div>
 	<div class="buttons-container">
 		<input class="button causeButtons" type="submit" value="Save Changes" id="causeSaveNew">

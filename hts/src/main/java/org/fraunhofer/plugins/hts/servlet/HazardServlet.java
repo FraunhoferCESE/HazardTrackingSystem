@@ -71,7 +71,6 @@ public final class HazardServlet extends HttpServlet {
 		this.templateRenderer = checkNotNull(templateRenderer);
 	}
 
-	//TODO
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {

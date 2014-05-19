@@ -15,7 +15,6 @@ import net.java.ao.schema.Table;
 public interface Hazard_Group extends Entity {
 
 	String getLabel();
-
 	void setLabel(String label);
 
 	@ManyToMany(value = GroupToHazard.class)
