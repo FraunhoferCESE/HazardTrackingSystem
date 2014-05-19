@@ -37,7 +37,6 @@
 					    <div class="field-group">
 					        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
 					        <input class="text long-field" type="text" id="control-title" name="control-title">
-					        <!--div class="description">Your primary email address.</div-->
 					    </div>
 					    <div class="field-group">
 						    <label for="control-group">Control group</label>

@@ -10,7 +10,9 @@ AJS.$(document).ready(function(){
         AJS.$("#content-1").hide();
         AJS.$("#content-3").hide();
         AJS.$("#content-4").hide();
-        AJS.$(".error").hide();  
+        AJS.$(".error").hide();
+        AJS.$("#hazard-nav-item").removeClass("aui-nav-selected");
+        AJS.$("#cause-nav-item").addClass("aui-nav-selected");
     }
     
 
