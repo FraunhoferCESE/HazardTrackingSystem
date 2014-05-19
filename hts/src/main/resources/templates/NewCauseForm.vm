@@ -8,8 +8,8 @@
 	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner">
 	</div>
 	<div class="field-group">
-	    <label for="causeEffect">Effects</label>
-	    <input class="text long-field" type="text" id="causeEffect" name="causeEffect">
+	    <label for="causeEffects">Effects</label>
+	    <input class="text long-field" type="text" id="causeEffects" name="causeEffects">
 	</div>
 	<div class="field-group">
 	    <label for="causeDescription">Description</label>

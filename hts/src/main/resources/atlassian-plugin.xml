@@ -61,6 +61,7 @@
   <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl"/>
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
   <component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl"/>
+  <component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
@@ -83,6 +84,6 @@
   </rest>
   <servlet name="Cause Servlet" i18n-name-key="cause-servlet.name" key="cause-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
     <description key="cause-servlet.description">The Cause Servlet Plugin</description>
-    <url-pattern>/causeservlet</url-pattern>
+    <url-pattern>/causeform</url-pattern>
   </servlet>
 </atlassian-plugin>
