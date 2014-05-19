@@ -135,7 +135,6 @@ public final class HazardServlet extends HttpServlet {
 		if(addNew != null) {
 			createJson(json, "redirect", req.getContextPath() + "/plugins/servlet/hazardform");
 		}
-		
 		res.getWriter().println(json);
 	}
 	

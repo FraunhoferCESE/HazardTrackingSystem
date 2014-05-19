@@ -1,4 +1,5 @@
 <div class="causeBody">
+	<h2>Hazard # - Hazard title</h2>
 	<button class="aui-button" id="expandAll">Expand all</button>
 	<div id="CauseTableHolder" class="table">
 		<div class="header">
