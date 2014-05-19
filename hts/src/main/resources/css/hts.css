@@ -84,6 +84,7 @@ form.payloadForm .add:active {
 
 .table {
     display:table;
+    width: 960px;
 }
 .header {
     display:table-header-group;
@@ -117,15 +118,26 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(1) {
-    width: 20%;
+    max-width: 7%;
+    min-width: 7%;
+    width: 7%;
 }
 
 .row > .cell:nth-child(2) {
-    width: 60%;
+    width: 40%;
+    max-width: 50%;
 }
 
 .row > .cell:nth-child(3) {
-    width: 20%;
+    max-width: 6%;
+    min-width: 3%;
+    width: 6%;
+}
+
+.row > .cell:nth-child(4) {
+    max-width: 15%;
+    min-width: 15%;
+    width: 15%;
 }
 
 #causeForm {
@@ -143,5 +155,9 @@ form.payloadForm .add:active {
 .newCauseFormHolder > h3 {    
     border-top: black solid 1px;
     margin-top: 22px;
-    width: 42%;
+    width: 54.3%;
+}
+
+.causeBody > h2 {
+    margin-left: 14%;
 }

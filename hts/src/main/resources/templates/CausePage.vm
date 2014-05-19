@@ -1,31 +1,52 @@
 <div class="causeBody">
+	<h2>Hazard # - Hazard title</h2>
+	<button class="aui-button" id="expandAll">Expand all</button>
 	<div id="CauseTableHolder" class="table">
 		<div class="header">
 	    	<div class="cell"></div>
 	    	<div class="cell">Title</div>
+		    <div class="cell">Owner</div>
 	    	<div class="cell">Last updated</div>
 	  	</div>
 	  	<div class="rowGroup">
 	    	<div class="row">
 	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
 	    		<div class="cell">Inadequate design to withstand pressures</div>
+	    		<div class="cell">Owner</div>
 	    		<div class="cell">May 08, 2014, 11:48</div>
 	    	</div>
 	    	<div class="formContainer row">
 	    		<div class="cell"></div>
 	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
+	    		<div class="cell"></div>
 	    		<div class="cell"></div>
 	    	</div>
 	  	</div>
 	  	<div class="rowGroup">
 	    	<div class="row">
-	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
+	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 2</div>
 	    		<div class="cell">Inadequate design to withstand pressures and heat</div>
+	    		<div class="cell">Owner</div>
 	    		<div class="cell">May 08, 2014, 11:48</div>
 	    	</div>
 	    	<div class="formContainer row">
 	    		<div class="cell"></div>
 	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
+	    		<div class="cell"></div>
+	    		<div class="cell"></div>
+	    	</div>
+	  	</div>
+	  	<div class="rowGroup">
+	    	<div class="row">
+	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 3</div>
+	    		<div class="cell">MMOD strike</div>
+	    		<div class="cell">Owner</div>
+	    		<div class="cell">May 09, 2014, 13:48</div>
+	    	</div>
+	    	<div class="formContainer row">
+	    		<div class="cell"></div>
+	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
+	    		<div class="cell"></div>
 	    		<div class="cell"></div>
 	    	</div>
 	  	</div>
