@@ -4,6 +4,7 @@ import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
+import net.java.ao.schema.NotNull;
 
 /**
  * The table definition for the Hazard_Cause table. It extends Entity which
@@ -17,6 +18,8 @@ public interface Hazard_Causes extends Entity {
 	String getCauseID();
 	void setCauseID(String id);
 	
+	@NotNull
+	@StringLength(value = 512)
 	String getTitle();
 	void setTitle(String title);
 

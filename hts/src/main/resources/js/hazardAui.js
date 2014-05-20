@@ -1,16 +1,14 @@
 AJS.$(document).ready(function(){
-    
+    AJS.$(".error").hide();   
     if(window.location.href.indexOf("hazardform") > -1) {
         AJS.$("#content-2").hide();
         AJS.$("#content-3").hide();
-        AJS.$("#content-4").hide();
-        AJS.$(".error").hide();    
+        AJS.$("#content-4").hide(); 
     }
     else if(window.location.href.indexOf("causeform") > -1) {
         AJS.$("#content-1").hide();
         AJS.$("#content-3").hide();
         AJS.$("#content-4").hide();
-        AJS.$(".error").hide();
         AJS.$("#hazard-nav-item").removeClass("aui-nav-selected");
         AJS.$("#cause-nav-item").addClass("aui-nav-selected");
     }
