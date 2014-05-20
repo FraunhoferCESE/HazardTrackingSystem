@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.HazardService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -19,11 +20,13 @@ import static com.google.common.base.Preconditions.*;
 public class CauseServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private final HazardCauseService hazardCauseService;
+	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer; 
 	
-	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer) {
+	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer, HazardService hazardService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
+		this.hazardService = checkNotNull(hazardService);
 	}
 	
     @Override
@@ -31,7 +34,9 @@ public class CauseServlet extends HttpServlet{
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 
 			res.setContentType("text/html;charset=utf-8");
-			templateRenderer.render("templates/HazardPage.vm", res.getWriter());
+			Map<String, Object> context = Maps.newHashMap();
+			context.put("newestHazard", hazardService.getNewestHazardReport());
+			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
 		} 
 		else {
@@ -48,7 +53,7 @@ public class CauseServlet extends HttpServlet{
     	final String causeID = "1";
     	
     	hazardCauseService.add(causeID, description, effects, owner, title);
-    	
+    	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
 
 }

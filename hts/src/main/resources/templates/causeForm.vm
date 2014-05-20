@@ -1,4 +1,4 @@
-<form class="aui" id="causeForm">
+<form class="aui" id="causeForm" method="post" action="causeform">
 	<div class="field-group">
 	    <label for="causeTitle">Title <span class="aui-icon icon-required">(required)</span></label>
 	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle">

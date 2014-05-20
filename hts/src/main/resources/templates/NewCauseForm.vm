@@ -1,4 +1,4 @@
-<form class="aui" id="addNewCauseForm">
+<form class="aui" id="addNewCauseForm" method="post" action="causeform">
 	<div class="field-group">
 	    <label for="causeTitle">Title <span class="aui-icon icon-required">(required)</span></label>
 	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle">
@@ -16,6 +16,6 @@
 	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription"></textarea>
 	</div>
 	<div class="buttons-container">
-		<input class="button causeButtons" type="submit" value="Save Changes" id="causeSaveNew">
+		<input class="button causeButtons" type="submit" value="Save" id="causeSaveNew">
 	</div>
 </form>

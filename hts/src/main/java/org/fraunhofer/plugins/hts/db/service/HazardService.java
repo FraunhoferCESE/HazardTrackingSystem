@@ -34,4 +34,5 @@ public interface HazardService {
 	
 	void deleteHazard(int id);
 	
+	Hazards getNewestHazardReport();
 }

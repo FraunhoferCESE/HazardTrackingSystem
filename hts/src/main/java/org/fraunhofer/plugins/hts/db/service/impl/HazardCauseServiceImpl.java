@@ -34,13 +34,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	@Override
 	public Hazard_Causes getHazardCauseByID(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Hazard_Causes> all() {
-		// TODO Auto-generated method stub
 		return newArrayList(ao.find(Hazard_Causes.class));
 	}
 	

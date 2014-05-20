@@ -168,6 +168,13 @@ public class HazardServiceImpl implements HazardService {
 		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
 	}
 	
+	@Override
+	public Hazards getNewestHazardReport() {
+		List<Hazards> all = all();
+		Hazards lastCreated = all.get(all.size() - 1);
+		return lastCreated;
+	}
+	
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
 		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
 		subsystemToHazard.setSubsystem(subsystems);
@@ -200,4 +207,5 @@ public class HazardServiceImpl implements HazardService {
 	private void removeHazardGroups(int id) {
 		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
+
 }
