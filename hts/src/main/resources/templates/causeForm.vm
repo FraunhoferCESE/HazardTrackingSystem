@@ -1,19 +1,19 @@
 <form class="aui" id="causeForm" method="post" action="causeform">
 	<div class="field-group">
 	    <label for="causeTitle">Title <span class="aui-icon icon-required">(required)</span></label>
-	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle">
+	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle" value="$!cause.getTitle()">
 	</div>
 	<div class="field-group">
 	    <label for="causeOwner">Owner</label>
-	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner">
+	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner" value="$!cause.getOwner()">
 	</div>
 	<div class="field-group">
 	    <label for="causeEffect">Effects</label>
-	    <input class="text long-field" type="text" id="causeEffect" name="causeEffect">
+	    <input class="text long-field" type="text" id="causeEffect" name="causeEffect" value="$!cause.getEffects()">
 	</div>
 	<div class="field-group">
 	    <label for="causeDescription">Description</label>
-	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription"></textarea>
+	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription">$!cause.getDescription()</textarea>
 	</div>
 	<div class="buttons-container">
 		<div class="causeButtonTop">

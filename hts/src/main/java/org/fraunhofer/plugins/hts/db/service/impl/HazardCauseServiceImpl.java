@@ -22,13 +22,14 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
-	public Hazard_Causes add(String causeID, String description, String effects, String owner, String title) {
+	public Hazard_Causes add(String causeID, String description, String effects, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
 		cause.setCauseID(causeID);
 		cause.setDescription(description);
 		cause.setEffects(effects);
 		cause.setOwner(owner);
 		cause.save();
+		associateCauseToHazard(hazard, cause);
 		return cause;
 	}
 

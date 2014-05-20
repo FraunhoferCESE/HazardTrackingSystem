@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
@@ -36,6 +37,7 @@ public class CauseServlet extends HttpServlet{
 			res.setContentType("text/html;charset=utf-8");
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("newestHazard", hazardService.getNewestHazardReport());
+			context.put("causes", hazardCauseService.all());
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
 		} 
@@ -50,9 +52,10 @@ public class CauseServlet extends HttpServlet{
     	final String owner = req.getParameter("causeOwner");
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
-    	final String causeID = "1";
+    	final String causeID = "Cause 2";
+    	final Hazards hazard = hazardService.getNewestHazardReport();
     	
-    	hazardCauseService.add(causeID, description, effects, owner, title);
+    	hazardCauseService.add(causeID, description, effects, owner, title, hazard);
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
 
