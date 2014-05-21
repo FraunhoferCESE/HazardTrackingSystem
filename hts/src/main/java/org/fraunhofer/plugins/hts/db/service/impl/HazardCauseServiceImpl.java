@@ -24,9 +24,9 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
-	public Hazard_Causes add(String causeNumber, String description, String effects, String owner, String title, Hazards hazard) {
+	public Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
-		cause.setCauseNumber(causeNumber);
+		cause.setCauseNumber("Cause " + getNewCauseNumber(hazard));
 		cause.setDescription(description);
 		cause.setEffects(effects);
 		cause.setOwner(owner);
@@ -34,6 +34,17 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		cause.save();
 		associateCauseToHazard(hazard, cause);
 		return cause;
+	}
+	
+	@Override
+	public Hazard_Causes update(String id, String description, String effects, String owner, String title) {
+		Hazard_Causes causeToBeupdated = getHazardCauseByID(id);
+		causeToBeupdated.setDescription(description);
+		causeToBeupdated.setEffects(effects);
+		causeToBeupdated.setOwner(owner);
+		causeToBeupdated.setTitle(title);
+		causeToBeupdated.save();
+		return causeToBeupdated;
 	}
 
 	@Override
@@ -53,15 +64,8 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		causeToHazard.setHazardCause(hazardCause);
 		causeToHazard.save();
 	}
-
-	@Override
-	public Hazard_Causes update(String id, String description, String effects, String owner, String title) {
-		Hazard_Causes causeToBeupdated = getHazardCauseByID(id);
-		causeToBeupdated.setDescription(description);
-		causeToBeupdated.setEffects(effects);
-		causeToBeupdated.setOwner(owner);
-		causeToBeupdated.setTitle(title);
-		causeToBeupdated.save();
-		return causeToBeupdated;
+	
+	private int getNewCauseNumber(Hazards hazard) {
+		return hazard.getHazardCauses().length + 1;
 	}
 }

@@ -171,7 +171,10 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards getNewestHazardReport() {
 		List<Hazards> all = all();
-		Hazards lastCreated = all.get(all.size() - 1);
+		Hazards lastCreated = null;
+		if(!all.isEmpty()) {
+			lastCreated = all.get(all.size() - 1);
+		}
 		return lastCreated;
 	}
 	

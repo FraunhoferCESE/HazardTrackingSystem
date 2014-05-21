@@ -50,7 +50,6 @@ public class CauseServlet extends HttpServlet{
     	final String owner = req.getParameter("causeOwner");
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
-    	final String causeNumber = "Cause 3";
     	//TODO change once we can navigate from the newest hazard report to older ones
     	final Hazards hazard = hazardService.getNewestHazardReport();
     	
@@ -59,7 +58,7 @@ public class CauseServlet extends HttpServlet{
     		hazardCauseService.update(id, description, effects, owner, title);
     	}
     	else {
-    		hazardCauseService.add(causeNumber, description, effects, owner, title, hazard);
+    		hazardCauseService.add(description, effects, owner, title, hazard);
     	}
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
