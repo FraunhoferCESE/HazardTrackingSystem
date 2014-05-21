@@ -58,6 +58,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		return newArrayList(ao.find(Hazard_Causes.class));
 	}
 	
+	@Override
+	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
+		return newArrayList(hazard.getHazardCauses());
+	}
+	
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {
 		final Causes_to_Hazards causeToHazard = ao.create(Causes_to_Hazards.class);
 		causeToHazard.setHazard(hazard);

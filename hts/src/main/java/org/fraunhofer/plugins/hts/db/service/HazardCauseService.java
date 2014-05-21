@@ -13,4 +13,6 @@ public interface HazardCauseService {
 	Hazard_Causes getHazardCauseByID(String id);
 	
 	List<Hazard_Causes> all();
+	
+	List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard);
 }

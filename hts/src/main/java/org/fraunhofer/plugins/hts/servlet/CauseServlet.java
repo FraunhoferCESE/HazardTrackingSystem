@@ -33,10 +33,11 @@ public class CauseServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			res.setContentType("text/html;charset=utf-8");
+			Hazards newestHazardReport = hazardService.getNewestHazardReport();
+    		res.setContentType("text/html;charset=utf-8");
 			Map<String, Object> context = Maps.newHashMap();
-			context.put("newestHazard", hazardService.getNewestHazardReport());
-			context.put("causes", hazardCauseService.all());
+			context.put("newestHazard", newestHazardReport);
+			context.put("causes", hazardCauseService.getAllCausesWithinAHazard(newestHazardReport));
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 		} 
 		else {
