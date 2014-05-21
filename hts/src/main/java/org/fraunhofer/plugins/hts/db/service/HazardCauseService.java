@@ -6,7 +6,9 @@ import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
 
 public interface HazardCauseService {
-	Hazard_Causes add(String causeID, String description, String effects, String owner, String title, Hazards hazard);
+	Hazard_Causes add(String causeNumber, String description, String effects, String owner, String title, Hazards hazard);
+	
+	Hazard_Causes update(String id, String description, String effects, String owner, String title);
 	
 	Hazard_Causes getHazardCauseByID(String id);
 	

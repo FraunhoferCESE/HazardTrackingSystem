@@ -6,7 +6,6 @@ function dateLayout() {
 	var lastUpdated = AJS.$(".lastUpdated");
 	if(lastUpdated.length > 0) {
 		lastUpdated.each(function () {
-			console.log(AJS.$(this)[0].innerText);
 			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
 		});
 	} 

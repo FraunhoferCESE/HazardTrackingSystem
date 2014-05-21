@@ -33,13 +33,11 @@ public class CauseServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-
 			res.setContentType("text/html;charset=utf-8");
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("newestHazard", hazardService.getNewestHazardReport());
 			context.put("causes", hazardCauseService.all());
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
-
 		} 
 		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
@@ -52,10 +50,17 @@ public class CauseServlet extends HttpServlet{
     	final String owner = req.getParameter("causeOwner");
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
-    	final String causeID = "Cause 2";
+    	final String causeNumber = "Cause 2";
+    	//TODO change once we can navigate from the newest hazard report to older ones
     	final Hazards hazard = hazardService.getNewestHazardReport();
     	
-    	hazardCauseService.add(causeID, description, effects, owner, title, hazard);
+    	if("y".equals(req.getParameter("edit"))) {
+    		String id = req.getParameter("key");
+    		hazardCauseService.update(id, description, effects, owner, title);
+    	}
+    	else {
+    		hazardCauseService.add(causeNumber, description, effects, owner, title, hazard);
+    	}
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
 
