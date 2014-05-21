@@ -238,7 +238,23 @@ AJS.$(document).ready(function(){
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
 	    },
-	})
+	});
+
+	$("#causeForm").validate({
+		rules: {
+	    	causeTitle: { 
+	    		required: true,
+	    		maxlength: 512
+	    	}
+	    },
+
+	    //Custom class so error messages are not styled with JIRA's css error style.
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+	});
 
 	/**********************************************************
 	*                                                         *

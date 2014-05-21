@@ -14,7 +14,7 @@
 		    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseID()</div>
 		    		<div class="cell">$!cause.getTitle()</div>
 		    		<div class="cell">$!cause.getOwner()</div>
-		    		<div class="cell">$!cause.getLastUpdated()</div>
+		    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 		    	</div>
 		    	<div class="formContainer row">
 		    		<div class="cell"></div>

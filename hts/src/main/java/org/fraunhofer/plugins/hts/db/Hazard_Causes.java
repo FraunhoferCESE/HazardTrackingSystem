@@ -1,5 +1,7 @@
 package org.fraunhofer.plugins.hts.db;
 
+import java.util.Date;
+
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
@@ -32,6 +34,9 @@ public interface Hazard_Causes extends Entity {
 	
 	String getEffects();
 	void setEffects(String effects);
+	
+	Date getLastUpdated();
+	void setLastUpdated(Date lastEdit);
 	
 	@ManyToMany(value = Causes_to_Hazards.class)
 	Hazards[] getHazards();

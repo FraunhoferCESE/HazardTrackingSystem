@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.Date;
 import java.util.List;
 
 import net.java.ao.DBParam;
@@ -28,6 +29,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		cause.setDescription(description);
 		cause.setEffects(effects);
 		cause.setOwner(owner);
+		cause.setLastUpdated(new Date());
 		cause.save();
 		associateCauseToHazard(hazard, cause);
 		return cause;
