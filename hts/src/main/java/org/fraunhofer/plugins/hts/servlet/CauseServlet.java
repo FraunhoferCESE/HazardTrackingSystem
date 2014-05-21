@@ -50,7 +50,7 @@ public class CauseServlet extends HttpServlet{
     	final String owner = req.getParameter("causeOwner");
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
-    	final String causeNumber = "Cause 2";
+    	final String causeNumber = "Cause 3";
     	//TODO change once we can navigate from the newest hazard report to older ones
     	final Hazards hazard = hazardService.getNewestHazardReport();
     	
