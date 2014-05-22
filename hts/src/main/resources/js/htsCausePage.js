@@ -11,32 +11,47 @@ function dateLayout() {
 	} 
 
 }
-
-AJS.$(document).ready(function(){
-	dateLayout();
-
+function openDivOnReload() {
 	AJS.$(".formContainer").each(function() {
-		console.log(this.id);
-		console.log(AJS.$.cookie("show-" + this.id));
+		var spanElement = AJS.$(this).parent().find(".trigger").children();
 		if(AJS.$.cookie("show-" + this.id) != "collapsed") {
-			console.log(AJS.$(this));
+			addExpandedClass(spanElement);
 			AJS.$(this).show();
 		}
 		else {
+			addCollapsedClass(spanElement);
 			AJS.$(this).hide();
 		}
 	});
+}
+
+function addExpandedClass(element) {
+	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
+}
+
+function addCollapsedClass(element) {
+	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");
+}
+
+AJS.$(document).ready(function(){
+	dateLayout();
+	openDivOnReload();
+	console.log(AJS.$.cookie("DisplayAll"));
 
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(this).html("Expand all");
 			AJS.$(".rowGroup .formContainer").hide();
-			AJS.$(".trigger").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");	
+			var spanElement = AJS.$(".trigger").children();
+			addCollapsedClass(spanElement);
+			AJS.$.cookie("DisplayAll", "false");
 		}
 		else {
 			AJS.$(this).html("Close all");
 			AJS.$(".rowGroup .formContainer").show();
-			AJS.$(".trigger").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
+			var spanElement = AJS.$(".trigger").children();
+			addExpandedClass(spanElement);
+			AJS.$.cookie("DisplayAll", "true")	
 		}
 	});
 
@@ -45,14 +60,14 @@ AJS.$(document).ready(function(){
 		var spanClass = spanElement.attr("class");
 		var formCont = AJS.$(this).parent().parent().find('.formContainer');
 		if(!(checkElementExpansion(formCont))) {
-			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+			addExpandedClass(spanElement);
 			formCont.show();
 			AJS.$.cookie("show-" + formCont.attr("id"), "expanded");
 		}
 		else {
-			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-add");
+			addCollapsedClass(spanElement);
 			formCont.hide();
-			console.log(AJS.$.cookie("show-" + formCont.attr("id"), "collapsed"));
+			AJS.$.cookie("show-" + formCont.attr("id"), "collapsed");
 		}
 	});
 });
