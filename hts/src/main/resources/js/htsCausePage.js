@@ -11,6 +11,7 @@ function dateLayout() {
 	} 
 
 }
+
 function openDivOnReload() {
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
@@ -33,10 +34,22 @@ function addCollapsedClass(element) {
 	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");
 }
 
+function openAllDivs() {
+	AJS.$(".rowGroup .formContainer").each(function() {
+		AJS.$.cookie("show-" + this.id, "expanded"); 
+	});
+}
+
+function closeAllDivs() {
+	AJS.$(".rowGroup .formContainer").each(function() {
+		AJS.$.cookie("show-" + this.id, "collapsed"); 
+	});
+}
+
+
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
-	console.log(AJS.$.cookie("DisplayAll"));
 
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
@@ -44,14 +57,14 @@ AJS.$(document).ready(function(){
 			AJS.$(".rowGroup .formContainer").hide();
 			var spanElement = AJS.$(".trigger").children();
 			addCollapsedClass(spanElement);
-			AJS.$.cookie("DisplayAll", "false");
+			closeAllDivs();
 		}
 		else {
 			AJS.$(this).html("Close all");
 			AJS.$(".rowGroup .formContainer").show();
 			var spanElement = AJS.$(".trigger").children();
-			addExpandedClass(spanElement);
-			AJS.$.cookie("DisplayAll", "true")	
+			addExpandedClass(spanElement);	
+			openAllDivs();
 		}
 	});
 
