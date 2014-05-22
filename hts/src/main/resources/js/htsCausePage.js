@@ -15,34 +15,44 @@ function dateLayout() {
 AJS.$(document).ready(function(){
 	dateLayout();
 
+	AJS.$(".formContainer").each(function() {
+		console.log(this.id);
+		console.log(AJS.$.cookie("show-" + this.id));
+		if(AJS.$.cookie("show-" + this.id) != "collapsed") {
+			console.log(AJS.$(this));
+			AJS.$(this).show();
+		}
+		else {
+			AJS.$(this).hide();
+		}
+	});
+
 	AJS.$("#expandAll").live('click', function() {
-		console.log(AJS.$(this));
-		console.log(AJS.$(this).html());
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(this).html("Expand all");
 			AJS.$(".rowGroup .formContainer").hide();
-			console.log(AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add"));	
+			AJS.$(".trigger").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");	
 		}
 		else {
 			AJS.$(this).html("Close all");
 			AJS.$(".rowGroup .formContainer").show();
-			AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
+			AJS.$(".trigger").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
 		}
 	});
 
-	AJS.$('.rowGroup .formContainer').hide();
-
-	AJS.$('.toggle').click(function() {
+	AJS.$('.trigger').click(function() {
 		var spanElement = AJS.$(this).children();
 		var spanClass = spanElement.attr("class");
 		var formCont = AJS.$(this).parent().parent().find('.formContainer');
 		if(!(checkElementExpansion(formCont))) {
 			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 			formCont.show();
+			AJS.$.cookie("show-" + formCont.attr("id"), "expanded");
 		}
 		else {
 			spanElement.removeClass(spanClass).addClass("aui-icon aui-icon-small aui-iconfont-add");
 			formCont.hide();
+			console.log(AJS.$.cookie("show-" + formCont.attr("id"), "collapsed"));
 		}
 	});
 });

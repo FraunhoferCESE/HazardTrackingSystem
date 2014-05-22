@@ -26,6 +26,7 @@
     <resource type="download" name="purl.js" location="/js/purl.js"/>
     <resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js"/>
     <resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js"/>
+    <resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->
