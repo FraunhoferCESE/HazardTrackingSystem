@@ -8,6 +8,7 @@
 		    	<div class="cell">Title</div>
 			    <div class="cell">Owner</div>
 		    	<div class="cell">Last updated</div>
+		    	<div class="cell">Delete?</div>
 		  	</div>
 		  	#foreach( $cause in $causes )
 			  	<div class="rowGroup">
@@ -16,10 +17,12 @@
 			    		<div class="cell">$!cause.getTitle()</div>
 			    		<div class="cell">$!cause.getOwner()</div>
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
+			    		<div class="cell"><input type="checkbox"></div>
 			    	</div>
 			    	<div class="formContainer row" id="$cause.getID()">
 			    		<div class="cell"></div>
 			    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
+			    		<div class="cell"></div>
 			    		<div class="cell"></div>
 			    		<div class="cell"></div>
 			    	</div>

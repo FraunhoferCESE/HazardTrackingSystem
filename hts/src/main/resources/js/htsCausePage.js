@@ -50,13 +50,13 @@ function addCollapsedClass(element) {
 
 function openAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
-		AJS.$.cookie("show-" + this.id, "expanded"); 
+		AJS.$.cookie("show-" + this.id, "expanded", { expires: 1 }); 
 	});
 }
 
 function closeAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
-		AJS.$.cookie("show-" + this.id, "collapsed"); 
+		AJS.$.cookie("show-" + this.id, "collapsed", { expires: 1 }); 
 	});
 }
 
@@ -88,12 +88,12 @@ AJS.$(document).ready(function(){
 		if(!(checkElementExpansion(formCont))) {
 			addExpandedClass(spanElement);
 			formCont.show();
-			AJS.$.cookie("show-" + formCont.attr("id"), "expanded");
+			AJS.$.cookie("show-" + formCont.attr("id"), "expanded", { expires: 1 });
 		}
 		else {
 			addCollapsedClass(spanElement);
 			formCont.hide();
-			AJS.$.cookie("show-" + formCont.attr("id"), "collapsed");
+			AJS.$.cookie("show-" + formCont.attr("id"), "collapsed", { expires: 1 });
 		}
 		changeButtonText();
 	});

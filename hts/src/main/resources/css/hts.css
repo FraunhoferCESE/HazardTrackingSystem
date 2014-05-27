@@ -135,9 +135,14 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(4) {
-    max-width: 15%;
-    min-width: 15%;
-    width: 15%;
+    max-width: 10%;
+    min-width: 10%;
+    width: 10%;
+}
+.row > .cell:nth-child(5) {
+    max-width: 6%;
+    min-width: 6%;
+    width: 6%;
 }
 
 #causeForm {
@@ -155,7 +160,7 @@ form.payloadForm .add:active {
 .newCauseFormHolder > h3 {    
     border-top: black solid 1px;
     margin-top: 22px;
-    width: 54.3%;
+    width: 59%;
 }
 
 .causeBody > h2 {
