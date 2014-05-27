@@ -13,16 +13,24 @@ function dateLayout() {
 }
 
 function openDivOnReload() {
+	var count = 0;
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
 		if(AJS.$.cookie("show-" + this.id) != "collapsed") {
 			addExpandedClass(spanElement);
 			AJS.$(this).show();
+			count++;
+			console.log(count);
+			if(count === AJS.$(".formContainer").length) {
+				AJS.$("#expandAll").html("Close all");
+			}
 		}
 		else {
 			addCollapsedClass(spanElement);
 			AJS.$(this).hide();
 		}
+
+
 	});
 }
 
