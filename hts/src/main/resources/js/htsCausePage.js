@@ -13,25 +13,31 @@ function dateLayout() {
 }
 
 function openDivOnReload() {
-	var count = 0;
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
 		if(AJS.$.cookie("show-" + this.id) != "collapsed") {
 			addExpandedClass(spanElement);
 			AJS.$(this).show();
-			count++;
-			console.log(count);
-			if(count === AJS.$(".formContainer").length) {
-				AJS.$("#expandAll").html("Close all");
-			}
 		}
 		else {
 			addCollapsedClass(spanElement);
 			AJS.$(this).hide();
 		}
-
-
 	});
+	changeButtonText();
+}
+
+function changeButtonText() {
+	if(checkIfAllDivsAreOpen()) {
+		AJS.$("#expandAll").html("Close all");
+	}
+	else {
+		AJS.$("#expandAll").html("Expand all");	
+	}
+}
+
+function checkIfAllDivsAreOpen() {
+	return (AJS.$(".formContainer").length === AJS.$(".formContainer:visible").length);
 }
 
 function addExpandedClass(element) {
@@ -58,17 +64,16 @@ function closeAllDivs() {
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
-
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
-			AJS.$(this).html("Expand all");
+			changeButtonText();
 			AJS.$(".rowGroup .formContainer").hide();
 			var spanElement = AJS.$(".trigger").children();
 			addCollapsedClass(spanElement);
 			closeAllDivs();
 		}
 		else {
-			AJS.$(this).html("Close all");
+			changeButtonText();
 			AJS.$(".rowGroup .formContainer").show();
 			var spanElement = AJS.$(".trigger").children();
 			addExpandedClass(spanElement);	
@@ -90,5 +95,6 @@ AJS.$(document).ready(function(){
 			formCont.hide();
 			AJS.$.cookie("show-" + formCont.attr("id"), "collapsed");
 		}
+		changeButtonText();
 	});
 });
