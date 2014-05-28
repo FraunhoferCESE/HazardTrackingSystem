@@ -240,20 +240,19 @@ AJS.$(document).ready(function(){
 	    },
 	});
 
-	$("#causeForm").validate({
-		rules: {
-	    	causeTitle: { 
-	    		required: true,
-	    		maxlength: 512
-	    	}
-	    },
-
-	    //Custom class so error messages are not styled with JIRA's css error style.
-	    errorClass: "validationError",
-	    errorElement: "span",
-	    errorPlacement: function(error, element) {
-	    	error.insertAfter(element);
-	    },
+	$("#causeSaveAllChanges").live('click', function() {
+		$("form.causeForms").each(function(){
+			console.log(this);
+			$(this).submit();
+			$(this).validate({
+				rules: {
+					causeTitle: {
+						required: true,
+						maxlength: 512
+					}
+				},
+			});
+		});
 	});
 
 	/**********************************************************

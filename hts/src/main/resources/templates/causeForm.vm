@@ -1,4 +1,4 @@
-<form class="aui" id="causeForm" method="post" action="causeform">
+<form class="aui causeForms" id="causeForm" method="post" action="causeform">
 	<div class="field-group">
 	    <label for="causeTitle">Title <span class="aui-icon icon-required">(required)</span></label>
 	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle" value="$!cause.getTitle()">
@@ -17,11 +17,10 @@
 	</div>
 	<div class="buttons-container">
 		<div class="causeButtonTop">
-			<input class="button causeButtons" type="submit" value="Save Changes" id="causeSaveChanges">
 			<input class="button causeButtons" type="submit" value="Add Cause Link" id="causeAddLink">
+			<input class="button causeButtons" type="submit" value="Add Control" id="causeAddControl">
 		</div>
 		<div>
-			<input class="button causeButtons" type="submit" value="Add Control" id="causeAddControl">
 			<input class="button causeButtons" type="submit" value="Add Reference Doc" id="causeAddReference">
 		</div>
 	</div>
