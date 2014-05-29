@@ -12,10 +12,18 @@ function dateLayout() {
 
 }
 
+function getCookieValue(id) {
+	return AJS.$.cookie("show-" + getTheHazardNumber() + id);
+}
+
+function createCookie(id, type) {
+	AJS.$.cookie("show-" + getTheHazardNumber() + id, type, { expires: 1 });
+}
+
 function openDivOnReload() {
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
-		if(AJS.$.cookie("show-" + this.id) != "collapsed") {
+		if(getCookieValue(this.id) != "collapsed" && typeof(getCookieValue(this.id))!="undefined") {
 			addExpandedClass(spanElement);
 			AJS.$(this).show();
 		}
@@ -50,14 +58,20 @@ function addCollapsedClass(element) {
 
 function openAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
-		AJS.$.cookie("show-" + this.id, "expanded", { expires: 1 }); 
+		createCookie(this.id, "expanded"); 
 	});
 }
 
 function closeAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
-		AJS.$.cookie("show-" + this.id, "collapsed", { expires: 1 }); 
+		createCookie(this.id, "collapsed");
 	});
+}
+
+function getTheHazardNumber() {
+	var hazardNumberAndTitle = AJS.$(".causeBody>h2").text();
+	var index = hazardNumberAndTitle.indexOf("-");
+	return hazardNumberAndTitle.substring(0, (index-1))  + "-";
 }
 
 
@@ -66,18 +80,18 @@ AJS.$(document).ready(function(){
 	openDivOnReload();
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
-			changeButtonText();
 			AJS.$(".rowGroup .formContainer").hide();
 			var spanElement = AJS.$(".trigger").children();
 			addCollapsedClass(spanElement);
 			closeAllDivs();
+			changeButtonText();
 		}
 		else {
-			changeButtonText();
 			AJS.$(".rowGroup .formContainer").show();
 			var spanElement = AJS.$(".trigger").children();
 			addExpandedClass(spanElement);	
 			openAllDivs();
+			changeButtonText();
 		}
 	});
 
@@ -88,13 +102,13 @@ AJS.$(document).ready(function(){
 		if(!(checkElementExpansion(formCont))) {
 			addExpandedClass(spanElement);
 			formCont.show();
-			AJS.$.cookie("show-" + formCont.attr("id"), "expanded", { expires: 1 });
+			createCookie(formCont.attr("id"), "expanded");
 		}
 		else {
 			addCollapsedClass(spanElement);
 			formCont.hide();
-			AJS.$.cookie("show-" + formCont.attr("id"), "collapsed", { expires: 1 });
+			createCookie(formCont.attr("id"), "collapsed");
 		}
-		changeButtonText();
+		
 	});
 });
