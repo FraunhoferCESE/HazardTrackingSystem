@@ -246,7 +246,7 @@ AJS.$(document).ready(function(){
 		});
 	});
 
-	$(".causeForms").each(function() {
+	$(".causeForms").each(function(index) {
 		$(this).validate({
 			rules: {
 	    		causeTitle: { 
@@ -260,10 +260,11 @@ AJS.$(document).ready(function(){
 	    		error.insertAfter(element);
 	    	},
 			submitHandler: function(form) {
-				console.log(form);
+				console.log($(form).parent().parent().parent().find(".deleteCause").is(':checked'));
 				$(form).ajaxSubmit({
-					success: function() {
+					success: function(data) {
 						console.log("success");
+						$(form).removeDirtyWarning();
 					},
 					error: function(error) {
 						console.log(error);
