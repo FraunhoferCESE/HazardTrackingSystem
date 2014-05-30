@@ -111,4 +111,18 @@ AJS.$(document).ready(function(){
 		}
 		
 	});
+
+	AJS.$("#causeSaveAllChanges").live('click', function() {
+		AJS.$("form.causeForms").each(function(){
+			if(AJS.$(this).parent().parent().parent().find(".deleteCause").is(':checked')) {
+				console.log("DELETE ME");
+				var formContainer = AJS.$(this).parent().parent().parent().find('.formContainer');
+				var causeID = formContainer.attr("id");
+				console.log(causeID);
+			}
+			else {
+				AJS.$(this).trigger("submit");
+			}
+		});
+	});
 });

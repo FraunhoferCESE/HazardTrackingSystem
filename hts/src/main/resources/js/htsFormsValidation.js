@@ -240,12 +240,6 @@ AJS.$(document).ready(function(){
 	    },
 	});
 
-	$("#causeSaveAllChanges").live('click', function() {
-		$("form.causeForms").each(function(){
-			$(this).trigger("submit");
-		});
-	});
-
 	$(".causeForms").each(function(index) {
 		$(this).validate({
 			rules: {
@@ -260,7 +254,6 @@ AJS.$(document).ready(function(){
 	    		error.insertAfter(element);
 	    	},
 			submitHandler: function(form) {
-				console.log($(form).parent().parent().parent().find(".deleteCause").is(':checked'));
 				$(form).ajaxSubmit({
 					success: function(data) {
 						console.log("success");
