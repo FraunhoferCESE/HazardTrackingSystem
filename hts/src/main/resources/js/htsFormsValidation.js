@@ -242,11 +242,36 @@ AJS.$(document).ready(function(){
 
 	$("#causeSaveAllChanges").live('click', function() {
 		$("form.causeForms").each(function(){
-			var $form = $(this);
-			$.post()
+			$(this).trigger("submit");
 		});
 	});
 
+	$(".causeForms").each(function() {
+		$(this).validate({
+			rules: {
+	    		causeTitle: { 
+	    			required: true,
+	    			maxlength: 512
+	    		},
+	    	},
+	    	errorClass: "validationError",
+	    	errorElement: "span",
+	    	errorPlacement: function(error, element) {
+	    		error.insertAfter(element);
+	    	},
+			submitHandler: function(form) {
+				console.log(form);
+				$(form).ajaxSubmit({
+					success: function() {
+						console.log("success");
+					},
+					error: function(error) {
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
 
 	/**********************************************************
 	*                                                         *

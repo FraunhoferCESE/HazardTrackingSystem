@@ -15,4 +15,5 @@ public interface HazardCauseService {
 	List<Hazard_Causes> all();
 	
 	List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard);
+	
 }

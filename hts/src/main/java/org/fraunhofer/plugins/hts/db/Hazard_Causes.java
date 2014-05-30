@@ -38,6 +38,10 @@ public interface Hazard_Causes extends Entity {
 	Date getLastUpdated();
 	void setLastUpdated(Date lastEdit);
 	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getDeleteReason();
+	void setDeleteReason(String reason);
+	
 	@ManyToMany(value = Causes_to_Hazards.class)
 	Hazards[] getHazards();
 }

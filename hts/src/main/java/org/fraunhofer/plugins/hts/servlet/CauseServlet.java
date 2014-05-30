@@ -63,5 +63,21 @@ public class CauseServlet extends HttpServlet{
     	}
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
+    
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			
+			//TODO reply string.
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
+		
+			res.setContentType("application/json;charset=utf-8");
+			// Send the raw output string 
+			res.getWriter().write(respStr);
+		}
+		else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
 
 }
