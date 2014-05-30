@@ -16,4 +16,5 @@ public interface HazardCauseService {
 	
 	List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard);
 	
+	Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason);
 }

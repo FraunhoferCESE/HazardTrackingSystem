@@ -63,6 +63,13 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		return newArrayList(hazard.getHazardCauses());
 	}
 	
+	@Override
+	public Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason) {
+		causeToBeDeleted.setDeleteReason(reason);
+		causeToBeDeleted.save();
+		return causeToBeDeleted;
+	}
+	
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {
 		final Causes_to_Hazards causeToHazard = ao.create(Causes_to_Hazards.class);
 		causeToHazard.setHazard(hazard);
@@ -73,4 +80,5 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	private int getNewCauseNumber(Hazards hazard) {
 		return hazard.getHazardCauses().length + 1;
 	}
+	
 }

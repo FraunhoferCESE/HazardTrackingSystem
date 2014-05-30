@@ -74,10 +74,39 @@ function getTheHazardNumber() {
 	return hazardNumberAndTitle.substring(0, (index-1))  + "-";
 }
 
+function submitCauses() {
+	function confirmation(){
+		//TODO ADD CONFIRMATION TEXTBOX
+	}
+
+	AJS.$("#causeSaveAllChanges").live('click', function() {
+		AJS.$("form.causeForms").each(function(){
+			if(AJS.$(this).parent().parent().parent().find(".deleteCause").is(':checked')) {
+				var self = AJS.$(this)
+				var causeID = self.data("key");
+				AJS.$.ajax({
+					type: "DELETE",
+					url: "causeform?key=" + causeID,
+					success: function(data) {
+						console.log("DELETED");
+					},
+					error: function() {
+						console.log("error", arguments);
+					}
+				});
+				console.log("DELETE ME " + causeID);
+			}
+			else {
+				AJS.$(this).trigger("submit");
+			}
+		});
+	});
+}
 
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
+	submitCauses();
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(".rowGroup .formContainer").hide();
@@ -110,19 +139,5 @@ AJS.$(document).ready(function(){
 			createCookie(formCont.attr("id"), "collapsed");
 		}
 		
-	});
-
-	AJS.$("#causeSaveAllChanges").live('click', function() {
-		AJS.$("form.causeForms").each(function(){
-			if(AJS.$(this).parent().parent().parent().find(".deleteCause").is(':checked')) {
-				console.log("DELETE ME");
-				var formContainer = AJS.$(this).parent().parent().parent().find('.formContainer');
-				var causeID = formContainer.attr("id");
-				console.log(causeID);
-			}
-			else {
-				AJS.$(this).trigger("submit");
-			}
-		});
 	});
 });

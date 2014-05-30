@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
@@ -67,10 +68,15 @@ public class CauseServlet extends HttpServlet{
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			
+			Hazard_Causes causeToBeDeleted  = hazardCauseService.getHazardCauseByID(req.getParameter("key"));
 			//TODO reply string.
 			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
-		
+			
+			if(causeToBeDeleted != null) {
+				hazardCauseService.deleteCause(causeToBeDeleted, "reason");
+				respStr =  "{ \"success\" : \"true\" }";
+			}
+			
 			res.setContentType("application/json;charset=utf-8");
 			// Send the raw output string 
 			res.getWriter().write(respStr);
