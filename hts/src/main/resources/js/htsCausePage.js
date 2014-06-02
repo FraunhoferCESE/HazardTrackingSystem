@@ -74,28 +74,44 @@ function getTheHazardNumber() {
 	return hazardNumberAndTitle.substring(0, (index-1))  + "-";
 }
 
-function submitCauses() {
-	function confirmation(){
-		//TODO ADD CONFIRMATION TEXTBOX
-	}
+function confirmation(causeID){
+	var dialog = new AJS.Dialog({
+		width: 500,
+		height: 220,
+		id: "deleteDialog",
+	});
+	
+	dialog.show();
+	dialog.addHeader("Confirm");
+	dialog.addPanel("Panel 1", "<p class='dialog-panel-body'>Deleting will remove this Hazard cause from JIRA. Please enter why this Hazard cause is begin deleted.</p> <input class='text long-field' type='text' id='deleteReason' name='deleteReason'>", "panel-body");
+	dialog.get("panel:0").setPadding(0);
+	
+	dialog.addButton("Continue", function(dialog) {
+		dialog.hide();
+		var reason = AJS.$("#deleteReason").val();
+		AJS.$.ajax({
+			type: "DELETE",
+			url: "causeform?key=" + causeID + "&reason=" + reason,
+			success: function(data) {
+				console.log("DELETED");
+			},
+			error: function(data) {
+				console.log("error", arguments);
+			}
+		});
+	});
 
+	dialog.addLink("Cancel", function(dialog) {
+		dialog.hide();
+	}, "#");
+}
+
+function submitCauses() {
 	AJS.$("#causeSaveAllChanges").live('click', function() {
 		AJS.$("form.causeForms").each(function(){
 			if(AJS.$(this).parent().parent().parent().find(".deleteCause").is(':checked')) {
-				var self = AJS.$(this)
-				var causeID = self.data("key");
-				AJS.$.ajax({
-					type: "DELETE",
-					url: "causeform?key=" + causeID,
-					success: function(data) {
-						console.log("DELETED");
-						location.reload();
-					},
-					error: function() {
-						console.log("error", arguments);
-					}
-				});
-				console.log("DELETE ME " + causeID);
+				var self = AJS.$(this);
+				confirmation(self.data("key"));
 			}
 			else {
 				AJS.$(this).trigger("submit");

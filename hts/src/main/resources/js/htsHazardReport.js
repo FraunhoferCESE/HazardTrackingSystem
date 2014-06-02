@@ -27,7 +27,7 @@ function initiateDeleteHazardReports () {
 	AJS.$(".deleteHazardReport").live('click', function() {
 		var self = AJS.$(this);
 		confirmation().then(function(ans) {
-			if(ans){
+			if(ans) {
 				AJS.$.ajax({
 					type: "DELETE",
 					url: "hazardlist?key=" + self.data("key"),

@@ -69,11 +69,11 @@ public class CauseServlet extends HttpServlet{
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazard_Causes causeToBeDeleted  = hazardCauseService.getHazardCauseByID(req.getParameter("key"));
-			//TODO reply string.
+			String reason = req.getParameter("reason");
 			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
 			
 			if(causeToBeDeleted != null) {
-				hazardCauseService.deleteCause(causeToBeDeleted, "reason");
+				hazardCauseService.deleteCause(causeToBeDeleted, reason);
 				respStr =  "{ \"success\" : \"true\" }";
 			}
 			
