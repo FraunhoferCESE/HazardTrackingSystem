@@ -256,7 +256,6 @@ AJS.$(document).ready(function(){
 			submitHandler: function(form) {
 				$(form).ajaxSubmit({
 					success: function(data) {
-						console.log("success");
 						$(form).removeDirtyWarning();
 					},
 					error: function(error) {

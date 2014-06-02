@@ -176,3 +176,8 @@ form.payloadForm .add:active {
 #deleteReasonForm {
     margin-left: 20px;
 }
+
+#causeSaveAllChanges {
+    margin-left: 0;
+    margin-top: 10px;
+}

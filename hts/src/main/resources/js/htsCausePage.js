@@ -44,6 +44,13 @@ function changeButtonText() {
 	}
 }
 
+function checkIfAllFormsAreValid() {
+	var valid = !AJS.$(".causeForms > div > span.validationError").is(":visible");
+	if(valid) {
+		location.reload();
+	}
+}
+
 function checkIfAllDivsAreOpen() {
 	return (AJS.$(".formContainer").length === AJS.$(".formContainer:visible").length);
 }
