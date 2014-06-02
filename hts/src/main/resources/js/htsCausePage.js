@@ -89,6 +89,7 @@ function submitCauses() {
 					url: "causeform?key=" + causeID,
 					success: function(data) {
 						console.log("DELETED");
+						location.reload();
 					},
 					error: function() {
 						console.log("error", arguments);

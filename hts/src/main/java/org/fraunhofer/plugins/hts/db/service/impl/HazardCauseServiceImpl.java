@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +62,17 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	@Override
 	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardCauses());
+	}
+	
+	@Override
+	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
+		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>(); 
+		for(Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
+			if(current.getDeleteReason() == null) {
+				allRemaining.add(current);
+			}
+		}
+		return allRemaining;
 	}
 	
 	@Override

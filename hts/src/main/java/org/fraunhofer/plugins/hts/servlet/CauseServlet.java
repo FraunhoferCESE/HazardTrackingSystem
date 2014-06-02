@@ -38,7 +38,7 @@ public class CauseServlet extends HttpServlet{
     		res.setContentType("text/html;charset=utf-8");
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("newestHazard", newestHazardReport);
-			context.put("causes", hazardCauseService.getAllCausesWithinAHazard(newestHazardReport));
+			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 		} 
 		else {
