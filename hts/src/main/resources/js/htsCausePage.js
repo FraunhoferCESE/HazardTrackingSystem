@@ -77,13 +77,13 @@ function getTheHazardNumber() {
 function confirmation(causeID){
 	var dialog = new AJS.Dialog({
 		width: 500,
-		height: 220,
+		height: 240,
 		id: "deleteDialog",
 	});
 	
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='dialog-panel-body'>Deleting will remove this Hazard cause from JIRA. Please enter why this Hazard cause is begin deleted.</p> <input class='text long-field' type='text' id='deleteReason' name='deleteReason'>", "panel-body");
+	dialog.addPanel("Panel 1", "<p class='panelBody'>Deleting will remove this Hazard cause from JIRA. Please enter why this Hazard cause is begin deleted.</p> <form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
 	dialog.get("panel:0").setPadding(0);
 	
 	dialog.addButton("Continue", function(dialog) {

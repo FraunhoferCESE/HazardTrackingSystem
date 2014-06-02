@@ -166,3 +166,13 @@ form.payloadForm .add:active {
 .causeBody > h2 {
     margin-left: 14%;
 }
+
+.panelBody {
+    box-sizing: border-box;
+    overflow: auto;
+    padding:20px 20px 0 20px;
+}
+
+#deleteReasonForm {
+    margin-left: 20px;
+}
