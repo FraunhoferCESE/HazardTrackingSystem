@@ -14,7 +14,7 @@
 			  	<div class="rowGroup">
 			    	<div class="row">
 			    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
-			    		<div class="cell">$!cause.getTitle()</div>
+			    		<div class="cell causeTitle">$!cause.getTitle()</div>
 			    		<div class="cell">$!cause.getOwner()</div>
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>

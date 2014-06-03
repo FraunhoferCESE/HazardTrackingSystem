@@ -13,11 +13,11 @@ function dateLayout() {
 }
 
 function getCookieValue(id) {
-	return AJS.$.cookie("show-" + getTheHazardNumber() + id);
+	return AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id);
 }
 
 function createCookie(id, type) {
-	AJS.$.cookie("show-" + getTheHazardNumber() + id, type, { expires: 1 });
+	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
 }
 
 function openDivOnReload() {
@@ -78,19 +78,20 @@ function closeAllDivs() {
 function getTheHazardNumber() {
 	var hazardNumberAndTitle = AJS.$(".causeBody>h2").text();
 	var index = hazardNumberAndTitle.indexOf("-");
-	return hazardNumberAndTitle.substring(0, (index-1))  + "-";
+	return hazardNumberAndTitle.substring(0, (index-1));
 }
 
-function confirmation(causeID){
+function confirmation(element, causeID){
 	var dialog = new AJS.Dialog({
 		width: 500,
 		height: 240,
 		id: "deleteDialog",
 	});
+	var causeTitle = element.children().find(".causeTitle").html();
 	
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='panelBody'>Deleting will remove this Hazard cause from JIRA. Please enter why this Hazard cause is begin deleted.</p> <form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
+	dialog.addPanel("Panel 1", "<p class='panelBody'>Removing cause <b>" + causeTitle + "</b> from Hazard Report <b>" + getTheHazardNumber() + "</b>. Please enter why this Hazard cause is begin deleted.</p> <form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
 	dialog.get("panel:0").setPadding(0);
 	
 	dialog.addButton("Continue", function(dialog) {
@@ -101,6 +102,7 @@ function confirmation(causeID){
 			url: "causeform?key=" + causeID + "&reason=" + reason,
 			success: function(data) {
 				console.log("DELETED");
+				element.remove();
 			},
 			error: function(data) {
 				console.log("error", arguments);
@@ -110,15 +112,17 @@ function confirmation(causeID){
 
 	dialog.addLink("Cancel", function(dialog) {
 		dialog.hide();
+		element.find(".deleteCause").attr('checked', false);
 	}, "#");
 }
 
 function submitCauses() {
 	AJS.$("#causeSaveAllChanges").live('click', function() {
 		AJS.$("form.causeForms").each(function(){
-			if(AJS.$(this).parent().parent().parent().find(".deleteCause").is(':checked')) {
+			var rowGroup = AJS.$(this).parent().parent().parent();
+			if(rowGroup.find(".deleteCause").is(':checked')) {
 				var self = AJS.$(this);
-				confirmation(self.data("key"));
+				confirmation(rowGroup, self.data("key"));
 			}
 			else {
 				AJS.$(this).trigger("submit");

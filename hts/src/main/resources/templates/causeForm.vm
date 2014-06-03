@@ -17,7 +17,7 @@
 	</div>
 	<div class="buttons-container">
 		<div class="causeButtonTop">
-			<input class="button causeButtons" type="submit" value="Add Cause Link" id="causeAddLink">
+			<input class="button causeButtons" type="submit" value="Add Cause Transfer" id="causeAddTransfer">
 			<input class="button causeButtons" type="submit" value="Add Control" id="causeAddControl">
 		</div>
 		<div>
