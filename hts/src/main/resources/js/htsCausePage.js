@@ -141,15 +141,14 @@ AJS.$(document).ready(function(){
 			var spanElement = AJS.$(".trigger").children();
 			addCollapsedClass(spanElement);
 			closeAllDivs();
-			changeButtonText();
 		}
 		else {
 			AJS.$(".rowGroup .formContainer").show();
 			var spanElement = AJS.$(".trigger").children();
 			addExpandedClass(spanElement);	
 			openAllDivs();
-			changeButtonText();
 		}
+		changeButtonText();
 	});
 
 	AJS.$('.trigger').click(function() {
@@ -166,6 +165,6 @@ AJS.$(document).ready(function(){
 			formCont.hide();
 			createCookie(formCont.attr("id"), "collapsed");
 		}
-		
+		changeButtonText();
 	});
 });
