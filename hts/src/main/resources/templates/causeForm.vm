@@ -17,11 +17,11 @@
 	</div>
 	<div class="buttons-container">
 		<div class="causeButtonTop">
-			<input class="button causeButtons" type="submit" value="Add Cause Transfer" id="causeAddTransfer">
-			<input class="button causeButtons" type="submit" value="Add Control" id="causeAddControl">
+			<button type="button" class="button causeButtons transfers" id="causeAddTransfer">Add Cause Transfer</button>
+			<button type="button" class="button causeButtons transfers" id="causeAddControl">Add Control</button>
 		</div>
 		<div>
-			<input class="button causeButtons" type="submit" value="Add Reference Doc" id="causeAddReference">
+			<button type="button" class="button causeButtons transfers" id="causeAddReference">Add Reference Doc</button>
 		</div>
 	</div>
 	<input type="hidden" name="edit" id="edit" value="y">

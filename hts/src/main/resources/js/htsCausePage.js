@@ -1,16 +1,8 @@
-function checkElementExpansion(element) {
-	return element.is(":visible");
-}
-
-function dateLayout() {
-	var lastUpdated = AJS.$(".lastUpdated");
-	if(lastUpdated.length > 0) {
-		lastUpdated.each(function () {
-			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
-		});
-	} 
-
-}
+	/**********************************************************
+	*                                                         *
+	*            Form - editing and saving related            *
+	*                                                         *
+	***********************************************************/
 
 function getCookieValue(id) {
 	return AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id);
@@ -18,6 +10,27 @@ function getCookieValue(id) {
 
 function createCookie(id, type) {
 	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
+}
+
+function checkElementExpansion(element) {
+	return element.is(":visible");
+}
+
+function changeButtonText() {
+	if(checkIfAllDivsAreOpen()) {
+		AJS.$("#expandAll").html("Close all");
+	}
+	else {
+		AJS.$("#expandAll").html("Expand all");	
+	}
+}
+
+function addExpandedClass(element) {
+	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
+}
+
+function addCollapsedClass(element) {
+	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");
 }
 
 function openDivOnReload() {
@@ -35,33 +48,10 @@ function openDivOnReload() {
 	changeButtonText();
 }
 
-function changeButtonText() {
-	if(checkIfAllDivsAreOpen()) {
-		AJS.$("#expandAll").html("Close all");
-	}
-	else {
-		AJS.$("#expandAll").html("Expand all");	
-	}
-}
-
-function checkIfAllFormsAreValid() {
-	var valid = !AJS.$(".causeForms > div > span.validationError").is(":visible");
-	if(valid) {
-		location.reload();
-	}
-}
-
 function checkIfAllDivsAreOpen() {
 	return (AJS.$(".formContainer").length === AJS.$(".formContainer:visible").length);
 }
 
-function addExpandedClass(element) {
-	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
-}
-
-function addCollapsedClass(element) {
-	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add");
-}
 
 function openAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
@@ -73,6 +63,16 @@ function closeAllDivs() {
 	AJS.$(".rowGroup .formContainer").each(function() {
 		createCookie(this.id, "collapsed");
 	});
+}
+
+function dateLayout() {
+	var lastUpdated = AJS.$(".lastUpdated");
+	if(lastUpdated.length > 0) {
+		lastUpdated.each(function () {
+			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+		});
+	} 
+
 }
 
 function getTheHazardNumber() {
@@ -87,11 +87,13 @@ function confirmation(element, causeID){
 		height: 240,
 		id: "deleteDialog",
 	});
-	var causeTitle = element.children().find(".causeTitle").html();
+	var causeTitle = element.children().find(".causeTitle").text();
+	var causeNumber = element.children().find(".trigger").text();
+	console.log(causeNumber);
 	
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='panelBody'>Removing cause <b>" + causeTitle + "</b> from Hazard Report <b>" + getTheHazardNumber() + "</b>. Please enter why this Hazard cause is begin deleted.</p> <form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
+	dialog.addPanel("Panel 1", "<p class='panelBody'>The following cause will be removed from Hazard report " + getTheHazardNumber() + ": <ul><li>" + causeNumber + ": "+ causeTitle +"</li></ul></p><form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
 	dialog.get("panel:0").setPadding(0);
 	
 	dialog.addButton("Continue", function(dialog) {
@@ -131,10 +133,35 @@ function submitCauses() {
 	});
 }
 
+	/**********************************************************
+	*                                                         *
+	*               Cause transfer related.                   *
+	*                                                         *
+	***********************************************************/
+
+function openPopUp() {
+	AJS.$(".transfers").live('click', function() {
+		console.log("HEHE");
+		var dialog = new AJS.Dialog({
+			width: 500,
+			height: 240,
+			id: "deleteDialog",
+		});
+
+		dialog.show();
+		dialog.addHeader("Confirm");
+		dialog.get("panel:0").setPadding(0);
+	});
+}
+
+
+
+
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
+	openPopUp();
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(".rowGroup .formContainer").hide();
