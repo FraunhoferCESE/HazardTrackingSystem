@@ -89,7 +89,6 @@ function confirmation(element, causeID){
 	});
 	var causeTitle = element.children().find(".causeTitle").text();
 	var causeNumber = element.children().find(".trigger").text();
-	console.log(causeNumber);
 	
 	dialog.show();
 	dialog.addHeader("Confirm");
@@ -110,7 +109,7 @@ function confirmation(element, causeID){
 				console.log("error", arguments);
 			}
 		});
-	});
+	}, "");
 
 	dialog.addLink("Cancel", function(dialog) {
 		dialog.hide();
@@ -147,9 +146,30 @@ function openPopUp() {
 			height: 240,
 			id: "deleteDialog",
 		});
+		var hazardList;
+		AJS.$.ajax({
+			type:"GET",
+			async: false,
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
+			success: function(data) {
+				hazardList = data;
+			}
+		});
 
+		console.log(hazardList);
+		var html = "<form class='aui panel-body'><select class='select' id='hazardList'>"
+		AJS.$(hazardList).each(function(counter) {
+			html += "<option value=" +this.hazardID +">" + this.title + "</option>";
+			console.log("Hazard number: " + counter);
+			console.log(this);
+			console.log(this.title);
+			console.log(this.hazardNumber);
+		});
+		html += "</select></form>";
+		console.log(html);
 		dialog.show();
 		dialog.addHeader("Confirm");
+		dialog.addPanel("Panel 1", html, "panel-body");
 		dialog.get("panel:0").setPadding(0);
 	});
 }

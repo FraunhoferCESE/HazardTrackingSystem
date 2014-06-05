@@ -1,11 +1,16 @@
 package org.fraunhofer.plugins.hts.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
@@ -51,5 +56,22 @@ public class HazardResource {
 		}
 
 	}
+	
+	@GET
+	@Path("allhazards")
+	@AnonymousAllowed
+	@Produces({ MediaType.APPLICATION_JSON})
+	public Response getAllHazardReports() {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			List<HazardResponseList> hazardList = new ArrayList<HazardResponseList>();
+			for(Hazards hazard : hazardService.all()){
+				hazardList.add(HazardResponseList.hazards(hazard));
+			}
+			return Response.ok(hazardList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN)
+					.entity(new HazardResourceModel("User is not logged in")).build();
+		}
 
+	}
 }

@@ -92,7 +92,13 @@ public class HazardServiceImpl implements HazardService {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", id));
 		return hazards.length > 0 ? hazards[0] : null;
 	}
-
+	
+	@Override
+	public Hazards getHazardByHazardNum(String hazardNum) {
+		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNum));
+		return hazards.length > 0 ? hazards[0] : null;
+	}
+	
 	// TODO add init date and completion and error handling
 	@Override
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
