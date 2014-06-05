@@ -159,14 +159,13 @@ function openPopUp() {
 		console.log(hazardList);
 		var html = "<form class='aui panel-body'><select class='select' id='hazardList'>"
 		AJS.$(hazardList).each(function(counter) {
-			html += "<option value=" +this.hazardID +">" + this.title + "</option>";
+			html += "<option value=" +this.hazardID +">"+ this.hazardNumber + " - " + this.title + "</option>";
 			console.log("Hazard number: " + counter);
 			console.log(this);
 			console.log(this.title);
 			console.log(this.hazardNumber);
 		});
 		html += "</select></form>";
-		console.log(html);
 		dialog.show();
 		dialog.addHeader("Confirm");
 		dialog.addPanel("Panel 1", html, "panel-body");

@@ -10,7 +10,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
@@ -23,10 +25,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class HazardResource {
 	private final HazardService hazardService;
 	private final MissionPayloadService missionPayloadService;
+	private final HazardCauseService hazardCauseService;
 
-	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService) {
+	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService, HazardCauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
+		this.hazardCauseService = checkNotNull(hazardCauseService);
 	}
 
 	@GET
@@ -60,7 +64,7 @@ public class HazardResource {
 	@GET
 	@Path("allhazards")
 	@AnonymousAllowed
-	@Produces({ MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazardReports() {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			List<HazardResponseList> hazardList = new ArrayList<HazardResponseList>();
@@ -68,6 +72,25 @@ public class HazardResource {
 				hazardList.add(HazardResponseList.hazards(hazard));
 			}
 			return Response.ok(hazardList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN)
+					.entity(new HazardResourceModel("User is not logged in")).build();
+		}
+
+	}
+	
+	@GET
+	@Path("allcauses/{hazardID}")
+	@AnonymousAllowed
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllCausesLinkedToHazard(@PathParam("hazardID") String hazardID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazards hazard = hazardService.getHazardByID(hazardID);
+			List<HazardCauseResponseList> causeList = new ArrayList<HazardCauseResponseList>();
+			for(Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard)) {
+				causeList.add(HazardCauseResponseList.causes(cause));
+			}
+			return Response.ok(causeList).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.entity(new HazardResourceModel("User is not logged in")).build();
