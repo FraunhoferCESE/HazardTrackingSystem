@@ -109,7 +109,7 @@ function confirmation(element, causeID){
 				console.log("error", arguments);
 			}
 		});
-	}, "");
+	});
 
 	dialog.addLink("Cancel", function(dialog) {
 		dialog.hide();
@@ -160,9 +160,9 @@ function openPopUp() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
 		html += "</select><div class='container'></div>";
-		
 		AJS.$("#hazardList").live('change', function() {
 			var elements = AJS.$("div.container").children().remove();
+			AJS.$(".popUpSubmits").css("visibility", "hidden");
 			var value = AJS.$(this).val();
 			var causeList;
 			if(value.length) {
@@ -172,7 +172,6 @@ function openPopUp() {
 					url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
 					success: function(data) {
 						causeList = data;
-						console.log(causeList);
 					}
 				});
 				var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select' name='causeList' id='causeList'>"
@@ -182,14 +181,18 @@ function openPopUp() {
 				temp += "</select>";
 				console.log(temp);
 				AJS.$("div.container").append(temp);
+				AJS.$(".popUpSubmits").css("visibility", "visible");
 			}
+
 		}).trigger('change');
 
-
-
-
-
-
+		dialog.addButton("Continue", function(dialog) {
+			dialog.hide();
+		}, "popUpSubmits");
+		AJS.$(".popUpSubmits").css("visibility", "hidden");
+		dialog.addLink("Cancel", function(dialog) {
+			dialog.hide();
+		}, "#");
 
 		dialog.show();
 		dialog.addHeader("Transfer Hazard Causes");
