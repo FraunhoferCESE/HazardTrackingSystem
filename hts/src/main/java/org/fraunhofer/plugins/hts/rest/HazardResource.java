@@ -63,7 +63,6 @@ public class HazardResource {
 	
 	@GET
 	@Path("allhazards")
-	@AnonymousAllowed
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazardReports() {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
@@ -81,7 +80,6 @@ public class HazardResource {
 	
 	@GET
 	@Path("allcauses/{hazardID}")
-	@AnonymousAllowed
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllCausesLinkedToHazard(@PathParam("hazardID") String hazardID) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
@@ -91,6 +89,20 @@ public class HazardResource {
 				causeList.add(HazardCauseResponseList.causes(cause));
 			}
 			return Response.ok(causeList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN)
+					.entity(new HazardResourceModel("User is not logged in")).build();
+		}
+
+	}
+	
+	@GET
+	@Path("transfercause/{causeID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getTransferCauseInfo(@PathParam("causeID") String causeID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazard_Causes transferCause = hazardCauseService.getHazardCauseByID(causeID);
+			return Response.ok(HazardCauseResponseList.causes(transferCause)).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN)
 					.entity(new HazardResourceModel("User is not logged in")).build();

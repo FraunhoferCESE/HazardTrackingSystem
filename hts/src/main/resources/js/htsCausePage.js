@@ -160,7 +160,7 @@ function openPopUp() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
 		html += "</select><div class='container'></div>";
-		AJS.$("#hazardList").live('change', function() {
+		AJS.$("#hazardList").live("change", function() {
 			var elements = AJS.$("div.container").children().remove();
 			AJS.$(".popUpSubmits").css("visibility", "hidden");
 			var value = AJS.$(this).val();
@@ -179,7 +179,6 @@ function openPopUp() {
 					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
 				});
 				temp += "</select>";
-				console.log(temp);
 				AJS.$("div.container").append(temp);
 				AJS.$(".popUpSubmits").css("visibility", "visible");
 			}
@@ -188,7 +187,17 @@ function openPopUp() {
 
 		dialog.addButton("Continue", function(dialog) {
 			dialog.hide();
+			var currentCauseID = AJS.$("#causeList option:selected").val();
+			AJS.$.ajax({
+				type:"GET",
+				async: false,
+				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/transfercause/" + currentCauseID,
+				success: function(data) {
+					console.log(data);
+				}
+			});
 		}, "popUpSubmits");
+
 		AJS.$(".popUpSubmits").css("visibility", "hidden");
 		dialog.addLink("Cancel", function(dialog) {
 			dialog.hide();
