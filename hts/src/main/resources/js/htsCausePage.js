@@ -140,7 +140,6 @@ function submitCauses() {
 
 function openPopUp() {
 	AJS.$(".transfers").live('click', function() {
-		console.log("HEHE");
 		var dialog = new AJS.Dialog({
 			width: 500,
 			height: 240,
@@ -156,31 +155,55 @@ function openPopUp() {
 			}
 		});
 
-		console.log(hazardList);
-		var html = "<form class='aui panel-body'><select class='select' id='hazardList'>"
-		AJS.$(hazardList).each(function(counter) {
-			html += "<option value=" +this.hazardID +">"+ this.hazardNumber + " - " + this.title + "</option>";
-			console.log("Hazard number: " + counter);
-			console.log(this);
-			console.log(this.title);
-			console.log(this.hazardNumber);
+		var html = "<form class='aui panel-body'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
+		AJS.$(hazardList).each(function() {
+			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
-		html += "</select></form>";
+		html += "</select><div class='container'></div>";
+		
+		AJS.$("#hazardList").live('change', function() {
+			var elements = AJS.$("div.container").children().remove();
+			var value = AJS.$(this).val();
+			var causeList;
+			if(value.length) {
+				AJS.$.ajax({
+					type:"GET",
+					async: false,
+					url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
+					success: function(data) {
+						causeList = data;
+						console.log(causeList);
+					}
+				});
+				var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select' name='causeList' id='causeList'>"
+				AJS.$(causeList).each(function() {
+					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
+				});
+				temp += "</select>";
+				console.log(temp);
+				AJS.$("div.container").append(temp);
+			}
+		}).trigger('change');
+
+
+
+
+
+
+
 		dialog.show();
-		dialog.addHeader("Confirm");
+		dialog.addHeader("Transfer Hazard Causes");
 		dialog.addPanel("Panel 1", html, "panel-body");
 		dialog.get("panel:0").setPadding(0);
 	});
 }
-
-
-
 
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
 	openPopUp();
+
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(".rowGroup .formContainer").hide();
