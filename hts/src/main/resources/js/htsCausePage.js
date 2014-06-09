@@ -129,6 +129,13 @@ function submitCauses() {
 				AJS.$(this).trigger("submit");
 			}
 		});
+
+		if(AJS.$(".validationError").is(":visible")) {
+			JIRA.Messages.showWarningMsg("Not all changes have been saved, see invalid forms below", {closeable: true});
+		}
+		else {
+			JIRA.Messages.showSuccessMsg("All changes have been successfully saved", {closeable: true});
+		}
 	});
 }
 
@@ -140,6 +147,12 @@ function submitCauses() {
 
 function openPopUp() {
 	AJS.$(".transfers").live('click', function() {
+		var form = AJS.$(this).parent().parent().parent();
+		var causeTitle = form[0].causeTitle;
+		var causeOwner = form[0].causeOwner;
+		var causeEffect = form[0].causeEffects;
+		var description = form[0].causeDescription;
+
 		var dialog = new AJS.Dialog({
 			width: 500,
 			height: 240,
@@ -155,7 +168,7 @@ function openPopUp() {
 			}
 		});
 
-		var html = "<form class='aui panel-body'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
+		var html = "<form class='aui panelBody'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
 		AJS.$(hazardList).each(function() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
@@ -193,7 +206,14 @@ function openPopUp() {
 				async: false,
 				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/transfercause/" + currentCauseID,
 				success: function(data) {
-					console.log(data);
+					AJS.$(causeTitle).val(data.title).prop("disabled", true);
+					AJS.$(causeOwner).val(data.owner).prop("disabled", true);
+					AJS.$(causeDescription).val(data.description).prop("disabled", true);
+					AJS.$(causeEffects).val(data.effects).prop("disabled", true);
+					JIRA.Messages.showSuccessMsg(AJS.$("#causeList option:selected").text() +" was successfully transferred", {closeable: true});
+				},
+				error: function(e) {
+					console.log(e);
 				}
 			});
 		}, "popUpSubmits");

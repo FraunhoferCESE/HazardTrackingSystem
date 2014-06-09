@@ -181,3 +181,11 @@ form.payloadForm .add:active {
     margin-left: 0;
     margin-top: 10px;
 }
+
+.popupLabels {
+    padding-right: 5px;
+}
+
+.container {
+    padding-top: 10px;
+}
