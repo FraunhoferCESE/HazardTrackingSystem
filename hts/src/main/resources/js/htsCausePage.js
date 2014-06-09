@@ -152,7 +152,7 @@ function openPopUp() {
 		var causeOwner = form[0].causeOwner;
 		var causeEffect = form[0].causeEffects;
 		var description = form[0].causeDescription;
-
+		console.log(causeEffect)
 		var dialog = new AJS.Dialog({
 			width: 500,
 			height: 240,
@@ -208,8 +208,8 @@ function openPopUp() {
 				success: function(data) {
 					AJS.$(causeTitle).val(data.title).prop("disabled", true);
 					AJS.$(causeOwner).val(data.owner).prop("disabled", true);
-					AJS.$(causeDescription).val(data.description).prop("disabled", true);
-					AJS.$(causeEffects).val(data.effects).prop("disabled", true);
+					AJS.$(description).val(data.description).prop("disabled", true);
+					AJS.$(causeEffect).val(data.effects).prop("disabled", true);
 					JIRA.Messages.showSuccessMsg(AJS.$("#causeList option:selected").text() +" was successfully transferred", {closeable: true});
 				},
 				error: function(e) {
