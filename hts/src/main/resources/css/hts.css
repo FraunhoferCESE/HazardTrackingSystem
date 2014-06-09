@@ -189,3 +189,7 @@ form.payloadForm .add:active {
 .container {
     padding-top: 10px;
 }
+
+.getReports {
+   cursor: pointer; 
+}

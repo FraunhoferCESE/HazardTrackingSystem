@@ -18,4 +18,5 @@
 	<div class="buttons-container">
 		<input class="button causeButtons" type="submit" value="Save" id="causeSaveNew">
 	</div>
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 </form>

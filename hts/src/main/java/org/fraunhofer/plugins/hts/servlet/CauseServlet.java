@@ -34,12 +34,25 @@ public class CauseServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			Hazards newestHazardReport = hazardService.getNewestHazardReport();
+    		Map<String, Object> context = Maps.newHashMap();
     		res.setContentType("text/html;charset=utf-8");
-			Map<String, Object> context = Maps.newHashMap();
-			context.put("newestHazard", newestHazardReport);
-			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
-			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
+    		if("y".equals(req.getParameter("edit"))) {
+    			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+    			context.put("hazardNumber", currentHazard.getHazardNum());
+    			context.put("hazardTitle", currentHazard.getTitle());
+    			context.put("hazardID", currentHazard.getID());
+      			context.put("hazard", currentHazard);
+    			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
+    			templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
+    		}
+    		else {
+        		Hazards newestHazardReport = hazardService.getNewestHazardReport();
+    			context.put("hazardNumber", newestHazardReport.getHazardNum());
+    			context.put("hazardTitle", newestHazardReport.getTitle());
+    			context.put("hazardID", newestHazardReport.getID());
+    			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+    			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
+    		}
 		} 
 		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
@@ -53,14 +66,21 @@ public class CauseServlet extends HttpServlet{
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
     	//TODO change once we can navigate from the newest hazard report to older ones
-    	final Hazards hazard = hazardService.getNewestHazardReport();
+    	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     	
     	if("y".equals(req.getParameter("edit"))) {
     		String id = req.getParameter("key");
     		hazardCauseService.update(id, description, effects, owner, title);
     	}
     	else {
-    		hazardCauseService.add(description, effects, owner, title, hazard);
+    		hazardCauseService.add(description, effects, owner, title, currentHazard);
+    		Map<String, Object> context = Maps.newHashMap();
+			context.put("hazardNumber", currentHazard.getHazardNum());
+			context.put("hazardTitle", currentHazard.getTitle());
+			context.put("hazardID", currentHazard.getID());
+  			context.put("hazard", currentHazard);
+			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
+			templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
     	}
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }

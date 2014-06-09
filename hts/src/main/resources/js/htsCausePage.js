@@ -188,12 +188,17 @@ function openPopUp() {
 					}
 				});
 				var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select' name='causeList' id='causeList'>"
-				AJS.$(causeList).each(function() {
-					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
-				});
-				temp += "</select>";
-				AJS.$("div.container").append(temp);
-				AJS.$(".popUpSubmits").css("visibility", "visible");
+				if(causeList.length > 0) {
+					AJS.$(causeList).each(function() {
+						temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
+					});
+					temp += "</select>";
+					AJS.$("div.container").append(temp);
+					AJS.$(".popUpSubmits").css("visibility", "visible");
+				}
+				else {
+					AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
+				}
 			}
 
 		}).trigger('change');
@@ -206,10 +211,10 @@ function openPopUp() {
 				async: false,
 				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/transfercause/" + currentCauseID,
 				success: function(data) {
-					AJS.$(causeTitle).val(data.title).prop("disabled", true);
-					AJS.$(causeOwner).val(data.owner).prop("disabled", true);
-					AJS.$(description).val(data.description).prop("disabled", true);
-					AJS.$(causeEffect).val(data.effects).prop("disabled", true);
+					AJS.$(causeTitle).val(data.title).prop("readonly", true);
+					AJS.$(causeOwner).val(data.owner).prop("readonly", true);
+					AJS.$(description).val(data.description).prop("readonly", true);
+					AJS.$(causeEffect).val(data.effects).prop("readonly", true);
 					JIRA.Messages.showSuccessMsg(AJS.$("#causeList option:selected").text() +" was successfully transferred", {closeable: true});
 				},
 				error: function(e) {

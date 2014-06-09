@@ -1,5 +1,5 @@
 <div class="causeBody">
-	<h2>$!newestHazard.getHazardNum() - $!newestHazard.getTitle()</h2>
+	<h2>$!hazardNumber - $!hazardTitle</h2>
 	#if($causes.size() > 0)
 		<button class="aui-button" id="expandAll">Expand all</button>
 		<div id="CauseTableHolder" class="table">

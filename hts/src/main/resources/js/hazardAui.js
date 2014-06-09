@@ -1,6 +1,6 @@
 AJS.$(document).ready(function(){
     AJS.$(".error").hide();   
-    if(window.location.href.indexOf("hazardform") > -1) {
+    if(window.location.href.indexOf("hazardform") > -1 || window.location.href.indexOf("hazardlist") > -1) {
         AJS.$("#content-2").hide();
         AJS.$("#content-3").hide();
         AJS.$("#content-4").hide(); 
@@ -27,7 +27,7 @@ AJS.$(document).ready(function(){
         navigateTo(e.target, "content-4");
     });
 
-    if(window.location.href.indexOf("hazardform") > -1 || window.location.href.indexOf("causeform") > -1) {
+    if(window.location.href.indexOf("hazardform") > -1 || (window.location.href.indexOf("causeform") > -1 && !(window.location.href.indexOf("causeform?edit") > -1))) {
         AJS.$("#CreateHazardNav").addClass("aui-nav-selected");
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");
     }
