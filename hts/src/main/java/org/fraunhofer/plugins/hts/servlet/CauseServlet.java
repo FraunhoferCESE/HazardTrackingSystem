@@ -74,13 +74,8 @@ public class CauseServlet extends HttpServlet{
     	}
     	else {
     		hazardCauseService.add(description, effects, owner, title, currentHazard);
-    		Map<String, Object> context = Maps.newHashMap();
-			context.put("hazardNumber", currentHazard.getHazardNum());
-			context.put("hazardTitle", currentHazard.getTitle());
-			context.put("hazardID", currentHazard.getID());
-  			context.put("hazard", currentHazard);
-			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
-			templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
+    		return;
     	}
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
     }
