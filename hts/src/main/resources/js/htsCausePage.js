@@ -81,7 +81,7 @@ function getTheHazardNumber() {
 	return hazardNumberAndTitle.substring(0, (index-1));
 }
 
-function confirmation(element, causeID){
+function deleteConfirmation(element, causeID){
 	var dialog = new AJS.Dialog({
 		width: 500,
 		height: 240,
@@ -109,6 +109,18 @@ function confirmation(element, causeID){
 				console.log("error", arguments);
 			}
 		});
+	}, "popUpSubmits");
+
+	AJS.$(".popUpSubmits").css("visibility", "hidden");
+	
+	AJS.$("#deleteReason").live("change", function() {
+		if(AJS.$("#deleteReason").val().length > 0) {
+			console.log("hehe");
+			AJS.$(".popUpSubmits").css("visibility", "visible");
+		}
+		else {
+			AJS.$(".popUpSubmits").css("visibility", "hidden");
+		}
 	});
 
 	dialog.addLink("Cancel", function(dialog) {
@@ -123,7 +135,7 @@ function submitCauses() {
 			var rowGroup = AJS.$(this).parent().parent().parent();
 			if(rowGroup.find(".deleteCause").is(':checked')) {
 				var self = AJS.$(this);
-				confirmation(rowGroup, self.data("key"));
+				deleteConfirmation(rowGroup, self.data("key"));
 			}
 			else {
 				AJS.$(this).trigger("submit");
@@ -145,7 +157,7 @@ function submitCauses() {
 	*                                                         *
 	***********************************************************/
 
-function openPopUp() {
+function openTransferPopup() {
 	AJS.$(".transfers").live('click', function() {
 		var form = AJS.$(this).parent().parent().parent();
 		var causeTitle = form[0].causeTitle;
@@ -239,7 +251,7 @@ AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
-	openPopUp();
+	openTransferPopup();
 
 	AJS.$("#expandAll").live('click', function() {
 		if(AJS.$(this).html() === "Close all") {
