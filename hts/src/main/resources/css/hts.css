@@ -114,7 +114,7 @@ form.payloadForm .add:active {
 
 .trigger {
     cursor: pointer;
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none; 
 }
 
 .row > .cell:nth-child(1) {
@@ -161,6 +161,8 @@ form.payloadForm .add:active {
     border-top: black solid 1px;
     margin-top: 22px;
     width: 59%;
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
 }
 
 .causeBody > h2 {
@@ -173,7 +175,7 @@ form.payloadForm .add:active {
     padding:20px 20px 0 20px;
 }
 
-#deleteReasonForm {
+#deleteReasonForm, .deleteReasonText {
     margin-left: 20px;
 }
 

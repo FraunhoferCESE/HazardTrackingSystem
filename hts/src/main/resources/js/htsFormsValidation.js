@@ -255,6 +255,7 @@ AJS.$(document).ready(function(){
 	    	},
 			submitHandler: function(form) {
 				$(form).ajaxSubmit({
+					async: false,
 					success: function(data) {
 						$(form).removeDirtyWarning();
 					},

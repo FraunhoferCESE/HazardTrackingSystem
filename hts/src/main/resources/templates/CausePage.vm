@@ -32,7 +32,9 @@
 		<button class="aui-button" id="causeSaveAllChanges" type="submit">Save All Changes</button>
 	#end
 	<div class="newCauseFormHolder">
-		<h3>Add New Cause</h3>
-		#parse("/templates/NewCauseForm.vm")
+		<h3 class="newCauseFormTrigger">Add New Cause</h3>
+		<div class="newFormContainer">
+			#parse("/templates/NewCauseForm.vm")
+		</div>
 	</div>
 </div>

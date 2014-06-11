@@ -84,7 +84,7 @@ function getTheHazardNumber() {
 function deleteConfirmation(element, causeID){
 	var dialog = new AJS.Dialog({
 		width: 500,
-		height: 240,
+		height: 260,
 		id: "deleteDialog",
 	});
 	var causeTitle = element.children().find(".causeTitle").text();
@@ -92,7 +92,7 @@ function deleteConfirmation(element, causeID){
 	
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='panelBody'>The following cause will be removed from Hazard report " + getTheHazardNumber() + ": <ul><li>" + causeNumber + ": "+ causeTitle +"</li></ul></p><form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form>", "panel-body");
+	dialog.addPanel("Panel 1", "<p class='panelBody'>The following cause will be removed from Hazard report " + getTheHazardNumber() + ": <ul><li>" + causeNumber + ": "+ causeTitle +"</li></ul></p><form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form><span class='deleteReasonText'>Field must not be empty</span>", "panel-body");
 	dialog.get("panel:0").setPadding(0);
 	
 	dialog.addButton("Continue", function(dialog) {
@@ -111,15 +111,14 @@ function deleteConfirmation(element, causeID){
 		});
 	}, "popUpSubmits");
 
-	AJS.$(".popUpSubmits").css("visibility", "hidden");
-	
+	AJS.$(".popUpSubmits").prop("disabled", true);
+
 	AJS.$("#deleteReason").live("change", function() {
 		if(AJS.$("#deleteReason").val().length > 0) {
-			console.log("hehe");
-			AJS.$(".popUpSubmits").css("visibility", "visible");
+			AJS.$(".popUpSubmits").prop("disabled", false);
 		}
 		else {
-			AJS.$(".popUpSubmits").css("visibility", "hidden");
+			AJS.$(".popUpSubmits").prop("disabled", true);
 		}
 	});
 
@@ -252,8 +251,9 @@ AJS.$(document).ready(function(){
 	openDivOnReload();
 	submitCauses();
 	openTransferPopup();
+	AJS.$(".newFormContainer").hide();
 
-	AJS.$("#expandAll").live('click', function() {
+	AJS.$("#expandAll").live("click", function() {
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(".rowGroup .formContainer").hide();
 			var spanElement = AJS.$(".trigger").children();
@@ -269,10 +269,10 @@ AJS.$(document).ready(function(){
 		changeButtonText();
 	});
 
-	AJS.$('.trigger').click(function() {
+	AJS.$(".trigger").live("click", function() {
 		var spanElement = AJS.$(this).children();
 		var spanClass = spanElement.attr("class");
-		var formCont = AJS.$(this).parent().parent().find('.formContainer');
+		var formCont = AJS.$(this).parent().parent().find(".formContainer");
 		if(!(checkElementExpansion(formCont))) {
 			addExpandedClass(spanElement);
 			formCont.show();
@@ -284,5 +284,15 @@ AJS.$(document).ready(function(){
 			createCookie(formCont.attr("id"), "collapsed");
 		}
 		changeButtonText();
+	});
+
+	AJS.$(".newCauseFormTrigger").live("click", function() {
+		var formCont = AJS.$(this).parent().find(".newFormContainer");
+		if(!(checkElementExpansion(formCont))) {
+			formCont.show()
+		}
+		else {
+			formCont.hide();
+		}
 	});
 });
