@@ -144,6 +144,13 @@ function submitCauses() {
 		if(AJS.$("#addNewCauseForm").isDirty()) {
 			AJS.$("#addNewCauseForm").submit();
 		}
+
+		if(!AJS.$(".validationError").is(":visible")) {
+			location.reload();
+		}
+		else {
+			JIRA.Messages.showWarningMsg("Not all changes have been saved.", {closeable: true});
+		}
 	});
 }
 
