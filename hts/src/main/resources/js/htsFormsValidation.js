@@ -238,6 +238,17 @@ AJS.$(document).ready(function(){
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
 	    },
+	    submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
 	});
 
 	$(".causeForms").each(function(index) {

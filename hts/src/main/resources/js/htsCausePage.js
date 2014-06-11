@@ -129,7 +129,7 @@ function deleteConfirmation(element, causeID){
 }
 
 function submitCauses() {
-	AJS.$("#causeSaveAllChanges").live('click', function() {
+	AJS.$(".causeSaveAllChanges").live('click', function() {
 		AJS.$("form.causeForms").each(function(){
 			var rowGroup = AJS.$(this).parent().parent().parent();
 			if(rowGroup.find(".deleteCause").is(':checked')) {
@@ -141,11 +141,8 @@ function submitCauses() {
 			}
 		});
 
-		if(AJS.$(".validationError").is(":visible")) {
-			JIRA.Messages.showWarningMsg("Not all changes have been saved, see invalid forms below", {closeable: true});
-		}
-		else {
-			JIRA.Messages.showSuccessMsg("All changes have been successfully saved", {closeable: true});
+		if(AJS.$("#addNewCauseForm").isDirty()) {
+			AJS.$("#addNewCauseForm").submit();
 		}
 	});
 }
@@ -159,11 +156,12 @@ function submitCauses() {
 function openTransferPopup() {
 	AJS.$(".transfers").live('click', function() {
 		var form = AJS.$(this).parent().parent().parent();
+		console.log(form);
 		var causeTitle = form[0].causeTitle;
 		var causeOwner = form[0].causeOwner;
 		var causeEffect = form[0].causeEffects;
 		var description = form[0].causeDescription;
-		console.log(causeEffect)
+
 		var dialog = new AJS.Dialog({
 			width: 500,
 			height: 240,
@@ -287,11 +285,14 @@ AJS.$(document).ready(function(){
 	});
 
 	AJS.$(".newCauseFormTrigger").live("click", function() {
+		var spanElement = AJS.$(this).children();
 		var formCont = AJS.$(this).parent().find(".newFormContainer");
 		if(!(checkElementExpansion(formCont))) {
+			addExpandedClass(spanElement);
 			formCont.show()
 		}
 		else {
+			addCollapsedClass(spanElement);
 			formCont.hide();
 		}
 	});

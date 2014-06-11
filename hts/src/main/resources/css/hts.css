@@ -100,7 +100,7 @@ form.payloadForm .add:active {
     display:table-cell;
 }
 
-.cell > span {
+.cell > span, .newCauseFormTrigger > span {
     padding-left: 10px;
 }
 
@@ -179,7 +179,7 @@ form.payloadForm .add:active {
     margin-left: 20px;
 }
 
-#causeSaveAllChanges {
+.causeSaveAllChanges {
     margin-left: 0;
     margin-top: 10px;
 }
