@@ -12,7 +12,7 @@ function createCookie(id, type) {
 	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
 }
 
-function checkElementExpansion(element) {
+function checkIfElementIsVisible(element) {
 	return element.is(":visible");
 }
 
@@ -113,8 +113,9 @@ function deleteConfirmation(element, causeID){
 
 	AJS.$(".popUpSubmits").prop("disabled", true);
 
-	AJS.$("#deleteReason").live("change", function() {
+	AJS.$("#deleteReason").live("change propertychange keyup input", function() {
 		if(AJS.$("#deleteReason").val().length > 0) {
+			console.log("Button enabled");
 			AJS.$(".popUpSubmits").prop("disabled", false);
 		}
 		else {
@@ -130,14 +131,18 @@ function deleteConfirmation(element, causeID){
 
 function submitCauses() {
 	AJS.$(".causeSaveAllChanges").live('click', function() {
+		var counter = 0;
 		AJS.$("form.causeForms").each(function(){
 			var rowGroup = AJS.$(this).parent().parent().parent();
 			if(rowGroup.find(".deleteCause").is(':checked')) {
 				var self = AJS.$(this);
 				deleteConfirmation(rowGroup, self.data("key"));
+				counter++;
 			}
 			else {
-				AJS.$(this).trigger("submit");
+				if(AJS.$(this).isDirty()) {
+					AJS.$(this).trigger("submit");
+				}
 			}
 		});
 
@@ -145,11 +150,19 @@ function submitCauses() {
 			AJS.$("#addNewCauseForm").submit();
 		}
 
-		if(!AJS.$(".validationError").is(":visible")) {
-			location.reload();
+		if(!checkIfElementIsVisible(AJS.$(".validationError"))) {
+			console.log("not error on page");
+			console.log(checkIfElementIsVisible(AJS.$(".aui-dialog")))
+
+			//location.reload();
 		}
 		else {
-			JIRA.Messages.showWarningMsg("Not all changes have been saved.", {closeable: true});
+			AJS.$(".validationError").each(function (counter){
+				console.log("loop called " + counter);
+				console.log(AJS.$(this).parent().parent().find("#causeNumber").val())
+			});
+
+			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
 		}
 	});
 }
@@ -163,14 +176,13 @@ function submitCauses() {
 function openTransferPopup() {
 	AJS.$(".transfers").live('click', function() {
 		var form = AJS.$(this).parent().parent().parent();
-		console.log(form);
 		var causeTitle = form[0].causeTitle;
 		var causeOwner = form[0].causeOwner;
 		var causeEffect = form[0].causeEffects;
 		var description = form[0].causeDescription;
 
 		var dialog = new AJS.Dialog({
-			width: 500,
+			width: 600,
 			height: 240,
 			id: "deleteDialog",
 		});
@@ -188,7 +200,7 @@ function openTransferPopup() {
 		AJS.$(hazardList).each(function() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
-		html += "</select><div class='container'></div>";
+		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button><div class='container'></div>";
 		AJS.$("#hazardList").live("change", function() {
 			var elements = AJS.$("div.container").children().remove();
 			AJS.$(".popUpSubmits").css("visibility", "hidden");
@@ -208,7 +220,7 @@ function openTransferPopup() {
 					AJS.$(causeList).each(function() {
 						temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
 					});
-					temp += "</select>";
+					temp += "</select><button type='button' class='button popupLink' id='linkCause'>Link Cause</button>";
 					AJS.$("div.container").append(temp);
 					AJS.$(".popUpSubmits").css("visibility", "visible");
 				}
@@ -219,7 +231,7 @@ function openTransferPopup() {
 
 		}).trigger('change');
 
-		dialog.addButton("Continue", function(dialog) {
+		/*dialog.addButton("Continue", function(dialog) {
 			dialog.hide();
 			var currentCauseID = AJS.$("#causeList option:selected").val();
 			AJS.$.ajax({
@@ -239,7 +251,7 @@ function openTransferPopup() {
 			});
 		}, "popUpSubmits");
 
-		AJS.$(".popUpSubmits").css("visibility", "hidden");
+		AJS.$(".popUpSubmits").css("visibility", "hidden");*/
 		dialog.addLink("Cancel", function(dialog) {
 			dialog.hide();
 		}, "#");
@@ -278,7 +290,7 @@ AJS.$(document).ready(function(){
 		var spanElement = AJS.$(this).children();
 		var spanClass = spanElement.attr("class");
 		var formCont = AJS.$(this).parent().parent().find(".formContainer");
-		if(!(checkElementExpansion(formCont))) {
+		if(!(checkIfElementIsVisible(formCont))) {
 			addExpandedClass(spanElement);
 			formCont.show();
 			createCookie(formCont.attr("id"), "expanded");
@@ -294,7 +306,7 @@ AJS.$(document).ready(function(){
 	AJS.$(".newCauseFormTrigger").live("click", function() {
 		var spanElement = AJS.$(this).children();
 		var formCont = AJS.$(this).parent().find(".newFormContainer");
-		if(!(checkElementExpansion(formCont))) {
+		if(!(checkIfElementIsVisible(formCont))) {
 			addExpandedClass(spanElement);
 			formCont.show()
 		}
