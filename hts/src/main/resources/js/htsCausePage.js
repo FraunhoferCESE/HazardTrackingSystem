@@ -82,10 +82,11 @@ function getTheHazardNumber() {
 }
 
 function deleteConfirmation(element, causeID){
+	console.log("opened dialog");
 	var dialog = new AJS.Dialog({
 		width: 500,
 		height: 260,
-		id: "deleteDialog",
+		id: "deleteDialog"+causeID,
 	});
 	var causeTitle = element.children().find(".causeTitle").text();
 	var causeNumber = element.children().find(".trigger").text();
@@ -97,9 +98,10 @@ function deleteConfirmation(element, causeID){
 	
 	dialog.addButton("Continue", function(dialog) {
 		dialog.hide();
-		var reason = AJS.$("#deleteReason").val();
+		var reason = AJS.$("#deleteDialog"+causeID).find("input").val();
 		AJS.$.ajax({
 			type: "DELETE",
+			async: false,
 			url: "causeform?key=" + causeID + "&reason=" + reason,
 			success: function(data) {
 				console.log("DELETED");
@@ -113,9 +115,9 @@ function deleteConfirmation(element, causeID){
 
 	AJS.$(".popUpSubmits").prop("disabled", true);
 
-	AJS.$("#deleteReason").live("change propertychange keyup input", function() {
-		if(AJS.$("#deleteReason").val().length > 0) {
-			console.log("Button enabled");
+	AJS.$("#deleteDialog"+causeID).find("input").live("change keyup", function() {
+		console.log(AJS.$("#deleteDialog"+causeID).find("input").val());
+		if(AJS.$("#deleteDialog"+causeID).find("input").val().length > 0) {
 			AJS.$(".popUpSubmits").prop("disabled", false);
 		}
 		else {
@@ -131,13 +133,11 @@ function deleteConfirmation(element, causeID){
 
 function submitCauses() {
 	AJS.$(".causeSaveAllChanges").live('click', function() {
-		var counter = 0;
 		AJS.$("form.causeForms").each(function(){
 			var rowGroup = AJS.$(this).parent().parent().parent();
 			if(rowGroup.find(".deleteCause").is(':checked')) {
 				var self = AJS.$(this);
 				deleteConfirmation(rowGroup, self.data("key"));
-				counter++;
 			}
 			else {
 				if(AJS.$(this).isDirty()) {
@@ -147,24 +147,28 @@ function submitCauses() {
 		});
 
 		if(AJS.$("#addNewCauseForm").isDirty()) {
-			AJS.$("#addNewCauseForm").submit();
+			AJS.$("#addNewCauseForm").trigger("submit");
 		}
-
-		if(!checkIfElementIsVisible(AJS.$(".validationError"))) {
-			console.log("not error on page");
-			console.log(checkIfElementIsVisible(AJS.$(".aui-dialog")))
-
-			//location.reload();
-		}
-		else {
-			AJS.$(".validationError").each(function (counter){
-				console.log("loop called " + counter);
-				console.log(AJS.$(this).parent().parent().find("#causeNumber").val())
-			});
-
-			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-		}
+		AJS.bind("hide.dialog", function(e, data) {
+			if(!checkIfElementIsVisible(AJS.$(".aui-dialog"))) {
+				checkIfRefresh();
+			}
+		});
 	});
+}
+
+function checkIfRefresh() {
+	if(!checkIfElementIsVisible(AJS.$(".validationError")) && !checkIfElementIsVisible(AJS.$(".aui-dialog"))) {
+		location.reload();
+	}
+	else {
+		AJS.$(".validationError").each(function (counter){
+			console.log("loop called " + counter);
+			console.log(AJS.$(this).parent().parent().find("#causeNumber").val())
+		});
+
+		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+	}
 }
 
 	/**********************************************************
