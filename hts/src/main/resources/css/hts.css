@@ -185,11 +185,12 @@ form.payloadForm .add:active {
 }
 
 .popupLabels {
-    padding-right: 5px;
+    padding-right: 14px;
 }
 
 .container {
     padding-top: 10px;
+    padding-bottom: 8px;
 }
 
 .getReports {
@@ -199,4 +200,8 @@ form.payloadForm .add:active {
 .popupLink, #linkHazard, #linkCause {
     margin-left: 10px;
     width: 100px;
+}
+
+#transferReason {
+    margin-left: 5px;
 }

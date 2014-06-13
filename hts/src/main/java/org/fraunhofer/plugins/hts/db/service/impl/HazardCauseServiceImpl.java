@@ -32,6 +32,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		cause.setEffects(effects);
 		cause.setOwner(owner);
 		cause.setLastUpdated(new Date());
+		cause.setOriginalDate(new Date());
 		cause.save();
 		associateCauseToHazard(hazard, cause);
 		return cause;
@@ -44,6 +45,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		causeToBeupdated.setEffects(effects);
 		causeToBeupdated.setOwner(owner);
 		causeToBeupdated.setTitle(title);
+		causeToBeupdated.setLastUpdated(new Date());
 		causeToBeupdated.save();
 		return causeToBeupdated;
 	}

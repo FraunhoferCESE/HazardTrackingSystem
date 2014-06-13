@@ -154,6 +154,7 @@ function submitCauses() {
 				checkIfRefresh();
 			}
 		});
+		checkIfRefresh();
 	});
 }
 
@@ -187,7 +188,7 @@ function openTransferPopup() {
 
 		var dialog = new AJS.Dialog({
 			width: 600,
-			height: 240,
+			height: 260,
 			id: "deleteDialog",
 		});
 		var hazardList;
@@ -204,7 +205,7 @@ function openTransferPopup() {
 		AJS.$(hazardList).each(function() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
-		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button><div class='container'></div>";
+		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button><div class='container'></div><label for='transferReason'>Transfer Reason</label><input class='text' type='text' id='transferReason' name='transferReason'></form>";
 		AJS.$("#hazardList").live("change", function() {
 			var elements = AJS.$("div.container").children().remove();
 			AJS.$(".popUpSubmits").css("visibility", "hidden");
@@ -234,6 +235,14 @@ function openTransferPopup() {
 			}
 
 		}).trigger('change');
+		
+		AJS.$("#linkHazard").live("click", function() {
+			console.log("Hello from link hazard");
+		});
+
+		AJS.$("#linkCause").live("click", function() {
+			console.log("Hello from link cause");
+		});
 
 		/*dialog.addButton("Continue", function(dialog) {
 			dialog.hide();

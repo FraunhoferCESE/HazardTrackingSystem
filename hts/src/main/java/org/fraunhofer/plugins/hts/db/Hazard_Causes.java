@@ -38,6 +38,9 @@ public interface Hazard_Causes extends Entity {
 	Date getLastUpdated();
 	void setLastUpdated(Date lastEdit);
 	
+	Date getOriginalDate();
+	void setOriginalDate(Date originalDate);
+	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDeleteReason();
 	void setDeleteReason(String reason);

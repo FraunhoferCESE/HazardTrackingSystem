@@ -19,17 +19,20 @@
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
 			    	</div>
-			    	<div class="formContainer row" id="$cause.getID()">
-			    		<div class="cell"></div>
-			    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
-			    		<div class="cell"></div>
-			    		<div class="cell"></div>
-			    		<div class="cell"></div>
-			    	</div>
+				    	<div class="formContainer row" id="$cause.getID()">
+				    		<div class="cell"></div>
+				    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
+				    		<div class="cell"></div>
+				    		<div class="cell"></div>
+				    		<div class="cell"></div>
+				    	</div>
 			  	</div>
 			#end
 		</div>
-		<button class="aui-button causeSaveAllChanges" type="submit" style="margin-left:0px">Save All Changes</button>
+		<div>
+			<button class="aui-button causeSaveAllChanges" type="submit" style="margin-left:0px">Save All Changes</button>
+			<button class="aui-button" type="submit" style="margin-left:0px">Save All Changes and Renumber</button>
+		</div>
 	#end
 	<div class="newCauseFormHolder">
 		<h3 class="newCauseFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add New Cause</h3>
