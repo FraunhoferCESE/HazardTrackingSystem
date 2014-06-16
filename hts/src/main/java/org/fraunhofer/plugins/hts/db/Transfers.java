@@ -8,7 +8,7 @@ import net.java.ao.schema.Table;
 public interface Transfers extends Entity {
 	@NotNull
 	int getOriginID();
-	void setOriginID(int originID);
+	void setOriginID(Hazard_Causes originID);
 	
 	@NotNull
 	String getOriginType();
@@ -21,4 +21,5 @@ public interface Transfers extends Entity {
 	@NotNull
 	String getTargetType();
 	void setTargetType(String targetType);
+	
 }

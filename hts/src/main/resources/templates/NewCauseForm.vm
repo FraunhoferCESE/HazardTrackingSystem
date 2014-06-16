@@ -13,7 +13,7 @@
 	</div>
 	<div class="field-group">
 	    <label for="causeDescription">Description</label>
-	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription"></textarea>
+	    <textarea class="textarea long-field" rows="6" cols="10" name="causeDescription" id="causeDescription"></textarea>
 	</div>
 	<div class="buttons-container">
 		<div class="causeButtonTop">

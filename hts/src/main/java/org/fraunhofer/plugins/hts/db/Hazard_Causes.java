@@ -4,6 +4,7 @@ import java.util.Date;
 
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
+import net.java.ao.OneToOne;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.NotNull;
@@ -47,4 +48,7 @@ public interface Hazard_Causes extends Entity {
 	
 	@ManyToMany(value = Causes_to_Hazards.class)
 	Hazards[] getHazards();
+	
+	@OneToOne
+	Transfers getTransfer();
 }

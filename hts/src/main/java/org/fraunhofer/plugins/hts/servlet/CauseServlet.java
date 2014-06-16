@@ -65,7 +65,6 @@ public class CauseServlet extends HttpServlet{
     	final String owner = req.getParameter("causeOwner");
     	final String effects = req.getParameter("causeEffects");
     	final String description = req.getParameter("causeDescription");
-    	//TODO change once we can navigate from the newest hazard report to older ones
     	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     	
     	if("y".equals(req.getParameter("edit"))) {

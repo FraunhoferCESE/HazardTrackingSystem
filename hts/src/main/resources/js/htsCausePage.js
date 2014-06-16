@@ -188,7 +188,7 @@ function openTransferPopup() {
 
 		var dialog = new AJS.Dialog({
 			width: 600,
-			height: 260,
+			height: 360,
 			id: "deleteDialog",
 		});
 		var hazardList;
@@ -201,11 +201,11 @@ function openTransferPopup() {
 			}
 		});
 
-		var html = "<form class='aui panelBody'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
+		var html = "<form class='aui panelBody'><div class='field-group'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
 		AJS.$(hazardList).each(function() {
 			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
 		});
-		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button><div class='container'></div><label for='transferReason'>Transfer Reason</label><input class='text' type='text' id='transferReason' name='transferReason'></form>";
+		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button></div><div class='field-group container'></div><div class='field-group'><label for='transferReason'>Transfer Reason</label><textarea class='textarea' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea></div></form>";
 		AJS.$("#hazardList").live("change", function() {
 			var elements = AJS.$("div.container").children().remove();
 			AJS.$(".popUpSubmits").css("visibility", "hidden");

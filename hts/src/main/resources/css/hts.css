@@ -184,10 +184,6 @@ form.payloadForm .add:active {
     margin-top: 10px;
 }
 
-.popupLabels {
-    padding-right: 14px;
-}
-
 .container {
     padding-top: 10px;
     padding-bottom: 8px;
@@ -200,8 +196,4 @@ form.payloadForm .add:active {
 .popupLink, #linkHazard, #linkCause {
     margin-left: 10px;
     width: 100px;
-}
-
-#transferReason {
-    margin-left: 5px;
 }
