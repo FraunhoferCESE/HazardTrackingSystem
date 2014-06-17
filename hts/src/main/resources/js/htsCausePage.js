@@ -192,9 +192,13 @@ function foldable(element, containerClass) {
 	***********************************************************/
 
 function transfer() {
-	AJS.$("#hazardList").live("change", function() {
+	AJS.$("#transferForm").live("reset", function() {
+		AJS.$("div.container").children().remove();
+	});
+	AJS.$("#hazardList").live("change reset", function() {
 		var elements = AJS.$("div.container").children().remove();
 		var value = AJS.$(this).val();
+		console.log(value);
 		var causeList;
 		if(value.length) {
 			AJS.$.ajax({

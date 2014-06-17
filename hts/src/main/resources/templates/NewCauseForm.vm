@@ -18,10 +18,10 @@
 	<div class="buttons-container">
 		<div class="causeButtonTop">
 			<button class="aui-button causeSaveAllChanges causeButtons" type="button">Save All Changes</button>
-			<button type="button" class="button causeButtons transfers" id="clearCause">Clear</button>
+			<input type="reset" value="Clear" class="aui-button causeButtons">
 		</div>
 		<div>
-			<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>
+			<button type="button" class="aui-button causeButtons" id="causeAddReference" disabled>Add Reference Doc</button>
 		</div>
 	</div>
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
