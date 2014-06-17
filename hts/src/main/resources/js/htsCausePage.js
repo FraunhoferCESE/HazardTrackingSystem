@@ -191,120 +191,62 @@ function foldable(element, containerClass) {
 	*                                                         *
 	***********************************************************/
 
-/*function openTransferPopup() {
-	AJS.$(".transfers").live('click', function() {
-		var form = AJS.$(this).parent().parent().parent();
-		var causeTitle = form[0].causeTitle;
-		var causeOwner = form[0].causeOwner;
-		var causeEffect = form[0].causeEffects;
-		var description = form[0].causeDescription;
-
-		var dialog = new AJS.Dialog({
-			width: 600,
-			height: 360,
-			id: "deleteDialog",
-		});
-		var hazardList;
-		AJS.$.ajax({
-			type:"GET",
-			async: false,
-			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
-			success: function(data) {
-				hazardList = data;
-			}
-		});
-
-		var html = "<form class='aui panelBody'><div class='field-group'><label class='popupLabels' for='hazardList'>Hazard Reports</label><select size='1' class='select' name='hazardList' id='hazardList'><option value=''>-Select Hazard Report-</option>"
-		AJS.$(hazardList).each(function() {
-			html += "<option value=" + this.hazardID +">" + this.hazardNumber + " - " + this.title + "</option>";
-		});
-		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button></div><div class='field-group container'></div><div class='field-group'><label for='transferReason'>Transfer Reason</label><textarea class='textarea' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea></div></form>";
-		AJS.$("#hazardList").live("change", function() {
-			var elements = AJS.$("div.container").children().remove();
-			var value = AJS.$(this).val();
-			var causeList;
-			if(value.length) {
-				AJS.$.ajax({
-					type:"GET",
-					async: false,
-					url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
-					success: function(data) {
-						causeList = data;
-					}
-				});
-				var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select' name='causeList' id='causeList'>"
-				if(causeList.length > 0) {
-					AJS.$(causeList).each(function() {
-						temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
-					});
-					temp += "</select><button type='button' class='button popupLink' id='linkCause'>Link Cause</button>";
-					AJS.$("div.container").append(temp);
-					AJS.$(".popUpSubmits").css("visibility", "visible");
-				}
-				else {
-					AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
-				}
-			}
-
-		}).trigger('change');
-		
-		AJS.$("#linkHazard").live("click", function() {
-			console.log("Hello from link hazard");
-			var form = AJS.$(this).parent().parent();
-			console.log(form);
-			var hazardID = AJS.$(form).find("#hazardList").val();
-			if(hazardID.length) {
-				console.log(hazardID);
-				console.log(AJS.$(form).find("#transferReason").val());
-			}
-		});
-
-		AJS.$("#linkCause").live("click", function() {
-			console.log("Hello from link hazard");
-			var form = AJS.$(this).parent().parent();
-			console.log(form);
-			var causeID = AJS.$(form).find("#causeList").val();
-			if(causeID.length) {
-				console.log(causeID);
-			}
-		});
-
-		dialog.addButton("Continue", function(dialog) {
-			dialog.hide();
-			var currentCauseID = AJS.$("#causeList option:selected").val();
+function transfer() {
+	AJS.$("#hazardList").live("change", function() {
+		var elements = AJS.$("div.container").children().remove();
+		var value = AJS.$(this).val();
+		var causeList;
+		if(value.length) {
 			AJS.$.ajax({
 				type:"GET",
 				async: false,
-				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/transfercause/" + currentCauseID,
+				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
 				success: function(data) {
-					AJS.$(causeTitle).val(data.title).prop("readonly", true);
-					AJS.$(causeOwner).val(data.owner).prop("readonly", true);
-					AJS.$(description).val(data.description).prop("readonly", true);
-					AJS.$(causeEffect).val(data.effects).prop("readonly", true);
-					JIRA.Messages.showSuccessMsg(AJS.$("#causeList option:selected").text() +" was successfully transferred", {closeable: true});
-				},
-				error: function(e) {
-					console.log(e);
+					causeList = data;
 				}
 			});
-		}, "popUpSubmits");
+			var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>"
+			if(causeList.length > 0) {
+				temp += "<option value=''>-Link to all causes in selected Hazard report-</option>"
+				AJS.$(causeList).each(function() {
+					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
+				});
+				AJS.$("div.container").append(temp);
+			}
+			else {
+				AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
+			}
+		}
 
-		AJS.$(".popUpSubmits").css("visibility", "hidden");
-		dialog.addLink("Cancel", function(dialog) {
-			dialog.hide();
-		}, "#");
-
-		dialog.show();
-		dialog.addHeader("Transfer Hazard Causes");
-		dialog.addPanel("Panel 1", html, "panel-body");
-		dialog.get("panel:0").setPadding(0);
+	}).trigger('change');
+	
+	AJS.$("#linkHazard").live("click", function() {
+		console.log("Hello from link hazard");
+		var form = AJS.$(this).parent().parent();
+		console.log(form);
+		var hazardID = AJS.$(form).find("#hazardList").val();
+		if(hazardID.length) {
+			console.log(hazardID);
+			console.log(AJS.$(form).find("#transferReason").val());
+		}
 	});
-}*/
+
+	AJS.$("#linkCause").live("click", function() {
+		console.log("Hello from link hazard");
+		var form = AJS.$(this).parent().parent();
+		console.log(form);
+		var causeID = AJS.$(form).find("#causeList").val();
+		if(causeID.length) {
+			console.log(causeID);
+		}
+	});
+}
 
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
+	transfer();
 	AJS.$(".newFormContainer").hide();
 	AJS.$(".transferFormContainer").hide();
 

@@ -18,7 +18,7 @@
 	<div class="buttons-container">
 		<div class="causeButtonTop">
 			<button class="aui-button causeSaveAllChanges causeButtons" type="button">Save All Changes</button>
-			<button type="button" class="button causeButtons transfers" id="causeAddTransfer">Add Cause Transfer</button>
+			<button type="button" class="button causeButtons transfers" id="clearCause">Clear</button>
 		</div>
 		<div>
 			<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>

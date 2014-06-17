@@ -43,7 +43,7 @@
 	<div class="transferFormHolder">
 		<h3 class="transferFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add Cause Transfer</h3>
 		<div class="transferFormContainer">
-			#parse("/templates/NewCauseForm.vm")
+			#parse("/templates/transferForm.vm")
 		</div>
 	</div>
 	

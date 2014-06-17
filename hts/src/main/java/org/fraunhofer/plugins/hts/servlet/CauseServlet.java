@@ -50,6 +50,7 @@ public class CauseServlet extends HttpServlet{
     			context.put("hazardNumber", newestHazardReport.getHazardNum());
     			context.put("hazardTitle", newestHazardReport.getTitle());
     			context.put("hazardID", newestHazardReport.getID());
+    			context.put("allHazards", hazardService.all());
     			context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
     			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
     		}
