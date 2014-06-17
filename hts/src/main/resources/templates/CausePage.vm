@@ -19,23 +19,13 @@
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
 			    	</div>
-			    	#if( ! $cause.getTransfer() )
-				    	<div class="formContainer row" id="$cause.getID()">
-				    		<div class="cell"></div>
-				    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
-				    		<div class="cell"></div>
-				    		<div class="cell"></div>
-				    		<div class="cell"></div>
-				    	</div>
-				    #else
-				    	<div class="formContainer row" id="$cause.getID()">
-				    		<div class="cell"></div>
-				    		<div class="cell toggle">#parse("/templates/transferForm.vm")</div>
-				    		<div class="cell"></div>
-				    		<div class="cell"></div>
-				    		<div class="cell"></div>
-				    	</div>
-				    #end
+			    	<div class="formContainer row" id="$cause.getID()">
+			    		<div class="cell"></div>
+			    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
+			    		<div class="cell"></div>
+			    		<div class="cell"></div>
+			    		<div class="cell"></div>
+			    	</div>
 			  	</div>
 			#end
 		</div>
@@ -50,4 +40,11 @@
 			#parse("/templates/NewCauseForm.vm")
 		</div>
 	</div>
+	<div class="transferFormHolder">
+		<h3 class="transferFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add Cause Transfer</h3>
+		<div class="transferFormContainer">
+			#parse("/templates/NewCauseForm.vm")
+		</div>
+	</div>
+	
 </div>

@@ -172,13 +172,26 @@ function checkIfRefresh() {
 	}
 }
 
+function foldable(element, containerClass) {
+	var spanElement = AJS.$(element).children();
+	var formCont = AJS.$(element).parent().find("." + containerClass);
+	if(!(checkIfElementIsVisible(formCont))) {
+		addExpandedClass(spanElement);
+		formCont.show()
+	}
+	else {
+		addCollapsedClass(spanElement);
+		formCont.hide();
+	}	
+}
+
 	/**********************************************************
 	*                                                         *
 	*               Cause transfer related.                   *
 	*                                                         *
 	***********************************************************/
 
-function openTransferPopup() {
+/*function openTransferPopup() {
 	AJS.$(".transfers").live('click', function() {
 		var form = AJS.$(this).parent().parent().parent();
 		var causeTitle = form[0].causeTitle;
@@ -208,7 +221,6 @@ function openTransferPopup() {
 		html += "</select><button type='button' class='button popupLink' id='linkHazard'>Link Hazard</button></div><div class='field-group container'></div><div class='field-group'><label for='transferReason'>Transfer Reason</label><textarea class='textarea' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea></div></form>";
 		AJS.$("#hazardList").live("change", function() {
 			var elements = AJS.$("div.container").children().remove();
-			AJS.$(".popUpSubmits").css("visibility", "hidden");
 			var value = AJS.$(this).val();
 			var causeList;
 			if(value.length) {
@@ -238,13 +250,26 @@ function openTransferPopup() {
 		
 		AJS.$("#linkHazard").live("click", function() {
 			console.log("Hello from link hazard");
+			var form = AJS.$(this).parent().parent();
+			console.log(form);
+			var hazardID = AJS.$(form).find("#hazardList").val();
+			if(hazardID.length) {
+				console.log(hazardID);
+				console.log(AJS.$(form).find("#transferReason").val());
+			}
 		});
 
 		AJS.$("#linkCause").live("click", function() {
-			console.log("Hello from link cause");
+			console.log("Hello from link hazard");
+			var form = AJS.$(this).parent().parent();
+			console.log(form);
+			var causeID = AJS.$(form).find("#causeList").val();
+			if(causeID.length) {
+				console.log(causeID);
+			}
 		});
 
-		/*dialog.addButton("Continue", function(dialog) {
+		dialog.addButton("Continue", function(dialog) {
 			dialog.hide();
 			var currentCauseID = AJS.$("#causeList option:selected").val();
 			AJS.$.ajax({
@@ -264,7 +289,7 @@ function openTransferPopup() {
 			});
 		}, "popUpSubmits");
 
-		AJS.$(".popUpSubmits").css("visibility", "hidden");*/
+		AJS.$(".popUpSubmits").css("visibility", "hidden");
 		dialog.addLink("Cancel", function(dialog) {
 			dialog.hide();
 		}, "#");
@@ -274,14 +299,14 @@ function openTransferPopup() {
 		dialog.addPanel("Panel 1", html, "panel-body");
 		dialog.get("panel:0").setPadding(0);
 	});
-}
+}*/
 
 AJS.$(document).ready(function(){
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
-	openTransferPopup();
 	AJS.$(".newFormContainer").hide();
+	AJS.$(".transferFormContainer").hide();
 
 	AJS.$("#expandAll").live("click", function() {
 		if(AJS.$(this).html() === "Close all") {
@@ -317,15 +342,10 @@ AJS.$(document).ready(function(){
 	});
 
 	AJS.$(".newCauseFormTrigger").live("click", function() {
-		var spanElement = AJS.$(this).children();
-		var formCont = AJS.$(this).parent().find(".newFormContainer");
-		if(!(checkIfElementIsVisible(formCont))) {
-			addExpandedClass(spanElement);
-			formCont.show()
-		}
-		else {
-			addCollapsedClass(spanElement);
-			formCont.hide();
-		}
+		foldable(this, "newFormContainer");
+	});
+
+	AJS.$(".transferFormTrigger").live("click", function() {
+		foldable(this, "transferFormContainer");
 	});
 });

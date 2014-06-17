@@ -100,7 +100,7 @@ form.payloadForm .add:active {
     display:table-cell;
 }
 
-.cell > span, .newCauseFormTrigger > span {
+.cell > span, .newCauseFormTrigger > span, .transferFormTrigger > span {
     padding-left: 10px;
 }
 
@@ -157,7 +157,7 @@ form.payloadForm .add:active {
     margin-left: -19px;
 }
 
-.newCauseFormHolder > h3 {    
+.newCauseFormHolder > h3,  .transferFormHolder > h3{    
     border-top: black solid 1px;
     margin-top: 22px;
     width: 59%;
