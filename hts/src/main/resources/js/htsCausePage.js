@@ -149,6 +149,13 @@ function submitCauses() {
 		if(AJS.$("#addNewCauseForm").isDirty()) {
 			AJS.$("#addNewCauseForm").trigger("submit");
 		}
+
+		var hazardID = AJS.$("#hazardList").val();
+		if(hazardID.length) {
+			console.log("SELECTED HAZARD " + hazardID);
+			AJS.$("#transferForm").submit();
+		}
+
 		AJS.bind("hide.dialog", function(e, data) {
 			if(!checkIfElementIsVisible(AJS.$(".aui-dialog"))) {
 				checkIfRefresh();
@@ -198,7 +205,6 @@ function transfer() {
 	AJS.$("#hazardList").live("change reset", function() {
 		var elements = AJS.$("div.container").children().remove();
 		var value = AJS.$(this).val();
-		console.log(value);
 		var causeList;
 		if(value.length) {
 			AJS.$.ajax({
@@ -223,27 +229,6 @@ function transfer() {
 		}
 
 	}).trigger('change');
-	
-	AJS.$("#linkHazard").live("click", function() {
-		console.log("Hello from link hazard");
-		var form = AJS.$(this).parent().parent();
-		console.log(form);
-		var hazardID = AJS.$(form).find("#hazardList").val();
-		if(hazardID.length) {
-			console.log(hazardID);
-			console.log(AJS.$(form).find("#transferReason").val());
-		}
-	});
-
-	AJS.$("#linkCause").live("click", function() {
-		console.log("Hello from link hazard");
-		var form = AJS.$(this).parent().parent();
-		console.log(form);
-		var causeID = AJS.$(form).find("#causeList").val();
-		if(causeID.length) {
-			console.log(causeID);
-		}
-	});
 }
 
 AJS.$(document).ready(function(){

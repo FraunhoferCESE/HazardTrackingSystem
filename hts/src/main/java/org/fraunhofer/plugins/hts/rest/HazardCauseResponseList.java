@@ -17,39 +17,39 @@ public class HazardCauseResponseList {
 	private String owner;
 	private String effects;
 	private Date lastUpdated;
-	
+
 	public HazardCauseResponseList() {
-		
+
 	}
 
 	public int getCauseID() {
 		return causeID;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getCauseNumber() {
 		return causeNumber;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public String getOwner() {
 		return owner;
 	}
-	
+
 	public String getEffects() {
 		return effects;
 	}
-	
+
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
-	
+
 	public static HazardCauseResponseList causes(Hazard_Causes cause) {
 		HazardCauseResponseList list = new HazardCauseResponseList();
 		list.causeID = cause.getID();

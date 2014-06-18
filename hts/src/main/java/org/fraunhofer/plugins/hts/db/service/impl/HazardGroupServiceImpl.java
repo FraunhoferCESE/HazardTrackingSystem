@@ -42,33 +42,32 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 		final Hazard_Group[] group = ao.find(Hazard_Group.class, Query.select().where("ID=?", id));
 		return group.length > 0 ? group[0] : null;
 	}
-	
-	//TODO see if a better way is possible
+
+	// TODO see if a better way is possible
 	@Override
 	public Hazard_Group[] getHazardGroupsByID(Integer[] id) {
 		initializeTable();
-		if(id == null) {
+		if (id == null) {
 			return null;
-		}
-		else {
+		} else {
 			Hazard_Group[] hazardGroupArr = new Hazard_Group[id.length];
-			for(int i = 0; i < id.length; i++) {
+			for (int i = 0; i < id.length; i++) {
 				hazardGroupArr[i] = ao.get(Hazard_Group.class, id[i]);
 			}
 			return hazardGroupArr;
 		}
 	}
-	
+
 	@Override
 	public List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList) {
 		List<Hazard_Group> listAll = all();
-		
-		if(!listAll.isEmpty()) {
-			for(Hazard_Group currRegistered : currentList) {
+
+		if (!listAll.isEmpty()) {
+			for (Hazard_Group currRegistered : currentList) {
 				listAll.remove(currRegistered);
 			}
 		}
-		
+
 		return listAll;
 	}
 

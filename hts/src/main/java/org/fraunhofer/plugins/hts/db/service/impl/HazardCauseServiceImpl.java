@@ -19,11 +19,11 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class HazardCauseServiceImpl implements HazardCauseService {
 	private final ActiveObjects ao;
-	
+
 	public HazardCauseServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
-	
+
 	@Override
 	public Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
@@ -37,7 +37,13 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		associateCauseToHazard(hazard, cause);
 		return cause;
 	}
-	
+
+	@Override
+	public Hazard_Causes addTransfer(String transferComment, String title, Hazards hazard) {
+		final Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		return cause;
+	}
+
 	@Override
 	public Hazard_Causes update(String id, String description, String effects, String owner, String title) {
 		Hazard_Causes causeToBeupdated = getHazardCauseByID(id);
@@ -52,7 +58,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	@Override
 	public Hazard_Causes getHazardCauseByID(String id) {
-		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?" ,id));
+		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?", id));
 		return hazardCause.length > 0 ? hazardCause[0] : null;
 	}
 
@@ -60,39 +66,39 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public List<Hazard_Causes> all() {
 		return newArrayList(ao.find(Hazard_Causes.class));
 	}
-	
+
 	@Override
 	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardCauses());
 	}
-	
+
 	@Override
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
-		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>(); 
-		for(Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
-			if(current.getDeleteReason() == null) {
+		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
+		for (Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
+			if (current.getDeleteReason() == null) {
 				allRemaining.add(current);
 			}
 		}
 		return allRemaining;
 	}
-	
+
 	@Override
 	public Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason) {
 		causeToBeDeleted.setDeleteReason(reason);
 		causeToBeDeleted.save();
 		return causeToBeDeleted;
 	}
-	
+
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {
 		final Causes_to_Hazards causeToHazard = ao.create(Causes_to_Hazards.class);
 		causeToHazard.setHazard(hazard);
 		causeToHazard.setHazardCause(hazardCause);
 		causeToHazard.save();
 	}
-	
+
 	private int getNewCauseNumber(Hazards hazard) {
 		return hazard.getHazardCauses().length + 1;
 	}
-	
+
 }

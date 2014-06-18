@@ -86,17 +86,17 @@ public class SubsystemServiceImplTest {
 		assertNull(result);
 
 	}
-	
+
 	@Test
 	public void testGetSubsystemsByIDNoneFound() {
 		Subsystems[] mockSubsystems = {};
 		Integer[] ids = null;
-		
+
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
-		
+
 		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
 		Subsystems[] result = test.getSubsystemsByID(ids);
-		
+
 		assertTrue(SubsystemServiceImpl.isInitialized());
 		assertNull(result);
 	}
@@ -107,55 +107,55 @@ public class SubsystemServiceImplTest {
 		Subsystems mockSubsystem3 = mock(Subsystems.class);
 		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2, mockSubsystem2 };
 		Integer[] ids = { mockSubsystem2.getID(), mockSubsystem3.getID() };
-		
+
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
-		
+
 		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
 		Subsystems[] result = test.getSubsystemsByID(ids);
-		
+
 		assertTrue(SubsystemServiceImpl.isInitialized());
 		verify(mockActiveObjects, times(2)).get(eq(Subsystems.class), anyInt());
 		assertEquals(2, result.length);
 	}
-	
+
 	@Test
 	public void testGetRemainingSubsystems() {
 		Subsystems mockSubsystem2 = mock(Subsystems.class);
 		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem2 };
 		Subsystems[] mockList = { mockSubsystem2 };
-		
+
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
-		
+
 		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
 		List<Subsystems> result = test.getRemainingGroups(mockList);
-		
+
 		assertTrue(SubsystemServiceImpl.isInitialized());
 		assertEquals(1, result.size());
 	}
-	
+
 	@Test
 	public void testGetRemainingMissionPhasesAllRemoved() {
 		Subsystems[] mockSubsystems = { mockSubsystem, mockSubsystem };
-		
+
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
-		
+
 		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
 		List<Subsystems> result = test.getRemainingGroups(mockSubsystems);
-		
+
 		assertTrue(SubsystemServiceImpl.isInitialized());
 		assertEquals(0, result.size());
 	}
-	
+
 	@Test
 	public void testGetRemainingMissionPhasesEmptyList() {
 		Subsystems[] mockSubsystems = {};
 		Subsystems[] mockList = { mockSubsystem };
-		
+
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
-		
+
 		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
 		List<Subsystems> result = test.getRemainingGroups(mockList);
-		
+
 		assertTrue(SubsystemServiceImpl.isInitialized());
 		assertTrue(result.isEmpty());
 	}
@@ -223,7 +223,7 @@ public class SubsystemServiceImplTest {
 		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();
-		
+
 		verify(mockActiveObjects, times(17)).create(eq(Subsystems.class), (DBParam[]) anyVararg());
 
 		verify(mockSubsystem).setLabel("Structure");
@@ -242,7 +242,8 @@ public class SubsystemServiceImplTest {
 		verify(mockSubsystem).setLabel("Non-Ionized Radiation");
 		verify(mockSubsystem).setLabel("Propellants");
 		verify(mockSubsystem).setLabel("Electrical/Electronics");
-		verify(mockSubsystem).setLabel("Human Factors");	}
+		verify(mockSubsystem).setLabel("Human Factors");
+	}
 
 	@Test
 	public void testIsInitialized() {

@@ -12,19 +12,19 @@ public class HazardResponseList {
 	private int hazardID;
 	private String title;
 	private String hazardNumber;
-	
+
 	public int getHazardID() {
 		return hazardID;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getHazardNumber() {
 		return hazardNumber;
 	}
-	
+
 	public static HazardResponseList hazards(Hazards hazard) {
 		HazardResponseList list = new HazardResponseList();
 		list.hazardID = hazard.getID();

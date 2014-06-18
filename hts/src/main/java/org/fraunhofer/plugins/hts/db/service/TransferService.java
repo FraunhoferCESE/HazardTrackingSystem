@@ -1,5 +1,14 @@
 package org.fraunhofer.plugins.hts.db.service;
 
-public interface TransferService {
+import java.util.List;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Transfers;
+
+public interface TransferService {
+	Transfers addCause(int originID, String originType, int targetID, String targetType, Hazard_Causes cause);
+	
+	Transfers update();
+	
+	public List<Transfers> all();
 }

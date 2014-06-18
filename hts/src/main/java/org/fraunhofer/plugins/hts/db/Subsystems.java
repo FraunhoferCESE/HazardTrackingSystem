@@ -17,15 +17,16 @@ import net.java.ao.schema.Table;
 @Table("Subsystems")
 public interface Subsystems extends Entity {
 	String getLabel();
-	//TODO unique
+
+	// TODO unique
 	void setLabel(String label);
 
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDescription();
 
 	void setDescription(String description);
-	
+
 	@ManyToMany(value = SubsystemToHazard.class)
 	Hazards[] getHazards();
-	
+
 }

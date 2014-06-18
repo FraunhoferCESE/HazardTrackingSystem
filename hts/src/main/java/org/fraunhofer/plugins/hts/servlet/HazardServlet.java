@@ -59,7 +59,8 @@ public final class HazardServlet extends HttpServlet {
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService,
-			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService, MissionPhaseService missionPhaseService) {
+			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService,
+			MissionPhaseService missionPhaseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -88,8 +89,7 @@ public final class HazardServlet extends HttpServlet {
 			res.setContentType("text/html;charset=utf-8");
 			templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 
-		} 
-		else {
+		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
@@ -103,40 +103,45 @@ public final class HazardServlet extends HttpServlet {
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
-		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("hazardLikelihood"));
-		final Hazard_Group[] group = hazardGroupService.getHazardGroupsByID(changeStringArray(req.getParameterValues("hazardGroup")));
+		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req
+				.getParameter("hazardLikelihood"));
+		final Hazard_Group[] group = hazardGroupService.getHazardGroupsByID(changeStringArray(req
+				.getParameterValues("hazardGroup")));
 		final Date revisionDate = new Date();
-		final Mission_Payload payloadName = missionPayloadService.getMissionPayloadByID(req.getParameter("hazardPayload"));
-		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
-		final Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req.getParameterValues("hazardPhase")));
+		final Mission_Payload payloadName = missionPayloadService.getMissionPayloadByID(req
+				.getParameter("hazardPayload"));
+		final Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req
+				.getParameterValues("hazardSubsystem")));
+		final Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req
+				.getParameterValues("hazardPhase")));
 		final Date created = changeToDate(req.getParameter("hazardInitation"));
 		final Date completed = changeToDate(req.getParameter("hazardCompletion"));
 		final String addNew = req.getParameter("hazardSaveAdd");
 		JSONObject json = new JSONObject();
-		
+
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
-			
+					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases,
+					payloadName);
+
 			createJson(json, "hazardID", updated.getID());
-			createJson(json, "hazardNumber", updated.getHazardNum());		
-		} 
-		else {
+			createJson(json, "hazardNumber", updated.getHazardNum());
+		} else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
-			
+
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "hazardNumber", hazard.getHazardNum());
 		}
-		//If Save and create another was pressed addNew should not contain null
-		if(addNew != null) {
+		// If Save and create another was pressed addNew should not contain null
+		if (addNew != null) {
 			createJson(json, "redirect", req.getContextPath() + "/plugins/servlet/hazardform");
 		}
 		res.getWriter().println(json);
 	}
-	
+
 	private Date changeToDate(String date) {
 		if (date != null && !date.isEmpty()) {
 			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -152,24 +157,23 @@ public final class HazardServlet extends HttpServlet {
 		}
 		return null;
 	}
-	
+
 	private JSONObject createJson(JSONObject json, String key, Object value) {
 		try {
 			json.put(key, value);
 		} catch (JSONException e) {
 			// TODO: handle exception
 			e.printStackTrace();
-		}	
+		}
 		return json;
 	}
-	
+
 	private Integer[] changeStringArray(String[] array) {
-		if(array == null) {
+		if (array == null) {
 			return null;
-		}
-		else {
+		} else {
 			Integer[] intArray = new Integer[array.length];
-			for(int i = 0; i < array.length; i++) {
+			for (int i = 0; i < array.length; i++) {
 				intArray[i] = Integer.parseInt(array[i]);
 			}
 			return intArray;

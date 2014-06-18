@@ -278,6 +278,20 @@ AJS.$(document).ready(function(){
 		});
 	});
 
+	$("#transferForm").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
 	/**********************************************************
 	*                                                         *
 	*               Helper functions below.                   *

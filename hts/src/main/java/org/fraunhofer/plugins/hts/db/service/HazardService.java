@@ -17,23 +17,25 @@ import com.atlassian.activeobjects.tx.Transactional;
 @Transactional
 public interface HazardService {
 	Hazards add(String title, String description, String preparer, String email, String hazardNum, Date initationDate,
-			Date completionDate, Date lastEdit, Risk_Categories risk, Risk_Likelihoods likelihood, Hazard_Group[] groups,
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+			Date completionDate, Date lastEdit, Risk_Categories risk, Risk_Likelihoods likelihood,
+			Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase,
+			Mission_Payload missionPayload);
 
 	Hazards getHazardByID(String id);
 
 	Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
 			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems,
+			Mission_Phase[] missionPhase, Mission_Payload missionPayload);
 
 	List<Hazards> all();
 
 	Boolean hazardNumberExists(String hazardNumber);
-	
+
 	List<Hazards> getHazardsByMissionPayload(String string);
-	
+
 	void deleteHazard(int id);
-	
+
 	Hazards getNewestHazardReport();
 
 	Hazards getHazardByHazardNum(String hazardNum);

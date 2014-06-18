@@ -41,7 +41,8 @@ public class LandingPageServlet extends HttpServlet {
 	public LandingPageServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService, ReviewPhaseService reviewPhaseService,
-			MissionPayloadService missionPayloadService, SubsystemService subsystemService, MissionPhaseService missionPhaseService) {
+			MissionPayloadService missionPayloadService, SubsystemService subsystemService,
+			MissionPhaseService missionPhaseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -73,11 +74,10 @@ public class LandingPageServlet extends HttpServlet {
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
 			} else {
 				Map<String, Object> context = Maps.newHashMap();
-				if(!(req.getParameter("key") == null)) {
+				if (!(req.getParameter("key") == null)) {
 					List<Hazards> hazards = hazardService.getHazardsByMissionPayload(req.getParameter("key"));
 					context.put("hazardReports", hazards);
-				}
-				else {
+				} else {
 					context.put("hazardReports", hazardService.all());
 				}
 				context.put("payloads", missionPayloadService.all());
@@ -88,30 +88,29 @@ public class LandingPageServlet extends HttpServlet {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		final String payload = req.getParameter("hazardPayloadAdd");
 		missionPayloadService.add(payload);
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/hazardlist");
 	}
-	
+
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(req.getParameter("key"));
-			//TODO reply string.
+			// TODO reply string.
 			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
-		
-			if(hazard != null){
+
+			if (hazard != null) {
 				hazardService.deleteHazard(hazard.getID());
 				respStr = "{ \"success\" : \"true\" }";
 			}
 			res.setContentType("application/json;charset=utf-8");
-			// Send the raw output string 
+			// Send the raw output string
 			res.getWriter().write(respStr);
-		}
-		else {
+		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}

@@ -27,7 +27,8 @@ public class HazardResource {
 	private final MissionPayloadService missionPayloadService;
 	private final HazardCauseService hazardCauseService;
 
-	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService, HazardCauseService hazardCauseService) {
+	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService,
+			HazardCauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
@@ -46,7 +47,7 @@ public class HazardResource {
 		}
 
 	}
-	
+
 	@GET
 	@Path("hazardlist/{payloadName}")
 	@AnonymousAllowed
@@ -60,24 +61,24 @@ public class HazardResource {
 		}
 
 	}
-	
+
 	@GET
 	@Path("allhazards")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazardReports() {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			List<HazardResponseList> hazardList = new ArrayList<HazardResponseList>();
-			for(Hazards hazard : hazardService.all()){
+			for (Hazards hazard : hazardService.all()) {
 				hazardList.add(HazardResponseList.hazards(hazard));
 			}
 			return Response.ok(hazardList).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN)
-					.entity(new HazardResourceModel("User is not logged in")).build();
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
 		}
 
 	}
-	
+
 	@GET
 	@Path("allcauses/{hazardID}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -85,17 +86,17 @@ public class HazardResource {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(hazardID);
 			List<HazardCauseResponseList> causeList = new ArrayList<HazardCauseResponseList>();
-			for(Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard)) {
+			for (Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard)) {
 				causeList.add(HazardCauseResponseList.causes(cause));
 			}
 			return Response.ok(causeList).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN)
-					.entity(new HazardResourceModel("User is not logged in")).build();
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
 		}
 
 	}
-	
+
 	@GET
 	@Path("transfercause/{causeID}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -104,8 +105,8 @@ public class HazardResource {
 			Hazard_Causes transferCause = hazardCauseService.getHazardCauseByID(causeID);
 			return Response.ok(HazardCauseResponseList.causes(transferCause)).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN)
-					.entity(new HazardResourceModel("User is not logged in")).build();
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
 		}
 
 	}

@@ -192,8 +192,3 @@ form.payloadForm .add:active {
 .getReports {
    cursor: pointer; 
 }
-
-.popupLink, #linkHazard, #linkCause {
-    margin-left: 10px;
-    width: 100px;
-}
