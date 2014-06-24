@@ -76,7 +76,7 @@ public class CauseServlet extends HttpServlet {
 			final String causeID = req.getParameter("causeList");
 			if (causeID.isEmpty() || causeID == null) {
 				Hazards hazard = hazardService.getHazardByID(hazardID);
-				createdCause = hazardCauseService.addTransfer(transferComment, hazard.getTitle(), currentHazard);
+				hazardCauseService.addTransfer(transferComment, hazard.getTitle(), currentHazard);
 			} else {
 				Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
 				hazardCauseService.addTransfer(transferComment, cause.getTitle(), currentHazard);
