@@ -46,7 +46,8 @@
     <entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.Mission_Phase</entity>
-    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>   
+    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>
+    <entity>org.fraunhofer.plugins.hts.db.ControlGroups</entity>
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
@@ -60,6 +61,8 @@
   <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl"/>
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
   <component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl"/>
+  <component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardControlServiceImpl"/>
+  <component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
@@ -69,13 +72,17 @@
     <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
     <url-pattern>/hazardform</url-pattern>
   </servlet>
+  <servlet name="Controls Servlet" i18n-name-key="controls-servlet.name" key="controls-servlet" class="org.fraunhofer.plugins.hts.servlet.ControlsServlet">
+    <description key="controls-servlet.description">The Controls Servlet Plugin</description>
+    <url-pattern>/controlform</url-pattern>
+  </servlet>
   <web-item name="View all Hazard reports" i18n-name-key="viewall-hazardreports.name" key="viewall-hazardreports" section="system.top.navigation.bar" weight="1000">
     <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
     <label key="viewall-hazardreports.label"/>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
-      <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-        <param name="permission">user</param>
-      </condition>
+    <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+      <param name="permission">user</param>
+    </condition>
   </web-item>
   <rest name="Hazard Resource" i18n-name-key="hazard-resource.name" key="hazard-resource" path="/htsrest" version="1.0">
     <description key="hazard-resource.description">The Hazard Resource Plugin</description>
