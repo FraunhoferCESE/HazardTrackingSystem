@@ -25,6 +25,9 @@ AJS.$(document).ready(function(){
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");
         AJS.$("#CreateHazardNav").removeClass("aui-nav-selected");
     }
+    else if(window.location.href.indexOf("hazardlist") > -1 ) {
+        //Left blank intentionally.
+    }
     else {
         AJS.$("#CreateHazardNav").addClass("aui-nav-selected");
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");       

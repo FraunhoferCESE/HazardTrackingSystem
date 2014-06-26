@@ -1,7 +1,7 @@
 package org.fraunhofer.plugins.hts.db;
 
-import net.java.ao.schema.NotNull;
 import net.java.ao.Entity;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.Table;
 
 @Table("Transfers")
@@ -25,9 +25,5 @@ public interface Transfers extends Entity {
 	String getTargetType();
 
 	void setTargetType(String targetType);
-
-	Hazard_Causes getHazardCause();
-	
-	void setHazardCause(Hazard_Causes cause);
 	
 }

@@ -64,6 +64,7 @@
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
   <component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl"/>
   <component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl"/>
+  <component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>

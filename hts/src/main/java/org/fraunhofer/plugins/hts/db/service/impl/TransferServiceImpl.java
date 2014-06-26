@@ -5,7 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
@@ -19,13 +18,12 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers addCause(int originID, String originType, int targetID, String targetType, Hazard_Causes cause) {
+	public Transfers addCause(int originID, String originType, int targetID, String targetType) {
 		final Transfers transfer = ao.create(Transfers.class);
 		transfer.setOriginID(originID);
 		transfer.setOriginType(originType);
 		transfer.setTargetID(targetID);
 		transfer.setTargetType(targetType);
-		transfer.setHazardCause(cause);
 		transfer.save();
 		return transfer;
 	}

@@ -271,6 +271,7 @@ AJS.$(document).ready(function(){
 						$(form).removeDirtyWarning();
 					},
 					error: function(error) {
+						console.log("ERROR");
 						console.log(error);
 					}
 				});
@@ -283,6 +284,8 @@ AJS.$(document).ready(function(){
 			$(form).ajaxSubmit({
 				async: false,
 				success: function(data) {
+					console.log("SUCCESS");
+					console.log(form);
 					$(form).removeDirtyWarning();
 				},
 				error: function(error) {

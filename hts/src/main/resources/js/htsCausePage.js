@@ -153,7 +153,7 @@ function submitCauses() {
 		var hazardID = AJS.$("#hazardList").val();
 		if(hazardID.length) {
 			console.log("SELECTED HAZARD " + hazardID);
-			AJS.$("#transferForm").submit();
+			AJS.$("#transferForm").trigger("submit");
 		}
 
 		AJS.bind("hide.dialog", function(e, data) {

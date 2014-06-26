@@ -9,6 +9,7 @@ import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -24,12 +25,14 @@ public class CauseServlet extends HttpServlet {
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer;
+	private final TransferService transferCauseService;
 
 	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
-			HazardService hazardService) {
+			HazardService hazardService, TransferService transferCauseService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
+		this.transferCauseService = checkNotNull(transferCauseService);
 	}
 
 	@Override
@@ -78,14 +81,15 @@ public class CauseServlet extends HttpServlet {
 				Hazards hazard = hazardService.getHazardByID(hazardID);
 				hazardCauseService.addTransfer(transferComment, hazard.getTitle(), currentHazard);
 			} else {
-				Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
-				hazardCauseService.addTransfer(transferComment, cause.getTitle(), currentHazard);
+				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
+				Hazard_Causes originCause = hazardCauseService.addTransfer(transferComment, targetCause.getTitle(), currentHazard);
 			}
 		} else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;
 		}
+		
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
 	}
 
