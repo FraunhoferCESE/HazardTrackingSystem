@@ -19,6 +19,7 @@
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
 			    	</div>
+			    	<p>$cause.getTransfer()</p>
 				    #if($cause.getTransfer() != 0)
 				    	<p>hehe</p>
 				    #else

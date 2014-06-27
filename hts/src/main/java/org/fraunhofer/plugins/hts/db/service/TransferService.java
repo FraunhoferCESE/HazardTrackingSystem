@@ -5,7 +5,7 @@ import java.util.List;
 import org.fraunhofer.plugins.hts.db.Transfers;
 
 public interface TransferService {
-	Transfers addCause(int originID, String originType, int targetID, String targetType);
+	Transfers add(int originID, String originType, int targetID, String targetType);
 	
 	Transfers update();
 	

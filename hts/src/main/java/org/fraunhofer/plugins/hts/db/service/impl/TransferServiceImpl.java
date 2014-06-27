@@ -18,7 +18,7 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers addCause(int originID, String originType, int targetID, String targetType) {
+	public Transfers add(int originID, String originType, int targetID, String targetType) {
 		final Transfers transfer = ao.create(Transfers.class);
 		transfer.setOriginID(originID);
 		transfer.setOriginType(originType);

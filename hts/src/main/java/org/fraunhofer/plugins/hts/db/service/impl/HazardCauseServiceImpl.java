@@ -13,15 +13,19 @@ import net.java.ao.Query;
 import org.fraunhofer.plugins.hts.db.Causes_to_Hazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class HazardCauseServiceImpl implements HazardCauseService {
 	private final ActiveObjects ao;
+	private final TransferService transferService;
 
-	public HazardCauseServiceImpl(ActiveObjects ao) {
+	public HazardCauseServiceImpl(ActiveObjects ao, TransferService transferService) {
 		this.ao = checkNotNull(ao);
+		this.transferService = checkNotNull(transferService);
 	}
 
 	@Override
@@ -41,7 +45,9 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	@Override
 	public Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard) {
 		final Hazard_Causes cause = add(transferComment, null, null, title, hazard);
-		
+		final Transfers causeTransfer = transferService.add(cause.getID(), "CAUSE", targetID, "CAUSE");
+		cause.setTransfer(causeTransfer.getID());
+		cause.save();
 		return cause;
 	}
 
