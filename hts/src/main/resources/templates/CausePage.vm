@@ -19,8 +19,9 @@
 			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
 			    	</div>
-			    	<p>$cause.getTransfer()</p>
-				    #if(!$cause.getTransfer())
+				    #if($cause.getTransfer() != 0)
+				    	<p>hehe</p>
+				    #else
 				    	<div class="formContainer row" id="$cause.getID()">
 				    		<div class="cell"></div>
 				    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
@@ -28,8 +29,6 @@
 				    		<div class="cell"></div>
 				    		<div class="cell"></div>
 				    	</div>
-				    #else
-				    	<p>hehe</p>
 				    #end
 			  	</div>
 			#end

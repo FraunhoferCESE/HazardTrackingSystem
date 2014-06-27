@@ -39,8 +39,9 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes addTransfer(String transferComment, String title, Hazards hazard) {
+	public Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard) {
 		final Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		
 		return cause;
 	}
 

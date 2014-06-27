@@ -20,5 +20,5 @@ public interface HazardCauseService {
 
 	List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard);
 
-	Hazard_Causes addTransfer(String transferComment, String title, Hazards hazard);
+	Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard);
 }

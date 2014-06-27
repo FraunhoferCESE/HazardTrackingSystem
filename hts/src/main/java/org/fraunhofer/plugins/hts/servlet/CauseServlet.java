@@ -25,14 +25,12 @@ public class CauseServlet extends HttpServlet {
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer;
-	private final TransferService transferCauseService;
 
 	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
 			HazardService hazardService, TransferService transferCauseService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
-		this.transferCauseService = checkNotNull(transferCauseService);
 	}
 
 	@Override
@@ -78,11 +76,11 @@ public class CauseServlet extends HttpServlet {
 			final String hazardID = req.getParameter("hazardList");
 			final String causeID = req.getParameter("causeList");
 			if (causeID.isEmpty() || causeID == null) {
-				Hazards hazard = hazardService.getHazardByID(hazardID);
-				hazardCauseService.addTransfer(transferComment, hazard.getTitle(), currentHazard);
+				Hazards targetHazard = hazardService.getHazardByID(hazardID);
+				hazardCauseService.addTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
 			} else {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-				Hazard_Causes originCause = hazardCauseService.addTransfer(transferComment, targetCause.getTitle(), currentHazard);
+				hazardCauseService.addTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
 			}
 		} else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);
