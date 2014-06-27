@@ -2,7 +2,7 @@
 	margin-top: 4px;
 	width: 65%;
 	margin-right: auto;
-	margin-left: 0.83em;	
+	margin-left: 0.83em;
 }
 
 .validationError {
@@ -16,23 +16,23 @@
 }
 
 .payloadForm {
-	margin-top: 2px; 
+	margin-top: 2px;
 }
 
 form.payloadForm .field-group > label {
-	color: #707070;   
+	color: #707070;
 	word-wrap: break-word;
 	margin-left: 2px;
 }
 
 form.payloadForm .text {
-	border: 1px solid #ccc;   
-    border-radius: 3.01px;   
-    box-shadow: inset 0 1px 3px #ccc;   
-    box-sizing: border-box;   
-    color: #333;   font-size: inherit;   
-    vertical-align: inherit;      
-    padding: 3px 3px;   
+	border: 1px solid #ccc;
+    border-radius: 3.01px;
+    box-shadow: inset 0 1px 3px #ccc;
+    box-sizing: border-box;
+    color: #333;   font-size: inherit;
+    vertical-align: inherit;
+    padding: 3px 3px;
     height: 2.11em;
     line-height:  1.4285714285714;
     overflow: hidden;
@@ -47,20 +47,20 @@ form.payloadForm .add {
     background: linear-gradient(to bottom, #fff 0%, #f2f2f2 100%);
     background: -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
 	background: -ms-linear-gradient(top, #fff 0%, #f2f2f2 100%);
-	background: -o-linear-gradient(top, #fff 0%, #f2f2f2 100%);      
-    border: 1px solid #ccc;      
-    border-radius: 3.01px;      
-    box-sizing: border-box;      
-    color: #333;            
-    font-variant: normal;      
-    font-weight: normal;            
-    line-height:  1.4285714285714;      
+	background: -o-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    border: 1px solid #ccc;
+    border-radius: 3.01px;
+    box-sizing: border-box;
+    color: #333;
+    font-variant: normal;
+    font-weight: normal;
+    line-height:  1.4285714285714;
     height: 2.228571428571em;
-    margin: 0px;      
-    padding: 3px 10px;      
-    text-decoration: none;      
-    text-shadow: 0 1px 0 white;      
-    vertical-align: inherit;      
+    margin: 0px;
+    padding: 3px 10px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 white;
+    vertical-align: inherit;
     white-space: nowrap;
     position: relative;
     float: right;
@@ -114,7 +114,7 @@ form.payloadForm .add:active {
 
 .toggle {
     cursor: pointer;
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;'
 }
 
 .row > .cell:nth-child(1) {
@@ -147,12 +147,12 @@ form.payloadForm .add:active {
     width: 536px;
 }
 
-#addNewCauseForm {    
+#addNewCauseForm {
     width: 545px;
     margin-left: -19px;
 }
 
-.newCauseFormHolder > h3 {    
+.newCauseFormHolder > h3 {
     border-top: black solid 1px;
     margin-top: 22px;
     width: 54.3%;

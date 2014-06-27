@@ -15,7 +15,7 @@
         <div class="aui-navgroup-inner">
             <div class="aui-navgroup-primary">
                 <ul class="aui-nav">
-                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="#">Hazard form</a></li>
+                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="hazardform">Hazard form</a></li>
                     <li id="cause-nav-item"><a href="#">Causes</a></li>
                     <li id="control-nav-item"><a href="controlform">Controls</a></li>
                     <li id="verification-nav-item"><a href="#">Verifications</a></li>

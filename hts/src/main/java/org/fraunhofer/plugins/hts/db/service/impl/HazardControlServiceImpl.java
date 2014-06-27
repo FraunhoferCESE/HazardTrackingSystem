@@ -8,6 +8,7 @@ import net.java.ao.DBParam;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -20,6 +21,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 
 	@Override
+	// Add parameter here: Hazard_Causes[] causes
 	public Hazard_Controls add(String description, ControlGroups controlGroup) {
 		final Hazard_Controls control = ao.create(Hazard_Controls.class, new DBParam("DESCRIPTION", description));
 		control.setControlGroup(controlGroup);

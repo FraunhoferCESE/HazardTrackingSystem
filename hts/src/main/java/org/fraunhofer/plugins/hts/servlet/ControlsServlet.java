@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 
@@ -50,6 +51,7 @@ public class ControlsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	final String description = req.getParameter("controlDescription");
     	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroup"));
+    	
     	hazardControlService.add(description, controlGroup);
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     }

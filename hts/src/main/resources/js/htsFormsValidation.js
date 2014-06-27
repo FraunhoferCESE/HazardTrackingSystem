@@ -34,6 +34,16 @@ AJS.$(document).ready(function(){
 		autoSortAvailable: true
     });
 
+    $("#controlCauses").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: 'Selected',
+		'search': 'Search: ',
+		autoSort: true,
+		autoSortAvailable: true
+    });
+
     initHazardDateFields();
 
 	/**********************************************************

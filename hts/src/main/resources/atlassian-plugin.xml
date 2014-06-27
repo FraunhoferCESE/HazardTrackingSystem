@@ -16,6 +16,7 @@
     <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
     <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
     <resource type="download" name="hts.css" location="/css/hts.css"/>
+    <resource type="download" name="controlPageStyles.css" location="/css/controlPageStyles.css"/>
     <resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css"/>
     <resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js"/>
     <resource type="download" name="htsHazardReport.js" location="/js/htsHazardReport.js"/>
@@ -26,6 +27,7 @@
     <resource type="download" name="purl.js" location="/js/purl.js"/>
     <resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js"/>
     <resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js"/>
+    <resource type="download" name="htsControlPage.js" location="/js/htsControlPage.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->

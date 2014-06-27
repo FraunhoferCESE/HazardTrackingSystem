@@ -1,0 +1,15 @@
+<form class="aui" action="controlform" method="post" id="controlForm">
+
+	<div class="field-group">
+		<label for="controlDescription">Description <span class="aui-icon icon-required">(required)</span></label>
+		<textarea class="textarea long-field" name="controlDescription" id="controlDescription"></textarea>
+	</div>
+
+	<div class="buttons-container">
+		<div class="buttons">
+			<input class="button submit" type="submit" value="Save" id="comment-save-button">
+		<a class="cancel" href="#">Cancel</a>
+		</div>
+	</div>
+
+</form>

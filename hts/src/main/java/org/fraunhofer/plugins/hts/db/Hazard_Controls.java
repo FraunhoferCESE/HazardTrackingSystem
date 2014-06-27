@@ -2,6 +2,7 @@ package org.fraunhofer.plugins.hts.db;
 
 
 import net.java.ao.Entity;
+import net.java.ao.ManyToMany;
 import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
@@ -25,4 +26,7 @@ public interface Hazard_Controls extends Entity {
 	ControlGroups getControlGroup();
 	
 	void setControlGroup(ControlGroups group);
+	
+	@ManyToMany(value = ControlToCause.class)
+	Hazard_Causes[] getCauses();
 }

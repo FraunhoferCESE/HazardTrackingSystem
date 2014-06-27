@@ -1,0 +1,65 @@
+.ControlsHeadingTwo {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.ControlsHeadingThree {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: bold;
+    border-top: black solid 1px;
+    width: 950px;
+}
+
+.ControlsHeaderHazardInfo {
+    padding-bottom: 10px;
+}
+
+.ControlsTableHeader {
+    text-align: left;
+}
+
+.ControlsTableCellOne {
+    width: 40px;
+}
+
+.ControlsTableCellTwo {
+    width: 40px;
+}
+
+.ControlsTableCellThree {
+    width: 330px;
+}
+
+.ControlsTableCellFour {
+    width: 160px;
+}
+
+.ControlsTableCellFive {
+    width: 200px;
+}
+
+.ControlsTableCellSix {
+    width: 200px;
+}
+
+.ControlsTableCellToggle {
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+}
+
+.ControlsTableEditEntryHidden {
+    display: none;
+}
+
+.ControlsTableEditEntryContainer {
+    padding-left: 30px;
+}
+
+.ControlsButtonPanel {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

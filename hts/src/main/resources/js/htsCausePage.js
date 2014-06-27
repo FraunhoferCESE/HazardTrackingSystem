@@ -9,7 +9,7 @@ AJS.$(document).ready(function(){
 		if(AJS.$(this).html() === "Close all") {
 			AJS.$(this).html("Expand all");
 			AJS.$(".rowGroup .formContainer").hide();
-			console.log(AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add"));	
+			console.log(AJS.$(".toggle").children().removeClass().addClass("aui-icon aui-icon-small aui-iconfont-add"));
 		}
 		else {
 			AJS.$(this).html("Close all");
