@@ -44,9 +44,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	@Override
 	public Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		final Hazard_Causes cause = add(transferComment, null, null, title, hazard);
-		final Transfers causeTransfer = transferService.add(cause.getID(), "CAUSE", targetID, "CAUSE");
-		cause.setTransfer(causeTransfer.getID());
+		Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "CAUSE");
+		int derp = cause.getTransfer();
+		cause.setTransfer(transferID);
+		int derp2 = cause.getTransfer();
 		cause.save();
 		return cause;
 	}
@@ -106,6 +108,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	private int getNewCauseNumber(Hazards hazard) {
 		return hazard.getHazardCauses().length + 1;
+	}
+	
+	private int createTransfer(int originID, String originType, int targetID, String targetType) {
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
+		return transfer.getID();
 	}
 
 }
