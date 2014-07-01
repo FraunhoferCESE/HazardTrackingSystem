@@ -1,21 +1,23 @@
+.ControlsHeadingOne {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+}
+
+.ControlsHeadingOneContent {
+    font-size: 16px;
+    font-weight: normal;
+    display: inline;
+}
+
 .ControlsHeadingTwo {
     margin: 0;
     padding: 0;
     font-size: 16px;
     font-weight: bold;
-}
-
-.ControlsHeadingThree {
-    margin: 0;
-    padding: 0;
-    font-size: 16px;
-    font-weight: bold;
-    border-top: black solid 1px;
-    width: 950px;
-}
-
-.ControlsHeaderHazardInfo {
-    padding-bottom: 10px;
+    border-top: 1px black solid;
+    display: block;
+    width: 960px;
 }
 
 .ControlsTableHeader {

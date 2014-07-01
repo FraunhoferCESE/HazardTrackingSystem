@@ -100,7 +100,7 @@ form.payloadForm .add:active {
     display:table-cell;
 }
 
-.cell > span {
+.cell > span, .newCauseFormTrigger > span, .transferFormTrigger > span {
     padding-left: 10px;
 }
 
@@ -112,9 +112,13 @@ form.payloadForm .add:active {
     margin-bottom: 3px;
 }
 
-.toggle {
+.trigger {
     cursor: pointer;
+<<<<<<< HEAD
     -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;'
+=======
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none; 
+>>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
 }
 
 .row > .cell:nth-child(1) {
@@ -135,9 +139,14 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(4) {
-    max-width: 15%;
-    min-width: 15%;
-    width: 15%;
+    max-width: 10%;
+    min-width: 10%;
+    width: 10%;
+}
+.row > .cell:nth-child(5) {
+    max-width: 6%;
+    min-width: 6%;
+    width: 6%;
 }
 
 #causeForm {
@@ -147,17 +156,54 @@ form.payloadForm .add:active {
     width: 536px;
 }
 
+<<<<<<< HEAD
 #addNewCauseForm {
+=======
+#addNewCauseForm, #transferForm {    
+>>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
     width: 545px;
     margin-left: -19px;
 }
 
+<<<<<<< HEAD
 .newCauseFormHolder > h3 {
+=======
+.newCauseFormHolder > h3,  .transferFormHolder > h3{    
+>>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
     border-top: black solid 1px;
     margin-top: 22px;
-    width: 54.3%;
+    width: 59%;
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
 }
 
 .causeBody > h2 {
     margin-left: 14%;
 }
+<<<<<<< HEAD
+=======
+
+.panelBody {
+    box-sizing: border-box;
+    overflow: auto;
+    padding:20px 20px 0 20px;
+}
+
+#deleteReasonForm, .deleteReasonText {
+    margin-left: 20px;
+}
+
+.causeSaveAllChanges {
+    margin-left: 0;
+    margin-top: 10px;
+}
+
+.container {
+    padding-top: 10px;
+    padding-bottom: 8px;
+}
+
+.getReports {
+   cursor: pointer; 
+}
+>>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa

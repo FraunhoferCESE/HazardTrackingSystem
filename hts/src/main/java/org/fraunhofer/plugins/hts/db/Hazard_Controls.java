@@ -1,6 +1,8 @@
 package org.fraunhofer.plugins.hts.db;
 
 
+import java.util.Date;
+
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.NotNull;
@@ -27,6 +29,13 @@ public interface Hazard_Controls extends Entity {
 	
 	void setControlGroup(ControlGroups group);
 	
+	Date getOriginalDate();
+
+	void setOriginalDate(Date originalDate);
+	
 	@ManyToMany(value = ControlToCause.class)
 	Hazard_Causes[] getCauses();
+	
+	@ManyToMany(value = ControlToHazard.class)
+	Hazards[] getHazard();
 }

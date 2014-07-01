@@ -35,9 +35,9 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add javadoc and fix the remaining fields.
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk, Risk_Likelihoods likelihood,
-			Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase,
-			Mission_Payload missionPayload) {
+			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
+			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems,
+			Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -51,8 +51,8 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setReviewPhase(reviewPhase);
 		hazard.setMissionPayload(missionPayload);
 		hazard.save();
-		if(subsystems != null) {
-			for(Subsystems subsystem : subsystems) {
+		if (subsystems != null) {
+			for (Subsystems subsystem : subsystems) {
 				try {
 					associateSubsystemToHazard(subsystem, hazard);
 				} catch (SQLException e) {
@@ -61,8 +61,8 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
-		if(groups != null) {
-			for(Hazard_Group group : groups) {
+		if (groups != null) {
+			for (Hazard_Group group : groups) {
 				try {
 					associateHazardGroupToHazard(group, hazard);
 				} catch (SQLException e) {
@@ -70,8 +70,8 @@ public class HazardServiceImpl implements HazardService {
 				}
 			}
 		}
-		if(missionPhase != null) {
-			for(Mission_Phase phase : missionPhase) {
+		if (missionPhase != null) {
+			for (Mission_Phase phase : missionPhase) {
 				try {
 					associateMissionPhaseToHazard(phase, hazard);
 				} catch (SQLException e) {
@@ -90,6 +90,12 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards getHazardByID(String id) {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", id));
+		return hazards.length > 0 ? hazards[0] : null;
+	}
+
+	@Override
+	public Hazards getHazardByHazardNum(String hazardNum) {
+		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNum));
 		return hazards.length > 0 ? hazards[0] : null;
 	}
 
@@ -117,8 +123,8 @@ public class HazardServiceImpl implements HazardService {
 			removeSubsystems(updated.getID());
 			removeHazardGroups(updated.getID());
 			removeMissionPhase(updated.getID());
-			if(subsystems != null) {
-				for(Subsystems subsystem : subsystems) {
+			if (subsystems != null) {
+				for (Subsystems subsystem : subsystems) {
 					try {
 						associateSubsystemToHazard(subsystem, updated);
 					} catch (SQLException e) {
@@ -127,8 +133,8 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
-			if(groups != null) {
-				for(Hazard_Group group : groups) {
+			if (groups != null) {
+				for (Hazard_Group group : groups) {
 					try {
 						associateHazardGroupToHazard(group, updated);
 					} catch (SQLException e) {
@@ -136,8 +142,8 @@ public class HazardServiceImpl implements HazardService {
 					}
 				}
 			}
-			if(missionPhase != null) {
-				for(Mission_Phase phase: missionPhase) {
+			if (missionPhase != null) {
+				for (Mission_Phase phase : missionPhase) {
 					try {
 						associateMissionPhaseToHazard(phase, updated);
 					} catch (SQLException e) {
@@ -160,44 +166,55 @@ public class HazardServiceImpl implements HazardService {
 		removeSubsystems(id);
 		removeHazardGroups(id);
 		removeMissionPhase(id);
-		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));		
+		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));
 	}
 
 	@Override
 	public List<Hazards> getHazardsByMissionPayload(String id) {
 		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
 	}
-	
+
+	@Override
+	public Hazards getNewestHazardReport() {
+		List<Hazards> all = all();
+		Hazards lastCreated = null;
+		if (!all.isEmpty()) {
+			lastCreated = all.get(all.size() - 1);
+		}
+		return lastCreated;
+	}
+
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
 		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
 		subsystemToHazard.setSubsystem(subsystems);
 		subsystemToHazard.setHazard(hazard);
 		subsystemToHazard.save();
 	}
-	
+
 	private void associateHazardGroupToHazard(Hazard_Group hazardGroup, Hazards hazard) throws SQLException {
 		final GroupToHazard hazardGroupToHazard = ao.create(GroupToHazard.class);
 		hazardGroupToHazard.setHazardGroup(hazardGroup);
 		hazardGroupToHazard.setHazard(hazard);
 		hazardGroupToHazard.save();
 	}
-	
-	private void associateMissionPhaseToHazard(Mission_Phase phase, Hazards hazard) throws SQLException{
+
+	private void associateMissionPhaseToHazard(Mission_Phase phase, Hazards hazard) throws SQLException {
 		final PhaseToHazard phaseToHazard = ao.create(PhaseToHazard.class);
 		phaseToHazard.setMissionPhase(phase);
 		phaseToHazard.setHazard(hazard);
 		phaseToHazard.save();
 	}
-	
+
 	private void removeMissionPhase(int id) {
 		ao.delete(ao.find(PhaseToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
-	
+
 	private void removeSubsystems(int id) {
 		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
-	
+
 	private void removeHazardGroups(int id) {
 		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
+
 }

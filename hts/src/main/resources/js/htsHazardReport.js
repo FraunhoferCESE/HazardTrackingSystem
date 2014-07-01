@@ -24,10 +24,10 @@ function initiateDeleteHazardReports () {
 		return defer.promise();
 	}
 
-	AJS.$(".deleteHazardReport").click(function() {
+	AJS.$(".deleteHazardReport").live('click', function() {
 		var self = AJS.$(this);
 		confirmation().then(function(ans) {
-			if(ans){
+			if(ans) {
 				AJS.$.ajax({
 					type: "DELETE",
 					url: "hazardlist?key=" + self.data("key"),
@@ -53,7 +53,9 @@ function layout() {
 	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
 	var lastEditColumn = AJS.$('table#hazardTable tbody td:nth-child(4)');
 	if(lastEditColumn.length > 0) {
-		lastEditColumn.each(function () { AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm") });
+		lastEditColumn.each(function () { 
+			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm"); 
+		});
 	}
 	if(!AJS.$.trim(AJS.$(".noHazard").html())) {
 		AJS.$(".noHazard").remove();

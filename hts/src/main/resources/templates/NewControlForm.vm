@@ -1,4 +1,5 @@
 <form class="aui" action="controlform" method="post" id="controlForm">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<div class="field-group">
 		<label for="controlDescription">Description <span class="aui-icon icon-required">(required)</span></label>
 		<textarea class="textarea long-field" name="controlDescription" id="controlDescription"></textarea>
@@ -16,21 +17,18 @@
 	<div class="field-group">
 		<label for="controlCauses">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
+			<!-- ALL HAZARD CAUSES -->
+			#foreach( $hazardCause in $hazardCauses )
+				<option value="$hazardCause.getID()">$!hazardCause.getTitle()</option>
+			#end
+			<!-- TODO: Based on the Control, loop all selected Causes -->
 
-			<option value="1" selected>C1</option>
-			<option value="2" selected>C2</option>
-			<option value="3">C3</option>
-			<option value="4">C4</option>
-
-			<!--
-			#foreach( $selectedSubsys in $hazard.getSubsystems() )
+			<!-- 			#foreach( $selectedSubsys in $hazard.getSubsystems() )
 				<option value="$selectedSubsys.getID()" selected>$!selectedSubsys.getLabel()</option>
 			#end
 			#foreach( $subsystem in $subsystems )
 				<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
-			#end
-			-->
-
+			#end -->
 		</select>
 	</div>
 

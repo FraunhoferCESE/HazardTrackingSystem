@@ -209,7 +209,6 @@ AJS.$(document).ready(function(){
 				uniquePayload: true
 			}
 	    },
-
 	    //Custom class so error messages are not styled with JIRA's css error style.
 	    errorClass: "validationError",
 	    errorElement: "span",
@@ -217,7 +216,6 @@ AJS.$(document).ready(function(){
 	    	error.insertAfter(element);
 	    	$(error).css({"height":0});
 	    },
-
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
@@ -234,8 +232,21 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
-	$("#transferForm").validate({
-		submitHandler: function(form) {
+	$("#addNewCauseForm").validate({
+		rules: {
+	    	causeTitle: {
+	    		required: true,
+	    		maxlength: 512
+	    	}
+	    },
+
+	    //Custom class so error messages are not styled with JIRA's css error style.
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+	    submitHandler: function(form) {
 			$(form).ajaxSubmit({
 				async: false,
 				success: function(data) {
@@ -259,7 +270,52 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
-	    },
+	    }
+	});
+
+
+	$(".causeForms").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		causeTitle: {
+	    			required: true,
+	    			maxlength: 512
+	    		},
+	    	},
+	    	errorClass: "validationError",
+	    	errorElement: "span",
+	    	errorPlacement: function(error, element) {
+	    		error.insertAfter(element);
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
+	$("#transferForm").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					console.log("SUCCESS");
+					console.log(form);
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
 	});
 
 	/**********************************************************

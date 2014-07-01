@@ -2,6 +2,14 @@ function checkElementExpansion(element) {
 	return element.is(":visible");
 }
 
+function manipulateDate(dateToManipulate) {
+	if (dateToManipulate.length > 0) {
+		dateToManipulate.each(function () {
+			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+		});
+	}
+}
+
 AJS.$(document).ready(function(){
 
 	/* Expand functionality code begins */
@@ -24,7 +32,12 @@ AJS.$(document).ready(function(){
 	/* Expand functionality code ends */
 
 	/* Text manipulation code begins */
-		for (var i = 1; i <= 3; i++) {
+	var createdDate = AJS.$(".createdDate");
+	//var lastUpdatedDate = AJS.$(".lastUpdatedDate");
+	manipulateDate(createdDate);
+	//manipulateDate(lastUpdatedDate);
+
+	for (var i = 1; i <= 3; i++) {
 		// Shortend description text for each control for cleaner UI
 		var descText = AJS.$(".ControlDescText" + i).text();
 		if (descText.length > 30) {
