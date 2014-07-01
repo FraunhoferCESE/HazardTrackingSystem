@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Transfers;
 
 public interface HazardCauseService {
 	Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard);
@@ -20,5 +21,9 @@ public interface HazardCauseService {
 
 	List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard);
 
-	Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard);
+	Hazard_Causes addCauseTransfer(String transferComment, int targetID, String title, Hazards hazard);
+	
+	Hazard_Causes addHazardTransfer(String transferComment, int targetID, String title, Hazards hazard);
+	
+	List<Transfers> getAllTransferredCauses(Hazards hazard);
 }

@@ -53,7 +53,7 @@ public interface Hazard_Causes extends Entity {
 
 	void setDeleteReason(String reason);
 
-	@ManyToMany(value = Causes_to_Hazards.class)
+	@ManyToMany(value = CausesToHazards.class)
 	Hazards[] getHazards();
 	
 	int getTransfer();

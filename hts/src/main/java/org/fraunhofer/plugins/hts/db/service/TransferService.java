@@ -9,5 +9,7 @@ public interface TransferService {
 	
 	Transfers update();
 	
-	public List<Transfers> all();
+	List<Transfers> all();
+	
+	Transfers getTransferByID(int id);
 }

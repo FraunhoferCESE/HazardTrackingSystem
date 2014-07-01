@@ -77,10 +77,10 @@ public class CauseServlet extends HttpServlet {
 			final String causeID = req.getParameter("causeList");
 			if (causeID.isEmpty() || causeID == null) {
 				Hazards targetHazard = hazardService.getHazardByID(hazardID);
-				hazardCauseService.addTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
+				hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
 			} else {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-				hazardCauseService.addTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
+				hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
 			}
 		} else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);
