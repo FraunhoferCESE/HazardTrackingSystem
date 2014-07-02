@@ -10,6 +10,7 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
@@ -92,7 +93,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
-	public List<Transfers> getAllTransferredCauses(Hazards hazard) {
+	public List<TransferClass> getAllTransferredCauses(Hazards hazard) {
 		List<Hazard_Causes> allCauses = getAllCausesWithinAHazard(hazard);
 		List<Transfers> allTransfers = new ArrayList<Transfers>();
 		for(Hazard_Causes cause : allCauses) {
@@ -100,29 +101,37 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				allTransfers.add(transferService.getTransferByID(cause.getTransfer()));
 			}
 		}
-		
+	
+		List<TransferClass> transferInfo = new ArrayList<TransferClass>();
 		for(Transfers transfer : allTransfers) {
 			//Be able to return this somehow in a list
-			transfer.getID();
-			if(transfer.getTargetType() == "CAUSE") {
+			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
+			String transferReason = originCause.getDescription();
+			int transferID = transfer.getID();
+			String type = transfer.getTargetType();
+			
+			if(transfer.getTargetType().equals("CAUSE")) {
 				Hazard_Causes transferredCause = getHazardCauseByID(String.valueOf(transfer.getTargetID()));
 				//Get the title
 				//get the hazard name and number
 				//get reason
-				transferredCause.getTitle();
-				transferredCause.getHazards()[0].getTitle();
-				transferredCause.getHazards()[0].getHazardNum();
-				
+				String causeTitle = transferredCause.getTitle();
+				String hazardTitle = transferredCause.getHazards()[0].getTitle();
+				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, causeTitle);
+				transferInfo.add(causeTransfer);
 			}
-			else if(transfer.getTargetType() == "HAZARD") {
+			else if(transfer.getTargetType().equals("HAZARD")) {
 				//get the hazard name and number
 				//get reason
 				Hazards transferredHazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
-				transferredHazard.getTitle();
-				transferredHazard.getHazardNum();
+				String hazardTitle = transferredHazard.getTitle();
+				String hazardNumb = transferredHazard.getHazardNum();
+				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, null);
+				transferInfo.add(hazardTransfer);
 			}
 		}
-		return allTransfers;
+		return transferInfo;
 	}
 
 	@Override
@@ -159,3 +168,4 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		return transfer.getID();
 	}
 }
+

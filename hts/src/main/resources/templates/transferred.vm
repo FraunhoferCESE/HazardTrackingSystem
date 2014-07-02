@@ -1,3 +1,21 @@
 <ul>
-	<li></li>
+	#foreach($transfer in $transfers)
+		#if($transfer.getTransferID() == $cause.getTransfer())
+			#if($transfer.getCauseTitle())
+				<li>$!transfer.getCauseTitle()</li>
+			#end
+			<li>$!transfer.getHazardTitle()</li>
+			<li>$!transfer.getHazardNumb()</li>
+			<form class="aui causeForms" id="causeForm" method="post" action="causeform" data-key="$!cause.getID()">
+				<div class="field-group">
+				    <label for="transferReason">Transfer Reason</label>
+				    <textarea class="textarea long-field" rows="6" cols="10" name="transferReason" id="transferReason">$!transfer.getTransferReason()</textarea>
+				</div>
+				<div class="buttons-container">
+					<button type="button" class="button causeButtons transfers" id="causeAddControl" disabled>Add Control</button>
+					<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>
+				</div>
+			</form>
+		#end
+	#end
 </ul>
