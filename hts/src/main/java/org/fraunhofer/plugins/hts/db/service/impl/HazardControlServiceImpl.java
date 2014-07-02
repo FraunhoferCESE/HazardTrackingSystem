@@ -9,6 +9,7 @@ import java.util.List;
 import net.java.ao.DBParam;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
+import org.fraunhofer.plugins.hts.db.ControlToCause;
 import org.fraunhofer.plugins.hts.db.ControlToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
@@ -28,6 +29,11 @@ public class HazardControlServiceImpl implements HazardControlService {
 	public Hazard_Controls add(Hazards hazard, String description, ControlGroups controlGroup, Hazard_Causes[] causes) {
 		final Hazard_Controls control = ao.create(Hazard_Controls.class, new DBParam("DESCRIPTION", description));
 		control.setControlGroup(controlGroup);
+		if (causes != null) {
+			for (Hazard_Causes hc : causes) {
+				associateControlToCause(control, hc);
+			}
+		}
 		// Need to perform check at this point, update or create?
 		// Check if OriginalDate is null?
 		control.setOriginalDate(new Date());
@@ -58,6 +64,13 @@ public class HazardControlServiceImpl implements HazardControlService {
 		controlToHazard.setHazard(hazard);
 		controlToHazard.setControl(control);
 		controlToHazard.save();
+	}
+	
+	private void associateControlToCause(Hazard_Controls control, Hazard_Causes cause) {
+		final ControlToCause controlToCause = ao.create(ControlToCause.class);
+		controlToCause.setCause(cause);
+		controlToCause.setControl(control);
+		controlToCause.save();
 	}
 
 }

@@ -78,7 +78,7 @@
 				var	leftSearch = false, rightSearch = false;
 				// BOTH SEARCH AND OPTGROUP SEARCH
 				if (o.search != false && o.optGroupSearch != false) {
-					var ss = 
+					var ss =
 						o.optGroupSearch + "<select class='small' ><option value=__null__> </option></select> " +
 						o.search + "<input class='small' type='text' /><a href='#'> </a>";
 
@@ -105,7 +105,7 @@
 				}
 
 				// CREATE NEW ELEMENT (AND HIDE IT) AFTER THE HIDDED ORGINAL SELECT
-				var htmlToAdd = 
+				var htmlToAdd =
 					"<div class='ms2side__div'>" +
 							((o.selectedPosition != 'right' && o.moveOptions) ? divUpDown : "") +
 						"<div class='ms2side__select'>" +
@@ -264,7 +264,7 @@
 				$(this).next().find('.ms2side__options, .ms2side__updown').each(function(){
 					var	top = ((heightDiv/2) - ($(this).height()/2));
 					if (top > 0)
-						$(this).css('padding-top',  top + 'px' );
+						$(this).css('padding-top',  11 + 'px' );
 				})
 
 				// MOVE SELECTED OPTION TO RIGHT, NOT SELECTED TO LEFT
@@ -559,7 +559,7 @@
       return methods.init.apply( this, arguments );
     } else {
       $.error( 'Method ' +  method + ' does not exist on jQuery.multiselect2side' );
-    }    
+    }
   };
 
 })(jQuery);

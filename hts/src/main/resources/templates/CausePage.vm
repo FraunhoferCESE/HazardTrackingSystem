@@ -50,5 +50,5 @@
 			#parse("/templates/transferForm.vm")
 		</div>
 	</div>
-	
+
 </div>

@@ -1,15 +1,46 @@
-<form class="aui" action="controlform" method="post" id="controlForm">
-
+<form class="aui" action="controlform" method="post" id="editControlForm">
 	<div class="field-group">
-		<label for="controlDescription">Description <span class="aui-icon icon-required">(required)</span></label>
-		<textarea class="textarea long-field" name="controlDescription" id="controlDescription"></textarea>
+		<label for="controlDescriptionEdit">Description <span class="aui-icon icon-required">(required)</span></label>
+		<textarea class="textarea long-field" name="controlDescriptionEdit" id="controlDescriptionEdit">$hazardControl.getDescription()</textarea>
+	</div>
+	<div class="field-group">
+		<label for="controlGroupEdit">Control group</label>
+		<select class="select" id="controlGroupEdit" name="controlGroupEdit">
+			#foreach( $controlGroup in $controlGroups )
+				#if($controlGroup.getID() == $hazardControl.getControlGroup().getID())
+					<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
+				#else
+					<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+				#end
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="controlCausesEdit">Causes</label>
+		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit">
+			#set( $foundMatch = 0 )
+			#foreach( $hazardCause in $hazardCauses )
+				#foreach( $selectedCause in $hazardControl.getCauses() )
+					#if( $hazardCause.getID() == $selectedCause.getID() )
+						<option selected>$hazardCause.getTitle()</option>
+						#set( $foundMatch = 1 )
+						#break
+					#end
+				#end
+				#if( $foundMatch == 0 )
+					<option>$hazardCause.getTitle()</option>
+				#else
+					#set( $foundMatch = 0 )
+				#end
+			#end
+		</select>
 	</div>
 
-	<div class="buttons-container">
+<!-- 	<div class="buttons-container">
 		<div class="buttons">
 			<input class="button submit" type="submit" value="Save" id="comment-save-button">
 		<a class="cancel" href="#">Cancel</a>
 		</div>
-	</div>
+	</div> -->
 
 </form>

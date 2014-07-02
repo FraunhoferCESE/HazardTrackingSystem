@@ -41,6 +41,7 @@
     <entity>org.fraunhofer.plugins.hts.db.ControlToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
+    <entity>org.fraunhofer.plugins.hts.db.ControlToCause</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
     <entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
     <entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>

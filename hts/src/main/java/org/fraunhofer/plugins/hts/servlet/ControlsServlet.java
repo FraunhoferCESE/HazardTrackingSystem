@@ -66,9 +66,9 @@ public class ControlsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-    	final String description = req.getParameter("controlDescription");
-    	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroup"));
-    	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCauses")));
+    	final String description = req.getParameter("controlDescriptionNew");
+    	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
+    	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
     	hazardControlService.add(currentHazard, description, controlGroup, causes);
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     }
