@@ -33,6 +33,10 @@ public interface Hazard_Controls extends Entity {
 
 	void setOriginalDate(Date originalDate);
 	
+	Date getLastUpdated();
+
+	void setLastUpdated(Date lastEdit);
+	
 	@ManyToMany(value = ControlToCause.class)
 	Hazard_Causes[] getCauses();
 	

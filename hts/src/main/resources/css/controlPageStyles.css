@@ -17,7 +17,7 @@
     font-weight: bold;
     border-top: 1px black solid;
     display: block;
-    width: 960px;
+    width: 1024px;
 }
 
 .ControlsTableHeader {
@@ -33,7 +33,7 @@
 }
 
 .ControlsTableCellThree {
-    width: 330px;
+    width: 400px;
 }
 
 .ControlsTableCellFour {
@@ -41,11 +41,11 @@
 }
 
 .ControlsTableCellFive {
-    width: 200px;
+    width: 150px;
 }
 
 .ControlsTableCellSix {
-    width: 200px;
+    width: 150px;
 }
 
 .ControlsTableCellToggle {
@@ -59,6 +59,25 @@
 
 .ControlsTableEditEntryContainer {
     padding-left: 30px;
+}
+
+.ControlsTableEditEntryField {
+    box-sizing: border-box;
+    clear: both;
+    padding: 4px 0 4px 145px;
+    position: relative;
+    margin: 1px 0;
+    width: 100%;
+}
+
+.ControlsTableEditEntryField > label {
+    float: left;
+    margin-left: -145px;
+    padding: 5px 0 0 0;
+    position: relative;
+    text-align: right;
+    width: 130px;
+    word-wrap: break-word;
 }
 
 .ControlsButtonPanel {

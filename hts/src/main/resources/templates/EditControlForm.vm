@@ -1,9 +1,11 @@
 <form class="aui" action="controlform" method="post" id="editControlForm">
-	<div class="field-group">
+	<input type="hidden" name="edit" id="edit" value="y">
+	<input type="hidden" name="controlID" id="controlID" value="$!hazardControl.getID()">
+	<div class="ControlsTableEditEntryField">
 		<label for="controlDescriptionEdit">Description <span class="aui-icon icon-required">(required)</span></label>
 		<textarea class="textarea long-field" name="controlDescriptionEdit" id="controlDescriptionEdit">$hazardControl.getDescription()</textarea>
 	</div>
-	<div class="field-group">
+	<div class="ControlsTableEditEntryField">
 		<label for="controlGroupEdit">Control group</label>
 		<select class="select" id="controlGroupEdit" name="controlGroupEdit">
 			#foreach( $controlGroup in $controlGroups )
@@ -15,32 +17,29 @@
 			#end
 		</select>
 	</div>
-	<div class="field-group">
+	<div class="ControlsTableEditEntryField">
 		<label for="controlCausesEdit">Causes</label>
 		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit">
 			#set( $foundMatch = 0 )
 			#foreach( $hazardCause in $hazardCauses )
 				#foreach( $selectedCause in $hazardControl.getCauses() )
 					#if( $hazardCause.getID() == $selectedCause.getID() )
-						<option selected>$hazardCause.getTitle()</option>
+						<option value="$hazardCause.getID()" selected>$hazardCause.getTitle()</option>
 						#set( $foundMatch = 1 )
 						#break
 					#end
 				#end
 				#if( $foundMatch == 0 )
-					<option>$hazardCause.getTitle()</option>
+					<option value="$hazardCause.getID()">$hazardCause.getTitle()</option>
 				#else
 					#set( $foundMatch = 0 )
 				#end
 			#end
 		</select>
 	</div>
-
-<!-- 	<div class="buttons-container">
+	<div class="buttons-container">
 		<div class="buttons">
-			<input class="button submit" type="submit" value="Save" id="comment-save-button">
-		<a class="cancel" href="#">Cancel</a>
+			<input class="button" type="submit" value="Save changes" id="updateControlButton">
 		</div>
-	</div> -->
-
+	</div>
 </form>

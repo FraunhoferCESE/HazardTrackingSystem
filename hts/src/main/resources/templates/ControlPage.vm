@@ -13,6 +13,7 @@
 				<th class="ControlsTableHeader ControlsTableCellFour">Control Group</th>
 				<th class="ControlsTableHeader ControlsTableCellFive">Created</th>
 				<th class="ControlsTableHeader ControlsTableCellSix">Last updated</th>
+				<th class="ControlsTableHeader ControlsTableCellSix">Delete</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -22,10 +23,17 @@
 						<span class="aui-icon aui-icon-small aui-iconfont-add"></span>
 					</td>
 					<td>$velocityCount</td>
-					<td>$hazardControl.getDescription()</td>
+					<td class="ControlDescriptionText">$hazardControl.getDescription()</td>
 					<td>$hazardControl.getControlGroup().getLabel()</td>
-					<td class="createdDate">$hazardControl.getOriginalDate()</td>
-					<td class="lastUpdatedDate"></td>
+					<td class="ControlDate">$hazardControl.getOriginalDate()</td>
+					#if( !$hazardControl.getLastUpdated() )
+						<td class="ControlDate">N/A</td>
+					#else
+						<td class="ControlDate">$hazardControl.getLastUpdated()</td>
+					#end
+					<td>
+						<input type="checkbox" name="ControlsDeleteControl" value="$hazardControl.getID()">
+					</td>
 				</tr>
 				<tr>
 					<td colspan="100%" class="ControlsTableEditEntryHidden" id="ControlsTableEditEntry$!velocityCount">
@@ -39,7 +47,7 @@
 	</table>
 	</div>
 	<div class="ControlsButtonPanel">
-		<button class="aui-button" class="ExpandAllControls">Expand all</button>
+		<!-- <button class="aui-button" class="ExpandAllControls">Expand all</button> -->
 	</div>
 
 	<div>

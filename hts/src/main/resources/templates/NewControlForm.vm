@@ -26,7 +26,7 @@
 	<div class="buttons-container">
 		<div class="buttons">
 			<input class="button submit" type="submit" value="Save" id="comment-save-button">
-		<a class="cancel" href="#">Cancel</a>
+			<input class="button" type="submit" value="Clear" id="clearNewControlButton">
 		</div>
 	</div>
 </form>

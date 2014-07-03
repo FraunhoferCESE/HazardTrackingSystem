@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.java.ao.DBParam;
+import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.ControlToCause;
@@ -34,14 +35,33 @@ public class HazardControlServiceImpl implements HazardControlService {
 				associateControlToCause(control, hc);
 			}
 		}
-		// Need to perform check at this point, update or create?
-		// Check if OriginalDate is null?
 		control.setOriginalDate(new Date());
+		control.setLastUpdated(null);
 		control.save();
 		associateControlToHazard(hazard, control);
 		return control;
 	}
 	
+	@Override
+	public Hazard_Controls update(String controlID, String description, ControlGroups controlGroup, Hazard_Causes[] causes) {
+		Hazard_Controls controlToBeUpdated = getHazardControlByID(controlID);
+		if (!description.equals(controlToBeUpdated.getDescription())) {
+			controlToBeUpdated.setDescription(description);
+		}
+		if (controlGroup.getID() != controlToBeUpdated.getControlGroup().getID()) {
+			controlToBeUpdated.setControlGroup(controlGroup);
+		}
+		if (causes != null) {
+			removeAssociationsControlToCause(controlToBeUpdated.getID());
+			for (Hazard_Causes hc : causes) {
+				associateControlToCause(controlToBeUpdated, hc);
+			}
+		}
+		controlToBeUpdated.setLastUpdated(new Date());
+		controlToBeUpdated.save();
+		return controlToBeUpdated;
+	}
+
 	@Override
 	public List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardControls());
@@ -49,9 +69,9 @@ public class HazardControlServiceImpl implements HazardControlService {
 
 	@Override
 	public Hazard_Controls getHazardControlByID(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		final Hazard_Controls[] control = ao.find(Hazard_Controls.class, Query.select().where("ID=?", id));
+		return control.length > 0 ? control[0] : null;
+	}	
 
 	@Override
 	public List<Hazard_Controls> all() {
@@ -72,5 +92,8 @@ public class HazardControlServiceImpl implements HazardControlService {
 		controlToCause.setControl(control);
 		controlToCause.save();
 	}
-
+	
+	private void removeAssociationsControlToCause(int id) {
+		ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", id)));
+	}
 }

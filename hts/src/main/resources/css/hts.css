@@ -114,11 +114,7 @@ form.payloadForm .add:active {
 
 .trigger {
     cursor: pointer;
-<<<<<<< HEAD
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;'
-=======
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none; 
->>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
 }
 
 .row > .cell:nth-child(1) {
@@ -156,20 +152,13 @@ form.payloadForm .add:active {
     width: 536px;
 }
 
-<<<<<<< HEAD
-#addNewCauseForm {
-=======
-#addNewCauseForm, #transferForm {    
->>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
+
+#addNewCauseForm, #transferForm {
     width: 545px;
     margin-left: -19px;
 }
 
-<<<<<<< HEAD
-.newCauseFormHolder > h3 {
-=======
-.newCauseFormHolder > h3,  .transferFormHolder > h3{    
->>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
+.newCauseFormHolder > h3,  .transferFormHolder > h3{
     border-top: black solid 1px;
     margin-top: 22px;
     width: 59%;
@@ -180,8 +169,6 @@ form.payloadForm .add:active {
 .causeBody > h2 {
     margin-left: 14%;
 }
-<<<<<<< HEAD
-=======
 
 .panelBody {
     box-sizing: border-box;
@@ -204,6 +191,5 @@ form.payloadForm .add:active {
 }
 
 .getReports {
-   cursor: pointer; 
+   cursor: pointer;
 }
->>>>>>> 1d2fee9de619f19e8176c310ddfb39b718284bfa
