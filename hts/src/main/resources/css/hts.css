@@ -118,13 +118,13 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(1) {
-    max-width: 7%;
-    min-width: 7%;
-    width: 7%;
+    max-width: 8%;
+    min-width: 8%;
+    width: 8%;
 }
 
 .row > .cell:nth-child(2) {
-    width: 40%;
+    width: 46%;
     max-width: 50%;
 }
 
