@@ -5,7 +5,6 @@ import java.util.List;
 import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Transfers;
 
 public interface HazardCauseService {
 	Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard);

@@ -279,7 +279,34 @@ AJS.$(document).ready(function(){
 		});
 	});
 
+	$(".transferredForms").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		causeDescription: { 
+	    			required: false,
+	    		},
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
 	$("#transferForm").validate({
+		rules: {
+	    	causeDescription: { 
+	    		required: false,
+	    	},
+	    },
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
 				async: false,

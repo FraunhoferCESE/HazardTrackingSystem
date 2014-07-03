@@ -145,7 +145,7 @@ form.payloadForm .add:active {
     width: 6%;
 }
 
-#causeForm {
+#causeForm, #transferredForm {
     float: left;
     margin-bottom: 15px;
     margin-left: -115px;
