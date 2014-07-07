@@ -308,8 +308,10 @@ AJS.$(document).ready(function(){
 	    	},
 	    },
 		submitHandler: function(form) {
+			console.log(baseUrl);
 			$(form).ajaxSubmit({
 				async: false,
+				url: baseUrl + "/plugins/servlet/causeform",
 				success: function(data) {
 					console.log("SUCCESS");
 					console.log(form);
