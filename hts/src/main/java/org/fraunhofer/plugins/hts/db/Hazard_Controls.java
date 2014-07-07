@@ -21,5 +21,4 @@ public interface Hazard_Controls extends Entity {
 	String getDescription();
 
 	void setDescription(String description);
-
 }

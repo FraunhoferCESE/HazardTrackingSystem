@@ -224,6 +224,104 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
+	$("#addNewCauseForm").validate({
+		rules: {
+	    	causeTitle: { 
+	    		required: true,
+	    		maxlength: 512
+	    	}
+	    },
+
+	    //Custom class so error messages are not styled with JIRA's css error style.
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+	    submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
+	$(".causeForms").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		causeTitle: { 
+	    			required: true,
+	    			maxlength: 512
+	    		},
+	    	},
+	    	errorClass: "validationError",
+	    	errorElement: "span",
+	    	errorPlacement: function(error, element) {
+	    		error.insertAfter(element);
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
+	$(".transferredForms").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		causeDescription: { 
+	    			required: false,
+	    		},
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
+	$("#transferForm").validate({
+		rules: {
+	    	causeDescription: { 
+	    		required: false,
+	    	},
+	    },
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					console.log("SUCCESS");
+					console.log(form);
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
 	/**********************************************************
 	*                                                         *
 	*               Helper functions below.                   *

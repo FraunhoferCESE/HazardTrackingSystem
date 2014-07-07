@@ -100,7 +100,7 @@ form.payloadForm .add:active {
     display:table-cell;
 }
 
-.cell > span {
+.cell > span, .newCauseFormTrigger > span, .transferFormTrigger > span {
     padding-left: 10px;
 }
 
@@ -112,19 +112,19 @@ form.payloadForm .add:active {
     margin-bottom: 3px;
 }
 
-.toggle {
+.trigger {
     cursor: pointer;
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;' 
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none; 
 }
 
 .row > .cell:nth-child(1) {
-    max-width: 7%;
-    min-width: 7%;
-    width: 7%;
+    max-width: 8%;
+    min-width: 8%;
+    width: 8%;
 }
 
 .row > .cell:nth-child(2) {
-    width: 40%;
+    width: 46%;
     max-width: 50%;
 }
 
@@ -135,29 +135,60 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(4) {
-    max-width: 15%;
-    min-width: 15%;
-    width: 15%;
+    max-width: 10%;
+    min-width: 10%;
+    width: 11%;
+}
+.row > .cell:nth-child(5) {
+    max-width: 6%;
+    min-width: 6%;
+    width: 6%;
 }
 
-#causeForm {
+#causeForm, #transferredForm {
     float: left;
     margin-bottom: 15px;
-    margin-left: -146px;
+    margin-left: -115px;
     width: 536px;
 }
 
-#addNewCauseForm {    
+#addNewCauseForm, #transferForm {    
     width: 545px;
     margin-left: -19px;
 }
 
-.newCauseFormHolder > h3 {    
+.newCauseFormHolder > h3,  .transferFormHolder > h3{    
     border-top: black solid 1px;
     margin-top: 22px;
-    width: 54.3%;
+    width: 59%;
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
 }
 
 .causeBody > h2 {
     margin-left: 14%;
+}
+
+.panelBody {
+    box-sizing: border-box;
+    overflow: auto;
+    padding:20px 20px 0 20px;
+}
+
+#deleteReasonForm, .deleteReasonText {
+    margin-left: 20px;
+}
+
+.causeSaveAllChanges {
+    margin-left: 0;
+    margin-top: 10px;
+}
+
+.container {
+    padding-top: 10px;
+    padding-bottom: 8px;
+}
+
+.getReports {
+   cursor: pointer; 
 }

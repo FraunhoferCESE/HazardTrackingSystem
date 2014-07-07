@@ -17,7 +17,6 @@ public interface Review_Phases extends Entity {
 
 	void setDescription(String description);
 
-	// TODO maybe fix the relation to the database(oneToMany)
 	@OneToOne
 	Hazards getHazards();
 }

@@ -69,17 +69,20 @@ public interface Hazards extends Entity {
 	void setReviewPhase(Review_Phases phase);
 
 	Review_Phases getReviewPhase();
-	
+
 	void setMissionPayload(Mission_Payload missionPayload);
-	
+
 	Mission_Payload getMissionPayload();
-	
+
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();
-	
-	@ManyToMany(value = GroupToHazard.class)	
+
+	@ManyToMany(value = GroupToHazard.class)
 	Hazard_Group[] getHazardGroups();
-	
+
 	@ManyToMany(value = PhaseToHazard.class)
 	Mission_Phase[] getMissionPhases();
+
+	@ManyToMany(value = CausesToHazards.class)
+	Hazard_Causes[] getHazardCauses();
 }

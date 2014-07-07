@@ -11,7 +11,7 @@ public interface Mission_Payload extends Entity {
 	String getName();
 
 	void setName(String name);
-	
+
 	@OneToOne
 	Hazards getHazards();
 }

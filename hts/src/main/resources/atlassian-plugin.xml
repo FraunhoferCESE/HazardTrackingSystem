@@ -26,6 +26,7 @@
     <resource type="download" name="purl.js" location="/js/purl.js"/>
     <resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js"/>
     <resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js"/>
+    <resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js"/>
     <context>hts</context>
   </web-resource>
   <!-- import from the product container -->
@@ -34,6 +35,7 @@
   <ao key="ao-module">
     <description>The module configuring active objects service</description>
     <entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
+    <entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
@@ -46,7 +48,8 @@
     <entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.Mission_Phase</entity>
-    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>   
+    <entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>
+    <entity>org.fraunhofer.plugins.hts.db.Transfers</entity>
   </ao>
   <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter=""/>
   <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
@@ -60,6 +63,8 @@
   <component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl"/>
   <component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl"/>
   <component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl"/>
+  <component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl"/>
+  <component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>
@@ -73,11 +78,15 @@
     <description key="viewall-hazardreports.description">The View all Hazard reports Plugin</description>
     <label key="viewall-hazardreports.label"/>
     <link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
-      <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
-        <param name="permission">user</param>
-      </condition>
+    <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+      <param name="permission">user</param>
+    </condition>
   </web-item>
   <rest name="Hazard Resource" i18n-name-key="hazard-resource.name" key="hazard-resource" path="/htsrest" version="1.0">
     <description key="hazard-resource.description">The Hazard Resource Plugin</description>
   </rest>
+  <servlet name="Cause Servlet" i18n-name-key="cause-servlet.name" key="cause-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
+    <description key="cause-servlet.description">The Cause Servlet Plugin</description>
+    <url-pattern>/causeform</url-pattern>
+  </servlet>
 </atlassian-plugin>
