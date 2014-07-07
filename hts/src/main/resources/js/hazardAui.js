@@ -32,6 +32,23 @@ AJS.$(document).ready(function(){
         AJS.$("#CreateHazardNav").addClass("aui-nav-selected");
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");       
     }
+
+    AJS.$("#payloadList").live("mousedown", function() {
+        console.log("PAYLOAD OPEN");
+        var missionList;
+        AJS.$.ajax({
+            type: "GET",
+            url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
+                success: function(data) {
+                    missionList = data;
+                    console.log(data);
+                }
+            });
+    });
+
+    AJS.$("#payloadList").live("change", function() {
+        console.log("PAYLOAD CHANGE");
+    }); 
     
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");
