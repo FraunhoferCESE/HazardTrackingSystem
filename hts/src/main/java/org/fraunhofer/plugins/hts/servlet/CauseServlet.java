@@ -37,6 +37,7 @@ public class CauseServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("allHazards", hazardService.all());
 			res.setContentType("text/html;charset=utf-8");
 			if ("y".equals(req.getParameter("edit"))) {
 				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
@@ -51,7 +52,6 @@ public class CauseServlet extends HttpServlet {
 				context.put("hazardNumber", newestHazardReport.getHazardNum());
 				context.put("hazardTitle", newestHazardReport.getTitle());
 				context.put("hazardID", newestHazardReport.getID());
-				context.put("allHazards", hazardService.all());
 				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
 				context.put("transfers", hazardCauseService.getAllTransferredCauses(newestHazardReport));
 				templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
