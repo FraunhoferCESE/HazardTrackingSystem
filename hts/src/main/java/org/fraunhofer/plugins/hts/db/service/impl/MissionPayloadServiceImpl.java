@@ -67,7 +67,6 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	@Override
 	public List<Hazards> getAllHazardsWithinMission(String id) {
 		Mission_Payload payload = getMissionPayloadByID(id);
-		Hazards number = payload.getHazards();
 		return newArrayList(payload.getHazards());
 	}
 }

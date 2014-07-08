@@ -58,7 +58,7 @@ AJS.$(document).ready(function(){
     });
 
     AJS.$("#payloadNavigationList").live("change", function() {
-        console.log("PAYLOAD CHANGE");
+        AJS.$("span#hazardReportsNavigation").children().remove();
         var value = AJS.$(this).val();
         var hazardList;
         if(value.length){
@@ -70,20 +70,27 @@ AJS.$(document).ready(function(){
                     hazardList = data;
                 }
             });
-
-            var temp = "<select size='1' class='select' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-Select Hazard Report-</option>";
+            console.log(hazardList.length);
             if(hazardList.length > 0) {
+                var temp = "<select size='1' class='select' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-Select Hazard Report-</option>";
                 AJS.$(hazardList).each(function() {
                     temp += "<option value=" + this.hazardID + ">" + this.hazardNumber + " - " + this.title + "</option>";
                 });
+                temp += "</select><a href='#' class='aui-button' id='navigateToHazard'>GO</a>";
             }
-            temp += "</select><a href='#' class='aui-button' id='navigateToHazard'>GO</a>";
+            else {
+                var temp = "<select size='1' class='select long-field' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-No Hazard Reports have been created-</option></select>";
+            }
+
             AJS.$("span#hazardReportsNavigation").append(temp);
         }
     });
 
     AJS.$("#hazardNavigationList").live("change", function() {
-        AJS.$("#navigateToHazard").attr("href", AJS.params.baseURL + "/plugins/servlet/hazardlist?edit=y&key=" + AJS.$(this).val());
+        var value = AJS.$(this).val();
+        if(value.length) {
+            AJS.$("#navigateToHazard").attr("href", AJS.params.baseURL + "/plugins/servlet/hazardlist?edit=y&key=" + value);
+        }
     });
     
     function navigateTo(trigger, contentId){

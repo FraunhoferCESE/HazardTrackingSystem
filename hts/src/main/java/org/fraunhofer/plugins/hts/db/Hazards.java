@@ -56,7 +56,7 @@ public interface Hazards extends Entity {
 
 	void setRevisionDate(Date revisionDate);
 
-	// TODO FOREIGN KEYS
+	//FOREIGN KEYS
 
 	void setRiskCategory(Risk_Categories risk);
 
