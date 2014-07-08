@@ -8,7 +8,7 @@ public interface SubsystemService {
 	Subsystems add(String label, String subsysDesc);
 
 	Subsystems getSubsystemByID(String id);
-	
+
 	Subsystems[] getSubsystemsByID(Integer[] id);
 
 	Subsystems update(Subsystems subsystemToUpdate, String label);

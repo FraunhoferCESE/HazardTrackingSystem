@@ -1,0 +1,168 @@
+.ControlsHeadingOne {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+}
+
+.ControlsHeadingOneContent {
+    font-size: 16px;
+    font-weight: normal;
+    display: inline;
+}
+
+.ControlsHeadingTwo {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: bold;
+    border-top: 1px black solid;
+    display: block;
+    width: 1024px;
+}
+
+.ControlsTableHeader {
+    text-align: left;
+}
+
+.ControlsTableCellOne {
+    width: 40px;
+}
+
+.ControlsTableCellTwo {
+    width: 40px;
+}
+
+.ControlsTableCellThree {
+    width: 400px;
+}
+
+.ControlsTableDescriptionText {
+    max-width: 370px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ControlsTableCellFour {
+    width: 160px;
+}
+
+.ControlsTableCellFive {
+    width: 150px;
+}
+
+.ControlsTableCellSix {
+    width: 150px;
+}
+
+.ControlsTableCellToggle {
+    cursor: pointer;
+    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+}
+
+.ControlsTableEditEntryHidden {
+    display: none;
+}
+
+.ControlsTableEditEntryContainer {
+    padding-left: 30px;
+}
+
+.ControlsTableEditEntryField {
+    box-sizing: border-box;
+    clear: both;
+    padding: 4px 0 4px 145px;
+    position: relative;
+    margin: 1px 0;
+    width: 100%;
+}
+
+.ControlsTableEditEntryField > label {
+    float: left;
+    margin-left: -145px;
+    padding: 5px 0 0 0;
+    position: relative;
+    text-align: right;
+    width: 130px;
+    word-wrap: break-word;
+}
+
+.ControlsButtonPanel {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* STYLES FOR THE CONFIRM DIALOG BEGIN */
+
+.ConfirmDialogHeadingOne {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    display: block;
+}
+
+.ConfirmDialogHeadingTwo {
+    margin: 0;
+    padding: 0;
+}
+
+.ConfirmDialogContentTwo {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.ConfirmDialogHeadingOneContent {
+    font-weight: normal;
+    display: inline;
+}
+
+.ConfirmDialogTableHeader {
+    text-align: left;
+}
+
+.ConfirmDialogTableCellOne {
+    width: 40px;
+}
+
+.ConfirmDialogTableCellTwo {
+    width: 400px;
+}
+
+.ConfirmDialogTableCellThree {
+    width: 160px;
+}
+
+.ConfirmDialogDescriptionText {
+    max-width: 370px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ConfirmDialogLabelContainer {
+    width: 12%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonTextContainer {
+    width: 88%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonText {
+    width: 100%
+}
+
+.ConfirmDialogErrorText {
+    margin: 0;
+    font-size: 10px;
+    font-style: italic;
+    color: red;
+    display: none;
+}
+
+.ConformDialogTopRow {
+    border-top: 1px dashed black;
+}
+
+/* STYLES FOR THE CONFIRM DIALOG END */

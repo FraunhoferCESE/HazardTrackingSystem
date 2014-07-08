@@ -23,8 +23,28 @@ AJS.$(document).ready(function(){
 		autoSort: true,
 		autoSortAvailable: true
     });
-	
+
 	$("#hazardPhase").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: 'Selected',
+		'search': 'Search: ',
+		autoSort: true,
+		autoSortAvailable: true
+    });
+
+    $("#controlCausesNew").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: 'Selected',
+		'search': 'Search: ',
+		autoSort: true,
+		autoSortAvailable: true
+    });
+
+    $(".controlCausesEdit").multiselect2side({
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
@@ -62,7 +82,7 @@ AJS.$(document).ready(function(){
 				response = true;
 			}
 		});
-		
+
 		//Check to see if we have an error. If so change the color of the input text to be red.
 		if(!response) {
 			$(element).css("color", "#D04437");
@@ -123,12 +143,12 @@ AJS.$(document).ready(function(){
 
 	$("#hazardForm").validate({
 		rules: {
-			hazardNumber: { 
+			hazardNumber: {
 				required: true,
 				maxlength: 255,
 				uniqueHazard: true
 			},
-	    	hazardTitle: { 
+	    	hazardTitle: {
 	    		required: true,
 	    		maxlength: 512
 	    	},
@@ -183,7 +203,7 @@ AJS.$(document).ready(function(){
 	    				var hazardNumber = data.hazardNumber;
 		    			var hazardID = data.hazardID;
 	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
-	    			}	
+	    			}
 	    		},
 	    		error: function(error) {
 	    			console.log(error);
@@ -194,12 +214,11 @@ AJS.$(document).ready(function(){
 
 	$("#payloadForm").validate({
 		rules: {
-			hazardPayloadAdd: { 
+			hazardPayloadAdd: {
 				maxlength: 255,
 				uniquePayload: true
 			}
 	    },
-
 	    //Custom class so error messages are not styled with JIRA's css error style.
 	    errorClass: "validationError",
 	    errorElement: "span",
@@ -207,7 +226,6 @@ AJS.$(document).ready(function(){
 	    	error.insertAfter(element);
 	    	$(error).css({"height":0});
 	    },
-
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
@@ -224,6 +242,92 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
+	$("#addNewCauseForm").validate({
+		rules: {
+	    	causeTitle: {
+	    		required: true,
+	    		maxlength: 512
+	    	}
+	    },
+
+	    //Custom class so error messages are not styled with JIRA's css error style.
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+	    submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
+	$("#addNewControlForm").validate({
+		rules: {
+			controlDescription: {
+				required: true,
+				maxlength: 255
+			}
+	    },
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    }
+	});
+
+
+	$(".causeForms").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		causeTitle: {
+	    			required: true,
+	    			maxlength: 512
+	    		},
+	    	},
+	    	errorClass: "validationError",
+	    	errorElement: "span",
+	    	errorPlacement: function(error, element) {
+	    		error.insertAfter(element);
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
+	$("#transferForm").validate({
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					console.log("SUCCESS");
+					console.log(form);
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
 	/**********************************************************
 	*                                                         *
 	*               Helper functions below.                   *
@@ -234,7 +338,7 @@ AJS.$(document).ready(function(){
 		if(Date.parse(initationVal) && Date.parse(completionVal)) {
 			var x = new Date(initationVal);
 			var y = new Date(completionVal);
-			return x <= y; 
+			return x <= y;
 		}
 		//initation is valid
 		else if(Date.parse(initationVal) && !(Date.parse(completionVal))) {
@@ -243,7 +347,7 @@ AJS.$(document).ready(function(){
 		//initation is not valid but completion is then the form is invalid.
 		else if(!(Date.parse(initationVal)) && Date.parse(completionVal)) {
 			return false;
-		} 
+		}
 		else {
 			return true;
 		}

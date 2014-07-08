@@ -1,6 +1,11 @@
 package org.fraunhofer.plugins.hts.db;
 
+
+import java.util.Date;
+
 import net.java.ao.Entity;
+import net.java.ao.ManyToMany;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -13,13 +18,33 @@ import net.java.ao.schema.Table;
  */
 @Table("Hazard_Controls")
 public interface Hazard_Controls extends Entity {
-	String getTitle();
-
-	void setTitle(String title);
-
+	
+	@NotNull
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDescription();
 
 	void setDescription(String description);
+	
+	ControlGroups getControlGroup();
+	
+	void setControlGroup(ControlGroups group);
+	
+	Date getOriginalDate();
 
+	void setOriginalDate(Date originalDate);
+	
+	Date getLastUpdated();
+
+	void setLastUpdated(Date lastEdit);
+	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getDeleteReason();
+
+	void setDeleteReason(String reason);
+	
+	@ManyToMany(value = ControlToCause.class)
+	Hazard_Causes[] getCauses();
+	
+	@ManyToMany(value = ControlToHazard.class)
+	Hazards[] getHazard();
 }

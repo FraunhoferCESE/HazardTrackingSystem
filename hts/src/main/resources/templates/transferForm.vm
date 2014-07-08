@@ -1,0 +1,23 @@
+<form class='aui' id="transferForm" method="post" action="causeform">
+	<div class='field-group'>
+		<label for='hazardList'>Hazard Reports</label>
+		<select size='1' class='select long-field' name='hazardList' id='hazardList'>
+			<option value=''>-Select Hazard Report-</option>
+			#foreach( $hazard in $allHazards )
+				<option value="$hazard.getID()"> $hazard.getHazardNum() - $hazard.getTitle()</option>
+			#end
+		</select>
+	</div>
+	<div class="field-group container">
+	</div>
+	<div class='field-group'>
+		<label for='transferReason'>Transfer Reason</label>
+		<textarea class='textarea long-field' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea>
+	</div>
+	<div class="buttons-container">
+		<button class="aui-button causeSaveAllChanges causeButtons" type="button">Save All Changes</button>
+		<input type="reset" value="Clear" class="aui-button causeButtons">
+	</div>
+	<input type="hidden" name="transfer" id="transfer" value="y">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
+</form>

@@ -15,9 +15,9 @@
         <div class="aui-navgroup-inner">
             <div class="aui-navgroup-primary">
                 <ul class="aui-nav">
-                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="#">Hazard form</a></li>
-                    <li id="cause-nav-item"><a href="#">Causes</a></li>
-                    <li id="control-nav-item"><a href="#">Controls</a></li>
+                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="hazardform">Hazard form</a></li>
+                    <li id="cause-nav-item"><a href="causeform">Causes</a></li>
+                    <li id="control-nav-item"><a href="controlform">Controls</a></li>
                     <li id="verification-nav-item"><a href="#">Verifications</a></li>
                 </ul>
             </div>
@@ -33,34 +33,7 @@
                    #parse("/templates/CausePage.vm")
                 </div>
                 <div class="nav-content" id="content-3">
-                	<form class="aui">
-					    <div class="field-group">
-					        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text long-field" type="text" id="control-title" name="control-title">
-					        <!--div class="description">Your primary email address.</div-->
-					    </div>
-					    <div class="field-group">
-						    <label for="control-group">Control group</label>
-						    <select class="select" id="control-group" name="control-group">
-						        <option>Hardware certification</option>
-						        <option>Independent inhibits</option>
-						        <option>Multi-step commanding</option>
-						        <option>Software FDIR</option>
-						        <option>Procedure</option>
-						        <option>Training</option>
-						    </select>
-						</div>
-					    <div class="field-group">
-					        <label for="control-description">Description</label>
-					        <textarea class="textarea long-field" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
-					    </div>
-					    <div class="buttons-container">
-					        <div class="buttons">
-					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-					            <a class="cancel" href="#">Cancel</a>
-					        </div>
-					    </div>
-					</form>
+                	#parse("/templates/ControlPage.vm")
                 </div>
                 <div class="nav-content" id="content-4">
                 	<form class="aui">

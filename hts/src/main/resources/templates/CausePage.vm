@@ -1,58 +1,54 @@
 <div class="causeBody">
-	<h2>Hazard # - Hazard title</h2>
-	<button class="aui-button" id="expandAll">Expand all</button>
-	<div id="CauseTableHolder" class="table">
-		<div class="header">
-	    	<div class="cell"></div>
-	    	<div class="cell">Title</div>
-		    <div class="cell">Owner</div>
-	    	<div class="cell">Last updated</div>
-	  	</div>
-	  	<div class="rowGroup">
-	    	<div class="row">
-	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 1</div>
-	    		<div class="cell">Inadequate design to withstand pressures</div>
-	    		<div class="cell">Owner</div>
-	    		<div class="cell">May 08, 2014, 11:48</div>
-	    	</div>
-	    	<div class="formContainer row">
-	    		<div class="cell"></div>
-	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
-	    		<div class="cell"></div>
-	    		<div class="cell"></div>
-	    	</div>
-	  	</div>
-	  	<div class="rowGroup">
-	    	<div class="row">
-	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 2</div>
-	    		<div class="cell">Inadequate design to withstand pressures and heat</div>
-	    		<div class="cell">Owner</div>
-	    		<div class="cell">May 08, 2014, 11:48</div>
-	    	</div>
-	    	<div class="formContainer row">
-	    		<div class="cell"></div>
-	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
-	    		<div class="cell"></div>
-	    		<div class="cell"></div>
-	    	</div>
-	  	</div>
-	  	<div class="rowGroup">
-	    	<div class="row">
-	    		<div class="cell toggle"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause 3</div>
-	    		<div class="cell">MMOD strike</div>
-	    		<div class="cell">Owner</div>
-	    		<div class="cell">May 09, 2014, 13:48</div>
-	    	</div>
-	    	<div class="formContainer row">
-	    		<div class="cell"></div>
-	    		<div class="cell">#parse("/templates/causeForm.vm")</div>
-	    		<div class="cell"></div>
-	    		<div class="cell"></div>
-	    	</div>
-	  	</div>
-	</div>
+	<h2>$!hazardNumber - $!hazardTitle</h2>
+	#if($causes.size() > 0)
+		<button class="aui-button" id="expandAll">Expand all</button>
+		<div id="CauseTableHolder" class="table">
+			<div class="header">
+		    	<div class="cell"></div>
+		    	<div class="cell">Title</div>
+			    <div class="cell">Owner</div>
+		    	<div class="cell">Last updated</div>
+		    	<div class="cell">Delete?</div>
+		  	</div>
+		  	#foreach( $cause in $causes )
+			  	<div class="rowGroup">
+			    	<div class="row">
+			    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
+			    		<div class="cell causeTitle">$!cause.getTitle()</div>
+			    		<div class="cell">$!cause.getOwner()</div>
+			    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
+			    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
+			    	</div>
+				    #if($cause.getTransfer() != 0)
+				    	<p>hehe</p>
+				    #else
+				    	<div class="formContainer row" id="$cause.getID()">
+				    		<div class="cell"></div>
+				    		<div class="cell toggle">#parse("/templates/causeForm.vm")</div>
+				    		<div class="cell"></div>
+				    		<div class="cell"></div>
+				    		<div class="cell"></div>
+				    	</div>
+				    #end
+			  	</div>
+			#end
+		</div>
+		<div>
+			<button class="aui-button causeSaveAllChanges" type="submit" style="margin-left:0px">Save All Changes</button>
+			<button class="aui-button" type="submit" style="margin-left:0px">Renumber and Save</button>
+		</div>
+	#end
 	<div class="newCauseFormHolder">
-		<h3>Add New Cause</h3>
-		#parse("/templates/NewCauseForm.vm")
+		<h3 class="newCauseFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add New Cause</h3>
+		<div class="newFormContainer">
+			#parse("/templates/NewCauseForm.vm")
+		</div>
 	</div>
+	<div class="transferFormHolder">
+		<h3 class="transferFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add Cause Transfer</h3>
+		<div class="transferFormContainer">
+			#parse("/templates/transferForm.vm")
+		</div>
+	</div>
+
 </div>

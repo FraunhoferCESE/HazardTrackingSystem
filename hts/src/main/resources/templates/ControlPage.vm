@@ -1,0 +1,67 @@
+<div>
+	<div class="ControlsHeaderHazardInfo">
+		<span class="ControlsHeadingOne">Hazard Title:
+			 <span class="ControlsHeadingOneContent" id="HazardTitleForControl">$!hazardTitle</span>
+		</span>
+		<span class="ControlsHeadingOne">Hazard #:
+			 <span class="ControlsHeadingOneContent" id="HazardNumberForControl">$!hazardNumber</span>
+		</span>
+	</div>
+	<span class="ControlsHeadingOne">Controls:</span>
+	#if( $hazardControls.size() == 0 )
+		<p>No controls have been created for this hazard report.</p>
+	#else
+		<table class="ControlsTable">
+			<thead>
+				<tr>
+					<th class="ControlsTableHeader ControlsTableCellOne"></th>
+					<th class="ControlsTableHeader ControlsTableCellTwo">#</th>
+					<th class="ControlsTableHeader ControlsTableCellThree">Description</th>
+					<th class="ControlsTableHeader ControlsTableCellFour">Control group</th>
+					<th class="ControlsTableHeader ControlsTableCellFive">Created</th>
+					<th class="ControlsTableHeader ControlsTableCellSix">Last updated</th>
+					<th class="ControlsTableHeader ControlsTableCellSix">Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				#foreach( $hazardControl in $hazardControls )
+					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
+						<td class="ControlsTableCellToggle" id="ControlsTableEntry$!velocityCount">
+							<span class="aui-icon aui-icon-small aui-iconfont-add"></span>
+						</td>
+						<td>$velocityCount</td>
+						<td>
+							<div class="ControlsTableDescriptionText">$hazardControl.getDescription()</div>
+						</td>
+						<td>$hazardControl.getControlGroup().getLabel()</td>
+						<td class="ControlDate">$hazardControl.getOriginalDate()</td>
+						#if( !$hazardControl.getLastUpdated() )
+							<td class="ControlDate">N/A</td>
+						#else
+							<td class="ControlDate">$hazardControl.getLastUpdated()</td>
+						#end
+						<td>
+							<input type="checkbox" class="ControlsTableListOfCreatedControls" value="$hazardControl.getID()">
+						</td>
+					</tr>
+					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
+						<td colspan="100%" class="ControlsTableEditEntryHidden" id="ControlsTableEditEntry$!velocityCount">
+							<div class="ControlsTableEditEntryContainer">
+								#parse("/templates/EditControlForm.vm")
+							</div>
+						</td>
+					</tr>
+				#end
+			</tbody>
+		</table>
+		</div>
+		<div class="ControlsButtonPanel">
+			<button class="aui-button" class="ExpandAllControls">Expand all</button>
+			<button class="aui-button" id="DeleteControl" disabled >Delete</button>
+		</div>
+	#end
+	<div>
+		<span class="ControlsHeadingTwo">New Control:</span>
+		#parse("/templates/NewControlForm.vm")
+	</div>
+</div>

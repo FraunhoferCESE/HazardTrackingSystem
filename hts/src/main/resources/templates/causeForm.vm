@@ -1,28 +1,25 @@
-<form class="aui" id="causeForm">
+<form class="aui causeForms" id="causeForm" method="post" action="causeform" data-key="$!cause.getID()">
 	<div class="field-group">
 	    <label for="causeTitle">Title <span class="aui-icon icon-required">(required)</span></label>
-	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle">
+	    <input class="text long-field" type="text" id="causeTitle" name="causeTitle" value="$!cause.getTitle()">
 	</div>
 	<div class="field-group">
 	    <label for="causeOwner">Owner</label>
-	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner">
+	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner" value="$!cause.getOwner()">
 	</div>
 	<div class="field-group">
-	    <label for="causeEffect">Effects</label>
-	    <input class="text long-field" type="text" id="causeEffect" name="causeEffect">
+	    <label for="causeEffects">Effects</label>
+	    <input class="text long-field" type="text" id="causeEffects" name="causeEffects" value="$!cause.getEffects()">
 	</div>
 	<div class="field-group">
 	    <label for="causeDescription">Description</label>
-	    <textarea class="textarea long-field" name="causeDescription" id="causeDescription"></textarea>
+	    <textarea class="textarea long-field" rows="6" cols="10" name="causeDescription" id="causeDescription">$!cause.getDescription()</textarea>
 	</div>
 	<div class="buttons-container">
-		<div class="causeButtonTop">
-			<input class="button causeButtons" type="submit" value="Save Changes" id="causeSaveChanges">
-			<input class="button causeButtons" type="submit" value="Add Cause Link" id="causeAddLink">
-		</div>
-		<div>
-			<input class="button causeButtons" type="submit" value="Add Control" id="causeAddControl">
-			<input class="button causeButtons" type="submit" value="Add Reference Doc" id="causeAddReference">
-		</div>
+		<button type="button" class="button causeButtons transfers" id="causeAddControl" disabled>Add Control</button>
+		<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>
 	</div>
+	<input type="hidden" name="causeNumber" id="causeNumber" value="$!cause.getCauseNumber()">
+	<input type="hidden" name="edit" id="edit" value="y">
+	<input type="hidden" name="key" id="key" value="$!cause.getID()">
 </form>

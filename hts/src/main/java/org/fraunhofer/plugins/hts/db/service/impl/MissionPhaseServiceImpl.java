@@ -42,32 +42,31 @@ public class MissionPhaseServiceImpl implements MissionPhaseService {
 		final Mission_Phase[] phase = ao.find(Mission_Phase.class, Query.select().where("ID=?", id));
 		return phase.length > 0 ? phase[0] : null;
 	}
-	
+
 	@Override
 	public Mission_Phase[] getMissionPhasesByID(Integer[] id) {
 		initializeTable();
-		if(id == null) {
+		if (id == null) {
 			return null;
-		}
-		else {
+		} else {
 			Mission_Phase[] missionPhaseArr = new Mission_Phase[id.length];
-			for(int i = 0; i < id.length; i++) {
+			for (int i = 0; i < id.length; i++) {
 				missionPhaseArr[i] = ao.get(Mission_Phase.class, id[i]);
 			}
 			return missionPhaseArr;
 		}
 	}
-	
+
 	@Override
 	public List<Mission_Phase> getRemainingMissionPhases(Mission_Phase[] currentList) {
 		List<Mission_Phase> listAll = all();
-		
-		if(!listAll.isEmpty()) {
-			for(Mission_Phase currRegistered : currentList) {
+
+		if (!listAll.isEmpty()) {
+			for (Mission_Phase currRegistered : currentList) {
 				listAll.remove(currRegistered);
 			}
 		}
-		
+
 		return listAll;
 	}
 
