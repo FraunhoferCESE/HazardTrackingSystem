@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,24 @@ public class HazardControlServiceImpl implements HazardControlService {
 	@Override
 	public List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardControls());
+	}
+	
+	@Override
+	public List<Hazard_Controls> getAllNonDeletedControlsWithinAHazard(Hazards hazard) {
+		List<Hazard_Controls> allRemaining = new ArrayList<Hazard_Controls>();
+		for (Hazard_Controls current : getAllControlsWithinAHazard(hazard)) {
+			if (current.getDeleteReason() == null) {
+				allRemaining.add(current);
+			}
+		}
+		return allRemaining;
+	}
+	
+	@Override
+	public Hazard_Controls deleteControl(Hazard_Controls controlToBeDeleted, String reason) {
+		controlToBeDeleted.setDeleteReason(reason);
+		controlToBeDeleted.save();
+		return controlToBeDeleted;
 	}
 
 	@Override

@@ -37,6 +37,11 @@ public interface Hazard_Controls extends Entity {
 
 	void setLastUpdated(Date lastEdit);
 	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getDeleteReason();
+
+	void setDeleteReason(String reason);
+	
 	@ManyToMany(value = ControlToCause.class)
 	Hazard_Causes[] getCauses();
 	

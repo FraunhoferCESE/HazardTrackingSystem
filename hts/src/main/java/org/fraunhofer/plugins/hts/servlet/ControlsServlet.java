@@ -9,6 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -51,7 +52,7 @@ public class ControlsServlet extends HttpServlet {
 			context.put("hazardNumber", newestHazardReport.getHazardNum());
 			context.put("hazardTitle", newestHazardReport.getTitle());
 			context.put("hazardID", newestHazardReport.getID());
-			context.put("hazardControls", hazardControlService.getAllControlsWithinAHazard(newestHazardReport));
+			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
 			// Content for lower part of page; creating a new control
 			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
     		context.put("controlGroups", controlGroupsService.all());
@@ -83,6 +84,27 @@ public class ControlsServlet extends HttpServlet {
     	}   	
     	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     }
+    
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazard_Controls controlToBeDeleted = hazardControlService.getHazardControlByID(req.getParameter("controlID"));
+			String reason = req.getParameter("reason");
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
+			
+			if (controlToBeDeleted != null) {
+				hazardControlService.deleteControl(controlToBeDeleted, reason);
+				respStr = "{ \"success\" : \"true\" }";
+			}
+
+			res.setContentType("application/json;charset=utf-8");
+			// Send the raw output string
+			res.getWriter().write(respStr);
+			
+		} else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
     
 	private Integer[] changeStringArray(String[] array) {
 		if (array == null) {

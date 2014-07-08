@@ -15,6 +15,10 @@ public interface HazardControlService {
 
 	List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard);
 	
+	List<Hazard_Controls> getAllNonDeletedControlsWithinAHazard(Hazards hazard);
+	
+	Hazard_Controls deleteControl(Hazard_Controls controlToBeDeleted, String reason);
+	
 	Hazard_Controls getHazardControlByID(String id);
 
 	List<Hazard_Controls> all();

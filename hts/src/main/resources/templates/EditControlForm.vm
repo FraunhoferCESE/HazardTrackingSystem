@@ -40,6 +40,8 @@
 	<div class="buttons-container">
 		<div class="buttons">
 			<input class="button" type="submit" value="Save changes" id="updateControlButton">
+			<input class="button" type="submit" value="Cancel" id="cancelControlButton">
+			<input class="button" type="submit" value="Delete" id="deleteControlButton">
 		</div>
 	</div>
 </form>
