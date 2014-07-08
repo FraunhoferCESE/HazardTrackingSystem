@@ -1,10 +1,10 @@
 <div>
 	<form class="aui">
 		<div class='field-group'>
-			<select size='1' class='select' name='payloadList' id='payloadList'>
+			<select size='1' class='select' name='payloadNavigationList' id='payloadNavigationList'>
 				<option value=''>-Select Mission/Payload-</option>
 			</select>
-			<span id="hazardReports">
+			<span id="hazardReportsNavigation">
 			</span>
 		</div>
 	</form>

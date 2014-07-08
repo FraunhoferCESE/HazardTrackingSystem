@@ -2,6 +2,7 @@ package org.fraunhofer.plugins.hts.db.service;
 
 import java.util.List;
 
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 
 public interface MissionPayloadService {
@@ -16,6 +17,8 @@ public interface MissionPayloadService {
 	List<Mission_Payload> all();
 
 	Boolean payloadNameExists(String payloadName);
+	
+	List<Hazards> getAllHazardsWithinMission(String id);
 
 	void deleteMissionPayload(int id);
 }

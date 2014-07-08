@@ -94,7 +94,22 @@ public class HazardResource {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
 		}
-
+	}
+	
+	@GET
+	@Path("allpayloads/{payloadID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllHazardsWithinPayload(@PathParam("payloadID") String payloadID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			List<HazardResponseList> hazardList = new ArrayList<HazardResponseList>();
+			for (Hazards hazard : missionPayloadService.getAllHazardsWithinMission(payloadID)) {
+				hazardList.add(HazardResponseList.hazards(hazard));
+			}
+			return Response.ok(hazardList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
+		}
 	}
 
 	@GET

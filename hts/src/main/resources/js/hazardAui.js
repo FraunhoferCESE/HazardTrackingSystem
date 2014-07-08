@@ -33,22 +33,58 @@ AJS.$(document).ready(function(){
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");       
     }
 
-    AJS.$("#payloadList").live("mousedown", function() {
+    AJS.$("#payloadNavigationList").live("mousedown", function() {
         console.log("PAYLOAD OPEN");
         var missionList;
         AJS.$.ajax({
             type: "GET",
+            async: false,
             url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
-                success: function(data) {
-                    missionList = data;
-                    console.log(data);
-                }
-            });
+            success: function(data) {
+                missionList = data;
+            }
+        });
+
+        if(missionList.length > 0) {
+            var temp;
+            console.log("payload list length " + AJS.$("#payloadNavigationList option").length);
+            if(AJS.$("#payloadNavigationList option").length <= 1) {
+                AJS.$(missionList).each(function() {
+                    temp += "<option value=" + this.payloadID + ">" + this.title + "</option>";
+                });
+                AJS.$("#payloadNavigationList").append(temp);
+            }
+        }
     });
 
-    AJS.$("#payloadList").live("change", function() {
+    AJS.$("#payloadNavigationList").live("change", function() {
         console.log("PAYLOAD CHANGE");
-    }); 
+        var value = AJS.$(this).val();
+        var hazardList;
+        if(value.length){
+            AJS.$.ajax({
+                type:"GET",
+                async: false,
+                url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/" + value,
+                success: function(data) {
+                    hazardList = data;
+                }
+            });
+
+            var temp = "<select size='1' class='select' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-Select Hazard Report-</option>";
+            if(hazardList.length > 0) {
+                AJS.$(hazardList).each(function() {
+                    temp += "<option value=" + this.hazardID + ">" + this.hazardNumber + " - " + this.title + "</option>";
+                });
+            }
+            temp += "</select><a href='#' class='aui-button' id='navigateToHazard'>GO</a>";
+            AJS.$("span#hazardReportsNavigation").append(temp);
+        }
+    });
+
+    AJS.$("#hazardNavigationList").live("change", function() {
+        AJS.$("#navigateToHazard").attr("href", AJS.params.baseURL + "/plugins/servlet/hazardlist?edit=y&key=" + AJS.$(this).val());
+    });
     
     function navigateTo(trigger, contentId){
         AJS.$("#main-nav li").removeClass("aui-nav-selected");
