@@ -5,6 +5,9 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import net.java.ao.DBParam;
+import net.java.ao.Query;
+
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
@@ -18,12 +21,8 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers addCause(int originID, String originType, int targetID, String targetType) {
-		final Transfers transfer = ao.create(Transfers.class);
-		transfer.setOriginID(originID);
-		transfer.setOriginType(originType);
-		transfer.setTargetID(targetID);
-		transfer.setTargetType(targetType);
+	public Transfers add(int originID, String originType, int targetID, String targetType) {
+		final Transfers transfer = ao.create(Transfers.class, new DBParam("ORIGIN_ID", originID), new DBParam("ORIGIN_TYPE", originType), new DBParam("TARGET_ID", targetID), new DBParam("TARGET_TYPE", targetType));
 		transfer.save();
 		return transfer;
 	}
@@ -37,6 +36,12 @@ public class TransferServiceImpl implements TransferService {
 	@Override
 	public List<Transfers> all() {
 		return newArrayList(ao.find(Transfers.class));
+	}
+
+	@Override
+	public Transfers getTransferByID(int id) {
+		final Transfers[] transfer = ao.find(Transfers.class, Query.select().where("ID=?", id));
+		return transfer.length > 0 ? transfer[0] : null;
 	}
 
 }

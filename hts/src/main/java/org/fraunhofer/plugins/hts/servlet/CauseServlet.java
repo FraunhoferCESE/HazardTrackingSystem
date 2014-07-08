@@ -37,6 +37,7 @@ public class CauseServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("allHazards", hazardService.all());
 			res.setContentType("text/html;charset=utf-8");
 			if ("y".equals(req.getParameter("edit"))) {
 				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
@@ -45,14 +46,15 @@ public class CauseServlet extends HttpServlet {
 				context.put("hazardID", currentHazard.getID());
 				context.put("hazard", currentHazard);
 				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
+				context.put("transfers", hazardCauseService.getAllTransferredCauses(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
 			} else {
 				Hazards newestHazardReport = hazardService.getNewestHazardReport();
 				context.put("hazardNumber", newestHazardReport.getHazardNum());
 				context.put("hazardTitle", newestHazardReport.getTitle());
 				context.put("hazardID", newestHazardReport.getID());
-				context.put("allHazards", hazardService.all());
 				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+				context.put("transfers", hazardCauseService.getAllTransferredCauses(newestHazardReport));
 				templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 			}
 		} else {
@@ -77,10 +79,10 @@ public class CauseServlet extends HttpServlet {
 			final String causeID = req.getParameter("causeList");
 			if (causeID.isEmpty() || causeID == null) {
 				Hazards targetHazard = hazardService.getHazardByID(hazardID);
-				hazardCauseService.addTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
+				hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
 			} else {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-				hazardCauseService.addTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
+				hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
 			}
 		} else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);

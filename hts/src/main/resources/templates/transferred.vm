@@ -1,0 +1,40 @@
+#foreach($transfer in $transfers)
+	#if($transfer.getTransferID() == $cause.getTransfer())
+		<div class="row">
+    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
+    		<div class="cell causeTitle"><a href="#">TRANSFERRED - $!transfer.getMainTitle()</a></div>
+    		<div class="cell">$!cause.getOwner()</div>
+    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
+    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
+    	</div>
+    	<div class="formContainer row" id="$cause.getID()">
+    		<div class="cell"></div>
+    		<div class="cell toggle">
+    			<ul>
+					#if($transfer.getSecondaryTitle())
+						<li>$!transfer.getSecondaryTitle()</li>
+					#end
+					<li>$!transfer.getMainTitle()</li>
+					<li>$!transfer.getHazardNumb()</li>
+				</ul>
+				<form class="aui transferredForms" id="transferredForm" method="post" action="causeform" data-key="$!cause.getID()">
+					<div class="field-group">
+					    <label for="causeDescription">Transfer Reason</label>
+					    <textarea class="textarea long-field" rows="6" cols="10" name="causeDescription" id="causeDescription">$!transfer.getTransferReason()</textarea>
+					</div>
+					<div class="buttons-container">
+						<button type="button" class="button causeButtons transfers" id="causeAddControl" disabled>Add Control</button>
+						<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>
+					</div>
+					<input type="hidden" name="causeTitle" id="causeTitle" value="Title">
+					<input type="hidden" name="edit" id="edit" value="y">
+					<input type="hidden" name="key" id="key" value="$!cause.getID()">
+				</form>
+    		</div>
+    		<div class="cell"></div>
+    		<div class="cell"></div>
+    		<div class="cell"></div>
+    	</div>
+		
+	#end
+#end

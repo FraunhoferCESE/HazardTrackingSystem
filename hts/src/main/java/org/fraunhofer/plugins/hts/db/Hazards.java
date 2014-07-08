@@ -83,7 +83,7 @@ public interface Hazards extends Entity {
 	@ManyToMany(value = PhaseToHazard.class)
 	Mission_Phase[] getMissionPhases();
 
-	@ManyToMany(value = Causes_to_Hazards.class)
+	@ManyToMany(value = CausesToHazards.class)
 	Hazard_Causes[] getHazardCauses();
 	
 	@ManyToMany(value = ControlToHazard.class)

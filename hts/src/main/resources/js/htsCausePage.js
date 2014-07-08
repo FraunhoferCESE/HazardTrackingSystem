@@ -133,7 +133,7 @@ function deleteConfirmation(element, causeID){
 
 function submitCauses() {
 	AJS.$(".causeSaveAllChanges").live('click', function() {
-		AJS.$("form.causeForms").each(function(){
+		AJS.$("form.causeForms, form.transferredForms").each(function(){
 			var rowGroup = AJS.$(this).parent().parent().parent();
 			if(rowGroup.find(".deleteCause").is(':checked')) {
 				var self = AJS.$(this);

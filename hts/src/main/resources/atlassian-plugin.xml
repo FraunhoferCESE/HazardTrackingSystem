@@ -39,6 +39,7 @@
     <entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
     <entity>org.fraunhofer.plugins.hts.db.Causes_to_Hazards</entity>
     <entity>org.fraunhofer.plugins.hts.db.ControlToHazard</entity>
+    <entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
     <entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
     <entity>org.fraunhofer.plugins.hts.db.ControlToCause</entity>

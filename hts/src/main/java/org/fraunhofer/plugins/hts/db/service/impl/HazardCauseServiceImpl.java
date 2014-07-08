@@ -10,18 +10,26 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Causes_to_Hazards;
+import org.fraunhofer.plugins.hts.datatype.TransferClass;
+import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class HazardCauseServiceImpl implements HazardCauseService {
 	private final ActiveObjects ao;
+	private final TransferService transferService;
+	private final HazardService hazardService;
 
-	public HazardCauseServiceImpl(ActiveObjects ao) {
+	public HazardCauseServiceImpl(ActiveObjects ao, TransferService transferService, HazardService hazardService) {
 		this.ao = checkNotNull(ao);
+		this.transferService = checkNotNull(transferService);
+		this.hazardService = checkNotNull(hazardService);
 	}
 
 	@Override
@@ -39,9 +47,20 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes addTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		final Hazard_Causes cause = add(transferComment, null, null, title, hazard);
-		
+	public Hazard_Causes addCauseTransfer(String transferComment, int targetID, String title, Hazards hazard) {
+		Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "CAUSE");
+		cause.setTransfer(transferID);
+		cause.save();
+		return cause;
+	}
+	
+	@Override
+	public Hazard_Causes addHazardTransfer(String transferComment, int targetID, String title, Hazards hazard) {
+		Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "HAZARD");
+		cause.setTransfer(transferID);
+		cause.save();
 		return cause;
 	}
 
@@ -85,6 +104,47 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardCauses());
 	}
+	
+	@Override
+	public List<TransferClass> getAllTransferredCauses(Hazards hazard) {
+		List<Hazard_Causes> allCauses = getAllCausesWithinAHazard(hazard);
+		List<Transfers> allTransfers = new ArrayList<Transfers>();
+		for(Hazard_Causes cause : allCauses) {
+			if(cause.getTransfer() != 0) {
+				allTransfers.add(transferService.getTransferByID(cause.getTransfer()));
+			}
+		}
+	
+		List<TransferClass> transferInfo = new ArrayList<TransferClass>();
+		for(Transfers transfer : allTransfers) {
+			//Be able to return this somehow in a list
+			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
+			String transferReason = originCause.getDescription();
+			int transferID = transfer.getID();
+			
+			if(transfer.getTargetType().equals("CAUSE")) {
+				Hazard_Causes transferredCause = getHazardCauseByID(String.valueOf(transfer.getTargetID()));
+				//Get the title
+				//get the hazard name and number
+				//get reason
+				String causeTitle = transferredCause.getTitle();
+				String hazardTitle = transferredCause.getHazards()[0].getTitle();
+				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle);
+				transferInfo.add(causeTransfer);
+			}
+			else if(transfer.getTargetType().equals("HAZARD")) {
+				//get the hazard name and number
+				//get reason
+				Hazards transferredHazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
+				String hazardTitle = transferredHazard.getTitle();
+				String hazardNumb = transferredHazard.getHazardNum();
+				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, null);
+				transferInfo.add(hazardTransfer);
+			}
+		}
+		return transferInfo;
+	}
 
 	@Override
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
@@ -105,7 +165,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {
-		final Causes_to_Hazards causeToHazard = ao.create(Causes_to_Hazards.class);
+		final CausesToHazards causeToHazard = ao.create(CausesToHazards.class);
 		causeToHazard.setHazard(hazard);
 		causeToHazard.setHazardCause(hazardCause);
 		causeToHazard.save();
@@ -114,5 +174,10 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	private int getNewCauseNumber(Hazards hazard) {
 		return hazard.getHazardCauses().length + 1;
 	}
-
+	
+	private int createTransfer(int originID, String originType, int targetID, String targetType) {
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
+		return transfer.getID();
+	}
 }
+
