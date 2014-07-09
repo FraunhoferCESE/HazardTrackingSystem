@@ -47,17 +47,28 @@ public class ControlsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
     		Map<String, Object> context = Maps.newHashMap();
-			Hazards newestHazardReport = hazardService.getNewestHazardReport();
-			// Content for upper part of page; hazard info and list of previously defined controls
-			context.put("hazardNumber", newestHazardReport.getHazardNum());
-			context.put("hazardTitle", newestHazardReport.getTitle());
-			context.put("hazardID", newestHazardReport.getID());
-			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
-			// Content for lower part of page; creating a new control
-			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
-    		context.put("controlGroups", controlGroupsService.all());
-        	resp.setContentType("text/html;charset=utf-8");
-        	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+    		resp.setContentType("text/html;charset=utf-8");
+    		if ("y".equals(req.getParameter("edit"))) {
+    			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+				context.put("hazardNumber", currentHazard.getHazardNum());
+				context.put("hazardTitle", currentHazard.getTitle());
+				context.put("hazardID", currentHazard.getID());
+    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
+    			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
+        		context.put("controlGroups", controlGroupsService.all());
+				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
+    		} else {
+    			Hazards newestHazardReport = hazardService.getNewestHazardReport();
+    			// Content for upper part of page; hazard info and list of previously defined controls
+    			context.put("hazardNumber", newestHazardReport.getHazardNum());
+    			context.put("hazardTitle", newestHazardReport.getTitle());
+    			context.put("hazardID", newestHazardReport.getID());
+    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
+    			// Content for lower part of page; creating a new control
+    			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+        		context.put("controlGroups", controlGroupsService.all());
+            	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+    		}
     	}
     	else {
     		resp.sendRedirect(req.getContextPath() + "/login.jsp");
