@@ -76,10 +76,10 @@ AJS.$(document).ready(function(){
                 AJS.$(hazardList).each(function() {
                     temp += "<option value=" + this.hazardID + ">" + this.hazardNumber + " - " + this.title + "</option>";
                 });
-                temp += "</select><a href='#' class='aui-button' id='navigateToHazard'>GO</a>";
+                temp += "</select><a href='#' style='margin-left:4px' class='aui-button' id='navigateToHazard'>GO</a>";
             }
             else {
-                var temp = "<select size='1' class='select long-field' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-No Hazard Reports have been created-</option></select>";
+                var temp = "<select size='1' class='select long-field' style='width:290px' name='hazardNavigationList' id='hazardNavigationList'><option value=''>-No Hazard Reports have been created-</option></select>";
             }
 
             AJS.$("span#hazardReportsNavigation").append(temp);

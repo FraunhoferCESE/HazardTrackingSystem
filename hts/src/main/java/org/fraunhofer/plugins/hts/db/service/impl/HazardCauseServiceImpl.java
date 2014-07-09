@@ -108,6 +108,8 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
 			String transferReason = originCause.getDescription();
 			int transferID = transfer.getID();
+			String targetType = transfer.getTargetType();
+			int targetID = transfer.getTargetID();
 			
 			if(transfer.getTargetType().equals("CAUSE")) {
 				Hazard_Causes transferredCause = getHazardCauseByID(String.valueOf(transfer.getTargetID()));
@@ -117,7 +119,9 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				String causeTitle = transferredCause.getTitle();
 				String hazardTitle = transferredCause.getHazards()[0].getTitle();
 				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
-				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle);
+				//This is the id of the hazard the cause belongs to, which is needed for the title navigation.
+				int hazardID = transferredCause.getHazards()[0].getID();
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle, targetType, hazardID, targetID);
 				transferInfo.add(causeTransfer);
 			}
 			else if(transfer.getTargetType().equals("HAZARD")) {
@@ -126,7 +130,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				Hazards transferredHazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
 				String hazardTitle = transferredHazard.getTitle();
 				String hazardNumb = transferredHazard.getHazardNum();
-				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, null);
+				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, targetType, targetID);
 				transferInfo.add(hazardTransfer);
 			}
 		}

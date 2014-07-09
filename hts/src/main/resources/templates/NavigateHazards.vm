@@ -1,6 +1,6 @@
 <div>
 	<form class="aui">
-		<div class='field-group'>
+		<div class='field-group' style="padding:0">
 			<select size='1' class='select' name='payloadNavigationList' id='payloadNavigationList'>
 				<option value=''>-Select Mission/Payload-</option>
 			</select>
