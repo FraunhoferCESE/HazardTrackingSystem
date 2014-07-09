@@ -53,6 +53,7 @@ public class ControlsServlet extends HttpServlet {
 				context.put("hazardNumber", currentHazard.getHazardNum());
 				context.put("hazardTitle", currentHazard.getTitle());
 				context.put("hazardID", currentHazard.getID());
+				context.put("hazard", currentHazard);
     			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
     			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
         		context.put("controlGroups", controlGroupsService.all());
@@ -84,6 +85,7 @@ public class ControlsServlet extends HttpServlet {
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
         	hazardControlService.update(id, description, controlGroup, causes);
+        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     	}
     	else {
     		// Process the new control request
@@ -92,8 +94,8 @@ public class ControlsServlet extends HttpServlet {
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
         	hazardControlService.add(currentHazard, description, controlGroup, causes);
+			res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}   	
-    	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     }
     
 	@Override
