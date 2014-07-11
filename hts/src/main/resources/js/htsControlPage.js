@@ -131,9 +131,7 @@ function deleteSelectedControls(selectedControls, hazardInformation, didUpdate){
 				sendAjaxRequestToDeleteSpecificControl(result.controlIDAndReasons[i].controlID, result.controlIDAndReasons[i].deleteReason);
 			}
 			dialog.hide();
-			if (didUpdate) {
-				location.reload();
-			}
+			location.reload();
 		}
 		else {
 			oldSelectedControls = result.skippedReasonControlIDs;
@@ -290,7 +288,6 @@ AJS.$(document).ready(function(){
 				if (checkIfElementIsVisible(AJS.$(".validationError"))) {
 					validationError = true;
 				}
-				didUpdate = true;
 			}
 			else {
 				needToDoDelete = true;

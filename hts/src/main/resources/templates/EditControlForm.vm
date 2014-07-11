@@ -17,7 +17,11 @@
 						<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
 					#end
 				#else
-					<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+					#if($controlGroup.getLabel() == "null")
+						<option value="$controlGroup.getID()">-Select-</option>
+					#else
+						<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+					#end
 				#end
 			#end
 		</select>
