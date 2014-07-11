@@ -36,7 +36,6 @@ function getSelectedControlsAndDeleteReasons(selectedControls) {
 	for (var i = 0; i < selectedControls.length; i++) {
 		var deleteReason = AJS.$("#ReasonTextForControlID" + selectedControls[i])[0].value;
 		if (deleteReason === "") {
-			// Call function to do CSS magic, send the controlID...
 			skippedReason = true;
 			skippedReasonControls.push(selectedControls[i]);
 		} else {
@@ -81,7 +80,7 @@ function getHazardInformation() {
 	return hazardInformation;
 }
 
-function deleteSelectedControls(selectedControls, hazardInformation){
+function deleteSelectedControls(selectedControls, hazardInformation, didUpdate){
 	// Hazard specific mark-up:
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
 	// Controls specific mark-up:
@@ -121,6 +120,9 @@ function deleteSelectedControls(selectedControls, hazardInformation){
 		uncheckSelectedControls();
 		dialog.hide();
 		dialog.remove();
+		if (didUpdate) {
+			location.reload();
+		}
 	});
 	dialog.addButton("Continue", function(dialog) {
 		var result = getSelectedControlsAndDeleteReasons(selectedControls);
@@ -129,6 +131,9 @@ function deleteSelectedControls(selectedControls, hazardInformation){
 				sendAjaxRequestToDeleteSpecificControl(result.controlIDAndReasons[i].controlID, result.controlIDAndReasons[i].deleteReason);
 			}
 			dialog.hide();
+			if (didUpdate) {
+				location.reload();
+			}
 		}
 		else {
 			oldSelectedControls = result.skippedReasonControlIDs;
@@ -139,13 +144,84 @@ function deleteSelectedControls(selectedControls, hazardInformation){
 	});
 }
 
-AJS.$(document).ready(function(){
+function isElementIsVisible(element) {
+	return element.is(":visible");
+}
 
-	// CSS fixes (on predefined JIRA element)>
-	AJS.$('form.aui').css({'margin':'0'});
+function checkIfExpandButtonNeedsRenaming(expanding) {
+	var numberOfNotHidden = 0;
+	var numberOfCreatedControls = AJS.$('.ControlsTableCellToggle').length;
+	var createdControls = AJS.$('.ControlsTableCellToggle');
+		createdControls.each(function (index) {
+		var entry = AJS.$(this);
+		var entryFullID = entry.attr("id");
+		var entryID = entryFullID.slice(-1);
+		var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
+		if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
+			numberOfNotHidden++;
+		}
+	});
+
+	if (numberOfNotHidden < numberOfCreatedControls) {
+		AJS.$("#ExpandAllControls").html("Expand all");
+		expanding = true;
+	}
+	else {
+		AJS.$("#ExpandAllControls").html("Close all");
+		expanding = false;
+	}
+	return expanding;
+}
+
+function findControlWithSpecificID(oldCausesAssociatedWithControl, controlID){
+	return AJS.$.grep(oldCausesAssociatedWithControl, function(item){
+		return item.controlID == controlID;
+	});
+}
+
+// function checkIfControlWasModified(oldCausesAssociatedWithControl) {
+// 	var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
+// 	for (var i = 0; i < newCausesAssociatedWithControl.length; i++) {
+// 		var result = findControlWithSpecificID(oldCausesAssociatedWithControl, newCausesAssociatedWithControl[i].controlID);
+// 		if (result[0].causesIDs.length !== newCausesAssociatedWithControl[i].causesIDs.length) {
+// 			console.log("changes!");
+// 		}
+// 	}
+// }
+
+// function getCurrentControlAndCausesAssociation() {
+// 	var causesAssociatedWithControl = [];
+// 	var multiSelectForCauses = AJS.$(".controlCausesEdit");
+// 	multiSelectForCauses.each(function () {
+// 		var controlIDWithText = AJS.$(this)[0].id;
+// 		var controlIDOnly = controlIDWithText.replace("controlCauseEditForControlID", "");
+// 		var causesIDs = [];
+// 		var numberOfSelectedCauses = AJS.$(this)[0].children.length;
+// 		var foo = AJS.$(this);
+// 		console.log(foo);
+// 		// for (var i = 0; i < numberOfSelectedCauses; i++) {
+// 		// 	causesIDs.push(AJS.$(this)[0].children[i].value);
+// 		// }
+// 		// causesAssociatedWithControl.push({
+// 		// 	controlID: controlIDOnly,
+// 		// 	causesIDs: causesIDs
+// 		// });
+// 	});
+// 	return causesAssociatedWithControl;
+// }
+
+AJS.$(document).ready(function(){
+	var expanding = true;
+	// var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
+	// console.log(oldCausesAssociatedWithControl);
+
+	/* Text manipulation code begins */
+	var dates = AJS.$(".ControlDate");
+	manipulateDates(dates);
+	/* Text manipulation code ends */
 
 	/* Expand functionality code begins */
-	AJS.$('.ControlsTableCellToggle').click(function() {
+	AJS.$(".ControlsTableCellToggle").live("click", function() {
 		var entry = AJS.$(this);
 		var entryFullID = entry.attr("id");
 		var entryID = entryFullID.slice(-1);
@@ -156,34 +232,89 @@ AJS.$(document).ready(function(){
 			entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 		}
 		else {
+
 			entryEdit.addClass("ControlsTableEditEntryHidden");
 			entry.removeClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 			entry.addClass("aui-icon aui-icon-small aui-iconfont-add");
 		}
+		expanding = checkIfExpandButtonNeedsRenaming(expanding);
+	});
+
+	AJS.$("#ExpandAllControls").live("click", function() {
+		var createdControls = AJS.$('.ControlsTableCellToggle');
+		if (expanding) {
+			AJS.$(this).html("Close all");
+			createdControls.each(function () {
+				var entry = AJS.$(this);
+				var entryFullID = entry.attr("id");
+				var entryID = entryFullID.slice(-1);
+				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
+				if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
+					entryEdit.removeClass("ControlsTableEditEntryHidden");
+					entry.removeClass("aui-icon aui-icon-small aui-iconfont-add");
+					entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+				}
+			});
+			expanding = false;
+		}
+		else {
+			AJS.$(this).html("Expand all");
+			createdControls.each(function () {
+				var entry = AJS.$(this);
+				var entryFullID = entry.attr("id");
+				var entryID = entryFullID.slice(-1);
+				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
+				if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
+					entryEdit.addClass("ControlsTableEditEntryHidden");
+					entry.removeClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+					entry.addClass("aui-icon aui-icon-small aui-iconfont-add");
+				}
+			});
+			expanding = true;
+		}
 	});
 	/* Expand functionality code ends */
 
-	/* Text manipulation code begins */
-	var dates = AJS.$(".ControlDate");
-	manipulateDates(dates);
-	/* Text manipulation code ends */
-
-	AJS.$(".ControlsTableListOfCreatedControls").live("click", function() {
+	/* Updating existing controls functinality begins */
+	AJS.$("#SaveAllChanges").live("click", function() {
 		var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
 		var selectedControls = getSelectedControls(createdControls);
-		if (selectedControls.length >= 1) {
-			AJS.$("#DeleteControl").prop('disabled', false);
+		var createdControlsForms = AJS.$(".editControlForm");
+		var needToDoDelete = false;
+		var didUpdate = false;
+		var validationError = false;
+		createdControlsForms.each(function () {
+			var controlID = this.children[2].value;
+			if (selectedControls.indexOf(controlID) === -1) {
+				AJS.$(this).trigger("submit");
+				if (checkIfElementIsVisible(AJS.$(".validationError"))) {
+					validationError = true;
+				}
+				didUpdate = true;
+			}
+			else {
+				needToDoDelete = true;
+			}
+		});
+
+		if (needToDoDelete) {
+			var hazardInformation = getHazardInformation();
+			deleteSelectedControls(selectedControls, hazardInformation, didUpdate);
 		}
 		else {
-			AJS.$("#DeleteControl").prop('disabled', true);
+			if (validationError) {
+				JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+			}
+			else {
+				location.reload();
+			}
 		}
 	});
+	/* Updating existing controls functinality ends */
 
-	AJS.$("#DeleteControl").live("click", function() {
-		var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
-		var selectedControls = getSelectedControls(createdControls);
-		var hazardInformation = getHazardInformation();
-		deleteSelectedControls(selectedControls, hazardInformation);
+	AJS.$("#clearNewControlButton").live("click", function() {
+		AJS.$("#controlDescriptionNew").val("");
+		AJS.$("#controlGroupNew").val('').trigger('chosen:updated');
+		AJS.$(".RemoveAll").trigger("click");
 	});
-
 });

@@ -53,10 +53,14 @@ public class HazardControlServiceImpl implements HazardControlService {
 			controlToBeUpdated.setControlGroup(controlGroup);
 		}
 		if (causes != null) {
+			
 			removeAssociationsControlToCause(controlToBeUpdated.getID());
 			for (Hazard_Causes hc : causes) {
 				associateControlToCause(controlToBeUpdated, hc);
 			}
+		}
+		else {
+			removeAssociationsControlToCause(controlToBeUpdated.getID());
 		}
 		controlToBeUpdated.setLastUpdated(new Date());
 		controlToBeUpdated.save();

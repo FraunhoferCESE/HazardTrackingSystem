@@ -1,4 +1,5 @@
-<form class="aui" action="controlform" method="post" id="editControlForm">
+<form class="aui editControlForm" name="editControlForm" action="controlform" method="post">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<input type="hidden" name="edit" id="edit" value="y">
 	<input type="hidden" name="controlID" id="controlID" value="$!hazardControl.getID()">
 	<div class="ControlsTableEditEntryField">
@@ -10,7 +11,11 @@
 		<select class="select" id="controlGroupEdit" name="controlGroupEdit">
 			#foreach( $controlGroup in $controlGroups )
 				#if($controlGroup.getID() == $hazardControl.getControlGroup().getID())
-					<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
+					#if($controlGroup.getLabel() == "null")
+						<option value="$controlGroup.getID()" selected>-Select-</option>
+					#else
+						<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
+					#end
 				#else
 					<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
 				#end
@@ -19,29 +24,22 @@
 	</div>
 	<div class="ControlsTableEditEntryField">
 		<label for="controlCausesEdit">Causes</label>
-		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit">
+		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit" id="controlCauseEditForControlID$!hazardControl.getID()">
 			#set( $foundMatch = 0 )
 			#foreach( $hazardCause in $hazardCauses )
 				#foreach( $selectedCause in $hazardControl.getCauses() )
 					#if( $hazardCause.getID() == $selectedCause.getID() )
-						<option value="$hazardCause.getID()" selected>$hazardCause.getTitle()</option>
+						<option value="$hazardCause.getID()" selected>$!hazardCause.getCauseNumber(): $hazardCause.getTitle()</option>
 						#set( $foundMatch = 1 )
 						#break
 					#end
 				#end
 				#if( $foundMatch == 0 )
-					<option value="$hazardCause.getID()">$hazardCause.getTitle()</option>
+					<option value="$hazardCause.getID()">$!hazardCause.getCauseNumber(): $hazardCause.getTitle()</option>
 				#else
 					#set( $foundMatch = 0 )
 				#end
 			#end
 		</select>
-	</div>
-	<div class="buttons-container">
-		<div class="buttons">
-			<input class="button" type="submit" value="Save changes" id="updateControlButton">
-			<input class="button" type="submit" value="Cancel" id="cancelControlButton">
-			<input class="button" type="submit" value="Delete" id="deleteControlButton">
-		</div>
 	</div>
 </form>

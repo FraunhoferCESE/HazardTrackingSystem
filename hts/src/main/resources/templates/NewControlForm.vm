@@ -9,7 +9,11 @@
 		<label for="controlGroupNew">Control group</label>
 		<select class="select" id="controlGroupNew" name="controlGroupNew">
 			#foreach( $controlGroup in $controlGroups )
-				<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+				#if($controlGroup.getLabel() == "null")
+					<option value="$controlGroup.getID()" selected>-Select-</option>
+				#else
+					<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+				#end
 			#end
 		</select>
 	</div>
@@ -18,15 +22,15 @@
 		<label for="controlCausesNew">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCausesNew" id="controlCausesNew">
 			#foreach( $hazardCause in $hazardCauses )
-				<option value="$hazardCause.getID()">$!hazardCause.getTitle()</option>
+				<option value="$hazardCause.getID()">$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()</option>
 			#end
 		</select>
 	</div>
 
 	<div class="buttons-container">
 		<div class="buttons">
-			<input class="button submit" type="submit" value="Save" id="comment-save-button">
-			<input class="button" type="submit" value="Clear" id="clearNewControlButton">
+			<input class="button submit" type="submit" value="Save" id="SaveNewControl">
+			<input class="button" type="button" value="Clear" id="clearNewControlButton">
 		</div>
 	</div>
 </form>

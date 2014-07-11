@@ -242,6 +242,49 @@ AJS.$(document).ready(function(){
 	    }
 	});
 
+	$("#addNewControlForm").validate({
+		rules: {
+			controlDescriptionNew: {
+				required: true,
+				maxlength: 255
+			}
+	    },
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    }
+	});
+
+	$(".editControlForm").each(function(index) {
+		$(this).validate({
+			rules: {
+	    		controlDescriptionEdit: {
+	    			required: true,
+	    			maxlength: 255
+	    		},
+	    	},
+	    	errorClass: "validationError",
+	    	errorElement: "span",
+	    	errorPlacement: function(error, element) {
+	    		error.insertAfter(element);
+	    	},
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						console.log("SUCCESS");
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
 	$("#addNewCauseForm").validate({
 		rules: {
 	    	causeTitle: {
@@ -266,23 +309,8 @@ AJS.$(document).ready(function(){
 					console.log(error);
 				}
 			});
-		}
+		},
 	});
-
-	$("#addNewControlForm").validate({
-		rules: {
-			controlDescription: {
-				required: true,
-				maxlength: 255
-			}
-	    },
-	    errorClass: "validationError",
-	    errorElement: "span",
-	    errorPlacement: function(error, element) {
-	    	error.insertAfter(element);
-	    }
-	});
-
 
 	$(".causeForms").each(function(index) {
 		$(this).validate({
@@ -362,6 +390,7 @@ AJS.$(document).ready(function(){
 	*               Helper functions below.                   *
 	*                                                         *
 	***********************************************************/
+
 	function validateDate(initationVal, completionVal) {
 		//Both valid dates
 		if(Date.parse(initationVal) && Date.parse(completionVal)) {
