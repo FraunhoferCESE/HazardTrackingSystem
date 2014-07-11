@@ -34,7 +34,6 @@ AJS.$(document).ready(function(){
     }
 
     AJS.$("#payloadNavigationList").live("mousedown", function() {
-        console.log("PAYLOAD OPEN");
         var missionList;
         AJS.$.ajax({
             type: "GET",
@@ -47,7 +46,6 @@ AJS.$(document).ready(function(){
 
         if(missionList.length > 0) {
             var temp;
-            console.log("payload list length " + AJS.$("#payloadNavigationList option").length);
             if(AJS.$("#payloadNavigationList option").length <= 1) {
                 AJS.$(missionList).each(function() {
                     temp += "<option value=" + this.payloadID + ">" + this.title + "</option>";

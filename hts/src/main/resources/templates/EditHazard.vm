@@ -9,6 +9,7 @@
 		<header class="aui-page-header">
 			<div class="aui-page-header-inner">
 				<h2>Hazard Form</h2>
+				#parse("/templates/NavigateHazards.vm")
 			</div>
 		</header>
 		<nav id="main-nav" class="aui-navgroup aui-navgroup-horizontal">
