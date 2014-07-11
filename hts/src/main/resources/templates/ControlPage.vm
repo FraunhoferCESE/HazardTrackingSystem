@@ -15,28 +15,29 @@
 			<thead>
 				<tr>
 					<th class="ControlsTableHeader ControlsTableCellOne"></th>
-					<th class="ControlsTableHeader ControlsTableCellTwo">#</th>
+					<th class="ControlsTableHeader ControlsTableCellTwo"></th>
 					<th class="ControlsTableHeader ControlsTableCellThree">Description</th>
 					<th class="ControlsTableHeader ControlsTableCellFour">Control group</th>
-					<th class="ControlsTableHeader ControlsTableCellFive">Created</th>
-					<th class="ControlsTableHeader ControlsTableCellSix">Last updated</th>
-					<th class="ControlsTableHeader ControlsTableCellSix">Delete</th>
+					<th class="ControlsTableHeader ControlsTableCellFive">Last updated</th>
+					<th class="ControlsTableHeader ControlsTableCellFive">Delete?</th>
 				</tr>
 			</thead>
 			<tbody>
 				#foreach( $hazardControl in $hazardControls )
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
-						<td class="ControlsTableCellToggle" id="ControlsTableEntry$!velocityCount">
-							<span class="aui-icon aui-icon-small aui-iconfont-add"></span>
+						<td class="ControlsTableCellToggle aui-icon aui-icon-small aui-iconfont-add" id="ControlsTableEntry$!velocityCount">
 						</td>
-						<td>$velocityCount</td>
+						<td>Control $velocityCount</td>
 						<td>
 							<div class="ControlsTableDescriptionText">$hazardControl.getDescription()</div>
 						</td>
-						<td>$hazardControl.getControlGroup().getLabel()</td>
-						<td class="ControlDate">$hazardControl.getOriginalDate()</td>
+						#if($hazardControl.getControlGroup().getLabel() == "null")
+							<td>N/A</td>
+						#else
+							<td>$hazardControl.getControlGroup().getLabel()</td>
+						#end
 						#if( !$hazardControl.getLastUpdated() )
-							<td class="ControlDate">N/A</td>
+							<td class="ControlDate">$hazardControl.getOriginalDate()</td>
 						#else
 							<td class="ControlDate">$hazardControl.getLastUpdated()</td>
 						#end
@@ -56,8 +57,9 @@
 		</table>
 		</div>
 		<div class="ControlsButtonPanel">
-			<button class="aui-button" class="ExpandAllControls">Expand all</button>
-			<button class="aui-button" id="DeleteControl" disabled >Delete</button>
+			<button class="aui-button" id="SaveAllChanges" >Save All Changes</button>
+			<button class="aui-button" id="RenumberAndSave" >Renumber and Save</button>
+			<button class="aui-button" id="ExpandAllControls">Expand all</button>
 		</div>
 	#end
 	<div>

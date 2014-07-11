@@ -26,6 +26,7 @@ public class ControlGroupsServiceImpl implements ControlGroupsService {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(ControlGroups.class).length == 0) {
+					add("null");
 					add("Design");
 					add("Safety devices");
 					add("Cautions/warnings");

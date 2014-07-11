@@ -25,11 +25,11 @@
 }
 
 .ControlsTableCellOne {
-    width: 40px;
+    width: 20px;
 }
 
 .ControlsTableCellTwo {
-    width: 40px;
+    width: 70px;
 }
 
 .ControlsTableCellThree {
@@ -48,10 +48,6 @@
 }
 
 .ControlsTableCellFive {
-    width: 150px;
-}
-
-.ControlsTableCellSix {
     width: 150px;
 }
 
@@ -121,11 +117,11 @@
 }
 
 .ConfirmDialogTableCellOne {
-    width: 40px;
+    width: 75px;
 }
 
 .ConfirmDialogTableCellTwo {
-    width: 400px;
+    width: 365px;
 }
 
 .ConfirmDialogTableCellThree {

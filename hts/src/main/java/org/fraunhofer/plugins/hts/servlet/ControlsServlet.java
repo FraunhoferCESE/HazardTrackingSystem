@@ -80,12 +80,15 @@ public class ControlsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if ("y".equals(req.getParameter("edit"))) {
     		// Process the editing request
-    		String id = req.getParameter("controlID");
+    		//final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+    		String controlID = req.getParameter("controlID");
     		final String description = req.getParameter("controlDescriptionEdit");
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
-        	hazardControlService.update(id, description, controlGroup, causes);
+        	hazardControlService.update(controlID, description, controlGroup, causes);
         	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
+        	// throw this out and send json response?
+        	//res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}
     	else {
     		// Process the new control request
