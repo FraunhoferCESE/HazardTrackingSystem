@@ -9,6 +9,7 @@ function getCookieValue(id) {
 }
 
 function createCookie(id, type) {
+	console.log("THE ID SENT IN " + id);
 	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
 }
 
@@ -37,6 +38,7 @@ function openDivOnReload() {
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
 		if(getCookieValue(this.id) != "collapsed" && typeof(getCookieValue(this.id))!="undefined") {
+			console.log("div open " + this.id);
 			addExpandedClass(spanElement);
 			AJS.$(this).show();
 		}
@@ -279,4 +281,12 @@ AJS.$(document).ready(function(){
 	AJS.$(".transferFormTrigger").live("click", function() {
 		foldable(this, "transferFormContainer");
 	});
+
+	var idOfCauseOpen = AJS.$.url().param("id");
+	if(idOfCauseOpen) {
+		console.log("ID ASKED " + idOfCauseOpen)
+		closeAllDivs();
+		createCookie(idOfCauseOpen, "expanded");
+		openDivOnReload();
+	}
 });

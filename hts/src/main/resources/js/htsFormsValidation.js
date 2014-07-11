@@ -1,7 +1,6 @@
 AJS.$(document).ready(function(){
 	var $ = AJS.$
 	var baseUrl = AJS.params.baseURL;
-
     editForm();
 
     $("#hazardSubsystem").multiselect2side({

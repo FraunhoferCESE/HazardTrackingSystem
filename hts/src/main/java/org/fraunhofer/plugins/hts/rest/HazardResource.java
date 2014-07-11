@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -77,6 +78,38 @@ public class HazardResource {
 					.build();
 		}
 
+	}
+	
+	@GET
+	@Path("allpayloads")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllMissionPayloads() {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			List<HazardMissionList> hazardList = new ArrayList<HazardMissionList>();
+			for (Mission_Payload payload : missionPayloadService.all()) {
+				hazardList.add(HazardMissionList.missionPayloads(payload));
+			}
+			return Response.ok(hazardList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("allpayloads/{payloadID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllHazardsWithinPayload(@PathParam("payloadID") String payloadID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			List<HazardResponseList> hazardList = new ArrayList<HazardResponseList>();
+			for (Hazards hazard : missionPayloadService.getAllHazardsWithinMission(payloadID)) {
+				hazardList.add(HazardResponseList.hazards(hazard));
+			}
+			return Response.ok(hazardList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
+		}
 	}
 
 	@GET
