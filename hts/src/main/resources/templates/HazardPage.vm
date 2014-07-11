@@ -4,83 +4,6 @@
 		<meta name="decorator" content="atl.general">
 		$webResourceManager.requireResourcesForContext("org.fraunhofer.plugins.hts.hts:hts-resources")
 	</head>
-<<<<<<< HEAD
-<body class="aui-layout aui-theme-default">
-	#parse("/templates/navigation.vm")
-	<header class="aui-page-header">
-		<div class="aui-page-header-inner">
-			<h2>Hazard Form</h2>
-		</div>
-	</header>
-	<nav id="main-nav" class="aui-navgroup aui-navgroup-horizontal">
-        <div class="aui-navgroup-inner">
-            <div class="aui-navgroup-primary">
-                <ul class="aui-nav">
-                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="hazardform">Hazard form</a></li>
-                    <li id="cause-nav-item"><a href="causeform">Causes</a></li>
-                    <li id="control-nav-item"><a href="controlform">Controls</a></li>
-                    <li id="verification-nav-item"><a href="#">Verifications</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="aui-page-panel">
-        <div class="aui-page-panel-inner">
-            <section class="aui-page-panel-content">
-                <div class="nav-content" id="content-1">
-	                #parse("/templates/HazardForm.vm")
-                </div>
-                <div class="nav-content" id="content-2">
-                   #parse("/templates/CausePage.vm")
-                </div>
-                <div class="nav-content" id="content-3">
-                	#parse("/templates/ControlPage.vm")
-                </div>
-                <div class="nav-content" id="content-4">
-                	<form class="aui">
-					    <div class="field-group">
-					        <label for="verification-title">Title <span class="aui-icon icon-required">(required)</span></label>
-					        <input class="text long-field" type="text" id="verification-title" name="verification-title">
-					        <!--div class="description">Your primary email address.</div-->
-					    </div>
-					    <div class="field-group">
-						    <label for="verification-group">Verification status</label>
-						    <select class="select" id="verification-group" name="verification-group">
-						        <option>Open</option>
-						        <option>Close to VTL</option>
-						        <option>Closed</option>
-						    </select>
-						</div>
-						<div class="field-group">
-						    <label for="verification-type">Verification group</label>
-						    <select class="select" id="verification-type" name="verification-type">
-								<option>Certification</option>
-						        <option>Demonstration/Witness</option>
-						        <option>Qualification test</option>
-						        <option>Simulation and analysis</option>
-						    </select>
-						</div>
-						<div class="field-group">
-					        <label for="verification-completion">Completion Date</label>
-					        <input class="aui-date-picker" name="verification-completion" id="verification-completion" type="date"/>
-					    </div>
-					    <div class="field-group">
-					        <label for="verification-description">Description</label>
-					        <textarea class="textarea long-field" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
-					    </div>
-					    <div class="buttons-container">
-					        <div class="buttons">
-					            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-					            <a class="cancel" href="#">Cancel</a>
-					        </div>
-					    </div>
-					</form>
-                </div>
-            </section>
-        </div>
-    </div>
-</body>
-=======
 	<body class="aui-layout aui-theme-default">
 		#parse("/templates/navigation.vm")
 		<header class="aui-page-header">
@@ -95,7 +18,7 @@
 	                <ul class="aui-nav">
 	                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="hazardform">Hazard form</a></li>
 	                    <li id="cause-nav-item"><a href="causeform">Causes</a></li>
-	                    <li id="control-nav-item"><a href="#">Controls</a></li>
+	                    <li id="control-nav-item"><a href="controlform">Controls</a></li>
 	                    <li id="verification-nav-item"><a href="#">Verifications</a></li>
 	                </ul>
 	            </div>
@@ -111,33 +34,7 @@
 	                   #parse("/templates/CausePage.vm")
 	                </div>
 	                <div class="nav-content" id="content-3">
-	                	<form class="aui">
-						    <div class="field-group">
-						        <label for="control-title">Title <span class="aui-icon icon-required">(required)</span></label>
-						        <input class="text long-field" type="text" id="control-title" name="control-title">
-						    </div>
-						    <div class="field-group">
-							    <label for="control-group">Control group</label>
-							    <select class="select" id="control-group" name="control-group">
-							        <option>Hardware certification</option>
-							        <option>Independent inhibits</option>
-							        <option>Multi-step commanding</option>
-							        <option>Software FDIR</option>
-							        <option>Procedure</option>
-							        <option>Training</option>
-							    </select>
-							</div>
-						    <div class="field-group">
-						        <label for="control-description">Description</label>
-						        <textarea class="textarea long-field" name="control-description" id="control-description" placeholder="Your comment here..."></textarea>
-						    </div>
-						    <div class="buttons-container">
-						        <div class="buttons">
-						            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-						            <a class="cancel" href="#">Cancel</a>
-						        </div>
-						    </div>
-						</form>
+	                	#parse("/templates/ControlPage.vm")
 	                </div>
 	                <div class="nav-content" id="content-4">
 	                	<form class="aui">
@@ -183,5 +80,4 @@
 	        </div>
 	    </div>
 	</body>
->>>>>>> hazardNavigation
 </html>
