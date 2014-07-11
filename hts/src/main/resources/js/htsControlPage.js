@@ -288,6 +288,7 @@ AJS.$(document).ready(function(){
 				if (checkIfElementIsVisible(AJS.$(".validationError"))) {
 					validationError = true;
 				}
+				didUpdate = true;
 			}
 			else {
 				needToDoDelete = true;
