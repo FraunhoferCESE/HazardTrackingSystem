@@ -176,10 +176,10 @@ public class HazardServiceImpl implements HazardService {
 
 	@Override
 	public Hazards getNewestHazardReport() {
-		List<Hazards> all = all();
+		Hazards[] hazard = ao.find(Hazards.class, Query.select().order("ID DESC"));
 		Hazards lastCreated = null;
-		if (!all.isEmpty()) {
-			lastCreated = all.get(all.size() - 1);
+		if(hazard.length > 0) {
+			lastCreated = hazard[0];
 		}
 		return lastCreated;
 	}

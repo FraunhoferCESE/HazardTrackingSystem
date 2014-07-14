@@ -238,7 +238,6 @@ AJS.$(document).ready(function(){
 	openDivOnReload();
 	submitCauses();
 	transfer();
-	console.log("Base url is: " + AJS.params.baseURL);
 	AJS.$(".newFormContainer").hide();
 	AJS.$(".transferFormContainer").hide();
 
