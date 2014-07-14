@@ -1,13 +1,11 @@
 <div>
-	<div class='field-group'>
-		<label for='hazardList'>Hazard Reports</label>
-		<select size='1' class='select long-field' name='hazardList' id='hazardList'>
-			<option value=''>-Select Hazard Report-</option>
-			#foreach( $hazard in $allHazards )
-				<option value="$hazard.getID()"> $hazard.getHazardNum() - $hazard.getTitle()</option>
-			#end
-		</select>
-	</div>
-	<div class="field-group container">
-	</div>
+	<form class="aui">
+		<div class='field-group' style="padding:0">
+			<select size='1' class='select' name='payloadNavigationList' id='payloadNavigationList'>
+				<option value=''>-Select Mission/Payload-</option>
+			</select>
+			<span id="hazardReportsNavigation">
+			</span>
+		</div>
+	</form>
 </div>

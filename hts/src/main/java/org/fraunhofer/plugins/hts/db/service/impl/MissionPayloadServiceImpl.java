@@ -5,6 +5,7 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
@@ -61,5 +62,11 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	public Mission_Payload getMissionPayloadByName(String name) {
 		final Mission_Payload[] missionPayload = ao.find(Mission_Payload.class, Query.select().where("NAME=?", name));
 		return missionPayload.length > 0 ? missionPayload[0] : null;
+	}
+
+	@Override
+	public List<Hazards> getAllHazardsWithinMission(String id) {
+		Mission_Payload payload = getMissionPayloadByID(id);
+		return newArrayList(payload.getHazards());
 	}
 }

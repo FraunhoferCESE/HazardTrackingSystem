@@ -2,7 +2,13 @@
 	#if($transfer.getTransferID() == $cause.getTransfer())
 		<div class="row">
     		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
-    		<div class="cell causeTitle"><a href="#">TRANSFERRED - $!transfer.getMainTitle()</a></div>
+    		<div class="cell causeTitle">
+    			#if($transfer.getTransferType() == "CAUSE")
+    				<a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    			#else
+    				<a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    			#end
+			</div>
     		<div class="cell">$!cause.getOwner()</div>
     		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
     		<div class="cell"><input type="checkbox" class="deleteCause"></div>
@@ -34,7 +40,6 @@
     		<div class="cell"></div>
     		<div class="cell"></div>
     		<div class="cell"></div>
-    	</div>
-		
+    	</div>	
 	#end
 #end

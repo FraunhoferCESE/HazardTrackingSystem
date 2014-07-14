@@ -38,6 +38,7 @@ public class CauseServlet extends HttpServlet {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("allHazards", hazardService.all());
+    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
 			res.setContentType("text/html;charset=utf-8");
 			if ("y".equals(req.getParameter("edit"))) {
 				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
