@@ -17,13 +17,18 @@
 						<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
 					#end
 				#else
-					<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+					#if($controlGroup.getLabel() == "null")
+						<option value="$controlGroup.getID()">-Select-</option>
+					#else
+						<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+					#end
 				#end
 			#end
 		</select>
 	</div>
 	<div class="ControlsTableEditEntryField">
 		<label for="controlCausesEdit">Causes</label>
+		<!-- <div class="ControlsTableAssociatedControlsHeader"><span >Non-associated Causes</span></div> -->
 		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit" id="controlCauseEditForControlID$!hazardControl.getID()">
 			#set( $foundMatch = 0 )
 			#foreach( $hazardCause in $hazardCauses )
@@ -41,5 +46,7 @@
 				#end
 			#end
 		</select>
+		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Causes</span></div>
+		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Causes</span></div>
 	</div>
 </form>

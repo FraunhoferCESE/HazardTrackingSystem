@@ -88,6 +88,32 @@
     padding-bottom: 5px;
 }
 
+/*.ControlsTableAssociatedControlsHeader {
+    padding-top: 5px;
+    margin-bottom: -5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}*/
+
+.ControlsTableEditControlsFooterContainerOne {
+    float: left;
+    width: 277px;
+    padding-left: 3px;
+    margin-top: -5px;
+}
+
+.ControlsTableEditControlsFooterContainerTwo {
+    float: left;
+    margin-top: -5px;
+}
+
+.ControlsTableEditControlsFooter {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}
+
 /* STYLES FOR THE CONFIRM DIALOG BEGIN */
 
 .ConfirmDialogHeadingOne {

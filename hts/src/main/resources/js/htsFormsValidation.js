@@ -48,8 +48,8 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
-		'search': 'Search: ',
+		labeldx: '<br>',
+		search: 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
     });
@@ -253,7 +253,20 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
-	    }
+	    },
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					console.log("SUCCESS");
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log("ERROR");
+					console.log(error);
+				}
+			});
+		}
 	});
 
 	$(".editControlForm").each(function(index) {

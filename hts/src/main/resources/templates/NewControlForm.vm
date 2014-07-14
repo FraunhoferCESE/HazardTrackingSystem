@@ -25,12 +25,12 @@
 				<option value="$hazardCause.getID()">$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()</option>
 			#end
 		</select>
+		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Causes</span></div>
+		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Causes</span></div>
 	</div>
 
 	<div class="buttons-container">
-		<div class="buttons">
-			<input class="button submit" type="submit" value="Save" id="SaveNewControl">
-			<input class="button" type="button" value="Clear" id="clearNewControlButton">
-		</div>
+		<button class="aui-button SaveAllChanges">Save All Changes</button>
+		<input class="button" type="button" value="Clear" id="clearNewControlButton">
 	</div>
 </form>
