@@ -4,9 +4,9 @@
     		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
     		<div class="cell causeTitle">
     			#if($transfer.getTransferType() == "CAUSE")
-    				<a href="/jira/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    				<a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
     			#else
-    				<a href="/jira/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    				<a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
     			#end
 			</div>
     		<div class="cell">$!cause.getOwner()</div>
