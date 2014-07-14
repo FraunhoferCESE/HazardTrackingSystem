@@ -80,7 +80,7 @@ function getHazardInformation() {
 	return hazardInformation;
 }
 
-function deleteSelectedControls(selectedControls, hazardInformation){
+function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 	// Hazard specific mark-up:
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
 	// Controls specific mark-up:
@@ -120,6 +120,9 @@ function deleteSelectedControls(selectedControls, hazardInformation){
 		uncheckSelectedControls();
 		dialog.hide();
 		dialog.remove();
+		if (doRefresh) {
+			location.reload();
+		}
 	});
 	dialog.addButton("Continue", function(dialog) {
 		var result = getSelectedControlsAndDeleteReasons(selectedControls);
@@ -324,7 +327,10 @@ AJS.$(document).ready(function(){
 		}
 
 		if (doDelete) {
-			deleteSelectedControls(selectedControls, hazardInformation);
+			if (doUpdate || doNew) {
+				doRefresh = true;
+			}
+			deleteSelectedControls(selectedControls, hazardInformation, doRefresh);
 			return;
 		}
 		if (doUpdate || doNew) {
