@@ -80,7 +80,7 @@ function getHazardInformation() {
 	return hazardInformation;
 }
 
-function deleteSelectedControls(selectedControls, hazardInformation, didUpdate){
+function deleteSelectedControls(selectedControls, hazardInformation){
 	// Hazard specific mark-up:
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
 	// Controls specific mark-up:
@@ -120,9 +120,6 @@ function deleteSelectedControls(selectedControls, hazardInformation, didUpdate){
 		uncheckSelectedControls();
 		dialog.hide();
 		dialog.remove();
-		if (didUpdate) {
-			location.reload();
-		}
 	});
 	dialog.addButton("Continue", function(dialog) {
 		var result = getSelectedControlsAndDeleteReasons(selectedControls);
@@ -171,47 +168,52 @@ function checkIfExpandButtonNeedsRenaming(expanding) {
 	return expanding;
 }
 
-function findControlWithSpecificID(oldCausesAssociatedWithControl, controlID){
-	return AJS.$.grep(oldCausesAssociatedWithControl, function(item){
-		return item.controlID == controlID;
+function findControlWithSpecificID(causesAssociatedWithControl, controlID){
+	return AJS.$.grep(causesAssociatedWithControl, function(item){
+		if (item.controlID === controlID) {
+			return item;
+		}
 	});
 }
 
-// function checkIfControlWasModified(oldCausesAssociatedWithControl) {
-// 	var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
-// 	for (var i = 0; i < newCausesAssociatedWithControl.length; i++) {
-// 		var result = findControlWithSpecificID(oldCausesAssociatedWithControl, newCausesAssociatedWithControl[i].controlID);
-// 		if (result[0].causesIDs.length !== newCausesAssociatedWithControl[i].causesIDs.length) {
-// 			console.log("changes!");
-// 		}
-// 	}
-// }
+function checkIfControlWasModified(oldCauses, newCauses) {
+	if (oldCauses.length === newCauses.length) {
+		for (var j = 0; j < newCauses.length; j++) {
+			if (oldCauses.indexOf(newCauses[j]) === -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	else {
+		return true;
+	}
+}
 
-// function getCurrentControlAndCausesAssociation() {
-// 	var causesAssociatedWithControl = [];
-// 	var multiSelectForCauses = AJS.$(".controlCausesEdit");
-// 	multiSelectForCauses.each(function () {
-// 		var controlIDWithText = AJS.$(this)[0].id;
-// 		var controlIDOnly = controlIDWithText.replace("controlCauseEditForControlID", "");
-// 		var causesIDs = [];
-// 		var numberOfSelectedCauses = AJS.$(this)[0].children.length;
-// 		var foo = AJS.$(this);
-// 		console.log(foo);
-// 		// for (var i = 0; i < numberOfSelectedCauses; i++) {
-// 		// 	causesIDs.push(AJS.$(this)[0].children[i].value);
-// 		// }
-// 		// causesAssociatedWithControl.push({
-// 		// 	controlID: controlIDOnly,
-// 		// 	causesIDs: causesIDs
-// 		// });
-// 	});
-// 	return causesAssociatedWithControl;
-// }
+function getCurrentControlAndCausesAssociation() {
+	var causesAssociatedWithControl = [];
+	var multiSelectForCauses = AJS.$(".controlCausesEdit");
+	multiSelectForCauses.each(function () {
+		var controlIDWithText = AJS.$(this)[0].id;
+		var controlIDOnly = controlIDWithText.replace("controlCauseEditForControlID", "");
+		var causesIDs = [];
+		var numberOfSelectedCauses = AJS.$(this)[0].children.length;
+		for (var i = 0; i < numberOfSelectedCauses; i++) {
+			if (AJS.$(this)[0].children[i].selected === true) {
+				causesIDs.push(AJS.$(this)[0].children[i].value);
+			}
+		}
+		causesAssociatedWithControl.push({
+			controlID: controlIDOnly,
+			causesIDs: causesIDs
+		});
+	});
+	return causesAssociatedWithControl;
+}
 
 AJS.$(document).ready(function(){
 	var expanding = true;
-	// var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
-	// console.log(oldCausesAssociatedWithControl);
+	var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
 
 	/* Text manipulation code begins */
 	var dates = AJS.$(".ControlDate");
@@ -274,38 +276,60 @@ AJS.$(document).ready(function(){
 	/* Expand functionality code ends */
 
 	/* Updating existing controls functinality begins */
-	AJS.$("#SaveAllChanges").live("click", function() {
+	AJS.$(".SaveAllChanges").live("click", function(e) {
+		e.preventDefault();
+		var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
 		var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
 		var selectedControls = getSelectedControls(createdControls);
 		var createdControlsForms = AJS.$(".editControlForm");
-		var needToDoDelete = false;
-		var didUpdate = false;
+		var hazardInformation = getHazardInformation();
+		var doDelete = false;
+		var doUpdate = false;
+		var doNew = false;
+		var doRefresh = false;
 		var validationError = false;
+
+		// Check for updates do controls or delete requests
 		createdControlsForms.each(function () {
 			var controlID = this.children[2].value;
 			if (selectedControls.indexOf(controlID) === -1) {
-				AJS.$(this).trigger("submit");
-				if (checkIfElementIsVisible(AJS.$(".validationError"))) {
-					validationError = true;
+				var oldCauses = findControlWithSpecificID(oldCausesAssociatedWithControl, controlID);
+				var newCauses = findControlWithSpecificID(newCausesAssociatedWithControl, controlID);
+				if (checkIfControlWasModified(oldCauses[0].causesIDs, newCauses[0].causesIDs) || AJS.$(this).isDirty()) {
+					AJS.$(this).trigger("submit");
+					doUpdate = true;
 				}
-				didUpdate = true;
 			}
 			else {
-				needToDoDelete = true;
+				doDelete = true;
 			}
 		});
 
-		if (needToDoDelete) {
-			var hazardInformation = getHazardInformation();
-			deleteSelectedControls(selectedControls, hazardInformation, didUpdate);
+		validationError = isElementIsVisible(AJS.$(".validationError"));
+		if (validationError) {
+			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+			return;
 		}
-		else {
-			if (validationError) {
-				JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-			}
-			else {
-				location.reload();
-			}
+
+		// Check for new control
+		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
+			AJS.$("#addNewControlForm").trigger("submit");
+			doNew = true;
+		}
+
+		validationError = isElementIsVisible(AJS.$(".validationError"));
+		if (validationError) {
+			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+			return;
+		}
+
+		if (doDelete) {
+			deleteSelectedControls(selectedControls, hazardInformation);
+			return;
+		}
+		if (doUpdate || doNew) {
+			location.reload();
+			return;
 		}
 	});
 	/* Updating existing controls functinality ends */
