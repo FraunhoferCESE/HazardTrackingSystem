@@ -29,6 +29,8 @@
 				<option value="$subsystem.getID()">$!subsystem.getLabel()</option>
 			#end
 		</select>
+		<div class="HazardFormMultiSelectFooterContainerOne"><span class="HazardFormMultiSelectFooter">Non-associated</span></div>
+		<div class="HazardFormMultiSelectFooterContainerTwo"><span class="HazardFormMultiSelectFooter">Associated</span></div>
 	</div>
 	<div class="field-group">
 		<label for="hazardPreparer">Preparer</label>
@@ -84,6 +86,8 @@
 				<option value="$!phase.getID()">$!phase.getLabel()</option>
 			#end
 		</select>
+		<div class="HazardFormMultiSelectFooterContainerOne"><span class="HazardFormMultiSelectFooter">Non-associated</span></div>
+		<div class="HazardFormMultiSelectFooterContainerTwo"><span class="HazardFormMultiSelectFooter">Associated</span></div>
 	</div>
 	<div class="field-group">
 	    <label for="hazardGroup">Hazard Group</label>
@@ -95,6 +99,8 @@
 				<option value="$!group.getID()">$!group.getLabel()</option>
 			#end
 		</select>
+		<div class="HazardFormMultiSelectFooterContainerOne"><span class="HazardFormMultiSelectFooter">Non-associated</span></div>
+		<div class="HazardFormMultiSelectFooterContainerTwo"><span class="HazardFormMultiSelectFooter">Associated</span></div>
 	</div>
 	<div class="field-group">
 	    <label for="hazardDescription">Description</label>

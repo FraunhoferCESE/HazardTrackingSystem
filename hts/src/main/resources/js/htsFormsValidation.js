@@ -7,7 +7,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -17,7 +17,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -27,7 +27,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -37,7 +37,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -355,7 +355,7 @@ AJS.$(document).ready(function(){
 	$(".transferredForms").each(function(index) {
 		$(this).validate({
 			rules: {
-	    		causeDescription: { 
+	    		causeDescription: {
 	    			required: false,
 	    		},
 	    	},
@@ -376,7 +376,7 @@ AJS.$(document).ready(function(){
 
 	$("#transferForm").validate({
 		rules: {
-	    	causeDescription: { 
+	    	causeDescription: {
 	    		required: false,
 	    	},
 	    },

@@ -61,16 +61,14 @@
 }
 
 .ControlsTableEditEntryContainer {
-    padding-left: 30px;
+    width: 600px;
+    height: 265px;
+    padding-left: 130px;
 }
 
 .ControlsTableEditEntryField {
-    box-sizing: border-box;
-    clear: both;
-    padding: 4px 0 4px 145px;
-    position: relative;
-    margin: 1px 0;
-    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .ControlsTableEditEntryField > label {
