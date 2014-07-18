@@ -24,14 +24,30 @@
 			</thead>
 			<tbody>
 				#foreach( $hazardControl in $hazardControls )
+					#set($theTransfer = 0)
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
 						<td class="ControlsTableCellToggle aui-icon aui-icon-small aui-iconfont-add" id="ControlsTableEntry$!velocityCount">
 						</td>
-						<td>Control $velocityCount</td>
+						<td>$hazardControl.getControlNumber()</td>
 						<td>
-							<div class="ControlsTableDescriptionText">$hazardControl.getDescription()</div>
+							#if($hazardControl.getTransfer() != 0)
+								#foreach($transfer in $controlTransfers)
+									#if($transfer.getTransferID() == $hazardControl.getTransfer())
+										#set($theTransfer = $transfer)
+										#if($theTransfer.getTargetType() == "CONTROL")
+											<div><a href="$baseUrl/plugins/servlet/controlform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getTargetHazardControlDescription()</a></div>
+										#end
+										#if($theTransfer.getTargetType() == "CAUSE")
+											<div><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getTargetHazardCauseTitle()</a></div>
+										#end
+										#break
+									#end
+								#end
+							#else
+								<div class="ControlsTableDescriptionText">$hazardControl.getDescription()</div>
+							#end
 						</td>
-						#if($hazardControl.getControlGroup().getLabel() == "null")
+						#if($hazardControl.getControlGroup().getLabel() == "null" || $hazardControl.getTransfer() != 0)
 							<td>N/A</td>
 						#else
 							<td>$hazardControl.getControlGroup().getLabel()</td>
@@ -47,9 +63,15 @@
 					</tr>
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
 						<td colspan="100%" class="ControlsTableEditEntryHidden" id="ControlsTableEditEntry$!velocityCount">
-							<div class="ControlsTableEditEntryContainer">
-								#parse("/templates/EditControlForm.vm")
-							</div>
+							#if( $hazardControl.getTransfer() != 0 )
+								<div class="ControlsTableEditTransferEntryContainer">
+									#parse("/templates/EditTransferredControl.vm")
+								</div>
+							#else
+								<div class="ControlsTableEditEntryContainer">
+									#parse("/templates/EditControlForm.vm")
+								</div>
+							#end
 						</td>
 					</tr>
 				#end
@@ -63,7 +85,19 @@
 		</div>
 	#end
 	<div>
-		<span class="ControlsHeadingTwo">New Control:</span>
-		#parse("/templates/NewControlForm.vm")
+		<div class="ControlsHeadingTwo">
+			<span class="aui-icon aui-icon-small aui-iconfont-add" id="addNewControl"></span>
+			<span>Add New Control</span>
+		</div>
+		<div class="ControlsNewContainer">
+			#parse("/templates/NewControlForm.vm")
+		</div>
+		<div class="ControlsHeadingTwo">
+			<span class="aui-icon aui-icon-small aui-iconfont-add" id="addTransferControl"></span>
+			<span>Add Control Transfer</span>
+		</div>
+		<div class="ControlsTransferContainer">
+			#parse("/templates/TransferControlForm.vm")
+		</div>
 	</div>
 </div>

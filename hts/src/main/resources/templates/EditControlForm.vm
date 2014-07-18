@@ -3,11 +3,11 @@
 	<input type="hidden" name="edit" id="edit" value="y">
 	<input type="hidden" name="controlID" id="controlID" value="$!hazardControl.getID()">
 	<div class="ControlsTableEditEntryField">
-		<label for="controlDescriptionEdit">Description <span class="aui-icon icon-required">(required)</span></label>
+		<label class="ControlsTableEditEntryFieldLabelHeadingOne" for="controlDescriptionEdit">Description <span class="aui-icon icon-required">(required)</span></label>
 		<textarea class="textarea long-field" name="controlDescriptionEdit" id="controlDescriptionEdit">$hazardControl.getDescription()</textarea>
 	</div>
 	<div class="ControlsTableEditEntryField">
-		<label for="controlGroupEdit">Control group</label>
+		<label class="ControlsTableEditEntryFieldLabelHeadingOne" for="controlGroupEdit">Control group</label>
 		<select class="select" id="controlGroupEdit" name="controlGroupEdit">
 			#foreach( $controlGroup in $controlGroups )
 				#if($controlGroup.getID() == $hazardControl.getControlGroup().getID())
@@ -27,8 +27,7 @@
 		</select>
 	</div>
 	<div class="ControlsTableEditEntryField">
-		<label for="controlCausesEdit">Causes</label>
-		<!-- <div class="ControlsTableAssociatedControlsHeader"><span >Non-associated Causes</span></div> -->
+		<label class="ControlsTableEditEntryFieldLabelHeadingOne" for="controlCausesEdit">Causes</label>
 		<select class="multi-select controlCausesEdit" size="5" multiple="multiple" name="controlCausesEdit" id="controlCauseEditForControlID$!hazardControl.getID()">
 			#set( $foundMatch = 0 )
 			#foreach( $hazardCause in $hazardCauses )

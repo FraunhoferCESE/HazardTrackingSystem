@@ -193,3 +193,21 @@ form.payloadForm .add:active {
 .getReports {
    cursor: pointer;
 }
+
+.HazardFormMultiSelectFooterContainerOne {
+    float: left;
+    width: 277px;
+    padding-left: 3px;
+    margin-top: -5px;
+}
+
+.HazardFormMultiSelectFooterContainerTwo {
+    float: left;
+    margin-top: -5px;
+}
+
+.HazardFormMultiSelectFooter {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}

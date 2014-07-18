@@ -48,6 +48,8 @@ public class ControlsServlet extends HttpServlet {
     	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
     		Map<String, Object> context = Maps.newHashMap();
     		resp.setContentType("text/html;charset=utf-8");
+			context.put("allHazards", hazardService.all());
+    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
     		if ("y".equals(req.getParameter("edit"))) {
     			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
 				context.put("hazardNumber", currentHazard.getHazardNum());
@@ -57,6 +59,7 @@ public class ControlsServlet extends HttpServlet {
     			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
     			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
         		context.put("controlGroups", controlGroupsService.all());
+        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
     		} else {
     			Hazards newestHazardReport = hazardService.getNewestHazardReport();
@@ -68,6 +71,7 @@ public class ControlsServlet extends HttpServlet {
     			// Content for lower part of page; creating a new control
     			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
         		context.put("controlGroups", controlGroupsService.all());
+        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(newestHazardReport));
             	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
     		}
     	}
@@ -87,8 +91,27 @@ public class ControlsServlet extends HttpServlet {
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
         	hazardControlService.update(controlID, description, controlGroup, causes);
         	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
-        	// throw this out and send json response?
-        	//res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+    	}
+    	else if ("y".equals(req.getParameter("editTransfer"))) {
+    		String controlID = req.getParameter("originID");
+    		String transferReason = req.getParameter("controlTransferReasonEdit");
+    		hazardControlService.updateTransferredControl(controlID, transferReason);
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
+    	}
+    	else if ("y".equals(req.getParameter("transfer"))) {
+    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+    		final String transferComment = req.getParameter("controlTransferReason");
+    		final String causeID = req.getParameter("controlCauseList");
+    		final String controlID = req.getParameter("controlControlList");
+    		if (controlID == null || controlID.isEmpty()) {
+    			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
+    			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
+    		}
+    		else {
+    			Hazard_Controls targetControl = hazardControlService.getHazardControlByID(controlID);
+    			hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
+    		}
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     	}
     	else {
     		// Process the new control request

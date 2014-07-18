@@ -11,13 +11,14 @@
 }
 
 .ControlsHeadingTwo {
-    margin: 0;
-    padding: 0;
+    border-top: 1px black solid;
+    width: 900px;
     font-size: 16px;
     font-weight: bold;
-    border-top: 1px black solid;
     display: block;
-    width: 1024px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
 }
 
 .ControlsTableHeader {
@@ -61,19 +62,26 @@
 }
 
 .ControlsTableEditEntryContainer {
-    padding-left: 30px;
+    width: 600px;
+    height: 265px;
+    padding-left: 130px;
+}
+
+.ControlsTableEditTransferEntryContainer {
+    width: 570px;
+    padding-left: 160px;
 }
 
 .ControlsTableEditEntryField {
-    box-sizing: border-box;
-    clear: both;
-    padding: 4px 0 4px 145px;
-    position: relative;
-    margin: 1px 0;
-    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
-.ControlsTableEditEntryField > label {
+.ControlsTableEditEntryFieldLast {
+    margin-bottom: -20px;
+}
+
+.ControlsTableEditEntryFieldLabelHeadingOne {
     float: left;
     margin-left: -145px;
     padding: 5px 0 0 0;
@@ -83,18 +91,23 @@
     word-wrap: break-word;
 }
 
+.ControlsTableEditEntryFieldLabelHeadingTwo {
+    float: left;
+    margin-left: -145px;
+    padding: 0 0 0 0;
+    position: relative;
+    text-align: right;
+    width: 130px;
+    word-wrap: break-word;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}
+
 .ControlsButtonPanel {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
-/*.ControlsTableAssociatedControlsHeader {
-    padding-top: 5px;
-    margin-bottom: -5px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    color: #707070;
-}*/
 
 .ControlsTableEditControlsFooterContainerOne {
     float: left;
@@ -112,6 +125,22 @@
     font-family: Arial, sans-serif;
     font-size: 14px;
     color: #707070;
+}
+
+.ControlsNewContainer {
+    display: none;
+}
+
+.ControlsTransferContainer {
+    display: none;
+}
+
+.TransferControlCauseContainer {
+    display: none;
+}
+
+.TransferControlControlContainer {
+    display: none;
 }
 
 /* STYLES FOR THE CONFIRM DIALOG BEGIN */

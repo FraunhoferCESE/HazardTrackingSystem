@@ -4,7 +4,6 @@
 		<label for="controlDescriptionNew">Description <span class="aui-icon icon-required">(required)</span></label>
 		<textarea class="textarea long-field" name="controlDescriptionNew" id="controlDescriptionNew"></textarea>
 	</div>
-
 	<div class="field-group">
 		<label for="controlGroupNew">Control group</label>
 		<select class="select" id="controlGroupNew" name="controlGroupNew">
@@ -17,7 +16,6 @@
 			#end
 		</select>
 	</div>
-
 	<div class="field-group">
 		<label for="controlCausesNew">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCausesNew" id="controlCausesNew">
@@ -28,7 +26,6 @@
 		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Causes</span></div>
 		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Causes</span></div>
 	</div>
-
 	<div class="buttons-container">
 		<button class="aui-button SaveAllChanges">Save All Changes</button>
 		<input class="button" type="button" value="Clear" id="clearNewControlButton">

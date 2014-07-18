@@ -90,7 +90,6 @@ public class CauseServlet extends HttpServlet {
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;
 		}
-		
 		res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
 	}
 

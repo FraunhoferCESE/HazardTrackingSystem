@@ -5,7 +5,8 @@
     		<div class="cell causeTitle">
     			#if($transfer.getTransferType() == "CAUSE")
     				<a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
-    			#else
+    			#end
+    			#if($transfer.getTransferType() == "HAZARD")
     				<a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
     			#end
 			</div>
@@ -40,6 +41,6 @@
     		<div class="cell"></div>
     		<div class="cell"></div>
     		<div class="cell"></div>
-    	</div>	
+    	</div>
 	#end
 #end

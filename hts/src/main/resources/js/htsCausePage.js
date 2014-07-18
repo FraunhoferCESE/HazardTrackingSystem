@@ -9,7 +9,6 @@ function getCookieValue(id) {
 }
 
 function createCookie(id, type) {
-	console.log("THE ID SENT IN " + id);
 	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
 }
 
@@ -27,7 +26,7 @@ function changeButtonText() {
 }
 
 function addExpandedClass(element) {
-	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled")
+	AJS.$(element).removeClass().addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 }
 
 function addCollapsedClass(element) {
@@ -38,7 +37,6 @@ function openDivOnReload() {
 	AJS.$(".formContainer").each(function() {
 		var spanElement = AJS.$(this).parent().find(".trigger").children();
 		if(getCookieValue(this.id) != "collapsed" && typeof(getCookieValue(this.id))!="undefined") {
-			console.log("div open " + this.id);
 			addExpandedClass(spanElement);
 			AJS.$(this).show();
 		}
@@ -282,11 +280,14 @@ AJS.$(document).ready(function(){
 		foldable(this, "transferFormContainer");
 	});
 
-	var idOfCauseOpen = AJS.$.url().param("id");
-	if(idOfCauseOpen) {
-		console.log("ID ASKED " + idOfCauseOpen)
-		closeAllDivs();
-		createCookie(idOfCauseOpen, "expanded");
-		openDivOnReload();
+	var whichForm = AJS.$.url().data.seg.path[3];
+	if (whichForm === "causeform") {
+		var idOfCauseOpen = AJS.$.url().param("id");
+		if(idOfCauseOpen) {
+			closeAllDivs();
+			createCookie(idOfCauseOpen, "expanded");
+			openDivOnReload();
+		}
 	}
+
 });

@@ -7,7 +7,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -17,7 +17,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -27,7 +27,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -37,7 +37,7 @@ AJS.$(document).ready(function(){
     	selectedPosition: 'right',
 		moveOptions: false,
 		labelsx: '',
-		labeldx: 'Selected',
+		labeldx: '<br>',
 		'search': 'Search: ',
 		autoSort: true,
 		autoSortAvailable: true
@@ -297,6 +297,52 @@ AJS.$(document).ready(function(){
 		});
 	});
 
+	$("#transferControlForm").validate({
+		rules: {
+	    	controlTransferReason: {
+	    		required: false,
+	    	}
+	    },
+		submitHandler: function(form) {
+			console.log(baseUrl);
+			$(form).ajaxSubmit({
+				async: false,
+				url: baseUrl + "/plugins/servlet/controlform",
+				success: function(data) {
+					console.log("SUCCESS");
+					$(form).removeDirtyWarning();
+				},
+				error: function(error) {
+					console.log("ERROR");
+					console.log(error);
+				}
+			});
+		}
+	});
+
+	$(".editTransferredControlForm").each(function(index) {
+		$(this).validate({
+			rules: {
+		    	controlTransferReasonEdit: {
+		    		required: false,
+		    	}
+		    },
+			submitHandler: function(form) {
+				$(form).ajaxSubmit({
+					async: false,
+					success: function(data) {
+						console.log("SUCCESS");
+						$(form).removeDirtyWarning();
+					},
+					error: function(error) {
+						console.log("ERROR");
+						console.log(error);
+					}
+				});
+			}
+		});
+	});
+
 	$("#addNewCauseForm").validate({
 		rules: {
 	    	causeTitle: {
@@ -355,7 +401,7 @@ AJS.$(document).ready(function(){
 	$(".transferredForms").each(function(index) {
 		$(this).validate({
 			rules: {
-	    		causeDescription: { 
+	    		causeDescription: {
 	    			required: false,
 	    		},
 	    	},
@@ -376,7 +422,7 @@ AJS.$(document).ready(function(){
 
 	$("#transferForm").validate({
 		rules: {
-	    	causeDescription: { 
+	    	causeDescription: {
 	    		required: false,
 	    	},
 	    },
