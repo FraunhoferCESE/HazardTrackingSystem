@@ -1,0 +1,36 @@
+<div class="ControlsTableEditEntryField">
+	<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardTitle">Hazard Title </label>
+	<span>$!theTransfer.getTargetHazardTitle()</span>
+</div>
+<div class="ControlsTableEditEntryField">
+	<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardNo">Hazard # </label>
+	<span>$!theTransfer.getTargetHazardNo()</span>
+</div>
+#if($theTransfer.getTargetType() == "CONTROL")
+	<div class="ControlsTableEditEntryField">
+		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardControlDescription">Control Description </label>
+		<span>$!theTransfer.getTargetHazardControlDescription()</span>
+	</div>
+	<div class="ControlsTableEditEntryField ControlsTableEditEntryFieldLast">
+		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardControlNo">Control # </label>
+		<span>$!theTransfer.getTargetHazardControlNo()</span>
+	</div>
+#end
+#if($theTransfer.getTargetType() == "CAUSE")
+	<div class="ControlsTableEditEntryField">
+		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardCauseTitle">Cause Title </label>
+		<span>$!theTransfer.getTargetHazardCauseTitle()</span>
+	</div>
+	<div class="ControlsTableEditEntryField ControlsTableEditEntryFieldLast">
+		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardCauselNo">Cause # </label>
+		<span>$!theTransfer.getTargetHazardCauseNo()</span>
+	</div>
+#end
+<form class="aui editTransferredControlForm" name="editTransferredControlForm" action="controlform" method="post">
+	<div class="ControlsTableEditEntryField">
+		<label class="ControlsTableEditEntryFieldLabelHeadingOne" for="controlTransferReasonEdit">Transfer Reason </label>
+		<textarea class="textarea long-field" name="controlTransferReasonEdit" id="controlTransferReasonEdit">$!theTransfer.getOriginHazardControlTransferReason()</textarea>
+	</div>
+	<input type="hidden" name="originID" id="originID" value="$theTransfer.getOriginID()">
+	<input type="hidden" name="editTransfer" id="editTransfer" value="y">
+</form>

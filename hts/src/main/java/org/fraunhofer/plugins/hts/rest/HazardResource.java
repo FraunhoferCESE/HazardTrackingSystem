@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -127,7 +128,6 @@ public class HazardResource {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
 		}
-
 	}
 
 	@GET
@@ -141,6 +141,22 @@ public class HazardResource {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
 		}
-
+	}
+		
+	@GET
+	@Path("cause/allcontrols/{causeID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllControlsLinkedToCause(@PathParam("causeID") String causeID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
+			List<HazardControlResponseList> controlList = new ArrayList<HazardControlResponseList>();
+			for (Hazard_Controls control : hazardCauseService.getAllNonDeletedControlsWithinACause(cause)) {
+				controlList.add(HazardControlResponseList.control(control));
+			}
+			return Response.ok(controlList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
+		}
 	}
 }

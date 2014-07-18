@@ -42,6 +42,14 @@ public interface Hazard_Controls extends Entity {
 
 	void setDeleteReason(String reason);
 	
+	String getControlNumber();
+
+	void setControlNumber(String causeNumber);
+	
+	int getTransfer();
+	
+	void setTransfer(int transferID);
+	
 	@ManyToMany(value = ControlToCause.class)
 	Hazard_Causes[] getCauses();
 	

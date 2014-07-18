@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 
 public interface HazardCauseService {
@@ -18,6 +19,10 @@ public interface HazardCauseService {
 	List<Hazard_Causes> all();
 
 	List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard);
+	
+	List<Hazard_Controls> getAllControlsWithinACause(Hazard_Causes cause);
+	
+	List<Hazard_Controls> getAllNonDeletedControlsWithinACause(Hazard_Causes cause);
 
 	Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason);
 

@@ -13,6 +13,7 @@ import net.java.ao.Query;
 import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -103,6 +104,22 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	@Override
 	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardCauses());
+	}
+	
+	@Override
+	public List<Hazard_Controls> getAllControlsWithinACause(Hazard_Causes cause) {
+		return newArrayList(cause.getControls());
+	}
+	
+	@Override
+	public List<Hazard_Controls> getAllNonDeletedControlsWithinACause(Hazard_Causes cause) {
+		List<Hazard_Controls> allRemaining = new ArrayList<Hazard_Controls>();
+		for (Hazard_Controls control : getAllControlsWithinACause(cause)) {
+			if (control.getDeleteReason() == null) {
+				allRemaining.add(control);
+			}
+		}
+		return allRemaining;
 	}
 	
 	@Override
