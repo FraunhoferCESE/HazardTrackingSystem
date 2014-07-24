@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.Borders;
@@ -21,9 +23,13 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Review_Phases;
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
@@ -33,10 +39,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 public class HazardReportGenerator {
+
+	private final String defaultFontFamily = "Arial";
+	private final int defaultFontSize = 8;
+	private final ParagraphAlignment defaultParagraphAlignment = ParagraphAlignment.LEFT;
+
 	private static final Logger log = LoggerFactory.getLogger(HazardReportGenerator.class);
 
-	public List<File> createWordDocuments(List<Hazards> hazardList, File outputDirectory, boolean separateFiles)
-			throws IOException {
+	DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+
+	public List<File> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
+			List<Risk_Categories> testRiskCategories, List<Risk_Likelihoods> testRiskLikelihoods, File outputDirectory,
+			boolean separateFiles) throws IOException {
 
 		checkNotNull(outputDirectory, "Output directory for hazard documents is null");
 		if (hazardList == null || hazardList.isEmpty())
@@ -47,11 +61,10 @@ public class HazardReportGenerator {
 		if (separateFiles) {
 			for (Hazards h : hazardList) {
 				XWPFDocument doc = new XWPFDocument();
-				createContentForHazard(doc, h);
+				createContentForHazard(doc, h, reviewPhases, testRiskCategories, testRiskLikelihoods);
 
 				File reportFile = new File(outputDirectory + File.separator + h.getHazardNum() + ".docx");
 				log.info("Writing hazard report to " + reportFile.getAbsolutePath());
-				System.err.println(reportFile.getAbsolutePath());
 
 				FileOutputStream out = new FileOutputStream(reportFile);
 				doc.write(out);
@@ -61,11 +74,246 @@ public class HazardReportGenerator {
 
 		}
 
+		// TODO: Return list of temp files
 		return null;
 	}
 
-	private void createContentForHazard(XWPFDocument doc, Hazards h) {
-		createHeader(doc, h);
+	private void createContentForHazard(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases, List<Risk_Categories> testRiskCategories, List<Risk_Likelihoods> testRiskLikelihoods) {
+		createHeader(doc, h, reviewPhases);
+		createHazardDescription(doc, h, testRiskCategories, testRiskLikelihoods);
+	}
+
+	private void createHazardDescription(XWPFDocument doc, Hazards h, List<Risk_Categories> testRiskCategories, List<Risk_Likelihoods> testRiskLikelihoods) {
+		XWPFTable top = doc.createTable(1, 1);
+
+		XWPFTableCell cell;
+
+		// "Hazard"
+		XWPFTableRow _1stRow = top.getRow(0);
+		cell = _1stRow.getCell(0);
+		cell.setColor("BBBBBB");
+		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
+		setGridSpan(cell, 3);
+		new CellHeaderBuilder().text("Hazard").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50)
+				.createCellHeader(cell);
+
+		// --------------------------------------
+		
+		// HAzard Title
+		XWPFTableRow _2ndRow = doc.createTable(1, 2).getRow(0);
+		cell = _2ndRow.getCell(0);
+		setGridSpan(cell, 2);
+		new CellHeaderBuilder().text("9. Hazard title:").createCellHeader(cell);
+		new ParagraphBuilder().text(h.getTitle()).createCellText(cell);
+		
+		// Hazard category and risk likelihood
+		cell = _2ndRow.getCell(1);
+		new CellHeaderBuilder().text("10. Hazard Category and risk Likelihood:").createCellHeader(cell);
+		for (Risk_Categories category : testRiskCategories) {
+			//TODO: left off here
+		}
+		
+	}
+
+	private void createHeader(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases) {
+		XWPFTable top = doc.createTable(1, 2);
+		setWidth(top, 730350);
+
+		XWPFTableRow _1stRow = top.getRow(0);
+
+		XWPFTableCell cell;
+
+		// "Payload Hazard Report"
+		cell = _1stRow.getCell(0);
+		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
+		setGridSpan(cell, 2);
+		new ParagraphBuilder().text("NASA Expendable Launch Vehicle (ELV)").bold(true).fontSize(14)
+				.createCellText(cell);
+		new ParagraphBuilder().text("Payload Safety Hazard Report").bold(true).fontSize(14).createCellText(cell);
+		new ParagraphBuilder().text("(NPR 8715.7 and NASA-STD 8719.24)").fontSize(8).createCellText(cell);
+
+		// Hazard report number and initiation date.
+		// XXX: Can't do row spans, so these "two" cells are actually one cell
+		// with a paragraph border.
+		cell = _1stRow.getCell(1);
+		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
+		new ParagraphBuilder().text(h.getHazardNum()).bold(true).alignment(ParagraphAlignment.CENTER).bottomBorder()
+				.createCellText(cell);
+
+		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
+		new ParagraphBuilder().text(df.format(h.getInitiationDate())).createCellText(cell);
+
+		// --------------------------------------
+		XWPFTableRow _2ndRow = doc.createTable(1, 2).getRow(0);
+
+		// Payload and Payload Safety Engineer
+		cell = _2ndRow.getCell(0);
+		setWidth(cell, 5000);
+		setGridSpan(cell, 2);
+
+		new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
+		new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
+
+		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
+		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
+
+		// Review Phase
+		cell = _2ndRow.getCell(1);
+		new CellHeaderBuilder().text("4. Review Phase: ").createCellHeader(cell);
+
+		for (Review_Phases phase : reviewPhases) {
+			if (phase.getID() == h.getReviewPhase().getID())
+				new ParagraphBuilder().text("\u2612\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
+			else
+				new ParagraphBuilder().text("\u2610\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
+		}
+
+		// --------------------------------------
+		XWPFTableRow _3rdRow = doc.createTable(1, 3).getRow(0);
+
+		// Subsystems
+		cell = _3rdRow.getCell(0);
+		new CellHeaderBuilder().text("5. System/Subsystem: ").createCellHeader(cell);
+		for (Subsystems s : h.getSubsystems()) {
+			new ParagraphBuilder().text(s.getLabel()).createCellText(cell);
+		}
+
+		// Hazard groups
+		cell = _3rdRow.getCell(1);
+		new CellHeaderBuilder().text("6. Hazard Group(s): ").createCellHeader(cell);
+		for (Hazard_Group g : h.getHazardGroups()) {
+			new ParagraphBuilder().text(g.getLabel()).createCellText(cell);
+		}
+
+		// Date
+		cell = _3rdRow.getCell(2);
+		new CellHeaderBuilder().text("7. Date: ").createCellHeader(cell);
+		new ParagraphBuilder().text(df.format(h.getRevisionDate())).createCellText(cell);
+
+		// --------------------------------------
+		XWPFTableRow _4thRow = doc.createTable(1, 1).getRow(0);
+
+		// Applicable Safety Requirements
+		cell = _4thRow.getCell(0);
+		setGridSpan(cell, 3);
+
+		new CellHeaderBuilder().text("8. Applicable Safety Requirements: ").createCellHeader(cell);
+		new ParagraphBuilder().text("NOT YET AVAILABLE").createCellText(cell);
+
+	}
+
+	private class ParagraphBuilder {
+
+		private ParagraphAlignment alignment = defaultParagraphAlignment;
+		private boolean isBold = false;
+		private String fontFamily = defaultFontFamily;
+		private int fontSize = defaultFontSize;
+		private String text = "";
+		private boolean bottomBorder = false;
+		private int leftMargin = 0;
+
+		public ParagraphBuilder() {
+		}
+
+		public void createCellText(XWPFTableCell cell) {
+			XWPFParagraph paragraph;
+
+			// If no header is set, use the cell's default paragraph.
+			if (cell.getParagraphs().get(0).getRuns().size() == 0)
+				paragraph = cell.getParagraphs().get(0);
+			else
+				paragraph = cell.addParagraph();
+
+			XWPFRun run = paragraph.createRun();
+			run.setBold(isBold);
+			run.setText(text);
+			run.setFontFamily(fontFamily);
+			run.setFontSize(fontSize);
+			paragraph.setAlignment(alignment);
+			paragraph.setSpacingAfter(10);
+			paragraph.setIndentationLeft(leftMargin);
+			if (bottomBorder)
+				paragraph.setBorderBottom(Borders.SINGLE);
+		}
+
+		public ParagraphBuilder text(String text) {
+			this.text = text;
+			return this;
+		}
+
+		public ParagraphBuilder alignment(ParagraphAlignment _alignment) {
+			this.alignment = _alignment;
+			return this;
+		}
+
+		public ParagraphBuilder bold(boolean isBold) {
+			this.isBold = isBold;
+			return this;
+		}
+
+		public ParagraphBuilder fontSize(int fontSize) {
+			this.fontSize = fontSize;
+			return this;
+		}
+
+		public ParagraphBuilder bottomBorder() {
+			this.bottomBorder = true;
+			return this;
+		}
+
+		public ParagraphBuilder leftMargin(int margin) {
+			this.leftMargin = margin;
+			return this;
+		}
+
+	}
+
+	private class CellHeaderBuilder {
+		private String text;
+		private boolean isBold = false;
+		private ParagraphAlignment alignment = ParagraphAlignment.LEFT;
+		private int beforeSpacing = 30;
+
+		public CellHeaderBuilder() {
+		}
+
+		public void createCellHeader(XWPFTableCell cell) {
+			XWPFParagraph p;
+			if (cell.getParagraphs().get(0).getRuns().size() == 0)
+				p = cell.getParagraphs().get(0);
+			else
+				p = cell.addParagraph();
+
+			p.setAlignment(alignment);
+			p.setSpacingBefore(beforeSpacing);
+			p.setIndentationLeft(20);
+			p.setSpacingAfter(100);
+			XWPFRun rHeading = p.createRun();
+			rHeading.setText(text.toUpperCase());
+			rHeading.setFontFamily("Arial");
+			rHeading.setFontSize(6);
+			rHeading.setBold(isBold);
+		}
+
+		public CellHeaderBuilder text(String text) {
+			this.text = text;
+			return this;
+		}
+
+		public CellHeaderBuilder bold() {
+			this.isBold = true;
+			return this;
+		}
+
+		public CellHeaderBuilder alignment(ParagraphAlignment alignment) {
+			this.alignment = alignment;
+			return this;
+		}
+
+		public CellHeaderBuilder beforeSpacing(int beforeSpacing) {
+			this.beforeSpacing = beforeSpacing;
+			return this;
+		}
 	}
 
 	private void setWidth(XWPFTable table, long val) {
@@ -85,88 +333,6 @@ public class HazardReportGenerator {
 		if (cell.getCTTc().getTcPr().getGridSpan() == null)
 			cell.getCTTc().getTcPr().addNewGridSpan();
 		cell.getCTTc().getTcPr().getGridSpan().setVal(BigInteger.valueOf(val));
-	}
-
-	private void createHeader(XWPFDocument doc, Hazards h) {
-		XWPFTable top = doc.createTable(1,2);
-		setWidth(top, 1000000);
-		
-		XWPFTableRow _1stRow = top.getRow(0);
-
-		// "Payload Hazard Report"
-		XWPFParagraph docTitle = _1stRow.getCell(0).getParagraphs().get(0);
-		setGridSpan(_1stRow.getCell(0), 2);
-		XWPFRun rDocTitle = docTitle.createRun();
-		rDocTitle.setBold(true);
-		rDocTitle.setText("Payload Hazard Report");
-		rDocTitle.setFontSize(16);
-		docTitle.setAlignment(ParagraphAlignment.CENTER);
-
-		// Hazard report number
-		XWPFParagraph hrNum = _1stRow.getCell(1).getParagraphs().get(0);
-		XWPFRun rHRNum = hrNum.createRun();
-		rHRNum.setBold(true);
-		rHRNum.setText(h.getHazardNum());
-		rHRNum.setFontSize(14);
-		hrNum.setAlignment(ParagraphAlignment.CENTER);
-
-		// --------------------------------------
-		XWPFTableRow _2ndRow = doc.createTable(1, 3).getRow(0);
-
-		// Payload
-		createCellHeader(_2ndRow.getCell(0), "Payload");
-		setWidth(_2ndRow.getCell(0), 5000);
-		_2ndRow.getCell(0).addParagraph().createRun().setText(h.getMissionPayload().getName());
-
-		// Initiation date
-		createCellHeader(_2ndRow.getCell(1), "Initiation Date");
-		_2ndRow.getCell(1).addParagraph().createRun().setText(h.getInitiationDate().toString());
-
-		// Last revision date
-		createCellHeader(_2ndRow.getCell(2), "Last Revision");
-		_2ndRow.getCell(2).addParagraph().createRun().setText(h.getRevisionDate().toString());
-
-		// --------------------------------------
-		XWPFTableRow _3rdRow = doc.createTable(1, 3).getRow(0);
-
-		createCellHeader(_3rdRow.getCell(0), "Subsystems");
-		XWPFParagraph subsystems = _3rdRow.getCell(0).addParagraph();
-		XWPFRun subsystem;
-		for (Subsystems s : h.getSubsystems()) {
-			subsystem = subsystems.createRun();
-			subsystem.setText(s.getLabel());
-			subsystem.addBreak();
-		}
-
-		// Hazard Group
-		createCellHeader(_3rdRow.getCell(1), "Hazard Groups");
-		XWPFParagraph hazard_groups = _3rdRow.getCell(1).addParagraph();
-		XWPFRun group;
-		for (Hazard_Group g : h.getHazardGroups()) {
-			group = hazard_groups.createRun();
-			group.setText(g.getLabel());
-			group.addBreak();
-		}
-
-		// Review Phase
-		createCellHeader(_3rdRow.getCell(2), "Review Phase");
-		_3rdRow.getCell(2).addParagraph().createRun().setText(h.getReviewPhase().getLabel());
-
-		// --------------------------------------
-		XWPFTableRow _4thRow = doc.createTable(1, 1).getRow(0);
-
-		// Title
-		setGridSpan(_4thRow.getCell(0), 3);
-		createCellHeader(_4thRow.getCell(0), "Title");
-		_4thRow.getCell(0).addParagraph().createRun().setText(h.getTitle());
-
-	}
-
-	private void createCellHeader(XWPFTableCell cell, String text) {
-		XWPFParagraph p = cell.getParagraphs().get(0);
-		XWPFRun rHeading = p.createRun();
-		rHeading.setBold(true);
-		rHeading.setText(text);
 	}
 
 	public void create() throws IOException {

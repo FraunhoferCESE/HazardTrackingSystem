@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.document.HazardReportGenerator;
 import org.junit.Before;
@@ -22,14 +25,77 @@ import com.google.common.collect.Lists;
 public class HazardReportGeneratorTest {
 
 	private Hazards testHazard;
-	private Mission_Payload testPayload;
-	private Review_Phases testReviewPhase;
-	private Subsystems[] testSubsystems;
-	private Hazard_Group[] testGroups;
+	private List<Review_Phases> testReviewPhases;
+	private List<Risk_Categories> testRiskCategories;
+	private List<Risk_Likelihoods> testRiskLikelihoods;
 	private File outputDirectory;
 
 	@Before
 	public void setUp() {
+		testRiskCategories = new ArrayList<Risk_Categories>();
+		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
+		when(mockRiskCategories.getID()).thenReturn(11111);
+		testRiskCategories.add(mockRiskCategories);
+		
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("II - Critical");
+		when(mockRiskCategories.getID()).thenReturn(22222);
+		testRiskCategories.add(mockRiskCategories);
+		
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("III - Marginal");
+		when(mockRiskCategories.getID()).thenReturn(33333);
+		testRiskCategories.add(mockRiskCategories);
+		
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("IV - Negligible");
+		when(mockRiskCategories.getID()).thenReturn(44444);
+		testRiskCategories.add(mockRiskCategories);
+
+		testRiskLikelihoods = new ArrayList<Risk_Likelihoods>();
+		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("A - Frequent");
+		when(mockRiskLikelihoods.getID()).thenReturn(11111);
+		testRiskLikelihoods.add(mockRiskLikelihoods);
+		
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("B - Reasonably probable");
+		when(mockRiskLikelihoods.getID()).thenReturn(22222);
+		testRiskLikelihoods.add(mockRiskLikelihoods);
+
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
+		when(mockRiskLikelihoods.getID()).thenReturn(33333);
+		testRiskLikelihoods.add(mockRiskLikelihoods);
+		
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("D - Remote");
+		when(mockRiskLikelihoods.getID()).thenReturn(44444);
+		testRiskLikelihoods.add(mockRiskLikelihoods);
+		
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("E - Extremely improbable");
+		when(mockRiskLikelihoods.getID()).thenReturn(55555);
+		testRiskLikelihoods.add(mockRiskLikelihoods);
+		testReviewPhases = new ArrayList<Review_Phases>();
+		Review_Phases mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase I");
+		when(mockReviewPhase.getID()).thenReturn(11111);
+		testReviewPhases.add(mockReviewPhase);
+
+		mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase II");
+		when(mockReviewPhase.getID()).thenReturn(22222);
+		testReviewPhases.add(mockReviewPhase);
+
+		mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase III");
+		when(mockReviewPhase.getID()).thenReturn(33333);
+		testReviewPhases.add(mockReviewPhase);
+		
+		
+
 		// outputDirectory = Files.createTempDir();
 		outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
 
@@ -39,20 +105,21 @@ public class HazardReportGeneratorTest {
 		when(testSub2.getLabel()).thenReturn("Structure");
 		Subsystems testSub3 = mock(Subsystems.class);
 		when(testSub3.getLabel()).thenReturn("Propellants");
-		testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
+		Subsystems[] testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
 
 		Hazard_Group testGroup1 = mock(Hazard_Group.class);
 		when(testGroup1.getLabel()).thenReturn("Fire/Explosion");
 		Hazard_Group testGroup2 = mock(Hazard_Group.class);
 		when(testGroup2.getLabel()).thenReturn("Pressure");
 
-		testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
+		Hazard_Group[] testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
 
-		testPayload = mock(Mission_Payload.class);
+		Mission_Payload testPayload = mock(Mission_Payload.class);
 		when(testPayload.getName()).thenReturn("MERV");
 
-		testReviewPhase = mock(Review_Phases.class);
-		when(testReviewPhase.getLabel()).thenReturn("Phase 0");
+		Review_Phases testReviewPhase = mock(Review_Phases.class);
+		when(testReviewPhase.getLabel()).thenReturn("Phase I");
+		when(testReviewPhase.getID()).thenReturn(11111);
 
 		testHazard = mock(Hazards.class);
 		when(testHazard.getHazardNum()).thenReturn("PROP-08-MPS");
@@ -77,7 +144,7 @@ public class HazardReportGeneratorTest {
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
 
 		HazardReportGenerator test = new HazardReportGenerator();
-		test.createWordDocuments(hazardList, outputDirectory, true);
+		test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories, testRiskLikelihoods, outputDirectory, true);
 
 	}
 
