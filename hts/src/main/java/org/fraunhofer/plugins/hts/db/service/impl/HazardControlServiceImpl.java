@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.datatype.HazardControlTransfers;
@@ -37,7 +36,8 @@ public class HazardControlServiceImpl implements HazardControlService {
 
 	@Override
 	public Hazard_Controls add(Hazards hazard, String description, ControlGroups controlGroup, Hazard_Causes[] causes) {
-		final Hazard_Controls control = ao.create(Hazard_Controls.class, new DBParam("DESCRIPTION", description));
+		final Hazard_Controls control = ao.create(Hazard_Controls.class);
+		control.setDescription(description);
 		control.setControlGroup(controlGroup);
 		if (causes != null) {
 			for (Hazard_Causes hc : causes) {
@@ -46,7 +46,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 		}
 		control.setOriginalDate(new Date());
 		control.setLastUpdated(null);
-		control.setControlNumber("Control " + getNewControlNumber(hazard));
+		control.setControlNumber(getNewControlNumber(hazard));
 		control.save();
 		associateControlToHazard(hazard, control);
 		return control;
@@ -129,7 +129,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 				String targetHazardNo = targetHazard.getHazardNum();
 				String targetHazardTitle = targetHazard.getTitle();
 				
-				String targetHazardControlNo = targetControl.getControlNumber();
+				int targetHazardControlNo = targetControl.getControlNumber();
 				String targetHazardControlDescription = targetControl.getDescription();
 				
 				HazardControlTransfers controlTransfer = new HazardControlTransfers();
@@ -153,7 +153,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 				String targetHazardNo = targetHazard.getHazardNum();
 				String targetHazardTitle = targetHazard.getTitle();
 				
-				String targetHazardCauseNo = targetCause.getCauseNumber();
+				int targetHazardCauseNo = targetCause.getCauseNumber();
 				String targetHazardCauseTitle = targetCause.getTitle();
 				
 				HazardControlTransfers causeTransfer = new HazardControlTransfers();

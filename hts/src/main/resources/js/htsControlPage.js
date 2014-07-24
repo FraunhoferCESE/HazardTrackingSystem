@@ -8,6 +8,54 @@ function manipulateDates(dates) {
 	}
 }
 
+function manipulateControlText(controlDescriptions) {
+	if (controlDescriptions.length > 0) {
+		controlDescriptions.each(function () {
+			var shortend;
+			if (AJS.$(this)[0].children.length === 0) {
+				if (AJS.$(this)[0].innerText.length >= 128) {
+					shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
+					AJS.$(this)[0].innerText = shortend;
+				}
+			}
+			else {
+				var shortendArr = (AJS.$(this)[0].innerText).split(" - ");
+				if (shortendArr.length === 2) {
+					if (shortendArr[1].length >= 128) {
+						shortend = shortendArr[1].substring(0, 125) + "...";
+						AJS.$(this)[0].children[0].innerText = shortendArr[0] + " - " + shortend;
+					}
+				}
+				else {
+					if (AJS.$(this)[0].innerText.length >= 128) {
+						shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
+						AJS.$(this)[0].children[0].innerText = shortend;
+					}
+				}
+			}
+		});
+	}
+}
+
+function manipulateTextForOptionInControls(theText) {
+	if (theText.length >= 85){
+		return theText.substring(0,82) + "...";
+	}
+	else {
+		return theText;
+	}
+}
+
+function manipulateTextForHazardSelectionInControls(theHazardList) {
+	if (theHazardList[0].children.length > 1) {
+		(theHazardList.children()).each(function (index) {
+			if ((AJS.$(this)[0].innerText).length >= 85) {
+				AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
+			}
+		});
+	}
+}
+
 function getSelectedControls(createdControls) {
 	if (createdControls.length > 0) {
 		var selectedControls = [];
@@ -142,10 +190,6 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 	});
 }
 
-function isElementIsVisible(element) {
-	return element.is(":visible");
-}
-
 function checkIfExpandButtonNeedsRenaming(expanding) {
 	var numberOfNotHidden = 0;
 	var numberOfCreatedControls = AJS.$('.ControlsTableCellToggle').length;
@@ -214,13 +258,72 @@ function getCurrentControlAndCausesAssociation() {
 	return causesAssociatedWithControl;
 }
 
+function createControlsCookie() {
+	if (AJS.Cookie.read("CONTROLS_COOKIE_CREATED") === undefined) {
+		AJS.Cookie.save("CONTROLS_COOKIE_CREATED", true);
+		AJS.Cookie.save("OPEN_CONTROLS", "none");
+	}
+}
+
+function updateControlsCookie(operation, entryID) {
+	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
+	if (operation === "add") {
+		if (openControls === "none") {
+			openControls = entryID;
+		}
+		else {
+			openControls = openControls + "," + entryID;
+		}
+		AJS.Cookie.save("OPEN_CONTROLS", openControls);
+	}
+	else {
+		if (openControls !== "none") {
+			openControlsArray = openControls.split(',');
+			var indexOfEntry = openControlsArray.indexOf(entryID);
+			if (indexOfEntry > -1) {
+				openControlsArray.splice(indexOfEntry, 1);
+				if (openControlsArray.length === 0) {
+					AJS.Cookie.save("OPEN_CONTROLS", "none");
+				}
+				else {
+					AJS.Cookie.save("OPEN_CONTROLS", openControlsArray.toString());
+				}
+			}
+		}
+	}
+	console.log(AJS.Cookie.read("OPEN_CONTROLS"));
+}
+
+function openControlsInCookie() {
+	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
+	if (openControls !== "none") {
+		console.log("expanding some shit");
+		openControlsArray = openControls.split(',');
+		for (var i = 0; i < openControlsArray.length; i++) {
+			var entryEdit = AJS.$("#ControlsTableEditEntry" + openControlsArray[i]);
+			if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
+				entryEdit.removeClass("ControlsTableEditEntryHidden");
+				var entry = AJS.$("#ControlsTableEntry" + openControlsArray[i]);
+				entry.removeClass("aui-icon aui-icon-small aui-iconfont-add");
+				entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+			}
+		}
+	}
+}
+
 AJS.$(document).ready(function(){
+	createControlsCookie();
+	openControlsInCookie();
+
 	var expanding = true;
+	expanding = checkIfExpandButtonNeedsRenaming(expanding);
 	var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
 
 	/* Text manipulation code begins */
 	var dates = AJS.$(".ControlDate");
 	manipulateDates(dates);
+	var controlDescriptions = AJS.$(".ControlsTableDescriptionText");
+	manipulateControlText(controlDescriptions);
 	/* Text manipulation code ends */
 
 	/* Expand functionality code begins */
@@ -233,11 +336,13 @@ AJS.$(document).ready(function(){
 			entryEdit.removeClass("ControlsTableEditEntryHidden");
 			entry.removeClass("aui-icon aui-icon-small aui-iconfont-add");
 			entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+			updateControlsCookie("add", entryID);
 		}
 		else {
 			entryEdit.addClass("ControlsTableEditEntryHidden");
 			entry.removeClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 			entry.addClass("aui-icon aui-icon-small aui-iconfont-add");
+			updateControlsCookie("delete", entryID);
 		}
 		expanding = checkIfExpandButtonNeedsRenaming(expanding);
 	});
@@ -255,6 +360,7 @@ AJS.$(document).ready(function(){
 					entryEdit.removeClass("ControlsTableEditEntryHidden");
 					entry.removeClass("aui-icon aui-icon-small aui-iconfont-add");
 					entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+					updateControlsCookie("add", entryID);
 				}
 			});
 			expanding = false;
@@ -270,6 +376,7 @@ AJS.$(document).ready(function(){
 					entryEdit.addClass("ControlsTableEditEntryHidden");
 					entry.removeClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
 					entry.addClass("aui-icon aui-icon-small aui-iconfont-add");
+					updateControlsCookie("delete", entryID);
 				}
 			});
 			expanding = true;
@@ -291,6 +398,8 @@ AJS.$(document).ready(function(){
 
 	AJS.$("#addTransferControl").live("click", function() {
 		if (AJS.$(this).hasClass("aui-iconfont-add")) {
+			var controlsHazardList = AJS.$("#controlHazardList");
+			manipulateTextForHazardSelectionInControls(controlsHazardList);
 			AJS.$(this).removeClass("aui-iconfont-add");
 			AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
 			AJS.$(".ControlsTransferContainer").show();
@@ -349,7 +458,7 @@ AJS.$(document).ready(function(){
 			}
 		});
 
-		validationError = isElementIsVisible(AJS.$(".validationError"));
+		validationError = AJS.$(".validationError").is(":visible");
 		if (validationError) {
 			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
 			return;
@@ -361,7 +470,7 @@ AJS.$(document).ready(function(){
 			doNew = true;
 		}
 
-		validationError = isElementIsVisible(AJS.$(".validationError"));
+		validationError = AJS.$(".validationError").is(":visible");
 		if (validationError) {
 			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
 			return;
@@ -382,6 +491,7 @@ AJS.$(document).ready(function(){
 			deleteSelectedControls(selectedControls, hazardInformation, doRefresh);
 			return;
 		}
+
 		if (doUpdate || doNew || doTransfer) {
 			location.reload();
 			return;
@@ -423,13 +533,18 @@ AJS.$(document).ready(function(){
 			if(causeListForSelectedHazard.length > 0) {
 				temp += "<option value=''>-Select Cause-</option>";
 				AJS.$(causeListForSelectedHazard).each(function() {
-					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>";
+					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					temp += "<option value=" + this.causeID + ">" + manipulateTextForOptionInControls(causeNumberAndTitle) + "</option>";
 				});
 				AJS.$("div.TransferControlCauseContainer").append(temp);
 			}
 			else {
 				AJS.$("div.TransferControlCauseContainer").append("<p>This hazard report has no causes</p>");
 			}
+		}
+		else {
+			AJS.$(".TransferControlCauseContainer").hide();
+			AJS.$(".TransferControlControlContainer").hide();
 		}
 	}).trigger('change');
 
@@ -451,7 +566,8 @@ AJS.$(document).ready(function(){
 			if(controlListForSelectedCause.length > 0) {
 				temp += "<option value=''>-Link to all controls in selected cause-</option>";
 				AJS.$(controlListForSelectedCause).each(function() {
-					temp += "<option value=" + this.controlID + ">" + this.controlNumber + " - " + this.description + "</option>";
+					var controlNumberAndDescription = this.controlNumber + " - " + this.description;
+					temp += "<option value=" + this.controlID + ">" + manipulateTextForOptionInControls(controlNumberAndDescription) + "</option>";
 				});
 				AJS.$("div.TransferControlControlContainer").append(temp);
 			}
@@ -459,11 +575,21 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlControlContainer").append("<p>This cause has no controls</p>");
 			}
 		}
+		else {
+			AJS.$(".TransferControlControlContainer").hide();
+		}
 	}).trigger('change');
 	/* Transfer control functionality ends */
 
-	/* Cookie code begins here */
-	var whichForm = AJS.$.url().data.seg.path[3];
+	/* Expand / scroll functionality begins */
+	var whichForm;
+	if (AJS.$.url().data.seg.path.length === 4) {
+		whichForm = AJS.$.url().data.seg.path[3];
+	}
+	else {
+		whichForm = AJS.$.url().data.seg.path[2];
+	}
+
 	if (whichForm === "controlform") {
 		var IDOfControlToBeOpen = AJS.$.url().param("id");
 		if(IDOfControlToBeOpen) {
@@ -475,7 +601,12 @@ AJS.$(document).ready(function(){
 				buttonForTheControl.classList.add("aui-iconfont-devtools-task-disabled");
 			}
 		}
+		if (AJS.$.url().param("trans") === "y") {
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$(".ControlsTableEntryControlID" + IDOfControlToBeOpen).offset().top
+			}, 50);
+		}
 	}
-	/* Cookie code ends here */
+	/* Expand / scroll functionality ends */
 
 });

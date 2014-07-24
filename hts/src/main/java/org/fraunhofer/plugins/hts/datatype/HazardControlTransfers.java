@@ -12,10 +12,10 @@ public class HazardControlTransfers {
 	private String targetHazardNo;
 	private String targetHazardTitle;
 	// For single control transfer only:
-	private String targetHazardControlNo;
+	private int targetHazardControlNo;
 	private String targetHazardControlDescription;
 	// For entire cause transfer only;
-	private String targetHazardCauseNo;
+	private int targetHazardCauseNo;
 	private String targetHazardCauseTitle;
 	
 	public int getTransferID() {
@@ -82,11 +82,11 @@ public class HazardControlTransfers {
 		this.targetHazardTitle = theTargetHazardTitle;
 	}
 	
-	public String getTargetHazardControlNo() {
+	public int getTargetHazardControlNo() {
 		return this.targetHazardControlNo;
 	}
 	
-	public void setTargetHazardControlNo(String theTargetHazardControlNo) {
+	public void setTargetHazardControlNo(int theTargetHazardControlNo) {
 		this.targetHazardControlNo = theTargetHazardControlNo;
 	}
 	
@@ -98,11 +98,11 @@ public class HazardControlTransfers {
 		this.targetHazardControlDescription = theTargetHazardControlDescription;
 	}
 	
-	public String getTargetHazardCauseNo() {
+	public int getTargetHazardCauseNo() {
 		return this.targetHazardCauseNo;
 	}
 	
-	public void setTargetHazardCauseNo(String theTargetHazardCauseNo) {
+	public void setTargetHazardCauseNo(int theTargetHazardCauseNo) {
 		this.targetHazardCauseNo = theTargetHazardCauseNo;
 	}
 	

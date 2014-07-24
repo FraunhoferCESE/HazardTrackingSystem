@@ -16,6 +16,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -80,10 +81,14 @@ public class CauseServlet extends HttpServlet {
 			final String causeID = req.getParameter("causeList");
 			if (causeID.isEmpty() || causeID == null) {
 				Hazards targetHazard = hazardService.getHazardByID(hazardID);
-				hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
+				if (!checkIfInternalHazardTransfer(currentHazard, targetHazard)) {
+					hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
+				}
 			} else {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-				hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
+				if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
+					hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
+				}
 			}
 		} else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);
@@ -111,6 +116,25 @@ public class CauseServlet extends HttpServlet {
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
+	}
+	
+	private Boolean checkIfInternalHazardTransfer(Hazards originHazard, Hazards targetHazard) {
+		if (originHazard.getID() == targetHazard.getID()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private Boolean checkIfInternalCauseTransfer(Hazards targetHazard, Hazard_Causes targetCause) {
+		List<Hazard_Causes> allCausesBelongingToHazard = hazardCauseService.getAllCausesWithinAHazard(targetHazard);
+		for (Hazard_Causes cause : allCausesBelongingToHazard) {
+			if (cause.getID() == targetCause.getID()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -1,7 +1,14 @@
 <div class="causeBody">
-	<h2>$!hazardNumber - $!hazardTitle</h2>
+	<div class="CausesHeaderHazardInfo">
+		<span class="CausesHeadingOne">Hazard Title:
+			 <span class="CausesHeadingOneContent" id="HazardTitleForCause">$!hazardTitle</span>
+		</span>
+		<span class="CausesHeadingOne">Hazard #:
+			 <span class="CausesHeadingOneContent" id="HazardNumberForCause">$!hazardNumber</span>
+		</span>
+	</div>
+	<span class="CausesHeadingOne">Causes:</span>
 	#if($causes.size() > 0)
-		<button class="aui-button" id="expandAll">Expand all</button>
 		<div id="CauseTableHolder" class="table">
 			<div class="header">
 		    	<div class="cell"></div>
@@ -11,14 +18,14 @@
 		    	<div class="cell">Delete?</div>
 		  	</div>
 		  	#foreach( $cause in $causes )
-			  	<div class="rowGroup">
+			  	<div class="rowGroup" id="CausesTableEntry$cause.getID()">
 				    #if($cause.getTransfer() != 0)
 				    	#parse("/templates/transferred.vm")
 				    #else
 					   	<div class="row">
-				    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
-				    		<div class="cell causeTitle">$!cause.getTitle()</div>
-				    		<div class="cell">$!cause.getOwner()</div>
+				    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause $!cause.getCauseNumber()</div>
+				    		<div class="cell causeTitle"><div class="CausesTableTitleText">$!cause.getTitle()</div></div>
+				    		<div class="cell"><div class="CausesTableOwnerText">$!cause.getOwner()</div></div>
 				    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
 				    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
 				    	</div>
@@ -33,24 +40,26 @@
 			  	</div>
 			#end
 		</div>
-		<div>
-			<button class="aui-button causeSaveAllChanges" type="submit" style="margin-left:0px">Save All Changes</button>
-			<button class="aui-button" type="submit" style="margin-left:0px">Renumber and Save</button>
+		<div class="CausesButtonPanel">
+			<button class="aui-button causeSaveAllChanges" type="button">Save All Changes</button>
+			<button class="aui-button" disabled>Renumber and Save</button>
+			<button class="aui-button" id="expandAll">Expand all</button>
 		</div>
 	#else
-		<h3>No Causes have been created.</h3>
+		<p>No causes have been created for this hazard report.</p>
 	#end
-	<div class="newCauseFormHolder">
-		<h3 class="newCauseFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add New Cause</h3>
-		<div class="newFormContainer">
-			#parse("/templates/NewCauseForm.vm")
-		</div>
+	<div class="CausesHeadingTwo">
+		<span class="aui-icon aui-icon-small aui-iconfont-add" id="newCauseFormTrigger"></span>
+		<span>Add New Cause</span>
 	</div>
-	<div class="transferFormHolder">
-		<h3 class="transferFormTrigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Add Cause Transfer</h3>
-		<div class="transferFormContainer">
-			#parse("/templates/transferForm.vm")
-		</div>
+	<div class="newFormContainer">
+		#parse("/templates/NewCauseForm.vm")
 	</div>
-
+	<div class="CausesHeadingTwo">
+		<span class="aui-icon aui-icon-small aui-iconfont-add" id="transferFormTrigger"></span>
+		<span>Add Cause Transfer</span>
+	</div>
+	<div class="transferFormContainer">
+		#parse("/templates/transferForm.vm")
+	</div>
 </div>

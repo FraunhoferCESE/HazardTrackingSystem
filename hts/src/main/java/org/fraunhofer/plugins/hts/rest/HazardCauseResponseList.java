@@ -12,7 +12,7 @@ import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 public class HazardCauseResponseList {
 	private int causeID;
 	private String title;
-	private String causeNumber;
+	private int causeNumber;
 	private String description;
 	private String owner;
 	private String effects;
@@ -30,7 +30,7 @@ public class HazardCauseResponseList {
 		return title;
 	}
 
-	public String getCauseNumber() {
+	public int getCauseNumber() {
 		return causeNumber;
 	}
 

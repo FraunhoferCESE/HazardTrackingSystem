@@ -21,6 +21,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class ControlsServlet extends HttpServlet {
@@ -99,17 +100,22 @@ public class ControlsServlet extends HttpServlet {
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     	}
     	else if ("y".equals(req.getParameter("transfer"))) {
-    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+    		final String hazardID = req.getParameter("hazardID");
+    		final Hazards currentHazard = hazardService.getHazardByID(hazardID);
     		final String transferComment = req.getParameter("controlTransferReason");
-    		final String causeID = req.getParameter("controlCauseList");
+    		final String causeID = req.getParameter("controlCauseList");   		
     		final String controlID = req.getParameter("controlControlList");
     		if (controlID == null || controlID.isEmpty()) {
     			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-    			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
+    			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
+        			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
+    			}
     		}
     		else {
     			Hazard_Controls targetControl = hazardControlService.getHazardControlByID(controlID);
-    			hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
+    			if (!checkIfInternalControlTransfer(currentHazard, targetControl)) {
+    				hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
+    			}
     		}
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
     	}
@@ -155,6 +161,26 @@ public class ControlsServlet extends HttpServlet {
 			}
 			return intArray;
 		}
+	}
+	
+	private Boolean checkIfInternalCauseTransfer(Hazards hazard, Hazard_Causes targetCause) {
+		List<Hazard_Causes> allCausesBelongingToHazard = hazardCauseService.getAllCausesWithinAHazard(hazard);
+		for (Hazard_Causes cause : allCausesBelongingToHazard) {
+			if (cause.getID() == targetCause.getID()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Boolean checkIfInternalControlTransfer(Hazards hazard, Hazard_Controls targetControl) {
+		List<Hazard_Controls> allControlsBelongingToHazard = hazardControlService.getAllControlsWithinAHazard(hazard);
+		for (Hazard_Controls control : allControlsBelongingToHazard) {
+			if (control.getID() == targetControl.getID()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

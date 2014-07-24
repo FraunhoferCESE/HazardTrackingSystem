@@ -72,13 +72,10 @@ function dateLayout() {
 			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
 		});
 	}
-
 }
 
 function getTheHazardNumber() {
-	var hazardNumberAndTitle = AJS.$(".causeBody>h2").text();
-	var index = hazardNumberAndTitle.indexOf("-");
-	return hazardNumberAndTitle.substring(0, (index-1));
+	return AJS.$("#HazardNumberForCause").text();
 }
 
 function deleteConfirmation(element, causeID){
@@ -152,7 +149,6 @@ function submitCauses() {
 
 		var hazardID = AJS.$("#hazardList").val();
 		if(hazardID.length) {
-			console.log("SELECTED HAZARD " + hazardID);
 			AJS.$("#transferForm").trigger("submit");
 		}
 
@@ -171,7 +167,6 @@ function checkIfRefresh() {
 	}
 	else {
 		AJS.$(".validationError").each(function (counter){
-			console.log("loop called " + counter);
 			console.log(AJS.$(this).parent().parent().find("#causeNumber").val())
 		});
 
@@ -180,8 +175,8 @@ function checkIfRefresh() {
 }
 
 function foldable(element, containerClass) {
-	var spanElement = AJS.$(element).children();
-	var formCont = AJS.$(element).parent().find("." + containerClass);
+	var spanElement = AJS.$(element);
+	var formCont = AJS.$("." + containerClass);
 	if(!(checkIfElementIsVisible(formCont))) {
 		addExpandedClass(spanElement);
 		formCont.show()
@@ -198,10 +193,21 @@ function foldable(element, containerClass) {
 	*                                                         *
 	***********************************************************/
 
+function manipulateTextForOptionInCauses(theText) {
+	if (theText.length >= 85){
+		return theText.substring(0,82) + "...";
+	}
+	else {
+		return theText;
+	}
+}
+
 function transfer() {
 	AJS.$("#transferForm").live("reset", function() {
+		AJS.$(".container").hide();
 		AJS.$("div.container").children().remove();
 	});
+
 	AJS.$("#hazardList").live("change reset", function() {
 		var elements = AJS.$("div.container").children().remove();
 		var value = AJS.$(this).val();
@@ -215,11 +221,13 @@ function transfer() {
 					causeList = data;
 				}
 			});
-			var temp = "<label class='popupLabels' for='hazardList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>"
+			AJS.$(".container").show();
+			var temp = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if(causeList.length > 0) {
-				temp += "<option value=''>-Link to all causes in selected Hazard report-</option>"
+				temp += "<option value=''>-Link to all causes in selected Hazard report-</option>";
 				AJS.$(causeList).each(function() {
-					temp += "<option value=" + this.causeID + ">" + this.causeNumber + " - " + this.title + "</option>"
+					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					temp += "<option value=" + this.causeID + ">" + manipulateTextForOptionInCauses(causeNumberAndTitle) + "</option>";
 				});
 				AJS.$("div.container").append(temp);
 			}
@@ -227,11 +235,56 @@ function transfer() {
 				AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
 			}
 		}
+		else {
+			AJS.$(".container").hide();
+		}
 
 	}).trigger('change');
 }
 
+function manipulateCausesTitles(causesTitles) {
+	if (causesTitles.length > 0) {
+		causesTitles.each(function () {
+			var shortend;
+			if (AJS.$(this)[0].children.length === 0) {
+				if (AJS.$(this)[0].innerText.length >= 128) {
+					shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
+					AJS.$(this)[0].innerText = shortend;
+				}
+			}
+			else {
+				var shortendArr = (AJS.$(this)[0].innerText).split(" - ");
+				if (shortendArr.length === 2) {
+					if (shortendArr[1].length >= 128) {
+						shortend = shortendArr[1].substring(0, 125) + "...";
+						AJS.$(this)[0].children[0].innerText = shortendArr[0] + " - " + shortend;
+					}
+				}
+				else {
+					if (AJS.$(this)[0].innerText.length >= 128) {
+						shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
+						AJS.$(this)[0].children[0].innerText = shortend;
+					}
+				}
+			}
+		});
+	}
+}
+
+function manipulateTextForHazardSelectionInCauses(theHazardList) {
+	if (theHazardList[0].children.length > 1) {
+		(theHazardList.children()).each(function (index) {
+			if ((AJS.$(this)[0].innerText).length >= 85) {
+				AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
+			}
+		});
+	}
+}
+
 AJS.$(document).ready(function(){
+	var causesTitles = AJS.$(".CausesTableTitleText");
+	manipulateCausesTitles(causesTitles);
+	getTheHazardNumber();
 	dateLayout();
 	openDivOnReload();
 	submitCauses();
@@ -272,21 +325,35 @@ AJS.$(document).ready(function(){
 		changeButtonText();
 	});
 
-	AJS.$(".newCauseFormTrigger").live("click", function() {
+	AJS.$("#newCauseFormTrigger").live("click", function() {
 		foldable(this, "newFormContainer");
 	});
 
-	AJS.$(".transferFormTrigger").live("click", function() {
+	AJS.$("#transferFormTrigger").live("click", function() {
+		var causesHazardList = AJS.$("#hazardList");
+		manipulateTextForHazardSelectionInCauses(causesHazardList);
 		foldable(this, "transferFormContainer");
 	});
 
-	var whichForm = AJS.$.url().data.seg.path[3];
+	var whichForm;
+	if (AJS.$.url().data.seg.path.length === 4) {
+		whichForm = AJS.$.url().data.seg.path[3];
+	}
+	else {
+		whichForm = AJS.$.url().data.seg.path[2];
+	}
+
 	if (whichForm === "causeform") {
 		var idOfCauseOpen = AJS.$.url().param("id");
 		if(idOfCauseOpen) {
 			closeAllDivs();
 			createCookie(idOfCauseOpen, "expanded");
 			openDivOnReload();
+		}
+		if (AJS.$.url().param("trans") === "y") {
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$("#CausesTableEntry" + idOfCauseOpen).offset().top
+			}, 50);
 		}
 	}
 

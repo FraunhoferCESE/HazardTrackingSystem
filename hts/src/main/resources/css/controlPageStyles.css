@@ -12,7 +12,7 @@
 
 .ControlsHeadingTwo {
     border-top: 1px black solid;
-    width: 900px;
+    width: 950px;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -21,27 +21,32 @@
     margin-top: 5px;
 }
 
+.ControlsTableAllCells {
+    padding: 0;
+    vertical-align: top;
+}
+
 .ControlsTableHeader {
     text-align: left;
 }
 
 .ControlsTableCellOne {
-    width: 20px;
+    width: 25px;
 }
 
 .ControlsTableCellTwo {
-    width: 70px;
+    width: 85px;
 }
 
 .ControlsTableCellThree {
-    width: 400px;
+    /*400*/
+    width: 475px;
 }
 
 .ControlsTableDescriptionText {
-    max-width: 370px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    /*370*/
+    max-width: 445px;
+    word-wrap: break-word;
 }
 
 .ControlsTableCellFour {
