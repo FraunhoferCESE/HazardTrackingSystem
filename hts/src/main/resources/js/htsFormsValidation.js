@@ -304,7 +304,6 @@ AJS.$(document).ready(function(){
 	    	}
 	    },
 		submitHandler: function(form) {
-			console.log(baseUrl);
 			$(form).ajaxSubmit({
 				async: false,
 				url: baseUrl + "/plugins/servlet/controlform",
@@ -427,7 +426,6 @@ AJS.$(document).ready(function(){
 	    	},
 	    },
 		submitHandler: function(form) {
-			console.log(baseUrl);
 			$(form).ajaxSubmit({
 				async: false,
 				url: baseUrl + "/plugins/servlet/causeform",

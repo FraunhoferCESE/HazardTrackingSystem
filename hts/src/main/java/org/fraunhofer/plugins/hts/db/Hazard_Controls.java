@@ -5,7 +5,6 @@ import java.util.Date;
 
 import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
-import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -19,7 +18,6 @@ import net.java.ao.schema.Table;
 @Table("Hazard_Controls")
 public interface Hazard_Controls extends Entity {
 	
-	@NotNull
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDescription();
 
@@ -42,9 +40,9 @@ public interface Hazard_Controls extends Entity {
 
 	void setDeleteReason(String reason);
 	
-	String getControlNumber();
+	int getControlNumber();
 
-	void setControlNumber(String causeNumber);
+	void setControlNumber(int controlNumber);
 	
 	int getTransfer();
 	

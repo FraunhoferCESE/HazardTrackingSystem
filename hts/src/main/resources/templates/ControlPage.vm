@@ -11,7 +11,7 @@
 	#if( $hazardControls.size() == 0 )
 		<p>No controls have been created for this hazard report.</p>
 	#else
-		<table class="ControlsTable">
+		<table cellspacing="0">
 			<thead>
 				<tr>
 					<th class="ControlsTableHeader ControlsTableCellOne"></th>
@@ -26,19 +26,19 @@
 				#foreach( $hazardControl in $hazardControls )
 					#set($theTransfer = 0)
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
-						<td class="ControlsTableCellToggle aui-icon aui-icon-small aui-iconfont-add" id="ControlsTableEntry$!velocityCount">
+						<td class="ControlsTableCellToggle aui-icon aui-icon-small aui-iconfont-add" id="ControlsTableEntry$hazardControl.getID()">
 						</td>
-						<td>$hazardControl.getControlNumber()</td>
-						<td>
+						<td class="ControlsTableAllCells">Control $hazardControl.getControlNumber()</td>
+						<td class="ControlsTableAllCells">
 							#if($hazardControl.getTransfer() != 0)
 								#foreach($transfer in $controlTransfers)
 									#if($transfer.getTransferID() == $hazardControl.getTransfer())
 										#set($theTransfer = $transfer)
 										#if($theTransfer.getTargetType() == "CONTROL")
-											<div><a href="$baseUrl/plugins/servlet/controlform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getTargetHazardControlDescription()</a></div>
+											<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/controlform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CTRL $!theTransfer.getTargetHazardControlNo() - $!transfer.getTargetHazardControlDescription()</a></div>
 										#end
 										#if($theTransfer.getTargetType() == "CAUSE")
-											<div><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getTargetHazardCauseTitle()</a></div>
+											<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CAUSE $!theTransfer.getTargetHazardCauseNo() - $!theTransfer.getTargetHazardCauseTitle()</a></div>
 										#end
 										#break
 									#end
@@ -48,21 +48,21 @@
 							#end
 						</td>
 						#if($hazardControl.getControlGroup().getLabel() == "null" || $hazardControl.getTransfer() != 0)
-							<td>N/A</td>
+							<td class="ControlsTableAllCells">N/A</td>
 						#else
-							<td>$hazardControl.getControlGroup().getLabel()</td>
+							<td class="ControlsTableAllCells">$hazardControl.getControlGroup().getLabel()</td>
 						#end
 						#if( !$hazardControl.getLastUpdated() )
-							<td class="ControlDate">$hazardControl.getOriginalDate()</td>
+							<td class="ControlDate ControlsTableAllCells">$hazardControl.getOriginalDate()</td>
 						#else
-							<td class="ControlDate">$hazardControl.getLastUpdated()</td>
+							<td class="ControlDate ControlsTableAllCells">$hazardControl.getLastUpdated()</td>
 						#end
-						<td>
+						<td class="ControlsTableAllCells">
 							<input type="checkbox" class="ControlsTableListOfCreatedControls" value="$hazardControl.getID()">
 						</td>
 					</tr>
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">
-						<td colspan="100%" class="ControlsTableEditEntryHidden" id="ControlsTableEditEntry$!velocityCount">
+						<td colspan="100%" class="ControlsTableEditEntryHidden" id="ControlsTableEditEntry$hazardControl.getID()">
 							#if( $hazardControl.getTransfer() != 0 )
 								<div class="ControlsTableEditTransferEntryContainer">
 									#parse("/templates/EditTransferredControl.vm")
@@ -80,7 +80,7 @@
 		</div>
 		<div class="ControlsButtonPanel">
 			<button class="aui-button SaveAllChanges">Save All Changes</button>
-			<button class="aui-button" id="RenumberAndSave" >Renumber and Save</button>
+			<button class="aui-button" id="RenumberAndSave" disabled>Renumber and Save</button>
 			<button class="aui-button" id="ExpandAllControls">Expand all</button>
 		</div>
 	#end

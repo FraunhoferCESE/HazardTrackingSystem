@@ -36,7 +36,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	@Override
 	public Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
-		cause.setCauseNumber("Cause " + getNewCauseNumber(hazard));
+		cause.setCauseNumber(getNewCauseNumber(hazard));
 		cause.setDescription(description);
 		cause.setEffects(effects);
 		cause.setOwner(owner);
@@ -147,11 +147,12 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				//get the hazard name and number
 				//get reason
 				String causeTitle = transferredCause.getTitle();
+				int causeNum = transferredCause.getCauseNumber();
 				String hazardTitle = transferredCause.getHazards()[0].getTitle();
 				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
 				//This is the id of the hazard the cause belongs to, which is needed for the title navigation.
 				int hazardID = transferredCause.getHazards()[0].getID();
-				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle, targetType, hazardID, targetID);
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle, targetType, hazardID, targetID, causeNum);
 				transferInfo.add(causeTransfer);
 			}
 			else if(transfer.getTargetType().equals("HAZARD")) {

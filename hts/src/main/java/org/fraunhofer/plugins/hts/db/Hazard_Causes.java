@@ -17,9 +17,9 @@ import net.java.ao.schema.NotNull;
  */
 @Table("Hazard_Causes")
 public interface Hazard_Causes extends Entity {
-	String getCauseNumber();
+	int getCauseNumber();
 
-	void setCauseNumber(String causeNumber);
+	void setCauseNumber(int causeNumber);
 
 	@NotNull
 	@StringLength(value = 512)

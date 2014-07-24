@@ -10,14 +10,14 @@ import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HazardControlResponseList {
 	private int controlID;
-	private String controlNumber;
+	private int controlNumber;
 	private String description;
 	
 	public int getControlID() {
 		return controlID;
 	}
 	
-	public String getControlNumber() {
+	public int getControlNumber() {
 		return controlNumber;
 	}
 	

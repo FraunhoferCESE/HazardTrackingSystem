@@ -9,8 +9,9 @@ public class TransferClass {
 	private String targetType;
 	private int targetID;
 	private int hazardID;
+	private int causeNum;
 	
-	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String secondaryTitle, String targetType,int hazardID, int targetID) {
+	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String secondaryTitle, String targetType,int hazardID, int targetID, int causeNum) {
 		this.transferID = transferID;
 		this.transferReason = transferReason;
 		this.mainTitle = mainTitle;
@@ -19,6 +20,7 @@ public class TransferClass {
 		this.targetType = targetType;
 		this.hazardID = hazardID;
 		this.targetID = targetID;
+		this.causeNum = causeNum;
 	}
 	
 	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String targetType, int targetID) {
@@ -29,8 +31,6 @@ public class TransferClass {
 		this.targetType = targetType;
 		this.targetID = targetID;
 	}
-	
-	
 	
 	public int getTransferID() {
 		return this.transferID;
@@ -62,5 +62,9 @@ public class TransferClass {
 	
 	public int getHazardID() {
 		return this.hazardID;
+	}
+	
+	public int getCauseNum() {
+		return this.causeNum;
 	}
 }

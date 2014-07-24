@@ -1,29 +1,46 @@
 #foreach($transfer in $transfers)
 	#if($transfer.getTransferID() == $cause.getTransfer())
 		<div class="row">
-    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>$!cause.getCauseNumber()</div>
+    		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause $!cause.getCauseNumber()</div>
     		<div class="cell causeTitle">
     			#if($transfer.getTransferType() == "CAUSE")
-    				<a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    				<div class="CausesTableTitleText"><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()&trans=y">$!transfer.getHazardNumb():CAUSE $!transfer.getCauseNum() - $!transfer.getMainTitle()</a></div>
     			#end
     			#if($transfer.getTransferType() == "HAZARD")
-    				<a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">TRANSFERRED - $!transfer.getMainTitle()</a>
+    				<div class="CausesTableTitleText"><a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">$!transfer.getHazardNumb() - $!transfer.getMainTitle()</a></div>
     			#end
 			</div>
-    		<div class="cell">$!cause.getOwner()</div>
+    		<div class="cell"><div class="CausesTableOwnerText">$!cause.getOwner()</div></div>
     		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
     		<div class="cell"><input type="checkbox" class="deleteCause"></div>
     	</div>
     	<div class="formContainer row" id="$cause.getID()">
     		<div class="cell"></div>
     		<div class="cell toggle">
-    			<ul>
-					#if($transfer.getSecondaryTitle())
-						<li>$!transfer.getSecondaryTitle()</li>
-					#end
-					<li>$!transfer.getMainTitle()</li>
-					<li>$!transfer.getHazardNumb()</li>
-				</ul>
+    			#if($transfer.getTransferType() == "CAUSE")
+	    			<div class="CausesTableEditEntryField">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardTitle">Hazard Title </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getSecondaryTitle()</div>
+					</div>
+	    			<div class="CausesTableEditEntryField">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardNo">Hazard # </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getHazardNumb()</div>
+					</div>
+	    			<div class="CausesTableEditEntryField CausesTableEditEntryFieldLast">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardCauseTitle">Cause Title </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getMainTitle()</div>
+					</div>
+				#end
+				#if($transfer.getTransferType() == "HAZARD")
+	    			<div class="CausesTableEditEntryField">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardTitle">Hazard Title </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getMainTitle()</div>
+					</div>
+	    			<div class="CausesTableEditEntryField CausesTableEditEntryFieldLast">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardNo">Hazard # </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getHazardNumb()</div>
+					</div>
+				#end
 				<form class="aui transferredForms" id="transferredForm" method="post" action="causeform" data-key="$!cause.getID()">
 					<div class="field-group">
 					    <label for="causeDescription">Transfer Reason</label>

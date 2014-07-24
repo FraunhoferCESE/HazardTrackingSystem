@@ -1,3 +1,21 @@
+.HazardFormMultiSelectFooterContainerOne {
+    float: left;
+    width: 277px;
+    padding-left: 3px;
+    margin-top: -5px;
+}
+
+.HazardFormMultiSelectFooterContainerTwo {
+    float: left;
+    margin-top: -5px;
+}
+
+.HazardFormMultiSelectFooter {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}
+
 #hazardTable, .noHazard {
 	margin-top: 4px;
 	width: 65%;
@@ -86,6 +104,7 @@ form.payloadForm .add:active {
     display:table;
     width: 960px;
 }
+
 .header {
     display:table-header-group;
     font-weight:bold;
@@ -118,52 +137,60 @@ form.payloadForm .add:active {
 }
 
 .row > .cell:nth-child(1) {
-    max-width: 8%;
-    min-width: 8%;
-    width: 8%;
+    width: 10%;
+    max-width: 10%;
 }
 
 .row > .cell:nth-child(2) {
-    width: 46%;
+    width: 50%;
     max-width: 50%;
 }
 
+.CausesTableTitleText {
+    max-width: 90%;
+    word-wrap: break-word;
+}
+
 .row > .cell:nth-child(3) {
-    max-width: 6%;
-    min-width: 3%;
-    width: 6%;
+    width: 14%;
+    max-width: 14%;
+}
+
+.CausesTableOwnerText {
+    max-width: 85%;
+    word-wrap: break-word;
 }
 
 .row > .cell:nth-child(4) {
-    max-width: 10%;
-    min-width: 10%;
-    width: 11%;
+    width: 20%;
+    max-width: 20%;
 }
 .row > .cell:nth-child(5) {
-    max-width: 6%;
-    min-width: 6%;
     width: 6%;
+    max-width: 6%;
 }
 
 #causeForm, #transferredForm {
     float: left;
     margin-bottom: 15px;
-    margin-left: -115px;
+    margin-left: -95px;
     width: 536px;
 }
 
 
 #addNewCauseForm, #transferForm {
     width: 545px;
-    margin-left: -19px;
 }
 
-.newCauseFormHolder > h3,  .transferFormHolder > h3{
-    border-top: black solid 1px;
-    margin-top: 22px;
-    width: 59%;
-    cursor: pointer;
-    -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+.CausesHeadingTwo {
+    border-top: 1px black solid;
+    width: 950px;
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
 }
 
 .causeBody > h2 {
@@ -180,34 +207,56 @@ form.payloadForm .add:active {
     margin-left: 20px;
 }
 
-.causeSaveAllChanges {
-    margin-left: 0;
-    margin-top: 10px;
-}
-
 .container {
-    padding-top: 10px;
-    padding-bottom: 8px;
+    display: none;
 }
 
 .getReports {
    cursor: pointer;
 }
 
-.HazardFormMultiSelectFooterContainerOne {
-    float: left;
-    width: 277px;
-    padding-left: 3px;
-    margin-top: -5px;
+.CausesHeadingOne {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
 }
 
-.HazardFormMultiSelectFooterContainerTwo {
-    float: left;
-    margin-top: -5px;
+.CausesHeadingOneContent {
+    font-size: 16px;
+    font-weight: normal;
+    display: inline;
 }
 
-.HazardFormMultiSelectFooter {
+.CausesTableEditEntryField {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.CausesTableEditEntryFieldLast {
+    margin-bottom: -20px;
+}
+
+.CausesTableEditEntryFieldLabelHeadingTwo {
+    float: left;
+    margin-left: -95px;
+    padding: 0 0 0 0;
+    position: relative;
+    text-align: right;
+    width: 130px;
+    word-wrap: break-word;
     font-family: Arial, sans-serif;
     font-size: 14px;
     color: #707070;
+}
+
+.CausesTableTransferredCauseText {
+    padding-left: 15px;
+    max-width: 500px;
+    overflow: auto;
+    word-wrap: break-word;
+}
+
+.CausesButtonPanel {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }

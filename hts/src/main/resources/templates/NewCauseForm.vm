@@ -16,13 +16,8 @@
 	    <textarea class="textarea long-field" rows="6" cols="10" name="causeDescription" id="causeDescription"></textarea>
 	</div>
 	<div class="buttons-container">
-		<div class="causeButtonTop">
-			<button class="aui-button causeSaveAllChanges causeButtons" type="button">Save All Changes</button>
-			<input type="reset" value="Clear" class="aui-button causeButtons">
-		</div>
-		<div>
-			<button type="button" class="aui-button causeButtons" id="causeAddReference" disabled>Add Reference Doc</button>
-		</div>
+		<button class="aui-button causeSaveAllChanges" type="button">Save All Changes</button>
+		<input type="reset" value="Clear" class="aui-button">
 	</div>
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 </form>

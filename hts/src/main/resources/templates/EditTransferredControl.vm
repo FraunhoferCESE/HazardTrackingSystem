@@ -1,29 +1,29 @@
 <div class="ControlsTableEditEntryField">
 	<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardTitle">Hazard Title </label>
-	<span>$!theTransfer.getTargetHazardTitle()</span>
+	<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardTitle()</div>
 </div>
 <div class="ControlsTableEditEntryField">
 	<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardNo">Hazard # </label>
-	<span>$!theTransfer.getTargetHazardNo()</span>
+	<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardNo()</div>
 </div>
 #if($theTransfer.getTargetType() == "CONTROL")
 	<div class="ControlsTableEditEntryField">
 		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardControlDescription">Control Description </label>
-		<span>$!theTransfer.getTargetHazardControlDescription()</span>
+		<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardControlDescription()</div>
 	</div>
 	<div class="ControlsTableEditEntryField ControlsTableEditEntryFieldLast">
 		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardControlNo">Control # </label>
-		<span>$!theTransfer.getTargetHazardControlNo()</span>
+		<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardControlNo()</div>
 	</div>
 #end
 #if($theTransfer.getTargetType() == "CAUSE")
 	<div class="ControlsTableEditEntryField">
 		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardCauseTitle">Cause Title </label>
-		<span>$!theTransfer.getTargetHazardCauseTitle()</span>
+		<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardCauseTitle()</div>
 	</div>
 	<div class="ControlsTableEditEntryField ControlsTableEditEntryFieldLast">
 		<label class="ControlsTableEditEntryFieldLabelHeadingTwo" for="controlTargetHazardCauselNo">Cause # </label>
-		<span>$!theTransfer.getTargetHazardCauseNo()</span>
+		<div class="ControlsTableTransferredControlText">$!theTransfer.getTargetHazardCauseNo()</div>
 	</div>
 #end
 <form class="aui editTransferredControlForm" name="editTransferredControlForm" action="controlform" method="post">
