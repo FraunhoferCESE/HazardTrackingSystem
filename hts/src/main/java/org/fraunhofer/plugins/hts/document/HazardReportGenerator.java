@@ -110,8 +110,27 @@ public class HazardReportGenerator {
 		cell = _2ndRow.getCell(1);
 		new CellHeaderBuilder().text("10. Hazard Category and risk Likelihood:").createCellHeader(cell);
 		for (Risk_Categories category : testRiskCategories) {
-			//TODO: left off here
+			if (category.getID() == h.getRiskCategory().getID())
+				new ParagraphBuilder().text("\u2612\t\t" + category.getValue()).leftMargin(100).fontSize(6).createCellText(cell);
+			else
+				new ParagraphBuilder().text("\u2610\t\t" + category.getValue()).leftMargin(100).fontSize(6).createCellText(cell);
 		}
+		
+		// --------------------------------------
+		
+		// Hazard description
+		XWPFTableRow _3rdRow = doc.createTable(1, 1).getRow(0);
+		cell = _3rdRow.getCell(0);
+		setGridSpan(cell, 3);
+		new CellHeaderBuilder().text("11. Description of hazard:").createCellHeader(cell);
+		new ParagraphBuilder().text(h.getHazardDesc()).createCellText(cell);
+		
+		// --------------------------------------
+		// Cause summary
+		XWPFTableRow _4thRow = doc.createTable(1, 1).getRow(0);
+		cell = _4thRow.getCell(0);
+		setGridSpan(cell, 3);
+		new CellHeaderBuilder().text("12. Hazard causes:").createCellHeader(cell);
 		
 	}
 
@@ -137,7 +156,7 @@ public class HazardReportGenerator {
 		// with a paragraph border.
 		cell = _1stRow.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardNum()).bold(true).alignment(ParagraphAlignment.CENTER).bottomBorder()
+		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).alignment(ParagraphAlignment.CENTER).bottomBorder()
 				.createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
@@ -210,7 +229,7 @@ public class HazardReportGenerator {
 		private int fontSize = defaultFontSize;
 		private String text = "";
 		private boolean bottomBorder = false;
-		private int leftMargin = 0;
+		private int leftMargin = 50;
 
 		public ParagraphBuilder() {
 		}
@@ -272,7 +291,7 @@ public class HazardReportGenerator {
 		private String text;
 		private boolean isBold = false;
 		private ParagraphAlignment alignment = ParagraphAlignment.LEFT;
-		private int beforeSpacing = 30;
+		private int beforeSpacing = 70;
 
 		public CellHeaderBuilder() {
 		}

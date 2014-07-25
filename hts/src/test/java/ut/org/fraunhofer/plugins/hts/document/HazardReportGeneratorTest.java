@@ -120,6 +120,14 @@ public class HazardReportGeneratorTest {
 		Review_Phases testReviewPhase = mock(Review_Phases.class);
 		when(testReviewPhase.getLabel()).thenReturn("Phase I");
 		when(testReviewPhase.getID()).thenReturn(11111);
+		
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("II - Critical");
+		when(mockRiskCategories.getID()).thenReturn(22222);
+		
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("B - Reasonably probable");
+		when(mockRiskLikelihoods.getID()).thenReturn(22222);
 
 		testHazard = mock(Hazards.class);
 		when(testHazard.getHazardNum()).thenReturn("PROP-08-MPS");
@@ -131,6 +139,8 @@ public class HazardReportGeneratorTest {
 		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
 		when(testHazard.getSubsystems()).thenReturn(testSubsystems);
 		when(testHazard.getHazardGroups()).thenReturn(testGroups);
+		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
+		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(testHazard.getTitle()).thenReturn(
 				"Contamination in the MPS Hydrogen System Leads to Malfunction, Damage or Fire/Explosion");
 		when(testHazard.getHazardDesc())
