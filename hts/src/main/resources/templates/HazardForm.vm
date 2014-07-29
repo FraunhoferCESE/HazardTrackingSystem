@@ -1,5 +1,7 @@
 <form method="post" action="hazardform" class="aui" id="hazardForm">
-    <div class="field-group">
+	<input type="hidden" name="hazardPayloadID" id="hazardPayloadID" value="$!hazard.getMissionPayload().getID()">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+	<div class="field-group">
 		<label for="hazardNumber">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
 		<input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber" value="$!hazard.getHazardNum()"/>
 	</div>

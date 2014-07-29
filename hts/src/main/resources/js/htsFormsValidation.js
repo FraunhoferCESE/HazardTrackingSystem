@@ -2,6 +2,10 @@ AJS.$(document).ready(function(){
 	var $ = AJS.$
 	var baseUrl = AJS.params.baseURL;
     editForm();
+    initializePayloadCookie();
+    hideHazardTablePayloadMessage();
+    initializeHazardCookie();
+    hideHazardTableHazardMessage();
 
     $("#hazardSubsystem").multiselect2side({
     	selectedPosition: 'right',
@@ -95,24 +99,27 @@ AJS.$(document).ready(function(){
 
 	$.validator.addMethod("uniquePayload", function(value, element) {
 		var response = false;
-		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
-		$.ajax({
-			type:"GET",
-			async: false,
-			url: actionUrl,
-			success: function(msg) {
-				response = true;
-			}
-		});
-		if(!response) {
-			$(element).css("color", "#D04437");
+		if (value !== "") {
+			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
+			$.ajax({
+				type:"GET",
+				async: false,
+				url: actionUrl,
+				success: function(msg) {
+					response = true;
+				}
+			});
 		}
-		else {
-			$(element).css("color", "");
-		}
-
 		return response;
 	}, "Mission/Payload already in use.");
+
+	$.validator.addMethod("emptyPayload", function(value, element) {
+		var response = false;
+		if (value !== "") {
+			response = true;
+		}
+		return response;
+	}, "Invalid name.");
 
 	//Custom method to check if completion date is set to precede initation date, which should not be allowed
 	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
@@ -190,6 +197,8 @@ AJS.$(document).ready(function(){
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
+	    			updateHazardCookie();
+	    			hideHazardTableHazardMessage();
 	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    			$("#hazardForm").removeDirtyWarning();
 	    			successfulSave(form);
@@ -215,6 +224,7 @@ AJS.$(document).ready(function(){
 		rules: {
 			hazardPayloadAdd: {
 				maxlength: 255,
+				emptyPayload: true,
 				uniquePayload: true
 			}
 	    },
@@ -223,14 +233,15 @@ AJS.$(document).ready(function(){
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
-	    	$(error).css({"height":0});
 	    },
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
+	    			updatePayloadCookie();
+	    			hideHazardTablePayloadMessage();
 	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    			$("#payloadForm").removeDirtyWarning();
-	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully", {closeable: true});
+	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully.", {closeable: true});
 	    			$("#payloadList").load(document.URL + " #payloadList");
 	    			form.reset();
 	    		},
@@ -530,4 +541,93 @@ AJS.$(document).ready(function(){
 			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
 		}
 	}
+
+	function initializePayloadCookie() {
+		if (AJS.Cookie.read("NUMBER_OF_PAYLOADS") === undefined) {
+			var payloads;
+			AJS.$.ajax({
+				type: "GET",
+				async: false,
+				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
+				success: function(data) {
+					payloads = data;
+				}
+			});
+			AJS.Cookie.save("NUMBER_OF_PAYLOADS", payloads.length);
+		}
+	}
+
+	function updatePayloadCookie() {
+		var payloads;
+		AJS.$.ajax({
+			type: "GET",
+			async: false,
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
+			success: function(data) {
+				payloads = data;
+			}
+		});
+		AJS.Cookie.save("NUMBER_OF_PAYLOADS", payloads.length);
+	}
+
+	function getPayloadCookie() {
+		var numberOfCreatedPayloadsStr = AJS.Cookie.read("NUMBER_OF_PAYLOADS");
+		var numberOfCreatedPayloads = parseInt(numberOfCreatedPayloadsStr, 10);
+		if (numberOfCreatedPayloads === -1) {
+			console.log("parse error");
+			return null;
+		}
+		return numberOfCreatedPayloads;
+	}
+
+	function initializeHazardCookie() {
+		if (AJS.Cookie.read("NUMBER_OF_HAZARDS") === undefined) {
+			var hazards;
+			AJS.$.ajax({
+				type: "GET",
+				async: false,
+				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
+				success: function(data) {
+					hazards = data;
+				}
+			});
+			AJS.Cookie.save("NUMBER_OF_HAZARDS", hazards.length);
+		}
+	}
+
+	function updateHazardCookie() {
+		var hazards;
+		AJS.$.ajax({
+			type: "GET",
+			async: false,
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
+			success: function(data) {
+				hazards = data;
+			}
+		});
+		AJS.Cookie.save("NUMBER_OF_HAZARDS", hazards.length);
+	}
+
+	function getHazardCookie() {
+		var numberOfCreatedHazardsStr = AJS.Cookie.read("NUMBER_OF_HAZARDS");
+		var numberOfCreatedHazards = parseInt(numberOfCreatedHazardsStr, 10);
+		if (numberOfCreatedHazards === -1) {
+			console.log("parse error");
+			return null;
+		}
+		return numberOfCreatedHazards;
+	}
+
+	function hideHazardTablePayloadMessage() {
+		if (getPayloadCookie() > 0) {
+			AJS.$("#HazardTableNoPayloadsMessage").hide();
+		}
+	}
+
+	function hideHazardTableHazardMessage() {
+		if (getHazardCookie() > 0) {
+			AJS.$("#HazardTableNoHazardsMessage").hide();
+		}
+	}
+
 });

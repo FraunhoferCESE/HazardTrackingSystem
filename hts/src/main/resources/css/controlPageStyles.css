@@ -12,7 +12,7 @@
 
 .ControlsHeadingTwo {
     border-top: 1px black solid;
-    width: 950px;
+    width: 975px;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -39,12 +39,10 @@
 }
 
 .ControlsTableCellThree {
-    /*400*/
     width: 475px;
 }
 
 .ControlsTableDescriptionText {
-    /*370*/
     max-width: 445px;
     word-wrap: break-word;
 }

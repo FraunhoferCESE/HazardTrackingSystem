@@ -2,10 +2,11 @@
 	<form class="aui">
 		<div class='field-group' style="padding:0">
 			<select size='1' class='select' name='payloadNavigationList' id='payloadNavigationList'>
-				<option value=''>-Select Mission/Payload-</option>
 			</select>
-			<span id="hazardReportsNavigation">
-			</span>
+			<select size='1' class='select' name='hazardNavigationList' id='hazardNavigationList'>
+			</select>
+			<input type="button" class="aui-button" id="gotoSelectedHazardReport" value="Go"/>
 		</div>
 	</form>
+	<span id="navigationError"></span>
 </div>

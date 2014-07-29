@@ -291,13 +291,11 @@ function updateControlsCookie(operation, entryID) {
 			}
 		}
 	}
-	console.log(AJS.Cookie.read("OPEN_CONTROLS"));
 }
 
 function openControlsInCookie() {
 	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
 	if (openControls !== "none") {
-		console.log("expanding some shit");
 		openControlsArray = openControls.split(',');
 		for (var i = 0; i < openControlsArray.length; i++) {
 			var entryEdit = AJS.$("#ControlsTableEditEntry" + openControlsArray[i]);
