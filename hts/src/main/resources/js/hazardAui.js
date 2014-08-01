@@ -1,3 +1,12 @@
+function manipulateTextLength(theText, numChars) {
+    if (theText.length >= numChars){
+        return theText.substring(0, numChars - 3) + "...";
+    }
+    else {
+        return theText;
+    }
+}
+
 function setNavigationErrorMessage(theMessage) {
     AJS.$("#navigationError").text(theMessage);
     AJS.$("#navigationError").show();
@@ -22,19 +31,17 @@ function initializePayloadDropDownSelection(currentHazardPayloadID) {
         else {
             temp = "<option value=''>-Select Mission/Payload-</option>";
         }
-        if(AJS.$("#payloadNavigationList option").length <= 1) {
-            AJS.$(missionList).each(function() {
-                if (this.payloadID === currentHazardPayloadID) {
-                    temp += "<option value=" + this.payloadID + " selected>" + this.title + "</option>";
-                }
-                else {
-                    temp += "<option value=" + this.payloadID + ">" + this.title + "</option>";
-                }
-            });
-            AJS.$("#payloadNavigationList").append(temp);
-        }
+        AJS.$(missionList).each(function() {
+            if (this.payloadID === currentHazardPayloadID ) {
+                temp += "<option value=" + this.payloadID + " selected>" + manipulateTextLength(this.title, 85) + "</option>";
+            }
+            else {
+                temp += "<option value=" + this.payloadID + ">" + manipulateTextLength(this.title, 85) + "</option>";
+            }
+        });
+        AJS.$("#payloadNavigationList").append(temp);
+        AJS.$("#payloadNavigationList option").tsort();
     }
-    return missionList.length;
 }
 
 function initializeHazardDropDownSelection(currentHazardPayloadID, currentHazardID) {
@@ -59,16 +66,17 @@ function initializeHazardDropDownSelection(currentHazardPayloadID, currentHazard
         }
         AJS.$(hazardList).each(function() {
             if (this.hazardID === currentHazardID) {
-                temp += "<option value=" + this.hazardID + " selected>" + this.hazardNumber + " - " + this.title + "</option>";
+                temp += "<option value=" + this.hazardID + " selected>" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
             }
             else {
-                temp += "<option value=" + this.hazardID + ">" + this.hazardNumber + " - " + this.title + "</option>";
+                temp += "<option value=" + this.hazardID + ">" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
             }
         });
         AJS.$("#hazardNavigationList").append(temp);
+        AJS.$("#hazardNavigationList option").tsort();
     }
     else {
-        AJS.$("#hazardNavigationList").append("<option value=''>-Select Hazard Report-</option>");
+        AJS.$("#hazardNavigationList").append("<option value=''>-No HRs have been created-</option>");
     }
     return hazardList.length;
 }
@@ -84,19 +92,10 @@ function initializeHazardDropDownSelectionToEmpty(noHazardReports) {
     }
 }
 
-function getPayloadCookie() {
-    var numberOfCreatedPayloadsStr = AJS.Cookie.read("NUMBER_OF_PAYLOADS");
-    var numberOfCreatedPayloads = parseInt(numberOfCreatedPayloadsStr, 10);
-    if (numberOfCreatedPayloads === -1) {
-        console.log("parse error");
-        return null;
-    }
-    return numberOfCreatedPayloads;
-}
-
 AJS.$(document).ready(function(){
+    AJS.$("#hazardPayload option").tsort();
+
     AJS.$(".aui-page-header").css({"padding-top":"5px", "padding-bottom":"5px"});
-    //AJS.$(".getReports").css({"padding-top":"3px", "padding-bottom":"3px"});
     AJS.$(".error").hide();
     if(window.location.href.indexOf("hazardform") > -1 || window.location.href.indexOf("hazardlist") > -1) {
         navigateTo("hazard-nav-item", "content-1");
@@ -129,28 +128,40 @@ AJS.$(document).ready(function(){
     }
 
     var whichPage = AJS.$.url();
+    var parameters = AJS.$.url().param();
+    var selectedPayload = null;
     if (AJS.$.url().data.seg.path.length === 4) {
         whichPage = AJS.$.url().data.seg.path[3];
     }
     else {
         whichPage = AJS.$.url().data.seg.path[2];
     }
+    if (!AJS.$.isEmptyObject(parameters)) {
+        selectedPayload = parseInt(parameters.selpay, 10);
+    }
 
     var currentHazardPayloadID;
-    var numberOfPayloadsFetched;
     var currentHazardID;
     var numberOfHazardsFetched;
-    if (whichPage === "hazardlist" && AJS.$.url().param("edit") === "y") {
+    if (whichPage === "hazardlist" && AJS.$.url().param("edit") === "y" ||
+        whichPage === "causeform" && AJS.$.url().param("edit") === "y" ||
+        whichPage === "controlform" && AJS.$.url().param("edit") === "y") {
         var currentHazardPayloadIDStr = AJS.$("#hazardPayloadID")[0].value;
         currentHazardPayloadID = parseInt(currentHazardPayloadIDStr, 10);
         var currentHazardIDStr = AJS.$("#hazardID")[0].value;
         currentHazardID = parseInt(currentHazardIDStr, 10);
-        numberOfPayloadsFetched = initializePayloadDropDownSelection(currentHazardPayloadID);
+        initializePayloadDropDownSelection(currentHazardPayloadID);
         numberOfHazardsFetched = initializeHazardDropDownSelection(currentHazardPayloadID, currentHazardID);
     }
     if (whichPage === "hazardform") {
-        numberOfPayloadsFetched = initializePayloadDropDownSelection(null);
-        initializeHazardDropDownSelectionToEmpty(false);
+        if (selectedPayload === null) {
+            initializePayloadDropDownSelection(null);
+            initializeHazardDropDownSelectionToEmpty(false);
+        }
+        else {
+            initializePayloadDropDownSelection(selectedPayload);
+            numberOfHazardsFetched = initializeHazardDropDownSelection(selectedPayload, null);
+        }
     }
 
     AJS.$("#payloadNavigationList").change(function(){
@@ -199,22 +210,6 @@ AJS.$(document).ready(function(){
     AJS.$("#hazardNavigationList").live("click", function() {
         if (AJS.$("#navigationError").is(":visible")) {
             AJS.$("#navigationError").hide();
-        }
-    });
-
-    AJS.$("#createNewHazardReport").live("click", function() {
-        // if (whichPage === "hazardlist") {
-        //     var parameters = AJS.$.url().param();
-        //     if (AJS.$.isEmptyObject(parameters)) {
-        //         setPayloadCookie(AJS.$(".getReports").length);
-        //     }
-        // }
-
-        if (getPayloadCookie() > 0) {
-            AJS.$(this).attr("href", AJS.params.baseURL + "/plugins/servlet/hazardform");
-        }
-        else {
-            JIRA.Messages.showWarningMsg("Please create a Mission/Payload before creating a Hazard Report.", {closeable: true});
         }
     });
 

@@ -18,9 +18,9 @@
 						<div class="field-group">
 							<div class="payloadHeading">Mission/Payload</div>
 							<div>
-        						<input class="add submit" type="submit" value="Add" name="PayloadAdd">
         						<div class="payloadFormInputContainer">
-									<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd"/>
+									<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd" autofocus/>
+									<input class="add submit" type="submit" value="Add" name="PayloadAdd">
 								</div>
 							</div>
 	        			</div>
@@ -28,10 +28,9 @@
         	    	<nav class="aui-navgroup aui-navgroup-vertical payloads">
         	    		<div class="payloadHeadingList">List of Missions/Payloads</div>
         	    		<div class="aui-navgroup-inner" id="payloadList">
-    						<ul class="aui-nav">
-    							<input type="hidden" name="numberOfPayloadsCreated" id="numberOfPayloadsCreated" value="$!payloads.size()">
+    						<ul class="aui-nav" id="listOfCreatedPayloads">
     							#if($payloads.size() == 0)
-    								<span class="noPayload">No Missions/Payloads have been created.</span>
+    								<span class="noPayload">-None-</span>
     							#else
 									<li><a class="getReports" data-key="all">-All Hazard Reports-</a></li>
 									#foreach( $payload in $payloads )
@@ -42,6 +41,7 @@
     					</div>
     				</nav>
     			</div>
+				<div id="HazardTableViewingHeader">Currently viewing: <div id="HazardTableViewingHeaderContent">All Hazard Reports</div></div>
     			#if($hazardReports.size()==0)
     				<div class="HazardTableText" id="HazardTableNoPayloadsMessage">No Missions/Payloads have been created.</div>
     			#end
@@ -85,6 +85,7 @@
 						</table>
 					#end
 				</div>
+				<button class="aui-button createNewHazardReport" id="HazardTableCreateHazardButton">Create Hazard</button>
 			</div>
 		</div>
 	</body>

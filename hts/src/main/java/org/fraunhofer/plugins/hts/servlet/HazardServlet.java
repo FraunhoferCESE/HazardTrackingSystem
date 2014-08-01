@@ -127,12 +127,14 @@ public final class HazardServlet extends HttpServlet {
 					payloadName);
 
 			createJson(json, "hazardID", updated.getID());
+			createJson(json, "payloadID", updated.getMissionPayload().getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());
 		} else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
 					revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
 
 			createJson(json, "hazardID", hazard.getID());
+			createJson(json, "payloadID", hazard.getMissionPayload().getID());
 			createJson(json, "hazardNumber", hazard.getHazardNum());
 		}
 		// If Save and create another was pressed addNew should not contain null

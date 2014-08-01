@@ -18,9 +18,29 @@
 
 #hazardTable {
 	margin-top: 4px;
-	width: 65%;
+	width: 100%;
 	margin-right: auto;
 	margin-left: 0.83em;
+}
+
+#hazardNumber {
+    width: 15%;
+}
+
+#hazardTitle {
+    width: 30%;
+}
+
+#hazardMissionPayload {
+    width: 20%;
+}
+
+#hazardLastEdit {
+    width: 22.5%;
+}
+
+#action {
+    width: 12.5%;
 }
 
 .noPayload {
@@ -35,11 +55,33 @@
     font-size: 14px;
     font-weight: bold;
     line-height: 1.42857142857143;
-    margin: 5px 0 0 5px;
+    margin: 5px 0 0 15px;
 }
 
 #HazardTableMessage {
     display: none;
+}
+
+#HazardTableCreateHazardButton {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+}
+
+#HazardTableViewingHeader {
+    display: block;
+    color: #333;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.42857142857143;
+    padding: 5px 0 5px 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+#HazardTableViewingHeaderContent {
+    display: inline-block;
+    font-weight: normal;
 }
 
 #hazardNavigationList {
@@ -84,6 +126,7 @@ form.payloadForm .field-group > label {
 .payloadFormInputContainer {
     overflow: hidden;
     padding-right: .5em;
+    display: block;
 }
 
 form.payloadForm .text {
@@ -98,8 +141,7 @@ form.payloadForm .text {
     overflow: hidden;
     padding-right: .5em;
     float: left;
-    max-width: 500px;
-    width: 100%;
+    width: 75%;
 }
 
 form.payloadForm .add {
@@ -121,7 +163,7 @@ form.payloadForm .add {
     vertical-align: inherit;
     white-space: nowrap;
     position: relative;
-    float: right;
+    float: left;
     margin-right: -14px;
 }
 

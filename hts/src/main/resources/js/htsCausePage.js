@@ -335,6 +335,13 @@ AJS.$(document).ready(function(){
 		foldable(this, "transferFormContainer");
 	});
 
+	AJS.$("#causeAddControl").live("click", function() {
+		var causeIDAndHazardIDArr = AJS.$(this).data("key").split("-");
+		var causeID = causeIDAndHazardIDArr[0];
+		var hazardID = causeIDAndHazardIDArr[1];
+		window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + hazardID + "&selcau=" + causeID;
+	});
+
 	var whichForm;
 	if (AJS.$.url().data.seg.path.length === 4) {
 		whichForm = AJS.$.url().data.seg.path[3];

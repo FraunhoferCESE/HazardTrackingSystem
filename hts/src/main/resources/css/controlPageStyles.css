@@ -199,12 +199,27 @@
 }
 
 .ConfirmDialogReasonTextContainer {
+    width: 72%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonTextContainerNoButton {
     width: 88%;
     display: inline-block;
 }
 
 .ConfirmDialogReasonText {
     width: 100%
+}
+
+.ConfirmDialogDuplButtonContainer {
+    width: 16%;
+    display: inline-block;
+}
+
+.ConfirmDialogDuplButton {
+    margin-left: 10px;
+    padding: 2px 5px 2px 5px;
 }
 
 .ConfirmDialogErrorText {

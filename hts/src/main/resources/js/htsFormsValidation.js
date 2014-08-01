@@ -1,11 +1,7 @@
 AJS.$(document).ready(function(){
-	var $ = AJS.$
+	var $ = AJS.$;
 	var baseUrl = AJS.params.baseURL;
-    editForm();
-    initializePayloadCookie();
-    hideHazardTablePayloadMessage();
-    initializeHazardCookie();
-    hideHazardTableHazardMessage();
+	editForm();
 
     $("#hazardSubsystem").multiselect2side({
     	selectedPosition: 'right',
@@ -111,7 +107,7 @@ AJS.$(document).ready(function(){
 			});
 		}
 		return response;
-	}, "Mission/Payload already in use.");
+	}, "This Mission/Payload name is already in use.");
 
 	$.validator.addMethod("emptyPayload", function(value, element) {
 		var response = false;
@@ -159,6 +155,7 @@ AJS.$(document).ready(function(){
 	    		maxlength: 512
 	    	},
 	    	hazardPayload: {
+	    		required: true,
 	    		maxlength: 255
 	    	},
 	    	hazardSubsystem: {
@@ -182,8 +179,11 @@ AJS.$(document).ready(function(){
 	    	},
 	    	hazardTitle: {
 	    		required: "Title is required.",
-	    		maxlength: "Title should not excede 512 characters."
+	    		maxlength: "Title should not exceed 512 characters."
 	    	},
+	    	hazardPayload: {
+	    		required: "Mission/Payload association is required.",
+	    	}
 	    },
 
 	    //Custom class so error messages are not styled with JIRA's css error style.
@@ -197,20 +197,21 @@ AJS.$(document).ready(function(){
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
-	    			updateHazardCookie();
-	    			hideHazardTableHazardMessage();
 	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    			$("#hazardForm").removeDirtyWarning();
 	    			successfulSave(form);
 	    			//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
 	    			var data = $.parseJSON(data);
 	    			if(data.redirect) {
-	    				window.location.replace(data.redirect);
+						window.location.href = baseUrl + "/plugins/servlet/hazardform?selpay=" + data.payloadID;
 	    			}
 	    			else {
 	    				var hazardNumber = data.hazardNumber;
 		    			var hazardID = data.hazardID;
+		    			var payloadID = data.payloadID;
 	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
+	    				initializeNavigationDropdowns(payloadID, hazardID);
+	    				updateNavigationOptionsToEditMode(hazardID);
 	    			}
 	    		},
 	    		error: function(error) {
@@ -232,18 +233,12 @@ AJS.$(document).ready(function(){
 	    errorClass: "validationError",
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
-	    	error.insertAfter(element);
+	    	error.insertAfter(element.parent());
 	    },
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
-	    			updatePayloadCookie();
-	    			hideHazardTablePayloadMessage();
-	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    			$("#payloadForm").removeDirtyWarning();
-	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully.", {closeable: true});
-	    			$("#payloadList").load(document.URL + " #payloadList");
-	    			form.reset();
+	    			location.reload();
 	    		},
 	    		error: function(error) {
 	    			console.log(error);
@@ -542,92 +537,72 @@ AJS.$(document).ready(function(){
 		}
 	}
 
-	function initializePayloadCookie() {
-		if (AJS.Cookie.read("NUMBER_OF_PAYLOADS") === undefined) {
-			var payloads;
-			AJS.$.ajax({
-				type: "GET",
-				async: false,
-				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
-				success: function(data) {
-					payloads = data;
-				}
-			});
-			AJS.Cookie.save("NUMBER_OF_PAYLOADS", payloads.length);
+	function manipulateTextLength(theText, numChars) {
+		if (theText.length >= numChars){
+			return theText.substring(0, numChars - 3) + "...";
+		}
+		else {
+			return theText;
 		}
 	}
 
-	function updatePayloadCookie() {
-		var payloads;
+	function initializeNavigationDropdowns(payloadID, hazardID) {
+		var missionList;
 		AJS.$.ajax({
 			type: "GET",
 			async: false,
 			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
 			success: function(data) {
-				payloads = data;
+				missionList = data;
 			}
 		});
-		AJS.Cookie.save("NUMBER_OF_PAYLOADS", payloads.length);
-	}
 
-	function getPayloadCookie() {
-		var numberOfCreatedPayloadsStr = AJS.Cookie.read("NUMBER_OF_PAYLOADS");
-		var numberOfCreatedPayloads = parseInt(numberOfCreatedPayloadsStr, 10);
-		if (numberOfCreatedPayloads === -1) {
-			console.log("parse error");
-			return null;
-		}
-		return numberOfCreatedPayloads;
-	}
-
-	function initializeHazardCookie() {
-		if (AJS.Cookie.read("NUMBER_OF_HAZARDS") === undefined) {
-			var hazards;
-			AJS.$.ajax({
-				type: "GET",
-				async: false,
-				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
-				success: function(data) {
-					hazards = data;
+		if(missionList.length > 0) {
+			var temp1 = "<option value=''>-Select Mission/Payload-</option>";
+			AJS.$(missionList).each(function() {
+				if (this.payloadID === payloadID ) {
+					temp1 += "<option value=" + this.payloadID + " selected>" + manipulateTextLength(this.title, 85) + "</option>";
+				}
+				else {
+					temp1 += "<option value=" + this.payloadID + ">" + manipulateTextLength(this.title, 85) + "</option>";
 				}
 			});
-			AJS.Cookie.save("NUMBER_OF_HAZARDS", hazards.length);
+			AJS.$('#payloadNavigationList')
+				.empty()
+				.append(temp1);
+			AJS.$("#payloadNavigationList option").tsort();
 		}
-	}
 
-	function updateHazardCookie() {
-		var hazards;
+		var hazardList;
 		AJS.$.ajax({
-			type: "GET",
+			type:"GET",
 			async: false,
-			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allhazards/",
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/" + payloadID,
 			success: function(data) {
-				hazards = data;
+				hazardList = data;
 			}
 		});
-		AJS.Cookie.save("NUMBER_OF_HAZARDS", hazards.length);
-	}
 
-	function getHazardCookie() {
-		var numberOfCreatedHazardsStr = AJS.Cookie.read("NUMBER_OF_HAZARDS");
-		var numberOfCreatedHazards = parseInt(numberOfCreatedHazardsStr, 10);
-		if (numberOfCreatedHazards === -1) {
-			console.log("parse error");
-			return null;
-		}
-		return numberOfCreatedHazards;
-	}
-
-	function hideHazardTablePayloadMessage() {
-		if (getPayloadCookie() > 0) {
-			AJS.$("#HazardTableNoPayloadsMessage").hide();
-		}
-	}
-
-	function hideHazardTableHazardMessage() {
-		if (getHazardCookie() > 0) {
-			AJS.$("#HazardTableNoHazardsMessage").hide();
+		if(hazardList.length > 0) {
+			var temp2 = "<option value=''>-Select Hazard Report-</option>";
+			AJS.$(hazardList).each(function() {
+				if (this.hazardID === hazardID) {
+					temp2 += "<option value=" + this.hazardID + " selected>" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
+				}
+				else {
+					temp2 += "<option value=" + this.hazardID + ">" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
+				}
+			});
+			AJS.$('#hazardNavigationList')
+				.empty()
+				.append(temp2);
+			AJS.$("#hazardNavigationList option").tsort();
 		}
 	}
 
+	function updateNavigationOptionsToEditMode(hazardID) {
+		AJS.$("#cause-nav-item").children().attr("href", "causeform?edit=y&key=" + hazardID);
+		AJS.$("#control-nav-item").children().attr("href", "controlform?edit=y&key=" + hazardID);
+		// add line here for verifications
+	}
 });

@@ -16,7 +16,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class MissionPayloadServiceImpl implements MissionPayloadService {
 	private final ActiveObjects ao;
-
+	
 	public MissionPayloadServiceImpl(ActiveObjects ao) {
 		this.ao = checkNotNull(ao);
 	}
