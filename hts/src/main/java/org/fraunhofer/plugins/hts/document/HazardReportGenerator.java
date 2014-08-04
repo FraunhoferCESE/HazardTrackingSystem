@@ -34,7 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
+/**
+ * This class generates .docx files containing hazard reports.
+ * 
+ * @author llayman
+ * 
+ */
 public class HazardReportGenerator {
 
 	private static final Logger log = LoggerFactory.getLogger(HazardReportGenerator.class);
@@ -56,6 +63,15 @@ public class HazardReportGenerator {
 			+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
 			+ System.getProperty("file.separator") + "Template.docx");
 
+	/**
+	 * Constructor for instantiating the class. The class requires various
+	 * services to be passed in order to retrieve information about the hazards,
+	 * causes, and transfers from the database.
+	 * 
+	 * @param hazardService
+	 * @param causeService
+	 * @param transferService
+	 */
 	public HazardReportGenerator(HazardService hazardService, HazardCauseService causeService,
 			TransferService transferService) {
 		this.hazardService = hazardService;
@@ -63,9 +79,38 @@ public class HazardReportGenerator {
 		this.transferService = transferService;
 	}
 
+	/**
+	 * Primary method for creating Word .docx files from hazard report data.
+	 * 
+	 * Each hazard is written to a separate file.
+	 * 
+	 * Files are stored in a directory specified by the caller. The files are
+	 * not deleted, so it is recommended that the files be stored in a temporary
+	 * directory that is cleaned periodically..
+	 * 
+	 * @param hazardList
+	 *            the list of {@link Hazards} objects for which the files will
+	 *            be created.
+	 * @param reviewPhases
+	 *            a list of all unique {@link Review_Phases} in the order in
+	 *            which they will be displayed.
+	 * @param riskCategories
+	 *            a list of all unique {@link Risk_Categories} in the order in
+	 *            which they will be displayed.
+	 * @param riskLikelihoods
+	 *            a list of all unique {@link Risk_Likelihoods} in the order in
+	 *            which they will be displayed.
+	 * @param outputDirectory
+	 *            File location in which to temporarily store output files, such
+	 *            as {@link Files#createTempDir()}. Must not be
+	 *            <code>null</code>.
+	 * @return a list of {@link File} pointing to the created documents.
+	 * @throws IOException
+	 * @throws XmlException
+	 */
 	public List<File> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
-			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, File outputDirectory,
-			boolean separateFiles) throws IOException, XmlException {
+			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, File outputDirectory)
+			throws IOException, XmlException {
 
 		checkNotNull(outputDirectory, "Output directory for hazard documents is null");
 		if (hazardList == null || hazardList.isEmpty())
@@ -73,29 +118,23 @@ public class HazardReportGenerator {
 
 		List<File> results = Lists.newArrayList();
 
-		if (separateFiles) {
-			for (Hazards h : hazardList) {
-				File reportFile = new File(outputDirectory + File.separator + h.getHazardNum() + ".docx");
-				FileOutputStream out = new FileOutputStream(reportFile);
+		for (Hazards h : hazardList) {
+			File reportFile = new File(outputDirectory + File.separator + h.getHazardNum() + ".docx");
+			FileOutputStream out = new FileOutputStream(reportFile);
 
-				XWPFDocument doc = new XWPFDocument();
+			FileInputStream in = new FileInputStream(template);
+			XWPFDocument doc = new XWPFDocument(in);
+			in.close();
 
-				FileInputStream in = new FileInputStream(template);
-				doc = new XWPFDocument(in);
-				in.close();
+			createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
 
-				createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
-
-				doc.write(out);
-				out.close();
-				results.add(reportFile);
-				log.info("Writing hazard report to " + reportFile.getAbsolutePath());
-			}
-
+			doc.write(out);
+			out.close();
+			results.add(reportFile);
+			log.info("Writing hazard report to " + reportFile.getAbsolutePath());
 		}
 
-		// TODO: Return list of temp files
-		return null;
+		return results;
 	}
 
 	private void createContentForHazard(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases,

@@ -252,8 +252,7 @@ public class HazardReportGeneratorTest {
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService);
-		test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories, testRiskLikelihoods,
-				outputDirectory, true);
+		test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories, testRiskLikelihoods, outputDirectory);
 
 	}
 
