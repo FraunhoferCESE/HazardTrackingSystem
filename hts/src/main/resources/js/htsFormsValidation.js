@@ -261,10 +261,10 @@ AJS.$(document).ready(function(){
 	    },
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
-				async: false,
 				success: function(data) {
-					console.log("SUCCESS");
 					$(form).removeDirtyWarning();
+					console.log("SUCCESS");
+					window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + data.hazardID;
 				},
 				error: function(error) {
 					console.log("ERROR");
@@ -272,6 +272,7 @@ AJS.$(document).ready(function(){
 				}
 			});
 		}
+
 	});
 
 	$(".editControlForm").each(function(index) {

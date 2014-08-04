@@ -17,6 +17,8 @@ import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
@@ -126,8 +128,13 @@ public class ControlsServlet extends HttpServlet {
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
         	hazardControlService.add(currentHazard, description, controlGroup, causes);
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-    	}   	
+			
+        	//res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+        	JSONObject json = new JSONObject();
+        	createJson(json, "hazardID", currentHazard.getID());
+        	res.setContentType("application/json;charset=utf-8");
+        	res.getWriter().println(json);
+    	}
     }
     
 	@Override
@@ -181,6 +188,16 @@ public class ControlsServlet extends HttpServlet {
 			}
 		}
 		return false;
+	}
+	
+	private JSONObject createJson(JSONObject json, String key, Object value) {
+		try {
+			json.put(key, value);
+		} catch (JSONException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return json;
 	}
 
 }

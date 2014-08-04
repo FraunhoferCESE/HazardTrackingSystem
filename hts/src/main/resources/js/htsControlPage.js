@@ -133,6 +133,7 @@ function getHazardInformation() {
 	var hazardInformation = {};
 	hazardInformation.theNumber = AJS.$("#HazardNumberForControl").text();
 	hazardInformation.theTitle = AJS.$("#HazardTitleForControl").text();
+	hazardInformation.theID = AJS.$("#hazardID").val();
 	return hazardInformation;
 }
 
@@ -211,7 +212,7 @@ function checkIfExpandButtonNeedsRenaming(expanding) {
 	createdControls.each(function (index) {
 		var entry = AJS.$(this);
 		var entryFullID = entry.attr("id");
-		var entryID = entryFullID.slice(-1);
+		var entryID = entryFullID.replace( /^\D+/g, '');
 		var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 		if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 			numberOfNotHidden++;
@@ -307,6 +308,14 @@ function updateControlsCookie(operation, entryID) {
 	}
 }
 
+function getAssociatedCauseCookie() {
+	return AJS.Cookie.read("ASSOCIATED_CAUSE");
+}
+
+function updateAssociatedCauseCookie(theCauseID) {
+	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
+}
+
 function openControlsInCookie() {
 	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
 	if (openControls !== "none") {
@@ -342,7 +351,7 @@ AJS.$(document).ready(function(){
 	AJS.$(".ControlsTableCellToggle").live("click", function() {
 		var entry = AJS.$(this);
 		var entryFullID = entry.attr("id");
-		var entryID = entryFullID.slice(-1);
+		var entryID = entryFullID.replace( /^\D+/g, '');
 		var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 		if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 			entryEdit.removeClass("ControlsTableEditEntryHidden");
@@ -366,7 +375,7 @@ AJS.$(document).ready(function(){
 			createdControls.each(function () {
 				var entry = AJS.$(this);
 				var entryFullID = entry.attr("id");
-				var entryID = entryFullID.slice(-1);
+				var entryID = entryFullID.replace( /^\D+/g, '');
 				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 				if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 					entryEdit.removeClass("ControlsTableEditEntryHidden");
@@ -382,7 +391,7 @@ AJS.$(document).ready(function(){
 			createdControls.each(function () {
 				var entry = AJS.$(this);
 				var entryFullID = entry.attr("id");
-				var entryID = entryFullID.slice(-1);
+				var entryID = entryFullID.replace( /^\D+/g, '');
 				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 				if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 					entryEdit.addClass("ControlsTableEditEntryHidden");
@@ -436,6 +445,7 @@ AJS.$(document).ready(function(){
 		var doDelete = false;
 		var doUpdate = false;
 		var doNew = false;
+		var doNewWithSelCau = false;
 		var doTransfer = false;
 		var doRefresh = false;
 		var validationError = false;
@@ -477,9 +487,18 @@ AJS.$(document).ready(function(){
 		}
 
 		// Check for new control
+
 		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
 			AJS.$("#addNewControlForm").trigger("submit");
-			doNew = true;
+
+			if (AJS.$.url().param().hasOwnProperty("selcau")) {
+				console.log("has para");
+				doNewWithSelCau = true;
+			}
+			else {
+				console.log("no para");
+				doNew = true;
+			}
 		}
 
 		validationError = AJS.$(".validationError").is(":visible");
@@ -505,6 +524,7 @@ AJS.$(document).ready(function(){
 		}
 
 		if (doUpdate || doNew || doTransfer) {
+			console.log("reload");
 			location.reload();
 			return;
 		}
@@ -652,27 +672,24 @@ AJS.$(document).ready(function(){
 			}, 50);
 		}
 
-		if (AJS.$.url().param().hasOwnProperty("selcau")) {
+		if (getAssociatedCauseCookie() !== "none") {
+
+
 			var selectedCauseID = AJS.$.url().param("selcau");
+
+			var associatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
+			associatedCauses.each(function () {
+				AJS.$(this).prop("selected", false);
+				if (AJS.$(this).val() === selectedCauseID) {
+					AJS.$(this).prop("selected", true);
+					AJS.$(this).trigger("dblclick");
+				}
+			});
+
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$("#addNewControl").offset().top
+			}, 50);
 			AJS.$("#addNewControl").trigger("click");
-
-			var previouslySelectedCause = null;
-			var nonAssociatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
-			if (nonAssociatedCauses.length > 0) {
-				nonAssociatedCauses.each(function () {
-					if (AJS.$(this).is(':selected')) {
-						previouslySelectedCause = AJS.$(this);
-						previouslySelectedCause.prop("selected", false);
-					}
-				});
-			}
-
-			AJS.$("#controlCausesNewms2side__sx option[value='" + selectedCauseID +"']");
-
-			//var fie = AJS.$("#controlCausesNewms2side__sx option[value='" + AJS.$.url().param("selcau") +"']");
-			//console.log(fie);
-
-			//AJS.$(".AddOne").trigger("click");
 		}
 	}
 	/* Expand / scroll functionality ends */
