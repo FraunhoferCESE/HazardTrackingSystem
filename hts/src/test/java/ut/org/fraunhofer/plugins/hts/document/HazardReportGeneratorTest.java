@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +35,6 @@ public class HazardReportGeneratorTest {
 	private List<Review_Phases> testReviewPhases;
 	private List<Risk_Categories> testRiskCategories;
 	private List<Risk_Likelihoods> testRiskLikelihoods;
-	private File outputDirectory;
 
 	private TransferService mockTransferService;
 	private HazardCauseService mockHazardCauseService;
@@ -149,9 +149,6 @@ public class HazardReportGeneratorTest {
 		when(mockReviewPhase.getID()).thenReturn(33333);
 		testReviewPhases.add(mockReviewPhase);
 
-		// outputDirectory = Files.createTempDir();
-		outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
-
 		Subsystems testSub1 = mock(Subsystems.class);
 		when(testSub1.getLabel()).thenReturn("Propulsion");
 		Subsystems testSub2 = mock(Subsystems.class);
@@ -252,8 +249,16 @@ public class HazardReportGeneratorTest {
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService);
-		test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories, testRiskLikelihoods, outputDirectory);
+		List<byte[]> results = test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories,
+				testRiskLikelihoods);
 
+		// outputDirectory = Files.createTempDir();
+		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
+		File reportFile = new File(outputDirectory + File.separator + hazardList.get(0).getHazardNum() + ".docx");
+		
+		FileOutputStream out = new FileOutputStream(reportFile);
+		out.write(results.get(0));
+		out.close();
 	}
 
 }

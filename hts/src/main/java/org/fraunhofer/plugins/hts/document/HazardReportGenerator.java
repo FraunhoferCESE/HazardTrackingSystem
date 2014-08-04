@@ -1,10 +1,8 @@
 package org.fraunhofer.plugins.hts.document;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DateFormat;
@@ -104,34 +102,30 @@ public class HazardReportGenerator {
 	 *            File location in which to temporarily store output files, such
 	 *            as {@link Files#createTempDir()}. Must not be
 	 *            <code>null</code>.
-	 * @return a list of {@link File} pointing to the created documents.
+	 * @return a list of {@link File} pointing to the created documents, or <code>null</code> if the hazardList is empty or <code>null</code>
 	 * @throws IOException
 	 * @throws XmlException
 	 */
-	public List<File> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
-			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, File outputDirectory)
+	public List<byte[]> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
+			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods)
 			throws IOException, XmlException {
 
-		checkNotNull(outputDirectory, "Output directory for hazard documents is null");
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
 
-		List<File> results = Lists.newArrayList();
+		List<byte[]> results = Lists.newArrayList();
 
 		for (Hazards h : hazardList) {
-			File reportFile = new File(outputDirectory + File.separator + h.getHazardNum() + ".docx");
-			FileOutputStream out = new FileOutputStream(reportFile);
-
 			FileInputStream in = new FileInputStream(template);
 			XWPFDocument doc = new XWPFDocument(in);
 			in.close();
 
 			createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
 
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			doc.write(out);
-			out.close();
-			results.add(reportFile);
-			log.info("Writing hazard report to " + reportFile.getAbsolutePath());
+			results.add(out.toByteArray());
+			log.info("Writing byte array for " + h.getHazardNum());
 		}
 
 		return results;
