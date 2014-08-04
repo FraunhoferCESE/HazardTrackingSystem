@@ -226,4 +226,9 @@ AJS.$(document).ready(function() {
 			JIRA.Messages.showWarningMsg("Please create a Mission/Payload before creating a Hazard Report.", {closeable: true});
 		}
 	});
+
+	AJS.$("#downloadHazardReport").live("click", function() {
+		AJS.$("#reportgeneration").submit();
+	});
+
 });

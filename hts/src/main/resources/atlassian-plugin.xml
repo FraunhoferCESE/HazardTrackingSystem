@@ -83,6 +83,10 @@
     <description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
     <url-pattern>/hazardform</url-pattern>
   </servlet>
+  <servlet name="Report Generation Servlet" i18n-name-key="report-gen-servlet.name" key="report-gen-servlet" class="org.fraunhofer.plugins.hts.servlet.ReportGenerationServlet">
+    <description key="report-gen-servlet.description">The Report Generation Servlet Plugin</description>
+    <url-pattern>/reportgeneration</url-pattern>
+  </servlet>
   <servlet name="Controls Servlet" i18n-name-key="controls-servlet.name" key="controls-servlet" class="org.fraunhofer.plugins.hts.servlet.ControlsServlet">
     <description key="controls-servlet.description">The Controls Servlet Plugin</description>
     <url-pattern>/controlform</url-pattern>
