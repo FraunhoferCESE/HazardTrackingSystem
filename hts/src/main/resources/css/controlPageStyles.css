@@ -12,7 +12,7 @@
 
 .ControlsHeadingTwo {
     border-top: 1px black solid;
-    width: 950px;
+    width: 975px;
     font-size: 16px;
     font-weight: bold;
     display: block;
@@ -39,12 +39,10 @@
 }
 
 .ControlsTableCellThree {
-    /*400*/
     width: 475px;
 }
 
 .ControlsTableDescriptionText {
-    /*370*/
     max-width: 445px;
     word-wrap: break-word;
 }
@@ -201,12 +199,27 @@
 }
 
 .ConfirmDialogReasonTextContainer {
+    width: 72%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonTextContainerNoButton {
     width: 88%;
     display: inline-block;
 }
 
 .ConfirmDialogReasonText {
     width: 100%
+}
+
+.ConfirmDialogDuplButtonContainer {
+    width: 16%;
+    display: inline-block;
+}
+
+.ConfirmDialogDuplButton {
+    margin-left: 10px;
+    padding: 2px 5px 2px 5px;
 }
 
 .ConfirmDialogErrorText {

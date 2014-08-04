@@ -1,7 +1,7 @@
 AJS.$(document).ready(function(){
-	var $ = AJS.$
+	var $ = AJS.$;
 	var baseUrl = AJS.params.baseURL;
-    editForm();
+	editForm();
 
     $("#hazardSubsystem").multiselect2side({
     	selectedPosition: 'right',
@@ -95,24 +95,27 @@ AJS.$(document).ready(function(){
 
 	$.validator.addMethod("uniquePayload", function(value, element) {
 		var response = false;
-		var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
-		$.ajax({
-			type:"GET",
-			async: false,
-			url: actionUrl,
-			success: function(msg) {
-				response = true;
-			}
-		});
-		if(!response) {
-			$(element).css("color", "#D04437");
+		if (value !== "") {
+			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
+			$.ajax({
+				type:"GET",
+				async: false,
+				url: actionUrl,
+				success: function(msg) {
+					response = true;
+				}
+			});
 		}
-		else {
-			$(element).css("color", "");
-		}
-
 		return response;
-	}, "Mission/Payload already in use.");
+	}, "This Mission/Payload name is already in use.");
+
+	$.validator.addMethod("emptyPayload", function(value, element) {
+		var response = false;
+		if (value !== "") {
+			response = true;
+		}
+		return response;
+	}, "Invalid name.");
 
 	//Custom method to check if completion date is set to precede initation date, which should not be allowed
 	$.validator.addMethod("preventIncorrectCompl", function(complDate, element) {
@@ -152,6 +155,7 @@ AJS.$(document).ready(function(){
 	    		maxlength: 512
 	    	},
 	    	hazardPayload: {
+	    		required: true,
 	    		maxlength: 255
 	    	},
 	    	hazardSubsystem: {
@@ -175,8 +179,11 @@ AJS.$(document).ready(function(){
 	    	},
 	    	hazardTitle: {
 	    		required: "Title is required.",
-	    		maxlength: "Title should not excede 512 characters."
+	    		maxlength: "Title should not exceed 512 characters."
 	    	},
+	    	hazardPayload: {
+	    		required: "Mission/Payload association is required.",
+	    	}
 	    },
 
 	    //Custom class so error messages are not styled with JIRA's css error style.
@@ -196,12 +203,15 @@ AJS.$(document).ready(function(){
 	    			//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
 	    			var data = $.parseJSON(data);
 	    			if(data.redirect) {
-	    				window.location.replace(data.redirect);
+						window.location.href = baseUrl + "/plugins/servlet/hazardform?selpay=" + data.payloadID;
 	    			}
 	    			else {
 	    				var hazardNumber = data.hazardNumber;
 		    			var hazardID = data.hazardID;
+		    			var payloadID = data.payloadID;
 	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
+	    				initializeNavigationDropdowns(payloadID, hazardID);
+	    				updateNavigationOptionsToEditMode(hazardID);
 	    			}
 	    		},
 	    		error: function(error) {
@@ -215,6 +225,7 @@ AJS.$(document).ready(function(){
 		rules: {
 			hazardPayloadAdd: {
 				maxlength: 255,
+				emptyPayload: true,
 				uniquePayload: true
 			}
 	    },
@@ -222,17 +233,12 @@ AJS.$(document).ready(function(){
 	    errorClass: "validationError",
 	    errorElement: "span",
 	    errorPlacement: function(error, element) {
-	    	error.insertAfter(element);
-	    	$(error).css({"height":0});
+	    	error.insertAfter(element.parent());
 	    },
 	    submitHandler: function(form) {
 	    	$(form).ajaxSubmit({
 	    		success: function(data) {
-	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
-	    			$("#payloadForm").removeDirtyWarning();
-	    			JIRA.Messages.showSuccessMsg($("#hazardPayloadAdd").val() +" was created successfully", {closeable: true});
-	    			$("#payloadList").load(document.URL + " #payloadList");
-	    			form.reset();
+	    			location.reload();
 	    		},
 	    		error: function(error) {
 	    			console.log(error);
@@ -255,10 +261,10 @@ AJS.$(document).ready(function(){
 	    },
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
-				async: false,
 				success: function(data) {
-					console.log("SUCCESS");
 					$(form).removeDirtyWarning();
+					console.log("SUCCESS");
+					window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + data.hazardID;
 				},
 				error: function(error) {
 					console.log("ERROR");
@@ -266,6 +272,7 @@ AJS.$(document).ready(function(){
 				}
 			});
 		}
+
 	});
 
 	$(".editControlForm").each(function(index) {
@@ -529,5 +536,74 @@ AJS.$(document).ready(function(){
 			AJS.$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
 			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
 		}
+	}
+
+	function manipulateTextLength(theText, numChars) {
+		if (theText.length >= numChars){
+			return theText.substring(0, numChars - 3) + "...";
+		}
+		else {
+			return theText;
+		}
+	}
+
+	function initializeNavigationDropdowns(payloadID, hazardID) {
+		var missionList;
+		AJS.$.ajax({
+			type: "GET",
+			async: false,
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/",
+			success: function(data) {
+				missionList = data;
+			}
+		});
+
+		if(missionList.length > 0) {
+			var temp1 = "<option value=''>-Select Mission/Payload-</option>";
+			AJS.$(missionList).each(function() {
+				if (this.payloadID === payloadID ) {
+					temp1 += "<option value=" + this.payloadID + " selected>" + manipulateTextLength(this.title, 85) + "</option>";
+				}
+				else {
+					temp1 += "<option value=" + this.payloadID + ">" + manipulateTextLength(this.title, 85) + "</option>";
+				}
+			});
+			AJS.$('#payloadNavigationList')
+				.empty()
+				.append(temp1);
+			AJS.$("#payloadNavigationList option").tsort();
+		}
+
+		var hazardList;
+		AJS.$.ajax({
+			type:"GET",
+			async: false,
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allpayloads/" + payloadID,
+			success: function(data) {
+				hazardList = data;
+			}
+		});
+
+		if(hazardList.length > 0) {
+			var temp2 = "<option value=''>-Select Hazard Report-</option>";
+			AJS.$(hazardList).each(function() {
+				if (this.hazardID === hazardID) {
+					temp2 += "<option value=" + this.hazardID + " selected>" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
+				}
+				else {
+					temp2 += "<option value=" + this.hazardID + ">" + manipulateTextLength(this.hazardNumber, 25) + " - " + manipulateTextLength(this.title, 57) + "</option>";
+				}
+			});
+			AJS.$('#hazardNavigationList')
+				.empty()
+				.append(temp2);
+			AJS.$("#hazardNavigationList option").tsort();
+		}
+	}
+
+	function updateNavigationOptionsToEditMode(hazardID) {
+		AJS.$("#cause-nav-item").children().attr("href", "causeform?edit=y&key=" + hazardID);
+		AJS.$("#control-nav-item").children().attr("href", "controlform?edit=y&key=" + hazardID);
+		// add line here for verifications
 	}
 });

@@ -8,33 +8,47 @@
 		#parse("/templates/navigation.vm")
 		<header class="aui-page-header">
 			<div class="aui-page-header-inner">
-				<h2>List of all Hazard Reports</h2>
+				<h2>Missions/Payloads and Hazard Reports</h2>
 			</div>
 		</header>
 		<div class="aui-page-panel">
         	<div class="aui-page-panel-inner">
-        	    <div class="aui-page-panel-nav">
+        	    <div class="leftPanel aui-page-panel-nav">
         	    	<form class="payloadForm" method="post" action="hazardlist" class="aui" id="payloadForm">
 						<div class="field-group">
-							<label for="hazardPayload">Mission/Payload</label>
-							<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd"/>
+							<div class="payloadHeading">Mission/Payload</div>
 							<div>
-	        					<input class="add submit" type="submit" value="Add" name="PayloadAdd">
-	        				</div>
+        						<div class="payloadFormInputContainer">
+									<input class="text long-field" name="hazardPayloadAdd" id="hazardPayloadAdd" autofocus/>
+									<input class="add submit" type="submit" value="Add" name="PayloadAdd">
+								</div>
+							</div>
 	        			</div>
     				</form>
         	    	<nav class="aui-navgroup aui-navgroup-vertical payloads">
-        	    		<div class="aui-nav-heading">List of Mission/Payloads</div>
+        	    		<div class="payloadHeadingList">List of Missions/Payloads</div>
         	    		<div class="aui-navgroup-inner" id="payloadList">
-    						<ul class="aui-nav">
-    							#foreach( $payload in $payloads )
-    								<li><a class="getReports" data-key="$payload.getID()">$!payload.getName()</a></li>
+    						<ul class="aui-nav" id="listOfCreatedPayloads">
+    							#if($payloads.size() == 0)
+    								<span class="noPayload">-None-</span>
+    							#else
+									<li><a class="getReports" data-key="all">-All Hazard Reports-</a></li>
+									#foreach( $payload in $payloads )
+    									<li><a class="getReports" data-key="$payload.getID()">$!payload.getName()</a></li>
+    								#end
     							#end
     						</ul>
     					</div>
     				</nav>
     			</div>
-    			<h2 class="noHazard">#if($hazardReports.size()==0)No Hazard reports have been created#end</h2>
+				<div id="HazardTableViewingHeader">Currently viewing: <div id="HazardTableViewingHeaderContent">All Hazard Reports</div></div>
+    			#if($hazardReports.size()==0)
+    				<div class="HazardTableText" id="HazardTableNoPayloadsMessage">No Missions/Payloads have been created.</div>
+    			#end
+    			#if($hazardReports.size()==0)
+    				<div class="HazardTableText" id="HazardTableNoHazardsMessage">No Hazard Reports have been created.</div>
+    			#end
+    			<div class="HazardTableText" id="HazardTableMessage"></div>
 				<div id="hazardTableHolder">
 					#if ( $hazardReports.size() > 0 )
 						<table class="aui" id="hazardTable">
@@ -49,7 +63,7 @@
 						    </thead>
 						    <tbody>
 						    	#foreach( $hazardreport in $hazardReports )
-						        <tr>
+						        <tr id="hazardEntryID$hazardreport.getID()">
 						            <td headers="hazardNumber">$!hazardreport.getHazardNum()</td>
 						            <td headers="hazardTitle">$!hazardreport.getTitle()</td>
 						            <td headers="hazardMissionPayload">$!hazardreport.getMissionPayload().getName()</td>
@@ -71,6 +85,7 @@
 						</table>
 					#end
 				</div>
+				<button class="aui-button createNewHazardReport" id="HazardTableCreateHazardButton">Create Hazard</button>
 			</div>
 		</div>
 	</body>

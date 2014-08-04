@@ -117,14 +117,23 @@ function sendAjaxRequestToDeleteSpecificControl(controlID, deleteReason) {
 	});
 }
 
-function addErrorMessageToSpecificControl(controlID) {
+function addErrorMessageToSpecificControl(controlID, message) {
+	AJS.$("#ConfirmDialogErrorTextForControlID" + controlID)[0].innerHTML = message;
 	AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).show();
+}
+
+function removeErrorMessageFromSpecificControl(controlID) {
+	if (AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).is(":visible")) {
+		AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).hide();
+		AJS.$("#ConfirmDialogErrorTextForControlID" + controlID)[0].innerHTML = "";
+	}
 }
 
 function getHazardInformation() {
 	var hazardInformation = {};
 	hazardInformation.theNumber = AJS.$("#HazardNumberForControl").text();
 	hazardInformation.theTitle = AJS.$("#HazardTitleForControl").text();
+	hazardInformation.theID = AJS.$("#hazardID").val();
 	return hazardInformation;
 }
 
@@ -146,8 +155,14 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 		dialogContent3 = dialogContent3 + "<tr><td>" + controlElementFirstRow.children[1].innerText + "</td>";
 		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + controlElementFirstRow.children[2].innerText + "</div></td>";
 		dialogContent3 = dialogContent3 + "<td>" + controlElementFirstRow.children[3].innerText + "</td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControlID'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonText' name='ReasonTextForControlID' id='ReasonTextForControlID" + selectedControls[i] + "'></div></td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + selectedControls[i] +"'>For the control above, please provide a short delete reason.</p></td></tr>";
+
+		if (i === 0 && selectedControls.length > 1) {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControlID'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonText' name='ReasonTextForControlID' id='ReasonTextForControlID" + selectedControls[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton'>Apply to all</button></div></td></tr>";
+		}
+		else {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControlID'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonText' name='ReasonTextForControlID' id='ReasonTextForControlID" + selectedControls[i] + "'></div></td></tr>";
+		}
+		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + selectedControls[i] +"'></p></td></tr>";
 	}
 	dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr></tbody></table>";
 
@@ -184,7 +199,7 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 		else {
 			oldSelectedControls = result.skippedReasonControlIDs;
 			for (var j = 0; j < result.skippedReasonControlIDs.length; j++) {
-				addErrorMessageToSpecificControl(result.skippedReasonControlIDs[j]);
+				addErrorMessageToSpecificControl(result.skippedReasonControlIDs[j], "For the control above, please provide a short delete reason.");
 			}
 		}
 	});
@@ -194,10 +209,10 @@ function checkIfExpandButtonNeedsRenaming(expanding) {
 	var numberOfNotHidden = 0;
 	var numberOfCreatedControls = AJS.$('.ControlsTableCellToggle').length;
 	var createdControls = AJS.$('.ControlsTableCellToggle');
-		createdControls.each(function (index) {
+	createdControls.each(function (index) {
 		var entry = AJS.$(this);
 		var entryFullID = entry.attr("id");
-		var entryID = entryFullID.slice(-1);
+		var entryID = entryFullID.replace( /^\D+/g, '');
 		var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 		if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 			numberOfNotHidden++;
@@ -291,13 +306,19 @@ function updateControlsCookie(operation, entryID) {
 			}
 		}
 	}
-	console.log(AJS.Cookie.read("OPEN_CONTROLS"));
+}
+
+function getAssociatedCauseCookie() {
+	return AJS.Cookie.read("ASSOCIATED_CAUSE");
+}
+
+function updateAssociatedCauseCookie(theCauseID) {
+	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
 }
 
 function openControlsInCookie() {
 	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
 	if (openControls !== "none") {
-		console.log("expanding some shit");
 		openControlsArray = openControls.split(',');
 		for (var i = 0; i < openControlsArray.length; i++) {
 			var entryEdit = AJS.$("#ControlsTableEditEntry" + openControlsArray[i]);
@@ -330,7 +351,7 @@ AJS.$(document).ready(function(){
 	AJS.$(".ControlsTableCellToggle").live("click", function() {
 		var entry = AJS.$(this);
 		var entryFullID = entry.attr("id");
-		var entryID = entryFullID.slice(-1);
+		var entryID = entryFullID.replace( /^\D+/g, '');
 		var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 		if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 			entryEdit.removeClass("ControlsTableEditEntryHidden");
@@ -354,7 +375,7 @@ AJS.$(document).ready(function(){
 			createdControls.each(function () {
 				var entry = AJS.$(this);
 				var entryFullID = entry.attr("id");
-				var entryID = entryFullID.slice(-1);
+				var entryID = entryFullID.replace( /^\D+/g, '');
 				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 				if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 					entryEdit.removeClass("ControlsTableEditEntryHidden");
@@ -370,7 +391,7 @@ AJS.$(document).ready(function(){
 			createdControls.each(function () {
 				var entry = AJS.$(this);
 				var entryFullID = entry.attr("id");
-				var entryID = entryFullID.slice(-1);
+				var entryID = entryFullID.replace( /^\D+/g, '');
 				var entryEdit = AJS.$("#ControlsTableEditEntry" + entryID);
 				if (!entryEdit.hasClass("ControlsTableEditEntryHidden")) {
 					entryEdit.addClass("ControlsTableEditEntryHidden");
@@ -424,6 +445,7 @@ AJS.$(document).ready(function(){
 		var doDelete = false;
 		var doUpdate = false;
 		var doNew = false;
+		var doNewWithSelCau = false;
 		var doTransfer = false;
 		var doRefresh = false;
 		var validationError = false;
@@ -465,9 +487,18 @@ AJS.$(document).ready(function(){
 		}
 
 		// Check for new control
+
 		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
 			AJS.$("#addNewControlForm").trigger("submit");
-			doNew = true;
+
+			if (AJS.$.url().param().hasOwnProperty("selcau")) {
+				console.log("has para");
+				doNewWithSelCau = true;
+			}
+			else {
+				console.log("no para");
+				doNew = true;
+			}
 		}
 
 		validationError = AJS.$(".validationError").is(":visible");
@@ -493,10 +524,43 @@ AJS.$(document).ready(function(){
 		}
 
 		if (doUpdate || doNew || doTransfer) {
+			console.log("reload");
 			location.reload();
 			return;
 		}
 	});
+
+	AJS.$(".ConfirmDialogDuplButton").live("click", function() {
+		var reasonTextFields = AJS.$(".ConfirmDialogReasonText");
+		var reasonToDuplicate;
+		var noReasonGiven = false;
+		var controlID;
+		reasonTextFields.each(function (index) {
+			if (index === 0) {
+				reasonToDuplicate = AJS.$(this).val();
+				if (reasonToDuplicate === "") {
+					controlID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+					addErrorMessageToSpecificControl(controlID, "For the control above, please provide a short delete reason.");
+					noReasonGiven = true;
+				}
+			}
+			else {
+				if (noReasonGiven) {
+					controlID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+					removeErrorMessageFromSpecificControl(controlID);
+				}
+				else {
+					AJS.$(this)[0].value = reasonToDuplicate;
+				}
+			}
+		});
+	});
+
+	AJS.$(".ConfirmDialogReasonText").live("input", function() {
+		var controlID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+		removeErrorMessageFromSpecificControl(controlID);
+	});
+
 	/* Updating existing controls functinality ends */
 
 	/* Clearing controls functionality begins */
@@ -601,10 +665,31 @@ AJS.$(document).ready(function(){
 				buttonForTheControl.classList.add("aui-iconfont-devtools-task-disabled");
 			}
 		}
+
 		if (AJS.$.url().param("trans") === "y") {
 			AJS.$('html, body').animate({
 				scrollTop: AJS.$(".ControlsTableEntryControlID" + IDOfControlToBeOpen).offset().top
 			}, 50);
+		}
+
+		if (getAssociatedCauseCookie() !== "none") {
+
+
+			var selectedCauseID = AJS.$.url().param("selcau");
+
+			var associatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
+			associatedCauses.each(function () {
+				AJS.$(this).prop("selected", false);
+				if (AJS.$(this).val() === selectedCauseID) {
+					AJS.$(this).prop("selected", true);
+					AJS.$(this).trigger("dblclick");
+				}
+			});
+
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$("#addNewControl").offset().top
+			}, 50);
+			AJS.$("#addNewControl").trigger("click");
 		}
 	}
 	/* Expand / scroll functionality ends */

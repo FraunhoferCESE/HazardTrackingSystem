@@ -12,6 +12,16 @@ function createCookie(id, type) {
 	AJS.$.cookie("show-" + getTheHazardNumber() + "-" + id, type, { expires: 1 });
 }
 
+function createAssociatedCauseCookie() {
+	if (AJS.Cookie.read("ASSOCIATED_CAUSE") === undefined) {
+		AJS.Cookie.save("ASSOCIATED_CAUSE", "none");
+	}
+}
+
+function updateAssociatedCauseCookie(theCauseID) {
+	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
+}
+
 function checkIfElementIsVisible(element) {
 	return element.is(":visible");
 }
@@ -289,6 +299,7 @@ AJS.$(document).ready(function(){
 	openDivOnReload();
 	submitCauses();
 	transfer();
+	createAssociatedCauseCookie();
 	AJS.$(".newFormContainer").hide();
 	AJS.$(".transferFormContainer").hide();
 
@@ -333,6 +344,14 @@ AJS.$(document).ready(function(){
 		var causesHazardList = AJS.$("#hazardList");
 		manipulateTextForHazardSelectionInCauses(causesHazardList);
 		foldable(this, "transferFormContainer");
+	});
+
+	AJS.$("#causeAddControl").live("click", function() {
+		var causeIDAndHazardIDArr = AJS.$(this).data("key").split("-");
+		var causeID = causeIDAndHazardIDArr[0];
+		var hazardID = causeIDAndHazardIDArr[1];
+		updateAssociatedCauseCookie(causeID);
+		window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + hazardID;
 	});
 
 	var whichForm;

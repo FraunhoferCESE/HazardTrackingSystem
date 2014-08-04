@@ -1,5 +1,7 @@
 <form method="post" action="hazardform" class="aui" id="hazardForm">
-    <div class="field-group">
+	<input type="hidden" name="hazardPayloadID" id="hazardPayloadID" value="$!hazard.getMissionPayload().getID()">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+	<div class="field-group">
 		<label for="hazardNumber">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
 		<input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber" value="$!hazard.getHazardNum()"/>
 	</div>
@@ -8,8 +10,10 @@
 		<input class="text long-field" type="text" id="hazardTitle" name="hazardTitle" value="$!hazard.getTitle()"/>
 	</div>
 	<div class="field-group">
-		<label for="hazardPayload">Mission/Payload</label>
+		<label for="hazardPayload">Mission/Payload<span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardPaylod">Mission/Payload association is required.</span></label>
+
 		<select class="select" id="hazardPayload" name="hazardPayload">
+			<option value="">-Select Mission/Payload-</option>
 		   	#foreach( $payload in $payloads )
 		    	#if($payload.getID() == $hazard.getMissionPayload().getID())
 					<option value="$payload.getID()" selected>$!payload.getName()</option>
@@ -116,8 +120,8 @@
     </div>
 	<div class="buttons-container">
 		<div class="buttons">
-	        <input class="button submit" type="submit" value="Save" name="hazardSave">
-	        <input class="button submit" type="submit" value="Save and create another" name="hazardSaveAdd">
+	        <input class="button submit" type="submit" value="Save" name="hazardSave" id="hazardSave">
+	        <input class="button submit" type="submit" value="Save and create another" name="hazardSaveAdd" id="hazardSaveAdd">
 	    </div>
 	</div>
 </form>
