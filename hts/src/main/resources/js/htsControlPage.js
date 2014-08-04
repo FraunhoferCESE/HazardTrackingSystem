@@ -644,7 +644,7 @@ AJS.$(document).ready(function(){
 
 	if (whichForm === "controlform") {
 		var IDOfControlToBeOpen = AJS.$.url().param("id");
-		if(IDOfControlToBeOpen) {
+		if (IDOfControlToBeOpen) {
 			var controlToBeOpened = AJS.$(".ControlsTableEntryControlID" + IDOfControlToBeOpen)[1].children[0];
 			if (controlToBeOpened.classList.contains("ControlsTableEditEntryHidden")) {
 				controlToBeOpened.classList.remove("ControlsTableEditEntryHidden");
@@ -660,13 +660,12 @@ AJS.$(document).ready(function(){
 			}, 50);
 		}
 
-		if (getAssociatedCauseCookie() !== "none") {
-			var selectedCauseID = getAssociatedCauseCookie();
-			updateAssociatedCauseCookie("none");
+		var associatedCause = getAssociatedCauseCookie();
+		if (associatedCause !== "none") {
 			var associatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
 			associatedCauses.each(function () {
 				AJS.$(this).prop("selected", false);
-				if (AJS.$(this).val() === selectedCauseID) {
+				if (AJS.$(this).val() === associatedCause) {
 					AJS.$(this).prop("selected", true);
 					AJS.$(this).trigger("dblclick");
 				}
@@ -676,6 +675,8 @@ AJS.$(document).ready(function(){
 				scrollTop: AJS.$("#addNewControl").offset().top
 			}, 50);
 			AJS.$("#addNewControl").trigger("click");
+
+			updateAssociatedCauseCookie("none");
 		}
 	}
 	/* Expand / scroll functionality ends */

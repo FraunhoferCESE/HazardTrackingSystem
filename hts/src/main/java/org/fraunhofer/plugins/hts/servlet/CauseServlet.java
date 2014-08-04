@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
+import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -25,24 +27,34 @@ public class CauseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
+	private final MissionPayloadService missionPayloadService;
 	private final TemplateRenderer templateRenderer;
 
 	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
-			HazardService hazardService, TransferService transferCauseService) {
+			HazardService hazardService, MissionPayloadService missionPayloadService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
+		this.missionPayloadService = checkNotNull(missionPayloadService);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
-			context.put("allHazards", hazardService.all());
-    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
 			res.setContentType("text/html;charset=utf-8");
+			context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
+			
+			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+			Mission_Payload currentPayload = currentHazard.getMissionPayload();
+			
+			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
+			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
+			
+			//Hazards[] allHazardsBelongingToPayload = currentPayload.getHazards();
+			//context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
+			
 			if ("y".equals(req.getParameter("edit"))) {
-				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
 				context.put("hazardNumber", currentHazard.getHazardNum());
 				context.put("hazardTitle", currentHazard.getTitle());
 				context.put("hazardID", currentHazard.getID());
@@ -50,16 +62,19 @@ public class CauseServlet extends HttpServlet {
 				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
 				context.put("transfers", hazardCauseService.getAllTransferredCauses(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
-			} else {
-				Hazards newestHazardReport = hazardService.getNewestHazardReport();
-				context.put("hazardNumber", newestHazardReport.getHazardNum());
-				context.put("hazardTitle", newestHazardReport.getTitle());
-				context.put("hazardID", newestHazardReport.getID());
-				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
-				context.put("transfers", hazardCauseService.getAllTransferredCauses(newestHazardReport));
-				templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
 			}
-		} else {
+			// This else is outdated, will no longer be used after issue #169 has been completed
+//			else {
+//				Hazards newestHazardReport = hazardService.getNewestHazardReport();
+//				context.put("hazardNumber", newestHazardReport.getHazardNum());
+//				context.put("hazardTitle", newestHazardReport.getTitle());
+//				context.put("hazardID", newestHazardReport.getID());
+//				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+//				context.put("transfers", hazardCauseService.getAllTransferredCauses(newestHazardReport));
+//				templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
+//			}
+		}
+		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
