@@ -11,16 +11,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.HeaderFooter;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.apache.xmlbeans.XmlDocumentProperties;
 import org.apache.xmlbeans.XmlException;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
@@ -33,8 +30,6 @@ import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,24 +103,25 @@ public class HazardReportGenerator {
 			XmlException {
 		createHeader(doc, h, reviewPhases);
 		createHazardDescription(doc, h, testRiskCategories, testRiskLikelihoods);
-		//createFooter(doc, h);
 	}
 
-	private void createFooter(XWPFDocument doc, Hazards h) throws IOException, XmlException {
-		// http://stackoverflow.com/questions/16442347/counting-pages-in-a-word-document
-
-		XWPFHeaderFooterPolicy headerFooterPolicy = doc.getHeaderFooterPolicy();
-		headerFooterPolicy.createFooter(STHdrFtr.DEFAULT);
-		XWPFFooter footer = headerFooterPolicy.getDefaultFooter();
-		new ParagraphBuilder().text("test").createFooterText(footer);
-		XmlDocumentProperties documentProperties = doc.getDocument().documentProperties();
-
-		doc.createNumbering();
-	}
+//	private void createFooter(XWPFDocument doc, Hazards h) throws IOException, XmlException {
+//		// http://stackoverflow.com/questions/16442347/counting-pages-in-a-word-document
+//
+//		XWPFHeaderFooterPolicy headerFooterPolicy = doc.getHeaderFooterPolicy();
+//		headerFooterPolicy.createFooter(STHdrFtr.DEFAULT);
+//		XWPFFooter footer = headerFooterPolicy.getDefaultFooter();
+//		// new ParagraphBuilder().text("test").createFooterText(footer);
+//		XmlDocumentProperties documentProperties = doc.getDocument().documentProperties();
+//
+//		doc.createNumbering();
+//	}
 
 	private void createHeader(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases) {
+		// Remove the default paragraph in Template.docx
+		doc.removeBodyElement(0);
+		
 		XWPFTable top = new TableBuilder().setWidth(730350).size(1, 2).createTable(doc);
-
 		XWPFTableRow row;
 		XWPFTableCell cell;
 
@@ -144,7 +140,7 @@ public class HazardReportGenerator {
 		// with a paragraph border.
 		cell = row.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).alignment(ParagraphAlignment.CENTER)
+		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).leftMargin(0).alignment(ParagraphAlignment.CENTER)
 				.bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
@@ -159,7 +155,7 @@ public class HazardReportGenerator {
 		setGridSpan(cell, 3);
 
 		new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
+		new ParagraphBuilder().text(h.getMissionPayload().getName()).leftMargin(0).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
@@ -227,7 +223,7 @@ public class HazardReportGenerator {
 		// --------------------------------------
 
 		// Headers for Hazard Title and Risk Categories/Likelihoods
-		row = new TableBuilder().size(1, 2).setInnerHBorder(STBorder.NONE).createTable(doc).getRow(0);
+		row = new TableBuilder().size(1, 2).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
 		cell = row.getCell(0);
 		setGridSpan(cell, 2);
 		new CellHeaderBuilder().text("9. Hazard title:").createCellHeader(cell);
@@ -236,7 +232,7 @@ public class HazardReportGenerator {
 		setGridSpan(cell, 2);
 		new CellHeaderBuilder().text("10. Hazard Category and risk Likelihood:").createCellHeader(cell);
 
-		row = new TableBuilder().size(1, 3).setInnerHBorder(STBorder.NONE).createTable(doc).getRow(0);
+		row = new TableBuilder().size(1, 3).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
 		// HAzard Title
 		cell = row.getCell(0);
 		setGridSpan(cell, 2);
@@ -246,11 +242,9 @@ public class HazardReportGenerator {
 		cell = row.getCell(1);
 		for (Risk_Categories category : testRiskCategories) {
 			if (category.getID() == h.getRiskCategory().getID())
-				new ParagraphBuilder().text("\u2612 " + category.getValue()).leftMargin(100).fontSize(6)
-						.createCellText(cell);
+				new ParagraphBuilder().text("\u2612  " + category.getValue()).fontSize(6).createCellText(cell);
 			else
-				new ParagraphBuilder().text("\u2610 " + category.getValue()).leftMargin(100).fontSize(6)
-						.createCellText(cell);
+				new ParagraphBuilder().text("\u2610  " + category.getValue()).fontSize(6).createCellText(cell);
 		}
 
 		cell = row.getCell(2);
