@@ -105,22 +105,25 @@ public class HazardReportGenerator {
 		createHazardDescription(doc, h, testRiskCategories, testRiskLikelihoods);
 	}
 
-//	private void createFooter(XWPFDocument doc, Hazards h) throws IOException, XmlException {
-//		// http://stackoverflow.com/questions/16442347/counting-pages-in-a-word-document
-//
-//		XWPFHeaderFooterPolicy headerFooterPolicy = doc.getHeaderFooterPolicy();
-//		headerFooterPolicy.createFooter(STHdrFtr.DEFAULT);
-//		XWPFFooter footer = headerFooterPolicy.getDefaultFooter();
-//		// new ParagraphBuilder().text("test").createFooterText(footer);
-//		XmlDocumentProperties documentProperties = doc.getDocument().documentProperties();
-//
-//		doc.createNumbering();
-//	}
+	// private void createFooter(XWPFDocument doc, Hazards h) throws
+	// IOException, XmlException {
+	// //
+	// http://stackoverflow.com/questions/16442347/counting-pages-in-a-word-document
+	//
+	// XWPFHeaderFooterPolicy headerFooterPolicy = doc.getHeaderFooterPolicy();
+	// headerFooterPolicy.createFooter(STHdrFtr.DEFAULT);
+	// XWPFFooter footer = headerFooterPolicy.getDefaultFooter();
+	// // new ParagraphBuilder().text("test").createFooterText(footer);
+	// XmlDocumentProperties documentProperties =
+	// doc.getDocument().documentProperties();
+	//
+	// doc.createNumbering();
+	// }
 
 	private void createHeader(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases) {
 		// Remove the default paragraph in Template.docx
 		doc.removeBodyElement(0);
-		
+
 		XWPFTable top = new TableBuilder().setWidth(730350).size(1, 2).createTable(doc);
 		XWPFTableRow row;
 		XWPFTableCell cell;
@@ -140,8 +143,8 @@ public class HazardReportGenerator {
 		// with a paragraph border.
 		cell = row.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).leftMargin(0).alignment(ParagraphAlignment.CENTER)
-				.bottomBorder().createCellText(cell);
+		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).leftMargin(0)
+				.alignment(ParagraphAlignment.CENTER).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
 		new ParagraphBuilder().text(df.format(h.getInitiationDate())).createCellText(cell);
@@ -275,8 +278,8 @@ public class HazardReportGenerator {
 
 		for (Hazard_Causes cause : h.getHazardCauses()) {
 			if (cause.getTransfer() == 0)
-				new ParagraphBuilder().text(cause.getCauseNumber() + " \u2013 " + cause.getTitle()).leftMargin(350)
-						.hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Cause " + cause.getCauseNumber() + " \u2013 " + cause.getTitle())
+						.leftMargin(350).hangingIndent(300).createCellText(cell);
 			else
 				printCauseTransfer(cell, cause);
 		}
@@ -289,13 +292,13 @@ public class HazardReportGenerator {
 		if (transfer.getTargetType().equals("HAZARD")) {
 			Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
 			new ParagraphBuilder()
-					.text(cause.getCauseNumber() + " (TRANSFER) " + hazard.getHazardNum() + " \u2013 "
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNum() + " \u2013 "
 							+ hazard.getTitle()).leftMargin(350).hangingIndent(300).createCellText(cell);
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
 			Hazards hazard = targetCause.getHazards()[0];
 			new ParagraphBuilder()
-					.text(cause.getCauseNumber() + " (TRANSFER) " + hazard.getHazardNum() + ","
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNum() + ", Cause "
 							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).leftMargin(350)
 					.hangingIndent(300).createCellText(cell);
 		}

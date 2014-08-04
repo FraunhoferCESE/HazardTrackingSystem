@@ -44,7 +44,7 @@ public class HazardReportGeneratorTest {
 
 	private void initializeMockCauses() {
 		mockCause1 = mock(Hazard_Causes.class);
-		when(mockCause1.getCauseNumber()).thenReturn("Cause 1");
+		when(mockCause1.getCauseNumber()).thenReturn(1);
 		when(mockCause1.getTitle()).thenReturn(
 				"Improper feed system design leads to incorrect pressures or temperatures during USE run");
 		when(mockCause1.getDescription())
@@ -52,21 +52,21 @@ public class HazardReportGeneratorTest {
 						"The Upper Stage feed system must be designed in order to provide correct propellant interface parameters to the USE for operation. Any errors in the design that cause these parameters to be violated could result in USE failures including cavitation/fire/ explosion.");
 
 		mockCause2 = mock(Hazard_Causes.class);
-		when(mockCause2.getCauseNumber()).thenReturn("Cause 2");
+		when(mockCause2.getCauseNumber()).thenReturn(2);
 		when(mockCause2.getTitle()).thenReturn("Depleted propellants");
 		when(mockCause2.getDescription())
 				.thenReturn(
 						"If propellants are depleted before MECO, cavitation of turbo pumps could occur if USE is not shutdown.");
 
 		mockCause3 = mock(Hazard_Causes.class);
-		when(mockCause3.getCauseNumber()).thenReturn("Cause 3");
+		when(mockCause3.getCauseNumber()).thenReturn(3);
 		when(mockCause3.getTitle()).thenReturn("Loss of fuel and/or oxidizer supply");
 		when(mockCause3.getDescription())
 				.thenReturn(
 						"Total loss of fuel and/or oxidizer supply would be caused by a failed close prevalve during USE operation. This could be from failure of the prevalve or of the pneumatic system/command to the prevalve. A single dual coil pneumatic valve controls the pressure to both prevalves. If this pneumatic valve (HF/OF -1000) is inadvertently activated the prevalves will close.\n\nShould there be a total loss of the fuel or oxidizer supply from the Upper Stage to the J-2X during operation, this would unload the Fuel or Oxidizer Turbopump and the pump could experience rotor overspeed which may induce pump or turbine component failure (including component rotational burst), and possibly FTP/OTP structural disintegration. This structural disintegration will cause turbopump loss of function, generation of shrapnel, uncontained USE damage and possibly fire/explosion, leading to loss of mission, and/or a loss of crew/vehicle. In addition loss of fuel supply only would cause the USE gas generator to run LO2 rich.");
 
 		mockCauseToHazard = mock(Hazard_Causes.class);
-		when(mockCauseToHazard.getCauseNumber()).thenReturn("Cause 4");
+		when(mockCauseToHazard.getCauseNumber()).thenReturn(4);
 		when(mockCauseToHazard.getTitle()).thenReturn("Fuel supply pressure too low or too high");
 		when(mockCauseToHazard.getDescription())
 				.thenReturn(
@@ -74,7 +74,7 @@ public class HazardReportGeneratorTest {
 		when(mockCauseToHazard.getTransfer()).thenReturn(12345);
 
 		mockCauseToCause = mock(Hazard_Causes.class);
-		when(mockCauseToCause.getCauseNumber()).thenReturn("Cause 5");
+		when(mockCauseToCause.getCauseNumber()).thenReturn(5);
 		when(mockCauseToCause.getTitle()).thenReturn("Excessive POGO creates surges");
 		when(mockCauseToCause.getDescription())
 				.thenReturn(
@@ -188,7 +188,8 @@ public class HazardReportGeneratorTest {
 		Hazards transferDestinationHazard = mock(Hazards.class);
 		when(transferDestinationHazard.getID()).thenReturn(99999);
 		when(transferDestinationHazard.getHazardNum()).thenReturn("MERV-PRESS-02");
-		when(transferDestinationHazard.getTitle()).thenReturn("Failure to Maintain Liquid Hydrogen Propellant Tank Pressure leads to USE operational failure");
+		when(transferDestinationHazard.getTitle()).thenReturn(
+				"Failure to Maintain Liquid Hydrogen Propellant Tank Pressure leads to USE operational failure");
 
 		Transfers mockCauseToHazardTransfer = mock(Transfers.class);
 		when(mockCauseToHazardTransfer.getTargetID()).thenReturn(99999);
@@ -200,7 +201,7 @@ public class HazardReportGeneratorTest {
 
 		Hazard_Causes transferDestinationCause = mock(Hazard_Causes.class);
 		when(transferDestinationCause.getID()).thenReturn(88888);
-		when(transferDestinationCause.getCauseNumber()).thenReturn("Cause H");
+		when(transferDestinationCause.getCauseNumber()).thenReturn(1);
 		when(transferDestinationCause.getHazards()).thenReturn(new Hazards[] { transferCauseHazard });
 		when(transferDestinationCause.getTitle()).thenReturn(
 				"POGO causes dynamic oscillations attaining a resonant frequency with other US components or USE");
@@ -208,7 +209,7 @@ public class HazardReportGeneratorTest {
 		Transfers mockCausetoCauseTransfer = mock(Transfers.class);
 		when(mockCausetoCauseTransfer.getTargetID()).thenReturn(88888);
 		when(mockCausetoCauseTransfer.getTargetType()).thenReturn("CAUSE");
-		
+
 		mockTransferService = mock(TransferService.class);
 		when(mockTransferService.getTransferByID(mockCauseToHazard.getTransfer()))
 				.thenReturn(mockCauseToHazardTransfer);

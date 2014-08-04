@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -24,8 +25,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class RiskChart {
 
@@ -168,8 +167,7 @@ public class RiskChart {
 		myComponent.paint(g2);
 		try {
 			OutputStream out = new FileOutputStream(filename);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			encoder.encode(myImage);
+			ImageIO.write(myImage,"jpeg",out);
 			out.close();
 		} catch (Exception e) {
 			System.out.println(e);
