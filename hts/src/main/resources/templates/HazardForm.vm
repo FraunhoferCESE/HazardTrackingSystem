@@ -122,6 +122,11 @@
 		<div class="buttons">
 	        <input class="button submit" type="submit" value="Save" name="hazardSave" id="hazardSave">
 	        <input class="button submit" type="submit" value="Save and create another" name="hazardSaveAdd" id="hazardSaveAdd">
+	        <input class="button downloadHazardReport" type="button" value="Print" name="downloadHazardReport" id="downloadHazardReportButton">
 	    </div>
 	</div>
+</form>
+
+<form method="post" action="reportgeneration" id="reportgeneration">
+	<input type="hidden" name="hazardToDownload" id="hazardToDownload" value="$!hazard.getID()" />
 </form>
