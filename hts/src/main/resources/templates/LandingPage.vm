@@ -80,7 +80,7 @@
 						                    <li>
 						                    	<a href="#" id="downloadHazardReport">Print</a>
 						                    	<form method="post" action="reportgeneration" id="reportgeneration">
-						                    		<input type="hidden" name="hazardToDownload" id="hazardToDownload" value="$!hazardreport.getID()" />
+<!-- 						                    		<input type="hidden" name="hazardToDownload" id="hazardToDownload" value="$!hazardreport.getID()" /> -->
 						                    	</form>
 						                    </li>
 						                </ul>
