@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,16 +26,16 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.fraunhofer.plugins.hts.document.HazardReportGenerator;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
 public class HazardReportGeneratorTest {
 
-	private Hazards testHazard;
-	private List<Review_Phases> testReviewPhases;
-	private List<Risk_Categories> testRiskCategories;
-	private List<Risk_Likelihoods> testRiskLikelihoods;
+	private static List<Review_Phases> validReviewPhases;
+	private static List<Risk_Categories> validRiskCategories;
+	private static List<Risk_Likelihoods> validRiskLikelihoods;
 
 	private TransferService mockTransferService;
 	private HazardCauseService mockHazardCauseService;
@@ -83,101 +84,16 @@ public class HazardReportGeneratorTest {
 
 	}
 
+	@BeforeClass
+	public static void oneTimeSetup() {
+		initializeValidRiskLikelihoods();
+		initializeValidRiskCategories();
+		initializeValidReviewPhases();
+	}
+
 	@Before
 	public void setUp() {
 		initializeMockCauses();
-
-		testRiskCategories = new ArrayList<Risk_Categories>();
-		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
-		when(mockRiskCategories.getID()).thenReturn(11111);
-		testRiskCategories.add(mockRiskCategories);
-
-		mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("II - Critical");
-		when(mockRiskCategories.getID()).thenReturn(22222);
-		testRiskCategories.add(mockRiskCategories);
-
-		mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("III - Marginal");
-		when(mockRiskCategories.getID()).thenReturn(33333);
-		testRiskCategories.add(mockRiskCategories);
-
-		mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("IV - Negligible");
-		when(mockRiskCategories.getID()).thenReturn(44444);
-		testRiskCategories.add(mockRiskCategories);
-
-		testRiskLikelihoods = new ArrayList<Risk_Likelihoods>();
-		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("A - Frequent");
-		when(mockRiskLikelihoods.getID()).thenReturn(11111);
-		testRiskLikelihoods.add(mockRiskLikelihoods);
-
-		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("B - Reasonably probable");
-		when(mockRiskLikelihoods.getID()).thenReturn(22222);
-		testRiskLikelihoods.add(mockRiskLikelihoods);
-
-		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
-		when(mockRiskLikelihoods.getID()).thenReturn(33333);
-		testRiskLikelihoods.add(mockRiskLikelihoods);
-
-		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("D - Remote");
-		when(mockRiskLikelihoods.getID()).thenReturn(44444);
-		testRiskLikelihoods.add(mockRiskLikelihoods);
-
-		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("E - Extremely improbable");
-		when(mockRiskLikelihoods.getID()).thenReturn(55555);
-		testRiskLikelihoods.add(mockRiskLikelihoods);
-		testReviewPhases = new ArrayList<Review_Phases>();
-		Review_Phases mockReviewPhase = mock(Review_Phases.class);
-		when(mockReviewPhase.getLabel()).thenReturn("Phase I");
-		when(mockReviewPhase.getID()).thenReturn(11111);
-		testReviewPhases.add(mockReviewPhase);
-
-		mockReviewPhase = mock(Review_Phases.class);
-		when(mockReviewPhase.getLabel()).thenReturn("Phase II");
-		when(mockReviewPhase.getID()).thenReturn(22222);
-		testReviewPhases.add(mockReviewPhase);
-
-		mockReviewPhase = mock(Review_Phases.class);
-		when(mockReviewPhase.getLabel()).thenReturn("Phase III");
-		when(mockReviewPhase.getID()).thenReturn(33333);
-		testReviewPhases.add(mockReviewPhase);
-
-		Subsystems testSub1 = mock(Subsystems.class);
-		when(testSub1.getLabel()).thenReturn("Propulsion");
-		Subsystems testSub2 = mock(Subsystems.class);
-		when(testSub2.getLabel()).thenReturn("Structure");
-		Subsystems testSub3 = mock(Subsystems.class);
-		when(testSub3.getLabel()).thenReturn("Propellants");
-		Subsystems[] testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
-
-		Hazard_Group testGroup1 = mock(Hazard_Group.class);
-		when(testGroup1.getLabel()).thenReturn("Fire/Explosion");
-		Hazard_Group testGroup2 = mock(Hazard_Group.class);
-		when(testGroup2.getLabel()).thenReturn("Pressure");
-
-		Hazard_Group[] testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
-
-		Mission_Payload testPayload = mock(Mission_Payload.class);
-		when(testPayload.getName()).thenReturn("MERV");
-
-		Review_Phases testReviewPhase = mock(Review_Phases.class);
-		when(testReviewPhase.getLabel()).thenReturn("Phase I");
-		when(testReviewPhase.getID()).thenReturn(11111);
-
-		mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
-		when(mockRiskCategories.getID()).thenReturn(11111);
-
-		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
-		when(mockRiskLikelihoods.getID()).thenReturn(33333);
 
 		// --------------------- Mock transfer setup ------------------
 
@@ -221,7 +137,111 @@ public class HazardReportGeneratorTest {
 		when(mockHazardCauseService.getHazardCauseByID(Integer.toString(transferDestinationCause.getID()))).thenReturn(
 				transferDestinationCause);
 
-		testHazard = mock(Hazards.class);
+	}
+
+	private static void initializeValidReviewPhases() {
+		validReviewPhases = new ArrayList<Review_Phases>();
+		Review_Phases mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase I");
+		when(mockReviewPhase.getID()).thenReturn(11111);
+		validReviewPhases.add(mockReviewPhase);
+
+		mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase II");
+		when(mockReviewPhase.getID()).thenReturn(22222);
+		validReviewPhases.add(mockReviewPhase);
+
+		mockReviewPhase = mock(Review_Phases.class);
+		when(mockReviewPhase.getLabel()).thenReturn("Phase III");
+		when(mockReviewPhase.getID()).thenReturn(33333);
+		validReviewPhases.add(mockReviewPhase);
+	}
+
+	private static void initializeValidRiskCategories() {
+		validRiskCategories = new ArrayList<Risk_Categories>();
+		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
+		when(mockRiskCategories.getID()).thenReturn(11111);
+		validRiskCategories.add(mockRiskCategories);
+
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("II - Critical");
+		when(mockRiskCategories.getID()).thenReturn(22222);
+		validRiskCategories.add(mockRiskCategories);
+
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("III - Marginal");
+		when(mockRiskCategories.getID()).thenReturn(33333);
+		validRiskCategories.add(mockRiskCategories);
+
+		mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("IV - Negligible");
+		when(mockRiskCategories.getID()).thenReturn(44444);
+		validRiskCategories.add(mockRiskCategories);
+
+	}
+
+	private static void initializeValidRiskLikelihoods() {
+		validRiskLikelihoods = new ArrayList<Risk_Likelihoods>();
+		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("A - Frequent");
+		when(mockRiskLikelihoods.getID()).thenReturn(11111);
+		validRiskLikelihoods.add(mockRiskLikelihoods);
+
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("B - Reasonably probable");
+		when(mockRiskLikelihoods.getID()).thenReturn(22222);
+		validRiskLikelihoods.add(mockRiskLikelihoods);
+
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
+		when(mockRiskLikelihoods.getID()).thenReturn(33333);
+		validRiskLikelihoods.add(mockRiskLikelihoods);
+
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("D - Remote");
+		when(mockRiskLikelihoods.getID()).thenReturn(44444);
+		validRiskLikelihoods.add(mockRiskLikelihoods);
+
+		mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("E - Extremely improbable");
+		when(mockRiskLikelihoods.getID()).thenReturn(55555);
+		validRiskLikelihoods.add(mockRiskLikelihoods);
+
+	}
+
+	@Test
+	public void testCreateWordDocuments() throws IOException, XmlException {
+		Mission_Payload testPayload = mock(Mission_Payload.class);
+		when(testPayload.getName()).thenReturn("MERV");
+
+		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
+		when(mockRiskCategories.getID()).thenReturn(11111);
+
+		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
+		when(mockRiskLikelihoods.getID()).thenReturn(33333);
+
+		Review_Phases testReviewPhase = mock(Review_Phases.class);
+		when(testReviewPhase.getLabel()).thenReturn("Phase I");
+		when(testReviewPhase.getID()).thenReturn(11111);
+
+		Subsystems testSub1 = mock(Subsystems.class);
+		when(testSub1.getLabel()).thenReturn("Propulsion");
+		Subsystems testSub2 = mock(Subsystems.class);
+		when(testSub2.getLabel()).thenReturn("Structure");
+		Subsystems testSub3 = mock(Subsystems.class);
+		when(testSub3.getLabel()).thenReturn("Propellants");
+		Subsystems[] testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
+
+		Hazard_Group testGroup1 = mock(Hazard_Group.class);
+		when(testGroup1.getLabel()).thenReturn("Fire/Explosion");
+		Hazard_Group testGroup2 = mock(Hazard_Group.class);
+		when(testGroup2.getLabel()).thenReturn("Pressure");
+		Hazard_Group[] testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
+
+		Hazards testHazard = mock(Hazards.class);
 		when(testHazard.getHazardNum()).thenReturn("MERV-PROP-01");
 		when(testHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
 		when(testHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
@@ -241,24 +261,81 @@ public class HazardReportGeneratorTest {
 		when(testHazard.getHazardCauses()).thenReturn(
 				new Hazard_Causes[] { mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause });
 
+		List<Hazards> hazardList = Lists.newArrayList(testHazard);
+		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
+				mockTransferService);
+
+		final File template = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "src"
+				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
+				+ System.getProperty("file.separator") + "Template.docx");
+
+		List<byte[]> results = test.createWordDocuments(hazardList, validReviewPhases, validRiskCategories,
+				validRiskLikelihoods, template.toURI().toURL().openStream());
+
+		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator")
+				+ "test_out");
+		File reportFile = new File(outputDirectory + File.separator + hazardList.get(0).getHazardNum() + ".docx");
+
+		FileOutputStream out = new FileOutputStream(reportFile);
+		out.write(results.get(0));
+		out.close();
 	}
 
 	@Test
-	public void testCreateWordDocuments() throws IOException, XmlException {
+	public void testCreateWordDocMinimalInfo() throws MalformedURLException, XmlException, IOException {
+
+		Mission_Payload testPayload = mock(Mission_Payload.class);
+		when(testPayload.getName()).thenReturn("dfg");
+
+		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
+		when(mockRiskCategories.getID()).thenReturn(11111);
+
+		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("A - Frequent");
+		when(mockRiskLikelihoods.getID()).thenReturn(11111);
+
+		Review_Phases testReviewPhase = mock(Review_Phases.class);
+		when(testReviewPhase.getLabel()).thenReturn("Phase I");
+		when(testReviewPhase.getID()).thenReturn(11111);
+
+		Hazards testHazard = mock(Hazards.class);
+		when(testHazard.getHazardNum()).thenReturn("dfg");
+		when(testHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
+		when(testHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
+		when(testHazard.getMissionPayload()).thenReturn(testPayload);
+		when(testHazard.getPreparer()).thenReturn("admin");
+		when(testHazard.getEmail()).thenReturn("admin@nasa.gov");
+		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
+		when(testHazard.getSubsystems()).thenReturn(new Subsystems[0]);
+		when(testHazard.getHazardGroups()).thenReturn(new Hazard_Group[0]);
+		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
+		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
+		when(testHazard.getTitle()).thenReturn("dfgdfgdfg");
+		// when(testHazard.getHazardDesc())
+		// .thenReturn(
+		// "The Upper Stage is responsible for supply of propellants (LH2 and LO2) to the USE during operation. Failures after USE start that result in a decrease or termination of flow to the USE will cause USE turbopump over speed/cavitation/damage leading to an explosion. If Upper Stage fails to command USE shutdown, propellant depletion could occur also leading to cavitation. A decrease in Net Positive Suction Pressure (NPSP) or blockage in the feedlines could decrease flow and inadvertent closure of the prevalve would terminate flow. Ingestion of ullage gas in the feed line will also cause turbopump cavitation. Ullage gas could be ingested if a vortex forms or propellant is depleted. Contaminates that enter the USE inlet could cause significant damage.");
+		when(testHazard.getHazardCauses()).thenReturn(new Hazard_Causes[0]);
 
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService);
-		List<byte[]> results = test.createWordDocuments(hazardList, testReviewPhases, testRiskCategories,
-				testRiskLikelihoods);
 
-		// outputDirectory = Files.createTempDir();
-		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
+		final File template = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "src"
+				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
+				+ System.getProperty("file.separator") + "Template.docx");
+
+		List<byte[]> results = test.createWordDocuments(hazardList, validReviewPhases, validRiskCategories,
+				validRiskLikelihoods, template.toURI().toURL().openStream());
+
+		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator")
+				+ "test_out");
 		File reportFile = new File(outputDirectory + File.separator + hazardList.get(0).getHazardNum() + ".docx");
-		
+
 		FileOutputStream out = new FileOutputStream(reportFile);
 		out.write(results.get(0));
 		out.close();
+
 	}
 
 }

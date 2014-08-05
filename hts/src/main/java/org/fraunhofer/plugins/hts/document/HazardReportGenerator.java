@@ -1,9 +1,11 @@
 package org.fraunhofer.plugins.hts.document;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,15 +54,6 @@ public class HazardReportGenerator {
 
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 
-	// XXX: Cannot create a footer from scratch per
-	// https://issues.apache.org/bugzilla/show_bug.cgi?id=53009. Have to use a
-	// workaround of creating a "template" doc and then basing hazards off that.
-
-	// TODO: This needs to be changed prior to deployment, most likely
-	final File template = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "src"
-			+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
-			+ System.getProperty("file.separator") + "Template.docx");
-
 	/**
 	 * Constructor for instantiating the class. The class requires various
 	 * services to be passed in order to retrieve information about the hazards,
@@ -98,17 +91,24 @@ public class HazardReportGenerator {
 	 * @param riskLikelihoods
 	 *            a list of all unique {@link Risk_Likelihoods} in the order in
 	 *            which they will be displayed.
+	 * @param inputStream
+	 *            - Word document containing desired header and footer. Cannot
+	 *            create a footer from scratch per
+	 *            https://issues.apache.org/bugzilla/show_bug.cgi?id=53009.
 	 * @param outputDirectory
 	 *            File location in which to temporarily store output files, such
 	 *            as {@link Files#createTempDir()}. Must not be
 	 *            <code>null</code>.
-	 * @return a list of {@link File} pointing to the created documents, or <code>null</code> if the hazardList is empty or <code>null</code>
+	 * @return a list of {@link File} pointing to the created documents, or
+	 *         <code>null</code> if the hazardList is empty or <code>null</code>
 	 * @throws IOException
 	 * @throws XmlException
 	 */
 	public List<byte[]> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
-			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods)
-			throws IOException, XmlException {
+			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
+			throws XmlException, IOException {
+
+		checkNotNull(inputStream, "InputStream for generating hazard documents cannot be null.");
 
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
@@ -116,16 +116,19 @@ public class HazardReportGenerator {
 		List<byte[]> results = Lists.newArrayList();
 
 		for (Hazards h : hazardList) {
-			FileInputStream in = new FileInputStream(template);
-			XWPFDocument doc = new XWPFDocument(in);
-			in.close();
+			try {
+				XWPFDocument doc = new XWPFDocument(inputStream);
 
-			createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
+				createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
 
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			doc.write(out);
-			results.add(out.toByteArray());
-			log.info("Writing byte array for " + h.getHazardNum());
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				doc.write(out);
+				results.add(out.toByteArray());
+				log.info("Writing byte array for " + h.getHazardNum());
+			} finally {
+				if (inputStream != null)
+					inputStream.close();
+			}
 		}
 
 		return results;
@@ -157,7 +160,7 @@ public class HazardReportGenerator {
 		// Remove the default paragraph in Template.docx
 		doc.removeBodyElement(0);
 
-		XWPFTable top = new TableBuilder().setWidth(730350).size(1, 2).createTable(doc);
+		XWPFTable top = new TableBuilder().size(1, 2).createTable(doc);
 		XWPFTableRow row;
 		XWPFTableCell cell;
 
@@ -180,18 +183,20 @@ public class HazardReportGenerator {
 				.alignment(ParagraphAlignment.CENTER).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
-		new ParagraphBuilder().text(df.format(h.getInitiationDate())).createCellText(cell);
+
+		String date = h.getInitiationDate() != null ? df.format(h.getInitiationDate()) : "";
+		new ParagraphBuilder().text(date).createCellText(cell);
 
 		// --------------------------------------
 		row = new TableBuilder().size(1, 2).createTable(doc).getRow(0);
 
 		// Payload and Payload Safety Engineer
 		cell = row.getCell(0);
-		setWidth(cell, 5000);
+		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
 		setGridSpan(cell, 3);
 
 		new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getMissionPayload().getName()).leftMargin(0).bottomBorder().createCellText(cell);
+		new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
@@ -228,7 +233,8 @@ public class HazardReportGenerator {
 		// Date
 		cell = row.getCell(2);
 		new CellHeaderBuilder().text("7. Date: ").createCellHeader(cell);
-		new ParagraphBuilder().text(df.format(h.getRevisionDate())).createCellText(cell);
+		String revisionDate = h.getRevisionDate() != null ? df.format(h.getRevisionDate()) : "";
+		new ParagraphBuilder().text(revisionDate).createCellText(cell);
 
 		// --------------------------------------
 		row = new TableBuilder().size(1, 1).createTable(doc).getRow(0);
@@ -252,6 +258,7 @@ public class HazardReportGenerator {
 		cell = row.getCell(0);
 		cell.setColor("BBBBBB");
 		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
+		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150)); // This sets the width of the table to the page
 		setGridSpan(cell, 4);
 		new CellHeaderBuilder().text("Hazard").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50)
 				.createCellHeader(cell);
@@ -336,10 +343,6 @@ public class HazardReportGenerator {
 					.hangingIndent(300).createCellText(cell);
 		}
 
-	}
-
-	private void setWidth(XWPFTableCell cell, long val) {
-		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(val));
 	}
 
 	private void setGridSpan(XWPFTableCell cell, int val) {

@@ -36,6 +36,7 @@ public class ParagraphBuilder {
 		paragraph.setAlignment(alignment);
 		paragraph.setSpacingAfter(10);
 		paragraph.setIndentationLeft(leftMargin);
+		paragraph.setIndentationRight(50);
 		paragraph.setIndentationHanging(hangingIndent);
 		if (bottomBorder)
 			paragraph.setBorderBottom(Borders.SINGLE);

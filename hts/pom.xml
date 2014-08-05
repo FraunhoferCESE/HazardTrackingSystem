@@ -13,6 +13,7 @@
 	<name>hts</name>
 	<description>This is the Hazard Tracking System plugin for Atlassian JIRA.</description>
 	<packaging>atlassian-plugin</packaging>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
@@ -149,6 +150,16 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-FINAL</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>dom4j</groupId>
+					<artifactId>dom4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -160,6 +171,14 @@
 			<artifactId>swingx-core</artifactId>
 			<version>1.6.5-1</version>
 		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.0.b2</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+			<version>2.11.0</version> </dependency> -->
 	</dependencies>
 
 	<build>
@@ -172,7 +191,7 @@
 				<configuration>
 					<productVersion>${jira.version}</productVersion>
 					<productDataVersion>${jira.version}</productDataVersion>
-					<!-- <output>${build.directory}\atlassian-confluence.log</output>-->
+					<!-- <output>${build.directory}\atlassian-confluence.log</output> -->
 					<log4jProperties>src/main/resources/log4j.properties</log4jProperties>
 					<!-- Uncomment to install TestKit backdoor in JIRA. -->
 					<!-- <pluginArtifacts> <pluginArtifact> <groupId>com.atlassian.jira.tests</groupId> 
@@ -201,6 +220,7 @@
 		<plugin.testrunner.version>1.1.2</plugin.testrunner.version>
 		<!-- TestKit version 5.x for JIRA 5.x, 6.x for JIRA 6.x -->
 		<testkit.version>5.2.26</testkit.version>
+		<allowGoogleTracking>false</allowGoogleTracking>
 	</properties>
 
 </project>
