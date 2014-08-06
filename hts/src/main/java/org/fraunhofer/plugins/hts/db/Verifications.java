@@ -14,13 +14,12 @@ import net.java.ao.schema.Table;
 // TODO
 @Table("Verifications")
 public interface Verifications extends Entity {
-	String getTitle();
-
-	void setTitle(String title);
-
+	
 	@StringLength(value = StringLength.UNLIMITED)
-	String getVerificationDesc();
+	String getDescription();
 
-	void setVerificationDesc(String description);
+	void setDescription(String description);
+	
+	
 
 }

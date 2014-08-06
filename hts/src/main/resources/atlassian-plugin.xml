@@ -17,6 +17,7 @@
     <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
     <resource type="download" name="hts.css" location="/css/hts.css"/>
     <resource type="download" name="controlPageStyles.css" location="/css/controlPageStyles.css"/>
+    <resource type="download" name="verificationPageStyles.css" location="/css/verificationPageStyles.css"/>
     <resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css"/>
     <resource type="download" name="jquery.tinysort.min.js" location="/js/jquery.tinysort.min.js"/>
     <resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js"/>
@@ -29,6 +30,7 @@
     <resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js"/>
     <resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js"/>
     <resource type="download" name="htsControlPage.js" location="/js/htsControlPage.js"/>
+    <resource type="download" name="htsVerificationPage.js" location="/js/htsVerificationPage.js"/>
     <resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js"/>
     <context>hts</context>
   </web-resource>
@@ -101,5 +103,9 @@
   <servlet name="Cause Servlet" i18n-name-key="cause-servlet.name" key="cause-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
     <description key="cause-servlet.description">The Cause Servlet Plugin</description>
     <url-pattern>/causeform</url-pattern>
+  </servlet>
+  <servlet name="Verification Servlet" i18n-name-key="verification-servlet.name" key="verification-servlet" class="org.fraunhofer.plugins.hts.servlet.VerificationServlet">
+    <description key="verification-servlet.description">The Verification Servlet Plugin</description>
+    <url-pattern>/verificationservlet</url-pattern>
   </servlet>
 </atlassian-plugin>

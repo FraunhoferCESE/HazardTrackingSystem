@@ -31,7 +31,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 	public HazardControlServiceImpl(ActiveObjects ao, TransferService transferService, HazardCauseService hazardCauseService) {
 		this.ao = checkNotNull(ao);
 		this.transferService = checkNotNull(transferService);
-		this.hazardCauseService = hazardCauseService;
+		this.hazardCauseService = checkNotNull(hazardCauseService);
 	}
 
 	@Override

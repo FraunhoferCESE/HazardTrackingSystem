@@ -106,14 +106,9 @@ AJS.$(document).ready(function(){
     else if(window.location.href.indexOf("controlform") > -1) {
         navigateTo("control-nav-item", "content-3");
     }
-    /* COMMENT IN WHEN THESE PATHS HAVE BEEN ADDED AND REMOVE THE CLICK EVENTS BELOW
     else if(window.location.href.indexOf("verificationform") > -1) {
         navigateTo("verification-nav-item", "content-4");
-    }*/
-
-    AJS.$("#verification-nav-item").click(function(e){
-        navigateTo("verification-nav-item", "content-4");
-    });
+    }
 
     if(window.location.href.indexOf("?edit=y") > -1) {
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");
