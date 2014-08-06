@@ -106,6 +106,6 @@
   </servlet>
   <servlet name="Verification Servlet" i18n-name-key="verification-servlet.name" key="verification-servlet" class="org.fraunhofer.plugins.hts.servlet.VerificationServlet">
     <description key="verification-servlet.description">The Verification Servlet Plugin</description>
-    <url-pattern>/verificationservlet</url-pattern>
+    <url-pattern>/verificationform</url-pattern>
   </servlet>
 </atlassian-plugin>
