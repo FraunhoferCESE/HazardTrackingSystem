@@ -1,4 +1,5 @@
 <form class="aui" action="verificationform" method="post" id="addNewVerificationForm">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<div class="field-group">
 		<label for="verificationDescriptionNew">Description <span class="aui-icon icon-required">(required)</span></label>
 		<textarea class="textarea long-field" name="verificationDescriptionNew" id="verificationDescriptionNew"></textarea>
