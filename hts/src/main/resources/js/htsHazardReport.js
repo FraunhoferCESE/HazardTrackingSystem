@@ -146,6 +146,10 @@ AJS.$(document).ready(function() {
 		}
 	}
 
+	if (whichPage === "hazardlist" && parameters.hasOwnProperty("edit")) {
+		AJS.$("#downloadHazardReportButton").show();
+	}
+
 	if (whichPage === "hazardform" && !AJS.$.isEmptyObject(parameters)) {
 		var selectedPayload = parameters.selpay;
 		AJS.$("#hazardPayload option[value='" + selectedPayload + "']").prop({selected: true});
@@ -226,4 +230,13 @@ AJS.$(document).ready(function() {
 			JIRA.Messages.showWarningMsg("Please create a Mission/Payload before creating a Hazard Report.", {closeable: true});
 		}
 	});
+
+	AJS.$(".downloadHazardReport").live("click", function() {
+		AJS.$("#reportgeneration").submit();
+	});
+
+	// AJS.$("#hazardSave").live("click", function() {
+	// 	AJS.$("#downloadHazardReportButton").show();
+	// });
+
 });

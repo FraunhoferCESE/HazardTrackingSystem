@@ -1,11 +1,14 @@
 package org.fraunhofer.plugins.hts.servlet;
 
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.VerificationStatus;
+import org.fraunhofer.plugins.hts.db.VerificationType;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.VerificationService;
+import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
+import org.fraunhofer.plugins.hts.db.service.VerificationTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -17,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class VerificationServlet extends HttpServlet{
@@ -24,10 +30,18 @@ public class VerificationServlet extends HttpServlet{
 	private static final Logger log = LoggerFactory.getLogger(VerificationServlet.class);
 	private final TemplateRenderer templateRenderer;
 	private final HazardService hazardService;
+	private final VerificationTypeService verificationTypeService;
+	private final VerificationStatusService verificationStatusService;
+	private final VerificationService verificationService;
 	
-	public VerificationServlet(TemplateRenderer templateRenderer, HazardService hazardService) {
+	public VerificationServlet(TemplateRenderer templateRenderer, HazardService hazardService,
+			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
+			VerificationService verificationService) {
 		this.templateRenderer = templateRenderer;
-		this.hazardService = checkNotNull(hazardService);
+		this.hazardService = hazardService;
+		this.verificationTypeService = verificationTypeService;
+		this.verificationStatusService = verificationStatusService;
+		this.verificationService = verificationService;
 	}
 
     @Override
@@ -36,32 +50,58 @@ public class VerificationServlet extends HttpServlet{
     		Map<String, Object> context = Maps.newHashMap();
     		resp.setContentType("text/html;charset=utf-8");
     		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-    		if ("y".equals(req.getParameter("edit"))) {
-    			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+			if ("y".equals(req.getParameter("edit"))) {
+				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
 				context.put("hazardNumber", currentHazard.getHazardNum());
 				context.put("hazardTitle", currentHazard.getTitle());
 				context.put("hazardID", currentHazard.getID());
 				context.put("hazard", currentHazard);
+				context.put("verificationTypes", verificationTypeService.all());
+				context.put("allVerifications", verificationService.getAllVerificationsWithinAHazard(currentHazard));
+				context.put("verificationStatuses", verificationStatusService.all());
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
-    		}
-    		else {
-    			templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
-    		}
-    	}
+			} else {
+				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+			}
+       	}
     	else {
     		resp.sendRedirect(req.getContextPath() + "/login.jsp");
     	}
     }
     
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if ("y".equals(req.getParameter("edit"))) {
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
     	}
     	else {
     		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
+    		final String description = req.getParameter("verificationDescriptionNew");
+        	final VerificationType verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
+        	final String responsibleParty = req.getParameter("verificationRespPartyNew");
+    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
+        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
+
+    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
+    		
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
     	}
     }
+    
+	private Date changeToDate(String date) {
+		if (date != null && !date.isEmpty()) {
+			SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat newFormat = new SimpleDateFormat("MM/dd/yyyy");
+			try {
+				String reformatted = newFormat.format(oldFormat.parse(date));
+				Date converted = newFormat.parse(reformatted);
+				return converted;
+			} catch (ParseException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 }

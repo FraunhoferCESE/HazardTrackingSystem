@@ -50,6 +50,9 @@
     <entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
     <entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
     <entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
+    <entity>org.fraunhofer.plugins.hts.db.VerificationType</entity>
+    <entity>org.fraunhofer.plugins.hts.db.VerificationStatus</entity>
+    <entity>org.fraunhofer.plugins.hts.db.VerifcToHazard</entity>
     <entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
     <entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
     <entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
@@ -76,6 +79,9 @@
   <component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl"/>
   <component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl"/>
   <component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl"/>
+  <component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationServiceImpl"/>
+  <component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationTypeServiceImpl"/>
+  <component key="VerificationStatus-service" name="VerificationStatus service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationStatusServiceImpl"/>
   <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name" key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
     <description key="landing-page-servlet.description">The Landing Page Servlet Plugin</description>

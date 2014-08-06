@@ -77,6 +77,12 @@
 						                    <li>
 						                    	<a href="#" class="deleteHazardReport" data-key="$hazardreport.getID()">Delete</a>
 						                    </li>
+						                    <li>
+						                    	<a href="#" class="downloadHazardReport">Print</a>
+						                    	<form method="post" action="reportgeneration" id="reportgeneration">
+						                    		<input type="hidden" name="hazardToDownload" id="hazardToDownload" value="$!hazardreport.getID()" />
+						                    	</form>
+						                    </li>
 						                </ul>
 						            </td>
 						        </tr>

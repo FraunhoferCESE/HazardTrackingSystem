@@ -210,6 +210,7 @@ AJS.$(document).ready(function(){
 		    			var hazardID = data.hazardID;
 		    			var payloadID = data.payloadID;
 	    				addOrUpdateHazardNum(form, hazardNumber, hazardID);
+	    				updateReportGenForm(hazardID);
 	    				initializeNavigationDropdowns(payloadID, hazardID);
 	    				updateNavigationOptionsToEditMode(hazardID);
 	    			}
@@ -461,6 +462,7 @@ AJS.$(document).ready(function(){
 	    },
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
+				async: false,
 				success: function(data) {
 					$(form).removeDirtyWarning();
 					console.log("SUCCESS");
@@ -631,4 +633,11 @@ AJS.$(document).ready(function(){
 		AJS.$("#control-nav-item").children().attr("href", "controlform?edit=y&key=" + hazardID);
 		// add line here for verifications
 	}
+
+	function updateReportGenForm(hazardID) {
+		AJS.$("#hazardToDownload")[0].value = hazardID;
+		AJS.$("#downloadHazardReportButton").show();
+	}
+
+
 });

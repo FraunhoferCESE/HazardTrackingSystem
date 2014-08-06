@@ -26,3 +26,32 @@
     padding-bottom: 5px;
     margin-top: 5px;
 }
+
+.VerificationsTableHeader {
+    text-align: left;
+}
+
+.VerificationsTableCellOne {
+    width: 25px;
+}
+
+.VerificationsTableCellTwo {
+    width: 110px;
+}
+
+.VerificationsTableCellThree {
+    width: 375px;
+}
+
+.VerificationsTableCellFour {
+    width: 220px;
+}
+
+.VerificationsTableCellFive {
+    width: 160px;
+}
+
+.VerificationButtonPanel {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

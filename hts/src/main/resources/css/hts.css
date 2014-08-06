@@ -18,7 +18,7 @@
 
 #hazardTable {
 	margin-top: 4px;
-	width: 100%;
+	width: 97.5%;
 	margin-right: auto;
 	margin-left: 0.83em;
 }
@@ -36,11 +36,11 @@
 }
 
 #hazardLastEdit {
-    width: 22.5%;
+    width: 20%;
 }
 
 #action {
-    width: 12.5%;
+    width: 15%;
 }
 
 .noPayload {
@@ -196,8 +196,12 @@ form.payloadForm .add:active {
     padding-top: 5px;
 }
 
-.payloads{
+.payloads {
 	margin-top: 10px;
+}
+
+#downloadHazardReportButton {
+    display: none;
 }
 
 .table {

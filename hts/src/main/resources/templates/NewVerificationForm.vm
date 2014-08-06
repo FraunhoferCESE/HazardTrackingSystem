@@ -5,37 +5,40 @@
 		<textarea class="textarea long-field" name="verificationDescriptionNew" id="verificationDescriptionNew"></textarea>
 	</div>
 	<div class="field-group">
-		<label for="verificationTypeNew">Verification Type</label>
-		<select class="select" id="verificationTypeNew" name="verificationTypeNew">
-			<option>Test</option>
-			<option>Demonstration</option>
-			<option>Simulation</option>
-			<option>Analysis</option>
+		<label for="verificationStatusNew">Verification Status</label>
+		<select class="select" id="verificationStatusNew" name="verificationStatusNew">
+			#foreach( $verificationStatus in $verificationStatuses )
+				#if( $verificationStatus == "Open" )
+					<option value="$verificationStatus.getID()" selected>$!verificationStatus.getLabel()</option>
+				#else
+					<option value="$verificationStatus.getID()">$!verificationStatus.getLabel()</option>
+				#end
+			#end
 		</select>
 	</div>
 	<div class="field-group">
-		<label for="verificationRespPartyNew">Responsible Party <span class="aui-icon icon-required">(required)</span></label>
+		<label for="verificationTypeNew">Verification Type</label>
+		<select class="select" id="verificationTypeNew" name="verificationTypeNew">
+			<option value="" selected>-Select-</option>
+			#foreach( $verificationType in $verificationTypes )
+				<option value="$verificationType.getID()">$!verificationType.getLabel()</option>
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="verificationRespPartyNew">Responsible Party</label>
 		<input class="text long-field" type="text" id="verificationRespPartyNew" name="verificationRespPartyNew" />
 	</div>
 	<div class="field-group">
-		<label for="verificationComplDateNew">Completion Date</label>
+		<label for="verificationComplDateNew">Estimated Completion Date</label>
 		<input class="aui-date-picker" name="verificationComplDateNew" id="verificationComplDateNew" type="date" />
 	</div>
-	<div class="field-group">
-		<label for="verificationStatusNew">Verification status</label>
-		<select class="select" id="verificationStatusNew" name="verificationStatusNew">
-			<option selected>Open</option>
-			<option>Open to Safety Tracking List</option>
-			<option>Closed</option>
-		</select>
-	</div>
+
 	<!-- CONTROLS MULTISELECT -->
 
 	<div class="buttons-container">
-		<div class="buttons">
-			<input class="button submit" type="submit" value="Save" id="comment-save-button">
-			<a class="cancel" href="#">Cancel</a>
-		</div>
+		<input class="button SaveAllVerificationChanges" type="button" value="Save All Changes">
+		<input class="button" type="button" value="Clear" disabled>
 	</div>
 
 </form>

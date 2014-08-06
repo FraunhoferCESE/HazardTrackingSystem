@@ -38,7 +38,7 @@
 	                   #parse("/templates/ControlPage.vm")
 	                </div>
 	                <div class="nav-content" id="content-4">
-                       #parse("/templates/VerificationPage.vm")
+	                	#parse("/templates/VerificationPage.vm")
 	                </div>
 	            </section>
 	        </div>
