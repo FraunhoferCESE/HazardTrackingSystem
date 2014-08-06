@@ -1,0 +1,40 @@
+<form class="aui" action="verificationform" method="post" id="addNewVerificationForm">
+	<div class="field-group">
+		<label for="verificationDescriptionNew">Description <span class="aui-icon icon-required">(required)</span></label>
+		<textarea class="textarea long-field" name="verificationDescriptionNew" id="verificationDescriptionNew"></textarea>
+	</div>
+	<div class="field-group">
+		<label for="verificationTypeNew">Verification Type</label>
+		<select class="select" id="verificationTypeNew" name="verificationTypeNew">
+			<option>Test</option>
+			<option>Demonstration</option>
+			<option>Simulation</option>
+			<option>Analysis</option>
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="verificationRespPartyNew">Responsible Party <span class="aui-icon icon-required">(required)</span></label>
+		<input class="text long-field" type="text" id="verificationRespPartyNew" name="verificationRespPartyNew" />
+	</div>
+	<div class="field-group">
+		<label for="verificationComplDateNew">Completion Date</label>
+		<input class="aui-date-picker" name="verificationComplDateNew" id="verificationComplDateNew" type="date" />
+	</div>
+	<div class="field-group">
+		<label for="verificationStatusNew">Verification status</label>
+		<select class="select" id="verificationStatusNew" name="verificationStatusNew">
+			<option selected>Open</option>
+			<option>Open to Safety Tracking List</option>
+			<option>Closed</option>
+		</select>
+	</div>
+	<!-- CONTROLS MULTISELECT -->
+
+	<div class="buttons-container">
+		<div class="buttons">
+			<input class="button submit" type="submit" value="Save" id="comment-save-button">
+			<a class="cancel" href="#">Cancel</a>
+		</div>
+	</div>
+
+</form>

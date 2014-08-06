@@ -1,0 +1,28 @@
+#verificationsBody {
+	margin-top: -20px;
+	padding-left: 20px;
+	padding-bottom: 20px;
+}
+
+.VerificationsHeadingOne {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+}
+
+.VerificationsHeadingOneContent {
+    font-size: 16px;
+    font-weight: normal;
+    display: inline;
+}
+
+.VerificationsHeadingTwo {
+    border-top: 1px black solid;
+    width: 975px;
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+}
