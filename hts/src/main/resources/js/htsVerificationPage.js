@@ -32,7 +32,19 @@ AJS.$(document).ready(function(){
 			AJS.$("#addNewVerificationForm").trigger("submit");
 			location.reload();
 		}
+	});
 
+	AJS.$("#addNewVerification").live("click", function() {
+		if (AJS.$(this).hasClass("aui-iconfont-add")) {
+			AJS.$(this).removeClass("aui-iconfont-add");
+			AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
+			AJS.$(".VerificationsNewContainer").show();
+		}
+		else {
+			AJS.$(this).removeClass("aui-iconfont-devtools-task-disabled");
+			AJS.$(this).addClass("aui-iconfont-add");
+			AJS.$(".VerificationsNewContainer").hide();
+		}
 	});
 
 });
