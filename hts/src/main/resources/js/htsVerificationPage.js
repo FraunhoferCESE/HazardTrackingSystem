@@ -8,23 +8,17 @@ function manipulateDates(dates) {
 	}
 }
 
-// function addNewVerificationFormIsDirty() {
-// 	var rtn = false;
-// 	if (AJS.$("#verificationDescriptionNew").val() !== "") {
-// 		rtn =
-// 	}
-// 	if (AJS.$("#verificationTypeNew").val() !== "") {
-// 		return false;
-// 	}
-// 	if (AJS.$("#verificationRespPartyNew").val() !== "") {
-// 		return false;
-// 	}
-// 	if (AJS.$("#verificationComplDateNew").val() !== "") {
-// 		return false;
-// 	}
-
-// 	return true;
-// }
+function addNewVerificationFormIsDirty() {
+	if (AJS.$("#verificationDescriptionNew").val() === "" &&
+		AJS.$("#verificationTypeNew").val() === "" &&
+		AJS.$("#verificationRespPartyNew").val() === "" &&
+		AJS.$("#verificationComplDateNew").val() === "")  {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
 
 AJS.$(document).ready(function(){
 	/* Text manipulation code begins */
@@ -33,15 +27,12 @@ AJS.$(document).ready(function(){
 	/* Text manipulation code ends */
 
 	AJS.$(".SaveAllVerificationChanges").live("click", function() {
-		AJS.$("#addNewVerificationForm").trigger("submit");
-		location.reload();
 
-		// if (AJS.$("#addNewVerificationForm").isDirty()) {
-		// 	console.log("dirty");
-		// }
-		// else {
-		// 	console.log("clean");
-		// }
+		if (addNewVerificationFormIsDirty()) {
+			AJS.$("#addNewVerificationForm").trigger("submit");
+			location.reload();
+		}
+
 	});
 
 });
