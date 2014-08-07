@@ -445,7 +445,6 @@ AJS.$(document).ready(function(){
 		var doDelete = false;
 		var doUpdate = false;
 		var doNew = false;
-		var doNewWithSelCau = false;
 		var doTransfer = false;
 		var doRefresh = false;
 		var validationError = false;
@@ -490,15 +489,7 @@ AJS.$(document).ready(function(){
 
 		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
 			AJS.$("#addNewControlForm").trigger("submit");
-
-			if (AJS.$.url().param().hasOwnProperty("selcau")) {
-				console.log("has para");
-				doNewWithSelCau = true;
-			}
-			else {
-				console.log("no para");
-				doNew = true;
-			}
+			doNew = true;
 		}
 
 		validationError = AJS.$(".validationError").is(":visible");

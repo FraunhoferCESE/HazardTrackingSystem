@@ -128,12 +128,11 @@ public class ControlsServlet extends HttpServlet {
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
         	hazardControlService.add(currentHazard, description, controlGroup, causes);
-			
-        	//res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-        	JSONObject json = new JSONObject();
-        	createJson(json, "hazardID", currentHazard.getID());
-        	res.setContentType("application/json;charset=utf-8");
-        	res.getWriter().println(json);
+        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+//        	JSONObject json = new JSONObject();
+//        	createJson(json, "hazardID", currentHazard.getID());
+//        	res.setContentType("application/json;charset=utf-8");
+//        	res.getWriter().println(json);
     	}
     }
     
