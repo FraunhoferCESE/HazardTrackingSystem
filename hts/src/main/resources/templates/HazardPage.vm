@@ -19,7 +19,7 @@
 	                    <li id="hazard-nav-item" class="aui-nav-selected"><a href="hazardform">Hazard form</a></li>
 	                    <li id="cause-nav-item"><a href="causeform">Causes</a></li>
 	                    <li id="control-nav-item"><a href="controlform">Controls</a></li>
-	                    <li id="verification-nav-item"><a href="#">Verifications</a></li>
+	                    <li id="verification-nav-item"><a href="verificationform">Verifications</a></li>
 	                </ul>
 	            </div>
 	        </div>
@@ -37,44 +37,7 @@
 	                	#parse("/templates/ControlPage.vm")
 	                </div>
 	                <div class="nav-content" id="content-4">
-	                	<form class="aui">
-						    <div class="field-group">
-						        <label for="verification-title">Title <span class="aui-icon icon-required">(required)</span></label>
-						        <input class="text long-field" type="text" id="verification-title" name="verification-title">
-						        <!--div class="description">Your primary email address.</div-->
-						    </div>
-						    <div class="field-group">
-							    <label for="verification-group">Verification status</label>
-							    <select class="select" id="verification-group" name="verification-group">
-							        <option>Open</option>
-							        <option>Close to VTL</option>
-							        <option>Closed</option>
-							    </select>
-							</div>
-							<div class="field-group">
-							    <label for="verification-type">Verification group</label>
-							    <select class="select" id="verification-type" name="verification-type">
-									<option>Certification</option>
-							        <option>Demonstration/Witness</option>
-							        <option>Qualification test</option>
-							        <option>Simulation and analysis</option>
-							    </select>
-							</div>
-							<div class="field-group">
-						        <label for="verification-completion">Completion Date</label>
-						        <input class="aui-date-picker" name="verification-completion" id="verification-completion" type="date"/>
-						    </div>
-						    <div class="field-group">
-						        <label for="verification-description">Description</label>
-						        <textarea class="textarea long-field" name="verification-description" id="verification-description" placeholder="Your comment here..."></textarea>
-						    </div>
-						    <div class="buttons-container">
-						        <div class="buttons">
-						            <input class="button submit" type="submit" value="Save" id="comment-save-button">
-						            <a class="cancel" href="#">Cancel</a>
-						        </div>
-						    </div>
-						</form>
+	                	#parse("/templates/VerificationPage.vm")
 	                </div>
 	            </section>
 	        </div>

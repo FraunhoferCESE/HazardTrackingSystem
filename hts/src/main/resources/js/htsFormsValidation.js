@@ -260,12 +260,25 @@ AJS.$(document).ready(function(){
 	    errorPlacement: function(error, element) {
 	    	error.insertAfter(element);
 	    },
+		// submitHandler: function(form) {
+		// 	$(form).ajaxSubmit({
+		// 		success: function(data) {
+		// 			$(form).removeDirtyWarning();
+		// 			console.log("SUCCESS");
+		// 			window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + data.hazardID;
+		// 		},
+		// 		error: function(error) {
+		// 			console.log("ERROR");
+		// 			console.log(error);
+		// 		}
+		// 	});
+		// }
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
+				async: false,
 				success: function(data) {
 					$(form).removeDirtyWarning();
 					console.log("SUCCESS");
-					window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + data.hazardID;
 				},
 				error: function(error) {
 					console.log("ERROR");
@@ -273,7 +286,6 @@ AJS.$(document).ready(function(){
 				}
 			});
 		}
-
 	});
 
 	$(".editControlForm").each(function(index) {
@@ -443,6 +455,33 @@ AJS.$(document).ready(function(){
 					$(form).removeDirtyWarning();
 				},
 				error: function(error) {
+					console.log(error);
+				}
+			});
+		}
+	});
+
+	$("#addNewVerificationForm").validate({
+		rules: {
+			verificationDescriptionNew: {
+				required: true,
+				maxlength: 255
+			}
+	    },
+	    errorClass: "validationError",
+	    errorElement: "span",
+	    errorPlacement: function(error, element) {
+	    	error.insertAfter(element);
+	    },
+		submitHandler: function(form) {
+			$(form).ajaxSubmit({
+				async: false,
+				success: function(data) {
+					$(form).removeDirtyWarning();
+					console.log("SUCCESS");
+				},
+				error: function(error) {
+					console.log("ERROR");
 					console.log(error);
 				}
 			});

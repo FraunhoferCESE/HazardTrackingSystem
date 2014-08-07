@@ -1,6 +1,10 @@
 package org.fraunhofer.plugins.hts.db;
 
+import java.util.Date;
+
 import net.java.ao.Entity;
+import net.java.ao.ManyToMany;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -14,13 +18,40 @@ import net.java.ao.schema.Table;
 // TODO
 @Table("Verifications")
 public interface Verifications extends Entity {
-	String getTitle();
 
-	void setTitle(String title);
-
+	@NotNull
 	@StringLength(value = StringLength.UNLIMITED)
 	String getVerificationDesc();
 
 	void setVerificationDesc(String description);
+	
+	VerificationType getVerificationType();
+	
+	void setVerificationType(VerificationType type);
+	
+	String getResponsibleParty();
 
+	void setResponsibleParty(String responsibleParty);
+
+	Date getEstCompletionDate();
+
+	void setEstCompletionDate(Date estCompletionDate);
+	
+	VerificationStatus getVerificationStatus();
+	
+	void setVerificationStatus(VerificationStatus status);
+	
+	int getVerificationNumber();
+
+	void setVerificationNumber(int verificationNumber);
+	
+	Date getLastUpdated();
+
+	void setLastUpdated(Date lastEdit);
+	
+	@ManyToMany(value = VerifcToHazard.class)
+	Hazards[] getHazards();
+	
+//	@ManyToMany(value = VerificationToControl.class)
+//	Hazard_Controls[] getControls();
 }

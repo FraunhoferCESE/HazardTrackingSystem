@@ -20,6 +20,8 @@
 		<resource type="download" name="hts.css" location="/css/hts.css" />
 		<resource type="download" name="controlPageStyles.css"
 			location="/css/controlPageStyles.css" />
+		<resource type="download" name="verificationPageStyles.css"
+			location="/css/verificationPageStyles.css"/>
 		<resource type="download" name="jquery.multiselect2side.css"
 			location="/css/jquery.multiselect2side.css" />
 		<resource type="download" name="jquery.tinysort.min.js"
@@ -36,6 +38,7 @@
 			location="/js/jquery.multiselect2side.js" />
 		<resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js" />
 		<resource type="download" name="htsControlPage.js" location="/js/htsControlPage.js" />
+		<resource type="download" name="htsVerificationPage.js" location="/js/htsVerificationPage.js"/>
 		<resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js" />
 		<context>hts</context>
 	</web-resource>
@@ -57,6 +60,9 @@
 		<entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
+		<entity>org.fraunhofer.plugins.hts.db.VerificationType</entity>
+		<entity>org.fraunhofer.plugins.hts.db.VerificationStatus</entity>
+		<entity>org.fraunhofer.plugins.hts.db.VerifcToHazard</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
@@ -67,36 +73,25 @@
 		<entity>org.fraunhofer.plugins.hts.db.ControlGroups</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Transfers</entity>
 	</ao>
-	<component-import key="ao"
-		interface="com.atlassian.activeobjects.external.ActiveObjects" filter="" />
-	<component key="tx-processor" name="Transactional Annotation Processor"
-		class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+	<component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter="" />
+	<component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
 		<decription>Processes @Transactional annotations.</decription>
 	</component>
-	<component key="Hazard-service" name="Hazard Service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
-	<component key="HazardGroup-service" name="Hazard Group Service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl" />
-	<component key="RiskCategory-service" name="Risk Category"
-		class="org.fraunhofer.plugins.hts.db.service.impl.RiskCategoryServiceImpl" />
-	<component key="RiskLikelihood-service" name="Risk Likelihood"
-		class="org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl" />
-	<component key="Subsystems-service" name="Subsystems service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl" />
-	<component key="ReviewPhase-service" name="ReviewPhase service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl" />
-	<component key="MissionPayload-service" name="MissionPayload service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl" />
-	<component key="MissionPhase-service" name="MissionPhase service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl" />
-	<component key="HazardControl-service" name="HazardControl service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.HazardControlServiceImpl" />
-	<component key="ControlGroups-service" name="ControlGroups service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl" />
-	<component key="HazardCause-service" name="HazardCause service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl" />
-	<component key="TransferCause-service" name="TransferCause service"
-		class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl" />
+	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
+	<component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl" />
+	<component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.db.service.impl.RiskCategoryServiceImpl" />
+	<component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl" />
+	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl" />
+	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl" />
+	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl" />
+	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl" />
+	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardControlServiceImpl" />
+	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl" />
+	<component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl" />
+	<component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl" />
+	<component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationServiceImpl"/>
+	<component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationTypeServiceImpl"/>
+	<component key="VerificationStatus-service" name="VerificationStatus service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationStatusServiceImpl"/>
 	<component-import key="templateRenderer"
 		interface="com.atlassian.templaterenderer.TemplateRenderer" filter="" />
 	<servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name"
@@ -138,8 +133,11 @@
 	</servlet>
 	<servlet name="Report Generation Servlet" i18n-name-key="report-gen-servlet.name"
 		key="report-gen-servlet" class="org.fraunhofer.plugins.hts.servlet.ReportGenerationServlet">
-		<description key="report-gen-servlet.description">The Report Generation Servlet Plugin
-		</description>
+		<description key="report-gen-servlet.description">The Report Generation Servlet Plugin</description>
 		<url-pattern>/reportgeneration</url-pattern>
+	</servlet>
+	<servlet name="Verification Servlet" i18n-name-key="verification-servlet.name" key="verification-servlet" class="org.fraunhofer.plugins.hts.servlet.VerificationServlet">
+		<description key="verification-servlet.description">The Verification Servlet Plugin</description>
+		<url-pattern>/verificationform</url-pattern>
 	</servlet>
 </atlassian-plugin>
