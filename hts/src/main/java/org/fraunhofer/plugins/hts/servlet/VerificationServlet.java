@@ -1,9 +1,11 @@
 package org.fraunhofer.plugins.hts.servlet;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
 import org.fraunhofer.plugins.hts.db.VerificationType;
 import org.fraunhofer.plugins.hts.db.Verifications;
+import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.VerificationService;
 import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
@@ -34,15 +36,17 @@ public class VerificationServlet extends HttpServlet{
 	private final VerificationTypeService verificationTypeService;
 	private final VerificationStatusService verificationStatusService;
 	private final VerificationService verificationService;
+	private final HazardControlService hazardControlService;
 	
 	public VerificationServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
-			VerificationService verificationService) {
+			VerificationService verificationService, HazardControlService hazardControlService) {
 		this.templateRenderer = templateRenderer;
 		this.hazardService = hazardService;
 		this.verificationTypeService = verificationTypeService;
 		this.verificationStatusService = verificationStatusService;
 		this.verificationService = verificationService;
+		this.hazardControlService = hazardControlService;
 	}
 
     @Override
@@ -60,6 +64,7 @@ public class VerificationServlet extends HttpServlet{
 				context.put("verificationTypes", verificationTypeService.all());
 				context.put("allVerifications", verificationService.getAllVerificationsWithinAHazard(currentHazard));
 				context.put("verificationStatuses", verificationStatusService.all());
+				context.put("allControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
 			} else {
 				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
@@ -96,6 +101,7 @@ public class VerificationServlet extends HttpServlet{
         	final String responsibleParty = req.getParameter("verificationRespPartyNew");
     		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
         	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
+        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsNew")));
         	
         	final VerificationType verificationType;
     		if (req.getParameter("verificationTypeNew") != "") {
@@ -105,7 +111,7 @@ public class VerificationServlet extends HttpServlet{
     			verificationType = null;
     		}
 
-    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
+    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
     	}
     }
@@ -124,6 +130,18 @@ public class VerificationServlet extends HttpServlet{
 			}
 		}
 		return null;
+	}
+	
+	private Integer[] changeStringArray(String[] array) {
+		if (array == null) {
+			return null;
+		} else {
+			Integer[] intArray = new Integer[array.length];
+			for (int i = 0; i < array.length; i++) {
+				intArray[i] = Integer.parseInt(array[i]);
+			}
+			return intArray;
+		}
 	}
 
 }

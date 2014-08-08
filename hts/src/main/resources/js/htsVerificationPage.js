@@ -75,8 +75,8 @@ AJS.$(document).ready(function(){
 				JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
 			}
 			else {
-				//console.log("reload");
-				location.reload();
+				console.log("reload");
+				//location.reload();
 			}
 		}
 	});

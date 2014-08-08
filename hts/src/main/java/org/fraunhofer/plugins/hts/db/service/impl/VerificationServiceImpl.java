@@ -9,7 +9,9 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.VerifcToControl;
 import org.fraunhofer.plugins.hts.db.VerifcToHazard;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
 import org.fraunhofer.plugins.hts.db.VerificationType;
@@ -45,7 +47,8 @@ public class VerificationServiceImpl implements VerificationService {
 	
 	@Override
 	public Verifications add(Hazards hazard, String description, VerificationType verificationType, 
-			String responsibleParty, Date estCompletionDate, VerificationStatus verificationStatus) {
+			String responsibleParty, Date estCompletionDate, VerificationStatus verificationStatus, 
+			Hazard_Controls[] controls) {
 		final Verifications verification = ao.create(Verifications.class, new DBParam("VERIFICATION_DESC", description));
 		verification.setVerificationType(verificationType);
 		verification.setResponsibleParty(responsibleParty);
@@ -53,8 +56,12 @@ public class VerificationServiceImpl implements VerificationService {
 		verification.setVerificationStatus(verificationStatus);
 		verification.setVerificationNumber(getVerificationNumber(hazard));
 		verification.setLastUpdated(new Date());
+		if (controls != null) {
+			for (Hazard_Controls hc : controls) {
+				associateVerificationToControl(hc, verification);
+			}
+		}
 		verification.save();
-		
 		associateVerificationToHazard(hazard, verification);
 		
 		return verification;
@@ -92,6 +99,13 @@ public class VerificationServiceImpl implements VerificationService {
 		verifcToHazard.setHazard(hazard);
 		verifcToHazard.setVerification(verification);
 		verifcToHazard.save();
+	}
+	
+	private void associateVerificationToControl(Hazard_Controls control, Verifications verification) {
+		final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
+		verifcToControl.setControl(control);
+		verifcToControl.setVerification(verification);
+		verifcToControl.save();
 	}
 	
 	private int getVerificationNumber(Hazards hazard) {
