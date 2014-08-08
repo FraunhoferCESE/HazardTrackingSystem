@@ -1,0 +1,51 @@
+<form class="aui editVerificationForm" action="verificationform" method="post">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
+	<input type="hidden" name="edit" id="edit" value="y">
+	<input type="hidden" name="verificationID" id="verificationID" value="$!verification.getID()">
+
+	<div class="field-group">
+		<label for="verificationDescriptionEdit">Description <span class="aui-icon icon-required">(required)</span></label>
+		<textarea class="textarea long-field" name="verificationDescriptionEdit" id="verificationDescriptionEdit">$verification.getVerificationDesc()</textarea>
+	</div>
+	<div class="field-group">
+		<label for="verificationStatusEdit">Verification Status</label>
+		<select class="select" id="verificationStatusEdit" name="verificationStatusEdit">
+			#foreach( $verificationStatus in $verificationStatuses )
+				#if( $verificationStatus.getID() == $verification.getVerificationStatus().getID() )
+					<option value="$verificationStatus.getID()" selected>$!verificationStatus.getLabel()</option>
+				#else
+					<option value="$verificationStatus.getID()">$!verificationStatus.getLabel()</option>
+				#end
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="verificationTypeEdit">Verification Type</label>
+		<select class="select" id="verificationTypeEdit" name="verificationTypeEdit">
+			#if( !$verification.getVerificationType() )
+				<option value="" selected>-Select-</option>
+			#else
+				<option value="">-Select-</option>
+			#end
+			#foreach( $verificationType in $verificationTypes )
+				#if( $verificationType.getID() == $verification.getVerificationType().getID() )
+					<option value="$verificationType.getID()" selected>$!verificationType.getLabel()</option>
+				#else
+					<option value="$verificationType.getID()">$!verificationType.getLabel()</option>
+				#end
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="verificationRespPartyEdit">Responsible Party</label>
+		<input class="text long-field" type="text" id="verificationRespPartyEdit"
+				name="verificationRespPartyEdit" value="$!verification.getResponsibleParty()" />
+	</div>
+	<div class="field-group">
+		<label for="verificationComplDateEdit">Estimated Completion Date</label>
+		<input class="aui-date-picker VerificationEstComplDate" name="verificationComplDateEdit" id="verificationComplDateEdit"
+				type="date" data-date="$!verification.getEstCompletionDate()" />
+	</div>
+
+	<!-- CONTROLS MULTISELECT -->
+</form>
