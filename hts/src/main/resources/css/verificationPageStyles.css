@@ -51,6 +51,10 @@
     width: 160px;
 }
 
+.VerificationsTableEditEntryHidden {
+    display: none;
+}
+
 .VerificationButtonPanel {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -58,4 +62,9 @@
 
 .VerificationsNewContainer {
     display: none;
+}
+
+.VerificationsEditContainer {
+    padding-top: 8px;
+    padding-bottom: 8px;
 }

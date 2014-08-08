@@ -209,7 +209,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 	public Hazard_Controls getHazardControlByID(String id) {
 		final Hazard_Controls[] control = ao.find(Hazard_Controls.class, Query.select().where("ID=?", id));
 		return control.length > 0 ? control[0] : null;
-	}	
+	}
 
 	@Override
 	public List<Hazard_Controls> all() {

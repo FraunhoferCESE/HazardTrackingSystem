@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.servlet;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
 import org.fraunhofer.plugins.hts.db.VerificationType;
+import org.fraunhofer.plugins.hts.db.Verifications;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.VerificationService;
 import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
@@ -72,18 +73,39 @@ public class VerificationServlet extends HttpServlet{
     @Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if ("y".equals(req.getParameter("edit"))) {
+    		final Verifications verificationToEdit = verificationService.getVerificationByID(req.getParameter("verificationID"));
+    		final String description = req.getParameter("verificationDescriptionEdit");
+    		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
+    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
+        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
+        	
+        	final VerificationType verificationType;
+    		if (req.getParameter("verificationTypeEdit") != "") {
+    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeEdit"));
+    		}
+    		else {
+    			verificationType = null;
+    		}
+
+    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
     	}
     	else {
     		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     		final String description = req.getParameter("verificationDescriptionNew");
-        	final VerificationType verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
         	final String responsibleParty = req.getParameter("verificationRespPartyNew");
     		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
         	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
+        	
+        	final VerificationType verificationType;
+    		if (req.getParameter("verificationTypeNew") != "") {
+    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
+    		}
+    		else {
+    			verificationType = null;
+    		}
 
     		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
-    		
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
     	}
     }

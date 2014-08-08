@@ -26,7 +26,10 @@
 			<tbody>
 				#foreach( $verification in $allVerifications )
 					<tr>
-						<td class="aui-icon aui-icon-small aui-iconfont-add" id=""></td>
+						<td
+							class="VerificationsTableCellToggle aui-icon aui-icon-small aui-iconfont-add"
+							id="VerificationsTableEntryID$verification.getID()">
+						</td>
 						<td>Verification $verification.getVerificationNumber()</td>
 						<td>$verification.getVerificationDesc()</td>
 						<td>$verification.getVerificationStatus().getLabel()</td>
@@ -35,11 +38,17 @@
 							<input type="checkbox" value="$verification.getID()">
 						</td>
 					</tr>
+					<tr>
+						<td colspan="100%" class="VerificationsTableEditEntryHidden VerificationsEditContainer"
+							id="VerificationsTableEditEntryID$verification.getID()">
+							#parse("/templates/EditVerificationForm.vm")
+						</td>
+					</tr>
 				#end
 			</tbody>
 		</table>
 		<div class="VerificationButtonPanel">
-			<button class="aui-button">Save All Changes</button>
+			<button class="aui-button SaveAllVerificationChanges">Save All Changes</button>
 			<button class="aui-button" disabled>Renumber and Save</button>
 			<button class="aui-button" disabled>Expand all</button>
 		</div>
