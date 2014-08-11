@@ -20,12 +20,13 @@ function addNewVerificationFormIsDirty() {
 	}
 }
 
-function editVerificationFormIsDirty(formElement) {
+function editVerificationFormIsDirty(formElement, initialControlAssociation, currentControlAssociation) {
 	if (AJS.$(formElement).find("#verificationDescriptionEdit").isDirty() ||
 		AJS.$(formElement).find("#verificationTypeEdit").isDirty() ||
 		AJS.$(formElement).find("#verificationRespPartyEdit").isDirty() ||
 		AJS.$(formElement).find("#verificationComplDateEdit").isDirty() ||
-		AJS.$(formElement).find("#verificationStatusEdit").isDirty()) {
+		AJS.$(formElement).find("#verificationStatusEdit").isDirty() ||
+		checkIfVerificationWasModified(initialControlAssociation, currentControlAssociation) ) {
 		return true;
 	}
 	else {
@@ -33,7 +34,52 @@ function editVerificationFormIsDirty(formElement) {
 	}
 }
 
+function getCurrentVerificationAndControlAssociation() {
+	var controlsAssociatedWithVerification = [];
+	var multiSelectForControls = AJS.$(".verificationControlsEdit");
+	multiSelectForControls.each(function () {
+		var verificationIDWithText = AJS.$(this)[0].id;
+		var verificationIDOnly = verificationIDWithText.replace("verificationControlsEditForVerificationID", "");
+		var controlsIDs = [];
+		var numberOfControls = AJS.$(this)[0].children.length;
+		for (var i = 0; i < numberOfControls; i++) {
+			if (AJS.$(this)[0].children[i].selected === true) {
+				controlsIDs.push(AJS.$(this)[0].children[i].value);
+			}
+		}
+		controlsAssociatedWithVerification.push({
+			verificationID: verificationIDOnly,
+			controlIDs: controlsIDs
+		});
+	});
+	return controlsAssociatedWithVerification;
+}
+
+function findVerificationWithSpecificID(controlsAssociatedWithVerification, verificationID) {
+	return AJS.$.grep(controlsAssociatedWithVerification, function(item){
+		if (item.verificationID === verificationID) {
+			return item;
+		}
+	});
+}
+
+function checkIfVerificationWasModified(oldControls, newControls) {
+	if (oldControls.length === newControls.length) {
+		for (var j = 0; j < newControls.length; j++) {
+			if (oldControls.indexOf(newControls[j]) === -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 AJS.$(document).ready(function(){
+	var initialVerificationAndControlAssociation = getCurrentVerificationAndControlAssociation();
+
 	/* Text manipulation code begins */
 	var dates = AJS.$(".VerificationDate");
 	manipulateDates(dates);
@@ -48,6 +94,7 @@ AJS.$(document).ready(function(){
 
 	AJS.$(".SaveAllVerificationChanges").live("click", function() {
 		var createdVerificationForms = AJS.$(".editVerificationForm");
+		var currentVerificationAndControlAssociation = getCurrentVerificationAndControlAssociation();
 		var newVerification = false;
 		var updatedVerification = false;
 
@@ -59,16 +106,14 @@ AJS.$(document).ready(function(){
 
 		// Check if the user has edited an existing Verification
 		createdVerificationForms.each(function () {
-			if (editVerificationFormIsDirty(AJS.$(this))) {
+			var verificationID = AJS.$(this).find("#verificationID").val();
+			var initialAssocation = findVerificationWithSpecificID(initialVerificationAndControlAssociation, verificationID);
+			var currentAssociation = findVerificationWithSpecificID(currentVerificationAndControlAssociation, verificationID);
+			if (editVerificationFormIsDirty(AJS.$(this), initialAssocation[0].controlIDs, currentAssociation[0].controlIDs)) {
 				AJS.$(this).trigger("submit");
-				//console.log("dirty");
 				updatedVerification = true;
 			}
 		});
-
-		if (editVerificationFormIsDirty()) {
-			updatedVerification = true;
-		}
 
 		if (newVerification || updatedVerification) {
 			if (AJS.$(".validationError").is(":visible")) {

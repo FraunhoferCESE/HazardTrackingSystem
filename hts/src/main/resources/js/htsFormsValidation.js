@@ -63,6 +63,16 @@ AJS.$(document).ready(function(){
 		autoSortAvailable: true
     });
 
+    $(".verificationControlsEdit").multiselect2side({
+    	selectedPosition: 'right',
+		moveOptions: false,
+		labelsx: '',
+		labeldx: '<br>',
+		search: 'Search: ',
+		autoSort: true,
+		autoSortAvailable: true
+    });
+
     initHazardDateFields();
 
 	/**********************************************************

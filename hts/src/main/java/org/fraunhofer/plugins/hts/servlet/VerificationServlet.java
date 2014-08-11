@@ -83,6 +83,7 @@ public class VerificationServlet extends HttpServlet{
     		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
     		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
         	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
+        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsEdit")));
         	
         	final VerificationType verificationType;
     		if (req.getParameter("verificationTypeEdit") != "") {
@@ -92,7 +93,7 @@ public class VerificationServlet extends HttpServlet{
     			verificationType = null;
     		}
 
-    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
+    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
     	}
     	else {

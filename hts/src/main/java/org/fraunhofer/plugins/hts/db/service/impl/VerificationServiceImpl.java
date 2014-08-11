@@ -69,7 +69,7 @@ public class VerificationServiceImpl implements VerificationService {
 	
 	@Override
 	public Verifications update(Verifications verificationToEdit, String description, VerificationType verificationType, String responsibleParty,
-			Date estCompletionDate, VerificationStatus verificationStatus) {
+			Date estCompletionDate, VerificationStatus verificationStatus, Hazard_Controls[] controls) {
 		if (!description.equals(verificationToEdit.getVerificationDesc())) {
 			verificationToEdit.setVerificationDesc(description);
 		}
@@ -90,6 +90,15 @@ public class VerificationServiceImpl implements VerificationService {
 		if (verificationStatus.getID() != verificationToEdit.getVerificationStatus().getID()) {
 			verificationToEdit.setVerificationStatus(verificationStatus);
 		}
+		if (controls != null) {
+			removeAssociationsVerifcationToControl(verificationToEdit.getID());
+			for (Hazard_Controls hc : controls) {
+				associateVerificationToControl(hc, verificationToEdit);
+			}
+		}
+		else {
+			removeAssociationsVerifcationToControl(verificationToEdit.getID());
+		}
 		verificationToEdit.save();
 		return verificationToEdit;
 	}
@@ -106,6 +115,10 @@ public class VerificationServiceImpl implements VerificationService {
 		verifcToControl.setControl(control);
 		verifcToControl.setVerification(verification);
 		verifcToControl.save();
+	}
+	
+	private void removeAssociationsVerifcationToControl(int id) {
+		ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", id)));
 	}
 	
 	private int getVerificationNumber(Hazards hazard) {

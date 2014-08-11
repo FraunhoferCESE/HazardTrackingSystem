@@ -33,7 +33,6 @@
 		<label for="verificationComplDateNew">Estimated Completion Date</label>
 		<input class="aui-date-picker" name="verificationComplDateNew" id="verificationComplDateNew" type="date" />
 	</div>
-
 	<div class="field-group">
 		<label for="verificationControlsNew">Controls</label>
 		<select class="multi-select" size="5" multiple="multiple" name="verificationControlsNew" id="verificationControlsNew">
@@ -44,10 +43,8 @@
 		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Controls</span></div>
 		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Controls</span></div>
 	</div>
-
 	<div class="buttons-container">
 		<input class="button SaveAllVerificationChanges" type="button" value="Save All Changes">
 		<input class="button" type="button" value="Clear" disabled>
 	</div>
-
 </form>

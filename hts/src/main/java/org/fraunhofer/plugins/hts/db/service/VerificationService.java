@@ -23,5 +23,5 @@ public interface VerificationService {
 
 	Verifications update(Verifications verificationToEdit, String description, VerificationType verificationType,
 			String responsibleParty, Date estCompletionDate,
-			VerificationStatus verificationStatus);
+			VerificationStatus verificationStatus, Hazard_Controls[] controls);
 }

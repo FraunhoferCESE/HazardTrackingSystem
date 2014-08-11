@@ -46,6 +46,26 @@
 		<input class="aui-date-picker VerificationEstComplDate" name="verificationComplDateEdit" id="verificationComplDateEdit"
 				type="date" data-date="$!verification.getEstCompletionDate()" />
 	</div>
-
-	<!-- CONTROLS MULTISELECT -->
+	<div class="field-group">
+		<label for="verificationControlsEdit">Controls</label>
+		<select class="multi-select verificationControlsEdit" size="5" multiple="multiple" name="verificationControlsEdit" id="verificationControlsEditForVerificationID$!verification.getID()">
+			#set( $foundMatch = 0 )
+			#foreach( $control in $allControls )
+				#foreach( $selectedControl in $verification.getControls() )
+					#if( $control.getID() == $selectedControl.getID() )
+						<option value="$control.getID()" selected>$!control.getControlNumber(): $control.getDescription()</option>
+						#set( $foundMatch = 1 )
+						#break
+					#end
+				#end
+				#if( $foundMatch == 0 )
+					<option value="$control.getID()">$!control.getControlNumber(): $control.getDescription()</option>
+				#else
+					#set( $foundMatch = 0 )
+				#end
+			#end
+		</select>
+		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Controls</span></div>
+		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Controls</span></div>
+	</div>
 </form>
