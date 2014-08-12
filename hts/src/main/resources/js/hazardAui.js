@@ -140,7 +140,8 @@ AJS.$(document).ready(function(){
     var numberOfHazardsFetched;
     if (whichPage === "hazardlist" && AJS.$.url().param("edit") === "y" ||
         whichPage === "causeform" && AJS.$.url().param("edit") === "y" ||
-        whichPage === "controlform" && AJS.$.url().param("edit") === "y") {
+        whichPage === "controlform" && AJS.$.url().param("edit") === "y" ||
+        whichPage === "verificationform" && AJS.$.url().param("edit") === "y") {
         var currentHazardPayloadIDStr = AJS.$("#hazardPayloadID")[0].value;
         currentHazardPayloadID = parseInt(currentHazardPayloadIDStr, 10);
         var currentHazardIDStr = AJS.$("#hazardID")[0].value;

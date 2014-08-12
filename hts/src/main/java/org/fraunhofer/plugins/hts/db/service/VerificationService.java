@@ -16,6 +16,8 @@ public interface VerificationService {
 	List<Verifications> all();
 	
 	List<Verifications> getAllVerificationsWithinAHazard(Hazards hazard);
+	
+	List<Verifications> getAllNonDeletedVerificationsWithinAHazard(Hazards hazard);
 
 	Verifications add(Hazards hazard, String description, VerificationType verificationType, 
 			String responsibleParty, Date estCompletionDate, 
@@ -24,4 +26,7 @@ public interface VerificationService {
 	Verifications update(Verifications verificationToEdit, String description, VerificationType verificationType,
 			String responsibleParty, Date estCompletionDate,
 			VerificationStatus verificationStatus, Hazard_Controls[] controls);
+
+	Verifications deleteVerification(Verifications verificationToDelete, String reason);
+	
 }

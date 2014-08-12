@@ -25,21 +25,24 @@
 			</thead>
 			<tbody>
 				#foreach( $verification in $allVerifications )
-					<tr>
+					<tr class="VerificationsTableEntryID$verification.getID()">
 						<td
 							class="VerificationsTableCellToggle aui-icon aui-icon-small aui-iconfont-add"
-							id="VerificationsTableEntryID$verification.getID()">
+							id="VerificationsToggleID$verification.getID()">
 						</td>
-						<td>Verification $verification.getVerificationNumber()</td>
-						<td>$verification.getVerificationDesc()</td>
-						<td>$verification.getVerificationStatus().getLabel()</td>
-						<td class="VerificationDate">$verification.getLastUpdated()</td>
-						<td>
-							<input type="checkbox" value="$verification.getID()">
+						<td class="VerificationsTableAllCells">Verification $verification.getVerificationNumber()</td>
+						<td class="VerificationsTableAllCells">
+							<div class="VerificationsTableDescriptionText">$verification.getVerificationDesc()</div>
+						</td>
+						<td class="VerificationsTableAllCells">$verification.getVerificationStatus().getLabel()</td>
+						<td class="VerificationDate VerificationsTableAllCells">$verification.getLastUpdated()</td>
+						<td class="VerificationsTableAllCells">
+							<input type="checkbox" class="VerificationsTableDeleteCheckbox" value="$verification.getID()">
 						</td>
 					</tr>
-					<tr>
-						<td colspan="100%" class="VerificationsTableEditEntryHidden VerificationsEditContainer"
+					<tr class="VerificationsTableEntryID$verification.getID()">
+						<td colspan="100%"
+							class="VerificationsTableEditEntryHidden VerificationsEditContainer"
 							id="VerificationsTableEditEntryID$verification.getID()">
 							#parse("/templates/EditVerificationForm.vm")
 						</td>
@@ -50,7 +53,7 @@
 		<div class="VerificationButtonPanel">
 			<button class="aui-button SaveAllVerificationChanges">Save All Changes</button>
 			<button class="aui-button" disabled>Renumber and Save</button>
-			<button class="aui-button" disabled>Expand all</button>
+			<button class="aui-button" id="ExpandAllVerifications">Expand all</button>
 		</div>
 	#end
 

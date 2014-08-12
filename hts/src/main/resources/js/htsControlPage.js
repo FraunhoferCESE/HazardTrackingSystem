@@ -148,19 +148,19 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following controls will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason for each of the controls.</span></div>";
 	}
 	// Controls specific mark-up, list of controls to be deleted:
-	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOne'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwo'>Description</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThree'>Control group:</th></tr></thead><tbody>";
+	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneControls'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoControls'>Description</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeControls'>Control group:</th></tr></thead><tbody>";
 	for (var i = 0; i < selectedControls.length; i++) {
 		var controlElementFirstRow = AJS.$(".ControlsTableEntryControlID" + selectedControls[i])[0];
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td>" + controlElementFirstRow.children[1].innerText + "</td>";
+		dialogContent3 = dialogContent3 + "<tr><td>" + (controlElementFirstRow.children[1].innerText).replace("Control ", "") + "</td>";
 		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + controlElementFirstRow.children[2].innerText + "</div></td>";
 		dialogContent3 = dialogContent3 + "<td>" + controlElementFirstRow.children[3].innerText + "</td></tr>";
 
 		if (i === 0 && selectedControls.length > 1) {
-			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControlID'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonText' name='ReasonTextForControlID' id='ReasonTextForControlID" + selectedControls[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton'>Apply to all</button></div></td></tr>";
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + selectedControls[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnControls'>Apply to all</button></div></td></tr>";
 		}
 		else {
-			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControlID'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonText' name='ReasonTextForControlID' id='ReasonTextForControlID" + selectedControls[i] + "'></div></td></tr>";
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + selectedControls[i] + "'></div></td></tr>";
 		}
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + selectedControls[i] +"'></p></td></tr>";
 	}
@@ -197,7 +197,6 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 			location.reload();
 		}
 		else {
-			oldSelectedControls = result.skippedReasonControlIDs;
 			for (var j = 0; j < result.skippedReasonControlIDs.length; j++) {
 				addErrorMessageToSpecificControl(result.skippedReasonControlIDs[j], "For the control above, please provide a short delete reason.");
 			}
@@ -515,14 +514,13 @@ AJS.$(document).ready(function(){
 		}
 
 		if (doUpdate || doNew || doTransfer) {
-			console.log("reload");
 			location.reload();
 			return;
 		}
 	});
 
-	AJS.$(".ConfirmDialogDuplButton").live("click", function() {
-		var reasonTextFields = AJS.$(".ConfirmDialogReasonText");
+	AJS.$("#ConfirmDialogDuplBtnControls").live("click", function() {
+		var reasonTextFields = AJS.$(".ConfirmDialogReasonTextControls");
 		var reasonToDuplicate;
 		var noReasonGiven = false;
 		var controlID;
@@ -547,11 +545,10 @@ AJS.$(document).ready(function(){
 		});
 	});
 
-	AJS.$(".ConfirmDialogReasonText").live("input", function() {
+	AJS.$(".ConfirmDialogReasonTextControls").live("input", function() {
 		var controlID = AJS.$(this).attr("id").replace( /^\D+/g, '');
 		removeErrorMessageFromSpecificControl(controlID);
 	});
-
 	/* Updating existing controls functinality ends */
 
 	/* Clearing controls functionality begins */

@@ -62,7 +62,7 @@ public class VerificationServlet extends HttpServlet{
 				context.put("hazardID", currentHazard.getID());
 				context.put("hazard", currentHazard);
 				context.put("verificationTypes", verificationTypeService.all());
-				context.put("allVerifications", verificationService.getAllVerificationsWithinAHazard(currentHazard));
+				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
 				context.put("verificationStatuses", verificationStatusService.all());
 				context.put("allControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
@@ -116,6 +116,26 @@ public class VerificationServlet extends HttpServlet{
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
     	}
     }
+    
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Verifications verificationToBeDeleted = verificationService.getVerificationByID(req.getParameter("verificationID")); 
+			String reason = req.getParameter("reason");
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
+			
+			if (verificationToBeDeleted != null) {
+				verificationService.deleteVerification(verificationToBeDeleted, reason);
+				respStr = "{ \"success\" : \"true\" }";
+			}
+
+			res.setContentType("application/json;charset=utf-8");
+			res.getWriter().write(respStr);
+			
+		} else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
     
 	private Date changeToDate(String date) {
 		if (date != null && !date.isEmpty()) {

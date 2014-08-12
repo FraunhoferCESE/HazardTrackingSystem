@@ -49,6 +49,11 @@ public interface Verifications extends Entity {
 
 	void setLastUpdated(Date lastEdit);
 	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getDeleteReason();
+
+	void setDeleteReason(String reason);
+	
 	@ManyToMany(value = VerifcToHazard.class)
 	Hazards[] getHazards();
 	

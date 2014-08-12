@@ -31,16 +31,26 @@
     text-align: left;
 }
 
+.VerificationsTableAllCells {
+    padding: 0;
+    vertical-align: top;
+}
+
 .VerificationsTableCellOne {
     width: 25px;
 }
 
 .VerificationsTableCellTwo {
-    width: 110px;
+    width: 100px;
 }
 
 .VerificationsTableCellThree {
-    width: 375px;
+    width: 385px;
+}
+
+.VerificationsTableDescriptionText {
+    max-width: 355px;
+    word-wrap: break-word;
 }
 
 .VerificationsTableCellFour {

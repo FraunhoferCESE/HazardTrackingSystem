@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,17 @@ public class VerificationServiceImpl implements VerificationService {
 	@Override
 	public List<Verifications> getAllVerificationsWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getVerifications());
+	}
+	
+	@Override
+	public List<Verifications> getAllNonDeletedVerificationsWithinAHazard(Hazards hazard) {
+		List<Verifications> allRemaining = new ArrayList<Verifications>();
+		for (Verifications current : getAllVerificationsWithinAHazard(hazard)) {
+			if (current.getDeleteReason() == null) {
+				allRemaining.add(current);
+			}
+		}
+		return allRemaining;
 	}
 	
 	@Override
@@ -101,6 +113,13 @@ public class VerificationServiceImpl implements VerificationService {
 		}
 		verificationToEdit.save();
 		return verificationToEdit;
+	}
+	
+	@Override
+	public Verifications deleteVerification(Verifications verificationToDelete, String reason) {
+		verificationToDelete.setDeleteReason(reason);
+		verificationToDelete.save();
+		return verificationToDelete;
 	}
 	
 	private void associateVerificationToHazard(Hazards hazard, Verifications verification) {
