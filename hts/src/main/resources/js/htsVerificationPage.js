@@ -329,6 +329,14 @@ function openVerificationsInCookie() {
 	}
 }
 
+function getAssociatedControlCookie() {
+	return AJS.Cookie.read("ASSOCIATED_CONTROL");
+}
+
+function updateAssociatedControlCookie(theControlID) {
+	AJS.Cookie.save("ASSOCIATED_CONTROL", theControlID);
+}
+
 AJS.$(document).ready(function(){
 	createVerificationsCookie();
 	openVerificationsInCookie();
@@ -501,6 +509,33 @@ AJS.$(document).ready(function(){
 			return;
 		}
 	});
+
+	var whichForm;
+	if (AJS.$.url().data.seg.path.length === 4) {
+		whichForm = AJS.$.url().data.seg.path[3];
+	}
+	else {
+		whichForm = AJS.$.url().data.seg.path[2];
+	}
+
+	if (whichForm === "verificationform" && getAssociatedControlCookie() !== "none") {
+		var selectedControlID = getAssociatedControlCookie();
+		updateAssociatedControlCookie("none");
+		var associatedControls = AJS.$("#verificationControlsNewms2side__sx").children();
+		associatedControls.each(function () {
+			AJS.$(this).prop("selected", false);
+			if (AJS.$(this).val() === selectedControlID) {
+				AJS.$(this).prop("selected", true);
+				AJS.$(this).trigger("dblclick");
+			}
+		});
+
+		AJS.$('html, body').animate({
+			scrollTop: AJS.$("#addNewVerification").offset().top
+		}, 50);
+		AJS.$("#addNewVerification").trigger("click");
+	}
+
 	/* Expand functionality code ends */
 
 });

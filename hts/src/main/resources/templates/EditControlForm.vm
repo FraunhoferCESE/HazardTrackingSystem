@@ -48,4 +48,7 @@
 		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Causes</span></div>
 		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Causes</span></div>
 	</div>
+	<div class="ControlsTableEditEntryButtons">
+		<button type="button" class="button" id="controlAddVerification" data-key="$hazardControl.getID()-$hazardID">Add Verification</button>
+	</div>
 </form>

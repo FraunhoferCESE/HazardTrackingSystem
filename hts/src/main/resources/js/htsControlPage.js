@@ -307,14 +307,6 @@ function updateControlsCookie(operation, entryID) {
 	}
 }
 
-function getAssociatedCauseCookie() {
-	return AJS.Cookie.read("ASSOCIATED_CAUSE");
-}
-
-function updateAssociatedCauseCookie(theCauseID) {
-	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
-}
-
 function openControlsInCookie() {
 	var openControls = AJS.Cookie.read("OPEN_CONTROLS");
 	if (openControls !== "none") {
@@ -331,9 +323,28 @@ function openControlsInCookie() {
 	}
 }
 
+function getAssociatedCauseCookie() {
+	return AJS.Cookie.read("ASSOCIATED_CAUSE");
+}
+
+function updateAssociatedCauseCookie(theCauseID) {
+	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
+}
+
+function createAssociatedControlCookie() {
+	if (AJS.Cookie.read("ASSOCIATED_CONTROL") === undefined) {
+		AJS.Cookie.save("ASSOCIATED_CONTROL", "none");
+	}
+}
+
+function updateAssociatedControlCookie(theControlID) {
+	AJS.Cookie.save("ASSOCIATED_CONTROL", theControlID);
+}
+
 AJS.$(document).ready(function(){
 	createControlsCookie();
 	openControlsInCookie();
+	createAssociatedControlCookie();
 
 	var expanding = true;
 	expanding = checkIfExpandButtonNeedsRenaming(expanding);
@@ -684,5 +695,13 @@ AJS.$(document).ready(function(){
 		}
 	}
 	/* Expand / scroll functionality ends */
+
+	AJS.$("#controlAddVerification").live("click", function(e) {
+		var controlIDAndHazardIDArr = AJS.$(this).data("key").split("-");
+		var controlID = controlIDAndHazardIDArr[0];
+		var hazardID = controlIDAndHazardIDArr[1];
+		updateAssociatedControlCookie(controlID);
+		window.location.href = AJS.params.baseURL + "/plugins/servlet/verificationform?edit=y&key=" + hazardID;
+	});
 
 });
