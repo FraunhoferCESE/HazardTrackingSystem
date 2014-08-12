@@ -1,8 +1,11 @@
 package org.fraunhofer.plugins.hts.servlet;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
 import org.fraunhofer.plugins.hts.db.VerificationType;
+import org.fraunhofer.plugins.hts.db.Verifications;
+import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.VerificationService;
 import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
@@ -33,15 +36,17 @@ public class VerificationServlet extends HttpServlet{
 	private final VerificationTypeService verificationTypeService;
 	private final VerificationStatusService verificationStatusService;
 	private final VerificationService verificationService;
+	private final HazardControlService hazardControlService;
 	
 	public VerificationServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
-			VerificationService verificationService) {
+			VerificationService verificationService, HazardControlService hazardControlService) {
 		this.templateRenderer = templateRenderer;
 		this.hazardService = hazardService;
 		this.verificationTypeService = verificationTypeService;
 		this.verificationStatusService = verificationStatusService;
 		this.verificationService = verificationService;
+		this.hazardControlService = hazardControlService;
 	}
 
     @Override
@@ -57,8 +62,9 @@ public class VerificationServlet extends HttpServlet{
 				context.put("hazardID", currentHazard.getID());
 				context.put("hazard", currentHazard);
 				context.put("verificationTypes", verificationTypeService.all());
-				context.put("allVerifications", verificationService.getAllVerificationsWithinAHazard(currentHazard));
+				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
 				context.put("verificationStatuses", verificationStatusService.all());
+				context.put("allControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
 			} else {
 				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
@@ -72,21 +78,64 @@ public class VerificationServlet extends HttpServlet{
     @Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if ("y".equals(req.getParameter("edit"))) {
+    		final Verifications verificationToEdit = verificationService.getVerificationByID(req.getParameter("verificationID"));
+    		final String description = req.getParameter("verificationDescriptionEdit");
+    		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
+    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
+        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
+        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsEdit")));
+        	
+        	final VerificationType verificationType;
+    		if (req.getParameter("verificationTypeEdit") != "") {
+    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeEdit"));
+    		}
+    		else {
+    			verificationType = null;
+    		}
+
+    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
     	}
     	else {
     		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     		final String description = req.getParameter("verificationDescriptionNew");
-        	final VerificationType verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
         	final String responsibleParty = req.getParameter("verificationRespPartyNew");
     		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
         	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
+        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsNew")));
+        	
+        	final VerificationType verificationType;
+    		if (req.getParameter("verificationTypeNew") != "") {
+    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
+    		}
+    		else {
+    			verificationType = null;
+    		}
 
-    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus);
-    		
+    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
     		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
     	}
     }
+    
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			Verifications verificationToBeDeleted = verificationService.getVerificationByID(req.getParameter("verificationID")); 
+			String reason = req.getParameter("reason");
+			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
+			
+			if (verificationToBeDeleted != null) {
+				verificationService.deleteVerification(verificationToBeDeleted, reason);
+				respStr = "{ \"success\" : \"true\" }";
+			}
+
+			res.setContentType("application/json;charset=utf-8");
+			res.getWriter().write(respStr);
+			
+		} else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
     
 	private Date changeToDate(String date) {
 		if (date != null && !date.isEmpty()) {
@@ -102,6 +151,18 @@ public class VerificationServlet extends HttpServlet{
 			}
 		}
 		return null;
+	}
+	
+	private Integer[] changeStringArray(String[] array) {
+		if (array == null) {
+			return null;
+		} else {
+			Integer[] intArray = new Integer[array.length];
+			for (int i = 0; i < array.length; i++) {
+				intArray[i] = Integer.parseInt(array[i]);
+			}
+			return intArray;
+		}
 	}
 
 }

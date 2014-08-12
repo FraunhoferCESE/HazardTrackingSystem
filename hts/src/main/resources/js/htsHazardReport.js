@@ -235,8 +235,9 @@ AJS.$(document).ready(function() {
 		AJS.$("#reportgeneration").submit();
 	});
 
-	// AJS.$("#hazardSave").live("click", function() {
-	// 	AJS.$("#downloadHazardReportButton").show();
-	// });
+	AJS.$(".downloadHazardReportViewAll").live("click", function() {
+		var formElement = AJS.$(this).parent().find("form");
+		formElement.submit();
+	});
 
 });

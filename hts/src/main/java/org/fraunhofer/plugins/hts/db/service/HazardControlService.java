@@ -29,6 +29,8 @@ public interface HazardControlService {
 	Hazard_Controls addCauseTransfer(String transferComment, int targetID, Hazards hazard);
 	
 	Hazard_Controls getHazardControlByID(String id);
+	
+	Hazard_Controls[] getHazardControlsByID(Integer[] id);
 
 	List<Hazard_Controls> all();
 

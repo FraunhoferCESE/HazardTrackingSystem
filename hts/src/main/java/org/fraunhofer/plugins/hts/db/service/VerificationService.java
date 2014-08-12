@@ -11,12 +11,22 @@ import org.fraunhofer.plugins.hts.db.Verifications;
 
 public interface VerificationService {
 	
+	Verifications getVerificationByID(String id);
+	
 	List<Verifications> all();
 	
 	List<Verifications> getAllVerificationsWithinAHazard(Hazards hazard);
+	
+	List<Verifications> getAllNonDeletedVerificationsWithinAHazard(Hazards hazard);
 
 	Verifications add(Hazards hazard, String description, VerificationType verificationType, 
-			String responsibleParty, Date estCompletionDate, VerificationStatus verificationStatus);
-	
+			String responsibleParty, Date estCompletionDate, 
+			VerificationStatus verificationStatus, Hazard_Controls[] controls);
+
+	Verifications update(Verifications verificationToEdit, String description, VerificationType verificationType,
+			String responsibleParty, Date estCompletionDate,
+			VerificationStatus verificationStatus, Hazard_Controls[] controls);
+
+	Verifications deleteVerification(Verifications verificationToDelete, String reason);
 	
 }

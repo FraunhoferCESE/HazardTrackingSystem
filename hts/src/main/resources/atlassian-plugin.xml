@@ -63,6 +63,7 @@
 		<entity>org.fraunhofer.plugins.hts.db.VerificationType</entity>
 		<entity>org.fraunhofer.plugins.hts.db.VerificationStatus</entity>
 		<entity>org.fraunhofer.plugins.hts.db.VerifcToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.db.VerifcToControl</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
