@@ -661,10 +661,8 @@ AJS.$(document).ready(function(){
 		}
 
 		if (getAssociatedCauseCookie() !== "none") {
-
-
-			var selectedCauseID = AJS.$.url().param("selcau");
-
+			var selectedCauseID = getAssociatedCauseCookie();
+			updateAssociatedCauseCookie("none");
 			var associatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
 			associatedCauses.each(function () {
 				AJS.$(this).prop("selected", false);
