@@ -369,6 +369,11 @@ form.payloadForm .add:active {
     padding-bottom: 5px;
 }
 
+.causeTransferMessage {
+    padding-left: 20px;
+
+}
+
 /* JOINT STYLES FOR THE CONFIRM DIALOG BEGIN */
 .ConfirmDialogHeadingOne {
     margin: 0;

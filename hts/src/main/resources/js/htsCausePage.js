@@ -282,13 +282,13 @@ function manipulateCausesTitles(causesTitles) {
 }
 
 function manipulateTextForHazardSelectionInCauses(theHazardList) {
-	if (theHazardList[0].children.length > 1) {
-		(theHazardList.children()).each(function (index) {
-			if ((AJS.$(this)[0].innerText).length >= 85) {
-				AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
-			}
-		});
-	}
+	// if (theHazardList[0].children.length > 0) {
+	// 	(theHazardList.children()).each(function (index) {
+	// 		if ((AJS.$(this)[0].innerText).length >= 85) {
+	// 			AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
+	// 		}
+	// 	});
+	// }
 }
 
 AJS.$(document).ready(function(){
