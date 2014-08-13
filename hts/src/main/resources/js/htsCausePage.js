@@ -158,7 +158,7 @@ function submitCauses() {
 		}
 
 		var hazardID = AJS.$("#hazardList").val();
-		if(hazardID.length) {
+		if(hazardID !== undefined) {
 			AJS.$("#transferForm").trigger("submit");
 		}
 
@@ -242,7 +242,7 @@ function transfer() {
 				AJS.$("div.container").append(temp);
 			}
 			else {
-				AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
+				AJS.$("div.container").append("<p>This Hazard Report has no Causes.</p>");
 			}
 		}
 		else {
@@ -282,13 +282,13 @@ function manipulateCausesTitles(causesTitles) {
 }
 
 function manipulateTextForHazardSelectionInCauses(theHazardList) {
-	if (theHazardList[0].children.length > 1) {
-		(theHazardList.children()).each(function (index) {
-			if ((AJS.$(this)[0].innerText).length >= 85) {
-				AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
-			}
-		});
-	}
+	// if (theHazardList[0].children.length > 0) {
+	// 	(theHazardList.children()).each(function (index) {
+	// 		if ((AJS.$(this)[0].innerText).length >= 85) {
+	// 			AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
+	// 		}
+	// 	});
+	// }
 }
 
 AJS.$(document).ready(function(){

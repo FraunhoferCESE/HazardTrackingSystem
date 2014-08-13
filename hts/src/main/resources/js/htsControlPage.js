@@ -419,7 +419,7 @@ AJS.$(document).ready(function(){
 	AJS.$("#addTransferControl").live("click", function() {
 		if (AJS.$(this).hasClass("aui-iconfont-add")) {
 			var controlsHazardList = AJS.$("#controlHazardList");
-			manipulateTextForHazardSelectionInControls(controlsHazardList);
+			//manipulateTextForHazardSelectionInControls(controlsHazardList);
 			AJS.$(this).removeClass("aui-iconfont-add");
 			AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
 			AJS.$(".ControlsTransferContainer").show();
@@ -500,7 +500,7 @@ AJS.$(document).ready(function(){
 		// Check for control transfer
 		var hazardID = AJS.$("#controlHazardList").val();
 		var controlID = AJS.$("#controlCauseList").val();
-		if(hazardID.length && controlID.length) {
+		if(hazardID !== undefined && controlID !== undefined) {
 			AJS.$("#transferControlForm").trigger("submit");
 			doTransfer = true;
 		}
@@ -569,6 +569,9 @@ AJS.$(document).ready(function(){
 	/* Transfer control functionality begins */
 	AJS.$("#controlHazardList").live("change reset", function() {
 		AJS.$("div.TransferControlCauseContainer").children().remove();
+		AJS.$("div.TransferControlControlContainer").hide();
+		AJS.$("div.TransferControlControlContainer").children().remove();
+
 		var selectedHazardID = AJS.$(this).val();
 		if(selectedHazardID.length) {
 			var causeListForSelectedHazard;
@@ -591,7 +594,7 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlCauseContainer").append(temp);
 			}
 			else {
-				AJS.$("div.TransferControlCauseContainer").append("<p>This hazard report has no causes</p>");
+				AJS.$("div.TransferControlCauseContainer").append("<p>This Hazard Report has no Causes.</p>");
 			}
 		}
 		else {
@@ -602,6 +605,7 @@ AJS.$(document).ready(function(){
 
 	AJS.$("#controlCauseList").live("change reset", function() {
 		AJS.$("div.TransferControlControlContainer").children().remove();
+		AJS.$("div.TransferControlControlContainer").show();
 		var selectedCauseID = AJS.$(this).val();
 		if(selectedCauseID.length) {
 			var controlListForSelectedCause;
@@ -624,7 +628,7 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlControlContainer").append(temp);
 			}
 			else {
-				AJS.$("div.TransferControlControlContainer").append("<p>This cause has no controls</p>");
+				AJS.$("div.TransferControlControlContainer").append("<p>This Cause has no Controls.</p>");
 			}
 		}
 		else {
@@ -644,7 +648,7 @@ AJS.$(document).ready(function(){
 
 	if (whichForm === "controlform") {
 		var IDOfControlToBeOpen = AJS.$.url().param("id");
-		if(IDOfControlToBeOpen) {
+		if (IDOfControlToBeOpen) {
 			var controlToBeOpened = AJS.$(".ControlsTableEntryControlID" + IDOfControlToBeOpen)[1].children[0];
 			if (controlToBeOpened.classList.contains("ControlsTableEditEntryHidden")) {
 				controlToBeOpened.classList.remove("ControlsTableEditEntryHidden");
@@ -660,13 +664,12 @@ AJS.$(document).ready(function(){
 			}, 50);
 		}
 
-		if (getAssociatedCauseCookie() !== "none") {
-			var selectedCauseID = getAssociatedCauseCookie();
-			updateAssociatedCauseCookie("none");
+		var associatedCause = getAssociatedCauseCookie();
+		if (associatedCause !== "none") {
 			var associatedCauses = AJS.$("#controlCausesNewms2side__sx").children();
 			associatedCauses.each(function () {
 				AJS.$(this).prop("selected", false);
-				if (AJS.$(this).val() === selectedCauseID) {
+				if (AJS.$(this).val() === associatedCause) {
 					AJS.$(this).prop("selected", true);
 					AJS.$(this).trigger("dblclick");
 				}
@@ -676,6 +679,8 @@ AJS.$(document).ready(function(){
 				scrollTop: AJS.$("#addNewControl").offset().top
 			}, 50);
 			AJS.$("#addNewControl").trigger("click");
+
+			updateAssociatedCauseCookie("none");
 		}
 	}
 	/* Expand / scroll functionality ends */

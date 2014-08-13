@@ -204,6 +204,10 @@ form.payloadForm .add:active {
     display: none;
 }
 
+.TransferUnavailableMessage {
+    padding-left: 20px;
+}
+
 .table {
     display:table;
     width: 960px;
