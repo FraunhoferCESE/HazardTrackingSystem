@@ -194,7 +194,7 @@ function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following verifications will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason for each of the verifications.</span></div>";
 	}
 	// Controls specific mark-up, list of controls to be deleted:
-	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneVerifications'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoVerifications'>Description:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeVerifications'>Control group:</th></tr></thead><tbody>";
+	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneVerifications'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoVerifications'>Description:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeVerifications'>Verification Status:</th></tr></thead><tbody>";
 	for (var i = 0; i < selectedVerifications.length; i++) {
 		var verificationRowElement = AJS.$(".VerificationsTableEntryID" + selectedVerifications[i])[0];
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";

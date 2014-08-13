@@ -271,8 +271,7 @@ AJS.$(document).ready(function(){
 	$("#addNewControlForm").validate({
 		rules: {
 			controlDescriptionNew: {
-				required: true,
-				maxlength: 255
+				required: true
 			}
 	    },
 	    errorClass: "validationError",
@@ -300,7 +299,6 @@ AJS.$(document).ready(function(){
 			rules: {
 	    		controlDescriptionEdit: {
 	    			required: true,
-	    			maxlength: 255
 	    		},
 	    	},
 	    	errorClass: "validationError",
@@ -372,8 +370,7 @@ AJS.$(document).ready(function(){
 	$("#addNewCauseForm").validate({
 		rules: {
 	    	causeTitle: {
-	    		required: true,
-	    		maxlength: 512
+	    		required: true
 	    	}
 	    },
 
@@ -400,8 +397,7 @@ AJS.$(document).ready(function(){
 		$(this).validate({
 			rules: {
 	    		causeTitle: {
-	    			required: true,
-	    			maxlength: 512
+	    			required: true
 	    		},
 	    	},
 	    	errorClass: "validationError",
@@ -471,8 +467,7 @@ AJS.$(document).ready(function(){
 	$("#addNewVerificationForm").validate({
 		rules: {
 			verificationDescriptionNew: {
-				required: true,
-				maxlength: 255
+				required: true
 			}
 	    },
 	    errorClass: "validationError",
@@ -499,8 +494,7 @@ AJS.$(document).ready(function(){
 		$(this).validate({
 			rules: {
 	    		verificationDescriptionEdit: {
-	    			required: true,
-	    			maxlength: 255
+	    			required: true
 	    		},
 	    	},
 	    	errorClass: "validationError",
