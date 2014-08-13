@@ -242,7 +242,7 @@ function transfer() {
 				AJS.$("div.container").append(temp);
 			}
 			else {
-				AJS.$("div.container").append("<p>This Hazard Report has no Causes.</p>");
+				AJS.$("div.container").append("<span class='TransferNotPossibleText'>The Hazard Report has no Causes. No Cause Transfer can be created.</span>");
 			}
 		}
 		else {

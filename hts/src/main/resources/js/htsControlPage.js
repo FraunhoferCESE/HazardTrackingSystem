@@ -605,7 +605,7 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlCauseContainer").append(temp);
 			}
 			else {
-				AJS.$("div.TransferControlCauseContainer").append("<p>This Hazard Report has no Causes.</p>");
+				AJS.$("div.TransferControlCauseContainer").append("<span class='TransferNotPossibleText'>The Hazard Report has no Causes. No Control Transfer can be created.</span>");
 			}
 		}
 		else {
@@ -639,7 +639,7 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlControlContainer").append(temp);
 			}
 			else {
-				AJS.$("div.TransferControlControlContainer").append("<p>This Cause has no Controls.</p>");
+				AJS.$("div.TransferControlControlContainer").append("<p>The Cause has no Controls. No Control Transfer can be created.</p>");
 			}
 		}
 		else {
