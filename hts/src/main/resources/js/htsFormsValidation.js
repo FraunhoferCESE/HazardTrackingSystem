@@ -468,7 +468,11 @@ AJS.$(document).ready(function(){
 		rules: {
 			verificationDescriptionNew: {
 				required: true
-			}
+			},
+	    	verificationComplDateNew: {
+	    		checkPartialDate: true,
+	    		mindate: new Date(40, 0, 1)
+	    	}
 	    },
 	    errorClass: "validationError",
 	    errorElement: "span",
@@ -496,6 +500,10 @@ AJS.$(document).ready(function(){
 	    		verificationDescriptionEdit: {
 	    			required: true
 	    		},
+		    	verificationComplDateEdit: {
+	    			checkPartialDate: true,
+	    			mindate: new Date(40, 0, 1)
+	    		}
 	    	},
 	    	errorClass: "validationError",
 	    	errorElement: "span",
@@ -602,9 +610,20 @@ AJS.$(document).ready(function(){
 	}
 
 	function initHazardDateFields() {
-		if($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
+		if ($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
 			AJS.$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
 			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
+		}
+
+		if ($("#verificationComplDateNew").length) {
+			AJS.$("#verificationComplDateNew").datePicker({"overrideBrowserDefault": true});
+		}
+
+		var verificationComplDateEdit = AJS.$(".VerificationEstComplDate");
+		if (verificationComplDateEdit.length > 0) {
+			verificationComplDateEdit.each(function () {
+				AJS.$(this).datePicker({"overrideBrowserDefault": true});
+			});
 		}
 	}
 
