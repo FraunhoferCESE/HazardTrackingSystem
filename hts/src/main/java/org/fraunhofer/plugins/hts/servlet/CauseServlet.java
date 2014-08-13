@@ -10,7 +10,6 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
@@ -50,9 +49,6 @@ public class CauseServlet extends HttpServlet {
 			
 			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
 			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
-			
-			//Hazards[] allHazardsBelongingToPayload = currentPayload.getHazards();
-			//context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
 			
 			if ("y".equals(req.getParameter("edit"))) {
 				context.put("hazardNumber", currentHazard.getHazardNum());

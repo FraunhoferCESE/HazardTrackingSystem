@@ -158,7 +158,7 @@ function submitCauses() {
 		}
 
 		var hazardID = AJS.$("#hazardList").val();
-		if(hazardID.length) {
+		if(hazardID !== undefined) {
 			AJS.$("#transferForm").trigger("submit");
 		}
 
@@ -242,7 +242,7 @@ function transfer() {
 				AJS.$("div.container").append(temp);
 			}
 			else {
-				AJS.$("div.container").append("<p>This Hazard report has no causes</p>");
+				AJS.$("div.container").append("<p>This Hazard Report has no Causes.</p>");
 			}
 		}
 		else {

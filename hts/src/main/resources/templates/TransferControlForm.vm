@@ -1,11 +1,14 @@
-<form class="aui" id="transferControlForm" method="post" action="controlform">
+#if($allHazardsBelongingToPayload.size() == 1)
+	<p class="TransferUnavailableMessage">No other Hazard Reports have been created for this Mission/Payload.</p>
+#else
+	<form class="aui" id="transferControlForm" method="post" action="controlform">
 	<input type="hidden" name="transfer" id="transfer" value="y">
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<div class='field-group'>
 		<label for='controlHazardList'>Hazard Reports</label>
 		<select size='1' class='select long-field' name='controlHazardList' id='controlHazardList'>
 			<option value=''>-Select Hazard Report-</option>
-			#foreach( $hazard in $allHazards )
+			#foreach( $hazard in $allHazardsBelongingToPayload )
 				#if($hazard.getID() != $hazardID)
 					<option value="$hazard.getID()">$hazard.getHazardNum() - $hazard.getTitle()</option>
 				#end
@@ -25,3 +28,4 @@
 		<input type="reset" value="Clear" class="aui-button" id="clearTransferControlButton">
 	</div>
 </form>
+#end
