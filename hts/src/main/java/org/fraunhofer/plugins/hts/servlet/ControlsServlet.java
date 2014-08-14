@@ -22,6 +22,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -117,7 +118,7 @@ public class ControlsServlet extends HttpServlet {
     		final String transferComment = req.getParameter("controlTransferReason");
     		final String causeID = req.getParameter("controlCauseList");   		
     		final String controlID = req.getParameter("controlControlList");
-    		if (controlID == null || controlID.isEmpty()) {
+    		if (Strings.isNullOrEmpty(controlID)) {
     			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
     			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
         			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);

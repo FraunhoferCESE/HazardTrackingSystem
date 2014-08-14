@@ -125,7 +125,7 @@ form.payloadForm .field-group > label {
 
 .payloadFormInputContainer {
     overflow: hidden;
-    padding-right: .5em;
+    padding-right: 15px;
     display: block;
 }
 
@@ -215,6 +215,10 @@ form.payloadForm .add:active {
     padding-left: 20px;
 }
 
+.TransferNoProperties {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 
 .table {
     display:table;

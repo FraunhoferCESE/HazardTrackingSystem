@@ -39,11 +39,11 @@
 }
 
 .ControlsTableCellThree {
-    width: 475px;
+    width: 430px;
 }
 
 .ControlsTableDescriptionText {
-    max-width: 445px;
+    max-width: 400px;
     word-wrap: break-word;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .ControlsTableCellFive {
-    width: 150px;
+    width: 195px;
 }
 
 .ControlsTableCellToggle {
@@ -66,7 +66,7 @@
 
 .ControlsTableEditEntryContainer {
     width: 600px;
-    height: 305px;
+    height: 320px;
     padding-left: 130px;
 }
 

@@ -40,19 +40,21 @@ function deleteHazardReport(hazardIDToBeDeleted) {
 
 function layout() {
 	//Fixing the date layout on the landing page. To change the define the new layout in the toString method.
+
 	var lastEditColumn = AJS.$('table#hazardTable tbody td:nth-child(4)');
 	if(lastEditColumn.length > 0) {
 		lastEditColumn.each(function () {
-			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
 	}
 
 	var hazardNumberColumn = AJS.$('table#hazardTable tbody td:nth-child(1)');
 	if(hazardNumberColumn.length > 0) {
 		hazardNumberColumn.each(function () {
-			if (AJS.$(this)[0].innerText.length >= 64) {
-				var shortend = (AJS.$(this)[0].innerText).substring(0, 61) + "...";
-				AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).text().length >= 64) {
+				var shortend = AJS.$(this).text().substring(0, 61) + "...";
+				AJS.$(this).text(shortend);
 			}
 		});
 	}
@@ -60,9 +62,9 @@ function layout() {
 	var hazardTitleColumn = AJS.$('table#hazardTable tbody td:nth-child(2)');
 	if(hazardTitleColumn.length > 0) {
 		hazardTitleColumn.each(function () {
-			if (AJS.$(this)[0].innerText.length >= 128) {
-				var shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-				AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).text().length >= 128) {
+				var shortend = AJS.$(this).text().substring(0, 125) + "...";
+				AJS.$(this).text(shortend);
 			}
 		});
 	}
@@ -139,8 +141,9 @@ AJS.$(document).ready(function() {
 		var listOfCreatedPayloads = AJS.$(".getReports");
 		if (listOfCreatedPayloads.length > 0) {
 			listOfCreatedPayloads.each(function () {
-				if (AJS.$(this)[0].text.length >= 64) {
-					AJS.$(this)[0].text = AJS.$(this)[0].text.substring(0, 61) + "...";
+				if (AJS.$(this).text().length >= 64) {
+					var shortend = AJS.$(this).text().substring(0, 61) + "...";
+					AJS.$(this).text(shortend);
 				}
 			});
 		}

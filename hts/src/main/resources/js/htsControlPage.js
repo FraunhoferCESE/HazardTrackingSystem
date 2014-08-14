@@ -1,9 +1,20 @@
-function manipulateDates(dates) {
+function manipulateHazardTextForControls() {
+	if (AJS.$("#HazardTitleForControl").text().length >= 128) {
+		var shortend1 = AJS.$("#HazardTitleForControl").text().substring(0,125) + "...";
+		AJS.$("#HazardTitleForControl").text(shortend1);
+	}
+	if (AJS.$("#HazardNumberForControl").text().length >= 128) {
+		var shortend2 = AJS.$("#HazardNumberForControl").text().substring(0,125) + "...";
+		AJS.$("#HazardNumberForControl").text(shortend2);
+	}
+}
+
+function manipulateControlDates() {
+	var dates = AJS.$(".ControlDate");
 	if (dates.length > 0) {
 		dates.each(function () {
-			if (AJS.$(this)[0].innerText != "N/A") {
-				AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MM/dd/yyyy, HH:mm");
-			}
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
 	}
 }
@@ -12,24 +23,24 @@ function manipulateControlText(controlDescriptions) {
 	if (controlDescriptions.length > 0) {
 		controlDescriptions.each(function () {
 			var shortend;
-			if (AJS.$(this)[0].children.length === 0) {
-				if (AJS.$(this)[0].innerText.length >= 128) {
-					shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-					AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).children().length === 0) {
+				if (AJS.$(this).text().length >= 128) {
+					shortend = AJS.$(this).text().substring(0, 125) + "...";
+					AJS.$(this).text(shortend);
 				}
 			}
 			else {
-				var shortendArr = (AJS.$(this)[0].innerText).split(" - ");
+				var shortendArr = AJS.$(this).text().split(" - ");
 				if (shortendArr.length === 2) {
 					if (shortendArr[1].length >= 128) {
 						shortend = shortendArr[1].substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortendArr[0] + " - " + shortend;
+						AJS.$(this).children(":first").text(shortendArr[0] + " - " + shortend);
 					}
 				}
 				else {
-					if (AJS.$(this)[0].innerText.length >= 128) {
-						shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortend;
+					if (AJS.$(this).text().length >= 128) {
+						shortend = AJS.$(this).text().substring(0, 125) + "...";
+						AJS.$(this).children(":first").text(shortendArr[0] + " - " + shortend);
 					}
 				}
 			}
@@ -46,11 +57,21 @@ function manipulateTextForOptionInControls(theText) {
 	}
 }
 
-function manipulateTextForHazardSelectionInControls(theHazardList) {
-	if (theHazardList[0].children.length > 1) {
-		(theHazardList.children()).each(function (index) {
-			if ((AJS.$(this)[0].innerText).length >= 85) {
-				AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
+function manipulateTextForControlDeleteDialog(theText, length) {
+	if (theText.length >= length){
+		return theText.substring(0, (length - 3)) + "...";
+	}
+	else {
+		return theText;
+	}
+}
+
+function manipulateTextForHazardSelectionInControls() {
+	var hazardList = AJS.$("#controlHazardList");
+	if (hazardList.children().length > 1) {
+		(hazardList.children()).each(function () {
+			if (AJS.$(this).text().length >= 85) {
+				AJS.$(this).text(AJS.$(this).text().substring(0,82) + "...");
 			}
 		});
 	}
@@ -60,7 +81,7 @@ function getSelectedControls(createdControls) {
 	if (createdControls.length > 0) {
 		var selectedControls = [];
 		createdControls.each(function () {
-			if (AJS.$(this)[0].checked === true) {
+			if (AJS.$(this).is(':checked')) {
 				selectedControls.push(this.value);
 			}
 		});
@@ -71,7 +92,7 @@ function getSelectedControls(createdControls) {
 function uncheckSelectedControls() {
 	var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
 	createdControls.each(function () {
-		if (AJS.$(this)[0].checked === true) {
+		if (AJS.$(this).is(':checked')) {
 			this.checked = false;
 		}
 	});
@@ -82,7 +103,7 @@ function getSelectedControlsAndDeleteReasons(selectedControls) {
 	var skippedReasonControls = [];
 	var skippedReason = false;
 	for (var i = 0; i < selectedControls.length; i++) {
-		var deleteReason = AJS.$("#ReasonTextForControlID" + selectedControls[i])[0].value;
+		var deleteReason = AJS.$("#ReasonTextForControlID" + selectedControls[i]).val();
 		if (deleteReason === "") {
 			skippedReason = true;
 			skippedReasonControls.push(selectedControls[i]);
@@ -118,14 +139,14 @@ function sendAjaxRequestToDeleteSpecificControl(controlID, deleteReason) {
 }
 
 function addErrorMessageToSpecificControl(controlID, message) {
-	AJS.$("#ConfirmDialogErrorTextForControlID" + controlID)[0].innerHTML = message;
+	AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).text(message);
 	AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).show();
 }
 
 function removeErrorMessageFromSpecificControl(controlID) {
 	if (AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).is(":visible")) {
 		AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).hide();
-		AJS.$("#ConfirmDialogErrorTextForControlID" + controlID)[0].innerHTML = "";
+		AJS.$("#ConfirmDialogErrorTextForControlID" + controlID).text("");
 	}
 }
 
@@ -139,7 +160,7 @@ function getHazardInformation() {
 
 function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 	// Hazard specific mark-up:
-	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
+	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForControlDeleteDialog(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForControlDeleteDialog(hazardInformation.theNumber, 64) + "</span></span>";
 	// Controls specific mark-up:
 	var dialogContent2;
 	if (selectedControls.length === 1) {
@@ -150,11 +171,11 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 	// Controls specific mark-up, list of controls to be deleted:
 	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneControls'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoControls'>Description</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeControls'>Control group:</th></tr></thead><tbody>";
 	for (var i = 0; i < selectedControls.length; i++) {
-		var controlElementFirstRow = AJS.$(".ControlsTableEntryControlID" + selectedControls[i])[0];
+		var controlElementFirstRow = AJS.$(".ControlsTableEntryControlID" + selectedControls[i]).first();
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td>" + (controlElementFirstRow.children[1].innerText).replace("Control ", "") + "</td>";
-		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + controlElementFirstRow.children[2].innerText + "</div></td>";
-		dialogContent3 = dialogContent3 + "<td>" + controlElementFirstRow.children[3].innerText + "</td></tr>";
+		dialogContent3 = dialogContent3 + "<tr><td>" + controlElementFirstRow.children(":nth-child(2)").text().replace("Control ", "") + "</td>";
+		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + controlElementFirstRow.children(":nth-child(3)").text() + "</div></td>";
+		dialogContent3 = dialogContent3 + "<td>" + controlElementFirstRow.children(":nth-child(4)").text() + "</td></tr>";
 
 		if (i === 0 && selectedControls.length > 1) {
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + selectedControls[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnControls'>Apply to all</button></div></td></tr>";
@@ -351,8 +372,8 @@ AJS.$(document).ready(function(){
 	var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
 
 	/* Text manipulation code begins */
-	var dates = AJS.$(".ControlDate");
-	manipulateDates(dates);
+	manipulateHazardTextForControls();
+	manipulateControlDates();
 	var controlDescriptions = AJS.$(".ControlsTableDescriptionText");
 	manipulateControlText(controlDescriptions);
 	/* Text manipulation code ends */
@@ -429,8 +450,7 @@ AJS.$(document).ready(function(){
 
 	AJS.$("#addTransferControl").live("click", function() {
 		if (AJS.$(this).hasClass("aui-iconfont-add")) {
-			var controlsHazardList = AJS.$("#controlHazardList");
-			//manipulateTextForHazardSelectionInControls(controlsHazardList);
+			manipulateTextForHazardSelectionInControls();
 			AJS.$(this).removeClass("aui-iconfont-add");
 			AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
 			AJS.$(".ControlsTransferContainer").show();
@@ -639,7 +659,7 @@ AJS.$(document).ready(function(){
 				AJS.$("div.TransferControlControlContainer").append(temp);
 			}
 			else {
-				AJS.$("div.TransferControlControlContainer").append("<p>The Cause has no Controls. No Control Transfer can be created.</p>");
+				AJS.$("div.TransferControlControlContainer").append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div class='TransferNoProperties'>-Link to all Controls in selected Cause- (Selected Cause currently has no Controls)</div>");
 			}
 		}
 		else {

@@ -14,6 +14,7 @@ import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -92,18 +93,21 @@ public class CauseServlet extends HttpServlet {
 			final String transferComment = req.getParameter("transferReason");
 			final String hazardID = req.getParameter("hazardList");
 			final String causeID = req.getParameter("causeList");
-			if (causeID.isEmpty() || causeID == null) {
+			
+			if (Strings.isNullOrEmpty(causeID)) {
 				Hazards targetHazard = hazardService.getHazardByID(hazardID);
 				if (!checkIfInternalHazardTransfer(currentHazard, targetHazard)) {
 					hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
 				}
-			} else {
+			}
+			else {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
 				if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
 					hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
 				}
-			}
-		} else {
+			}			
+		}
+		else {
 			hazardCauseService.add(description, effects, owner, title, currentHazard);
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;

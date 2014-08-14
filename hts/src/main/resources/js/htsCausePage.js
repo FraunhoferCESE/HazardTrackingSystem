@@ -79,8 +79,20 @@ function dateLayout() {
 	var lastUpdated = AJS.$(".lastUpdated");
 	if(lastUpdated.length > 0) {
 		lastUpdated.each(function () {
-			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
+	}
+}
+
+function manipulateHazardTextForCauses() {
+	if (AJS.$("#HazardTitleForCause").text().length >= 128) {
+		var shortend1 = AJS.$("#HazardTitleForCause").text().substring(0,125) + "...";
+		AJS.$("#HazardTitleForCause").text(shortend1);
+	}
+	if (AJS.$("#HazardNumberForCause").text().length >= 128) {
+		var shortend2 = AJS.$("#HazardNumberForCause").text().substring(0,125) + "...";
+		AJS.$("#HazardNumberForCause").text(shortend2);
 	}
 }
 
@@ -233,8 +245,8 @@ function transfer() {
 			});
 			AJS.$(".container").show();
 			var temp = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
-			if(causeList.length > 0) {
-				temp += "<option value=''>-Link to all causes in selected Hazard report-</option>";
+			if (causeList.length > 0) {
+				temp += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				AJS.$(causeList).each(function() {
 					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
 					temp += "<option value=" + this.causeID + ">" + manipulateTextForOptionInCauses(causeNumberAndTitle) + "</option>";
@@ -242,7 +254,7 @@ function transfer() {
 				AJS.$("div.container").append(temp);
 			}
 			else {
-				AJS.$("div.container").append("<span class='TransferNotPossibleText'>The Hazard Report has no Causes. No Cause Transfer can be created.</span>");
+				AJS.$("div.container").append("<label class='popupLabels' for='causeList'>Hazard Causes</label><div class='TransferNoProperties'>-Link to all Causes in selected Hazard Report- (Selected HR currently has no Causes)</div>");
 			}
 		}
 		else {
@@ -252,28 +264,29 @@ function transfer() {
 	}).trigger('change');
 }
 
-function manipulateCausesTitles(causesTitles) {
+function manipulateCausesTitles() {
+	var causesTitles = AJS.$(".CausesTableTitleText");
 	if (causesTitles.length > 0) {
 		causesTitles.each(function () {
 			var shortend;
-			if (AJS.$(this)[0].children.length === 0) {
-				if (AJS.$(this)[0].innerText.length >= 128) {
-					shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-					AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).children().length === 0) {
+				if (AJS.$(this).text().length >= 128) {
+					shortend = AJS.$(this).text().substring(0, 125) + "...";
+					AJS.$(this).text(shortend);
 				}
 			}
 			else {
-				var shortendArr = (AJS.$(this)[0].innerText).split(" - ");
+				var shortendArr = AJS.$(this).text().split(" - ");
 				if (shortendArr.length === 2) {
 					if (shortendArr[1].length >= 128) {
 						shortend = shortendArr[1].substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortendArr[0] + " - " + shortend;
+						AJS.$(this).children(":first").text(shortendArr[0] + " - " + shortend);
 					}
 				}
 				else {
-					if (AJS.$(this)[0].innerText.length >= 128) {
-						shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortend;
+					if (AJS.$(this).text().length >= 128) {
+						shortend = AJS.$(this).text().substring(0, 125) + "...";
+						AJS.$(this).children(":first").text(shortend);
 					}
 				}
 			}
@@ -282,18 +295,18 @@ function manipulateCausesTitles(causesTitles) {
 }
 
 function manipulateTextForHazardSelectionInCauses(theHazardList) {
-	// if (theHazardList[0].children.length > 0) {
-	// 	(theHazardList.children()).each(function (index) {
-	// 		if ((AJS.$(this)[0].innerText).length >= 85) {
-	// 			AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
-	// 		}
-	// 	});
-	// }
+	if (theHazardList.children().length > 0) {
+		theHazardList.children().each(function (index) {
+			if (AJS.$(this).text().length >= 85) {
+				AJS.$(this).text(AJS.$(this).text().substring(0,82) + "...");
+			}
+		});
+	}
 }
 
-AJS.$(document).ready(function(){
-	var causesTitles = AJS.$(".CausesTableTitleText");
-	manipulateCausesTitles(causesTitles);
+AJS.$(document).ready(function() {
+	manipulateHazardTextForCauses();
+	manipulateCausesTitles();
 	getTheHazardNumber();
 	dateLayout();
 	openDivOnReload();

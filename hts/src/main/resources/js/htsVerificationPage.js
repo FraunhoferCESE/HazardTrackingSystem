@@ -1,9 +1,8 @@
-function manipulateDates(dates) {
+function manipulateVerificationDates(dates) {
 	if (dates.length > 0) {
 		dates.each(function () {
-			if (AJS.$(this)[0].innerText != "N/A") {
-				AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MM/dd/yyyy, HH:mm");
-			}
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
 	}
 }
@@ -20,11 +19,20 @@ function manipulateEstComplDates() {
 function manipulateVerificationText(textElement, textCapNum) {
 	if (textElement.length > 0) {
 		textElement.each(function () {
-			if (AJS.$(this)[0].innerText.length >= textCapNum) {
-				var shortend = (AJS.$(this)[0].innerText).substring(0, (textCapNum - 3)) + "...";
-				AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).text().length >= textCapNum) {
+				var shortend = AJS.$(this).text().substring(0, (textCapNum - 3)) + "...";
+				AJS.$(this).text(shortend);
 			}
 		});
+	}
+}
+
+function manipulateTextForVerificationDeleteDialog(theText, length) {
+	if (theText.length >= length){
+		return theText.substring(0, (length - 3)) + "...";
+	}
+	else {
+		return theText;
 	}
 }
 
@@ -83,10 +91,10 @@ function findVerificationWithSpecificID(controlsAssociatedWithVerification, veri
 	});
 }
 
-function checkIfVerificationWasModified(oldControls, newControls) {
-	if (oldControls.length === newControls.length) {
-		for (var j = 0; j < newControls.length; j++) {
-			if (oldControls.indexOf(newControls[j]) === -1) {
+function checkIfVerificationWasModified(oldVerifications, newVerifications) {
+	if (oldVerifications.length === newVerifications.length) {
+		for (var j = 0; j < newVerifications.length; j++) {
+			if (oldVerifications.indexOf(newVerifications[j]) === -1) {
 				return true;
 			}
 		}
@@ -110,7 +118,7 @@ function getVerificationsToBeDeleted() {
 	if (verificationsToBeDeleted.length > 0) {
 		var verifications = [];
 		verificationsToBeDeleted.each(function () {
-			if (AJS.$(this)[0].checked === true) {
+			if (AJS.$(this).is(':checked')) {
 				verifications.push(this.value);
 			}
 		});
@@ -121,7 +129,7 @@ function getVerificationsToBeDeleted() {
 function uncheckVerificationsToBeDeleted() {
 	var verificationsToBeDeleted = AJS.$(".ControlsTableListOfCreatedControls");
 	verificationsToBeDeleted.each(function () {
-		if (AJS.$(this)[0].checked === true) {
+		if (AJS.$(this).is(':checked')) {
 			this.checked = false;
 		}
 	});
@@ -132,7 +140,7 @@ function getVerificationsToBeDeletedAndDeleteReasons(selectedVerifications) {
 	var skippedReasonVerifications = [];
 	var skippedReason = false;
 	for (var i = 0; i < selectedVerifications.length; i++) {
-		var deleteReason = AJS.$("#ReasonTextForVerificationID" + selectedVerifications[i])[0].value;
+		var deleteReason = AJS.$("#ReasonTextForVerificationID" + selectedVerifications[i]).val();
 		if (deleteReason === "") {
 			skippedReason = true;
 			skippedReasonVerifications.push(selectedVerifications[i]);
@@ -171,21 +179,21 @@ function sendAjaxRequestToDeleteSpecificVerification(verificationID, deleteReaso
 }
 
 function addErrorMessageToSpecificVerification(verificationID, message) {
-	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID)[0].innerHTML = message;
+	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).text(message);
 	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).show();
 }
 
 function removeErrorMessageFromSpecificVerification(verificationID) {
 	if (AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).is(":visible")) {
 		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).hide();
-		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID)[0].innerHTML = "";
+		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).text("");
 	}
 }
 
 function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
 	// Hazard specific mark-up:
 	var hazardInformation = getHazardInformation();
-	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
+	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForVerificationDeleteDialog(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForVerificationDeleteDialog(hazardInformation.theNumber, 64) + "</span></span>";
 	// Controls specific mark-up:
 	var dialogContent2;
 	if (selectedVerifications.length === 1) {
@@ -196,11 +204,11 @@ function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
 	// Controls specific mark-up, list of controls to be deleted:
 	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneVerifications'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoVerifications'>Description:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeVerifications'>Verification Status:</th></tr></thead><tbody>";
 	for (var i = 0; i < selectedVerifications.length; i++) {
-		var verificationRowElement = AJS.$(".VerificationsTableEntryID" + selectedVerifications[i])[0];
+		var verificationRowElement = AJS.$(".VerificationsTableEntryID" + selectedVerifications[i]).first();
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td class='ConfirmDialogTableAllCells'>" + (verificationRowElement.children[1].innerText).replace("Verification ", "") + "</td>";
-		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'><div class='ConfirmDialogDescriptionText'>" + verificationRowElement.children[2].innerText + "</div></td>";
-		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children[3].innerText + "</td></tr>";
+		dialogContent3 = dialogContent3 + "<tr><td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children(":nth-child(2)").text().replace("Verification ", "") + "</td>";
+		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'><div class='ConfirmDialogDescriptionText'>" + verificationRowElement.children(":nth-child(3)").text() + "</div></td>";
+		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children(":nth-child(4)").text() + "</td></tr>";
 
 		if (i === 0 && selectedVerifications.length > 1) {
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForVerification'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextVerifications' name='ReasonTextForVerifiction' id='ReasonTextForVerificationID" + selectedVerifications[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnVerifc'>Apply to all</button></div></td></tr>";
@@ -345,7 +353,7 @@ AJS.$(document).ready(function(){
 
 	/* Text manipulation code begins */
 	var dates = AJS.$(".VerificationDate");
-	manipulateDates(dates);
+	manipulateVerificationDates(dates);
 
 	manipulateEstComplDates();
 
