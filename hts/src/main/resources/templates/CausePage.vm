@@ -41,7 +41,7 @@
 			#end
 		</div>
 		<div class="CausesButtonPanel">
-			<button class="aui-button causeSaveAllChanges" type="button">Save All Changes</button>
+			<button class="aui-button causeSaveAllChanges" type="button" data-new="false">Save All Changes</button>
 			<button class="aui-button" disabled>Renumber and Save</button>
 			<button class="aui-button" id="expandAll">Expand all</button>
 		</div>

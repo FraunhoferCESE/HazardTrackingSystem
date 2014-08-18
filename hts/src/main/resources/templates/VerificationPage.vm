@@ -51,7 +51,7 @@
 			</tbody>
 		</table>
 		<div class="VerificationButtonPanel">
-			<button class="aui-button SaveAllVerificationChanges">Save All Changes</button>
+			<button class="aui-button SaveAllVerificationChanges" data-new="false">Save All Changes</button>
 			<button class="aui-button" disabled>Renumber and Save</button>
 			<button class="aui-button" id="ExpandAllVerifications">Expand all</button>
 		</div>

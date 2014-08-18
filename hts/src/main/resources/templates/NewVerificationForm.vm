@@ -44,7 +44,7 @@
 		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Controls</span></div>
 	</div>
 	<div class="buttons-container">
-		<input class="button SaveAllVerificationChanges" type="button" value="Save All Changes">
+		<input class="button SaveAllVerificationChanges" type="button" value="Save All Changes" data-new="true">
 		<input class="button" type="button" value="Clear" disabled>
 	</div>
 </form>

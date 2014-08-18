@@ -22,6 +22,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -97,13 +98,13 @@ public class ControlsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     	if ("y".equals(req.getParameter("edit"))) {
     		// Process the editing request
-    		//final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     		String controlID = req.getParameter("controlID");
     		final String description = req.getParameter("controlDescriptionEdit");
         	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
         	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
         	hazardControlService.update(controlID, description, controlGroup, causes);
-        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
+        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}
     	else if ("y".equals(req.getParameter("editTransfer"))) {
     		String controlID = req.getParameter("originID");
@@ -117,7 +118,7 @@ public class ControlsServlet extends HttpServlet {
     		final String transferComment = req.getParameter("controlTransferReason");
     		final String causeID = req.getParameter("controlCauseList");   		
     		final String controlID = req.getParameter("controlControlList");
-    		if (controlID == null || controlID.isEmpty()) {
+    		if (Strings.isNullOrEmpty(controlID)) {
     			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
     			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
         			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);

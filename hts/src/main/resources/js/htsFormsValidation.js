@@ -116,7 +116,8 @@ AJS.$(document).ready(function(){
 	$.validator.addMethod("uniquePayload", function(value, element) {
 		var response = false;
 		if (value !== "") {
-			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
+			var payloadNameUpperCase = value.toUpperCase();
+			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + payloadNameUpperCase;
 			$.ajax({
 				type:"GET",
 				async: false,
@@ -271,8 +272,7 @@ AJS.$(document).ready(function(){
 	$("#addNewControlForm").validate({
 		rules: {
 			controlDescriptionNew: {
-				required: true,
-				maxlength: 255
+				required: true
 			}
 	    },
 	    errorClass: "validationError",
@@ -300,7 +300,6 @@ AJS.$(document).ready(function(){
 			rules: {
 	    		controlDescriptionEdit: {
 	    			required: true,
-	    			maxlength: 255
 	    		},
 	    	},
 	    	errorClass: "validationError",
@@ -372,8 +371,7 @@ AJS.$(document).ready(function(){
 	$("#addNewCauseForm").validate({
 		rules: {
 	    	causeTitle: {
-	    		required: true,
-	    		maxlength: 512
+	    		required: true
 	    	}
 	    },
 
@@ -400,8 +398,7 @@ AJS.$(document).ready(function(){
 		$(this).validate({
 			rules: {
 	    		causeTitle: {
-	    			required: true,
-	    			maxlength: 512
+	    			required: true
 	    		},
 	    	},
 	    	errorClass: "validationError",
@@ -471,9 +468,12 @@ AJS.$(document).ready(function(){
 	$("#addNewVerificationForm").validate({
 		rules: {
 			verificationDescriptionNew: {
-				required: true,
-				maxlength: 255
-			}
+				required: true
+			},
+	    	verificationComplDateNew: {
+	    		checkPartialDate: true,
+	    		mindate: new Date(40, 0, 1)
+	    	}
 	    },
 	    errorClass: "validationError",
 	    errorElement: "span",
@@ -499,9 +499,12 @@ AJS.$(document).ready(function(){
 		$(this).validate({
 			rules: {
 	    		verificationDescriptionEdit: {
-	    			required: true,
-	    			maxlength: 255
+	    			required: true
 	    		},
+		    	verificationComplDateEdit: {
+	    			checkPartialDate: true,
+	    			mindate: new Date(40, 0, 1)
+	    		}
 	    	},
 	    	errorClass: "validationError",
 	    	errorElement: "span",
@@ -608,9 +611,20 @@ AJS.$(document).ready(function(){
 	}
 
 	function initHazardDateFields() {
-		if($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
+		if ($("#hazardInitation").length > 0 && $("#hazardCompletion").length > 0) {
 			AJS.$("#hazardInitation").datePicker({"overrideBrowserDefault": true});
 			AJS.$("#hazardCompletion").datePicker({"overrideBrowserDefault": true});
+		}
+
+		if ($("#verificationComplDateNew").length) {
+			AJS.$("#verificationComplDateNew").datePicker({"overrideBrowserDefault": true});
+		}
+
+		var verificationComplDateEdit = AJS.$(".VerificationEstComplDate");
+		if (verificationComplDateEdit.length > 0) {
+			verificationComplDateEdit.each(function () {
+				AJS.$(this).datePicker({"overrideBrowserDefault": true});
+			});
 		}
 	}
 

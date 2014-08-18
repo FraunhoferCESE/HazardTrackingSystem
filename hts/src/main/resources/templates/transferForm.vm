@@ -1,5 +1,5 @@
 #if($allHazardsBelongingToPayload.size() == 1)
-	<p class="TransferUnavailableMessage">No other Hazard Reports have been created for this Mission/Payload.</p>
+	<p class="TransferNotPossibleNoHRs">No other Hazard Reports have been created for this Mission/Payload.</p>
 #else
 	<form class='aui' id="transferForm" method="post" action="causeform">
 		<div class='field-group'>

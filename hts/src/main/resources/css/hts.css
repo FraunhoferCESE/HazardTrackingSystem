@@ -125,7 +125,7 @@ form.payloadForm .field-group > label {
 
 .payloadFormInputContainer {
     overflow: hidden;
-    padding-right: .5em;
+    padding-right: 15px;
     display: block;
 }
 
@@ -204,8 +204,20 @@ form.payloadForm .add:active {
     display: none;
 }
 
-.TransferUnavailableMessage {
+.TransferNotPossibleText {
+    color: #D04437;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857142857143;
+}
+
+.TransferNotPossibleNoHRs {
     padding-left: 20px;
+}
+
+.TransferNoProperties {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .table {
@@ -283,11 +295,6 @@ form.payloadForm .add:active {
     margin-bottom: 15px;
     margin-left: -95px;
     width: 536px;
-}
-
-
-#addNewCauseForm, #transferForm {
-    width: 545px;
 }
 
 .CausesHeadingTwo {
@@ -485,3 +492,24 @@ form.payloadForm .add:active {
     width: 100%
 }
 /* VERIFICATION STYLES FOR THE CONFIRM DIALOG END */
+
+/* CAUSE STYLES FOR THE CONFIRM DIALOG BEGIN */
+.ConfirmDialogTableCellOneCauses {
+    width: 30px;
+}
+
+.ConfirmDialogTableCellTwoCauses {
+    width: 410px;
+}
+
+.ConfirmDialogTableCellThreeCauses {
+    width: 160px;
+}
+
+.ConfirmDialogReasonTextCauses {
+    width: 100%
+}
+/*.ConfirmDialogReasonTextControls {
+    width: 100%
+}*/
+/* CAUSE STYLES FOR THE CONFIRM DIALOG END */

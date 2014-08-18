@@ -79,8 +79,20 @@ function dateLayout() {
 	var lastUpdated = AJS.$(".lastUpdated");
 	if(lastUpdated.length > 0) {
 		lastUpdated.each(function () {
-			AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
+	}
+}
+
+function manipulateHazardTextForCauses() {
+	if (AJS.$("#HazardTitleForCause").text().length >= 128) {
+		var shortend1 = AJS.$("#HazardTitleForCause").text().substring(0,125) + "...";
+		AJS.$("#HazardTitleForCause").text(shortend1);
+	}
+	if (AJS.$("#HazardNumberForCause").text().length >= 128) {
+		var shortend2 = AJS.$("#HazardNumberForCause").text().substring(0,125) + "...";
+		AJS.$("#HazardNumberForCause").text(shortend2);
 	}
 }
 
@@ -88,86 +100,276 @@ function getTheHazardNumber() {
 	return AJS.$("#HazardNumberForCause").text();
 }
 
-function deleteConfirmation(element, causeID){
-	console.log("opened dialog");
-	var dialog = new AJS.Dialog({
-		width: 500,
-		height: 260,
-		id: "deleteDialog"+causeID,
+function uncheckCausesToBeDeleted() {
+	var causesCheckboxElements = AJS.$(".deleteCause");
+	causesCheckboxElements.each(function() {
+		if (AJS.$(this).is(':checked')) {
+			this.checked = false;
+		}
 	});
-	var causeTitle = element.children().find(".causeTitle").text();
-	var causeNumber = element.children().find(".trigger").text();
+}
+
+function getSelectedCausesAndDeleteReasons(arrayOfCauseIDs) {
+	var selectedCausesAndDeleteReasons = [];
+	var skippedReasonCauses = [];
+	var skippedReason = false;
+	for (var i = 0; i < arrayOfCauseIDs.length; i++) {
+		var deleteReason = AJS.$("#ReasonTextForCauseID" + arrayOfCauseIDs[i]).val();
+		if (deleteReason === "") {
+			skippedReason = true;
+			skippedReasonCauses.push(arrayOfCauseIDs[i]);
+		} else {
+			selectedCausesAndDeleteReasons.push({
+				causeID: arrayOfCauseIDs[i],
+				deleteReason: deleteReason
+			});
+		}
+	}
+
+	if (skippedReason) {
+		return { allReasonsFilledOut: false, skippedReasonCauseIDs: skippedReasonCauses };
+	} else {
+		return { allReasonsFilledOut: true, causeIDsAndReasons: selectedCausesAndDeleteReasons };
+	}
+}
+
+function sendAjaxRequestToDeleteSpecificCause(causeID, deleteReason) {
+	AJS.$.ajax({
+		type: "DELETE",
+		async: false,
+		url: "causeform?key=" + causeID + "&reason=" + deleteReason,
+		success: function(data) {
+			console.log("SUCCESS");
+		},
+		error: function(data) {
+			console.log("error", arguments);
+		}
+	});
+}
+
+function addErrorMessageToSpecificCause(causeID, message) {
+	AJS.$("#ConfirmDialogErrorTextForCauseID" + causeID).text(message);
+	AJS.$("#ConfirmDialogErrorTextForCauseID" + causeID).show();
+}
+
+function removeErrorMessageFromSpecificCause(causeID) {
+	if (AJS.$("#ConfirmDialogErrorTextForCauseID" + causeID).is(":visible")) {
+		AJS.$("#ConfirmDialogErrorTextForCauseID" + causeID).hide();
+		AJS.$("#ConfirmDialogErrorTextForCauseID" + causeID).text("");
+	}
+}
+
+function getHazardInformationInCauses() {
+	var hazardInformation = {};
+	hazardInformation.theNumber = AJS.$("#HazardNumberForCause").text();
+	hazardInformation.theTitle = AJS.$("#HazardTitleForCause").text();
+	hazardInformation.theID = AJS.$("#hazardID").val();
+	return hazardInformation;
+}
+
+function deleteSelectedCauses(doRefresh, arrayOfCauseIDs){
+	// Hazard specific mark-up:
+	var hazardInformation = getHazardInformationInControls();
+	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" +
+						manipulateCauseTextVariableLength(hazardInformation.theTitle, 64) +
+						"</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" +
+						manipulateCauseTextVariableLength(hazardInformation.theNumber, 64) +
+						"</span></span>";
+	// Cause specific mark-up:
+	var dialogContent2;
+	if (arrayOfCauseIDs === 1) {
+		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following cause will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason.</span></div>";
+	}
+	else {
+		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following causes will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason for each of the causes.</span></div>";
+	}
+	// Causes specific mark-up, list of causes to be deleted:
+	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneCauses'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoCauses'>Title:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeCauses'>Owner:</th></tr></thead><tbody>";
+	for (var i = 0; i < arrayOfCauseIDs.length; i++) {
+		var causeElement = AJS.$("#CausesTableEntry" + arrayOfCauseIDs[i]);
+		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
+		dialogContent3 = dialogContent3 + "<tr><td>" + AJS.$(causeElement).find(".trigger").text().replace("Cause ", "") + "</td>";
+		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + AJS.$(causeElement).find(".CausesTableTitleText").text() + "</div></td>";
+		dialogContent3 = dialogContent3 + "<td>" + AJS.$(causeElement).find(".CausesTableOwnerText").text() + "</td></tr>";
+
+		if (i === 0 && arrayOfCauseIDs.length > 1) {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForCause'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextCauses' name='ReasonTextForCause' id='ReasonTextForCauseID" +
+							arrayOfCauseIDs[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnCauses'>Apply to all</button></div></td></tr>";
+		}
+		else {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForCause'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextCauses' name='ReasonTextForCause' id='ReasonTextForCauseID" +
+							arrayOfCauseIDs[i] + "'></div></td></tr>";
+		}
+		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForCauseID" + arrayOfCauseIDs[i] +"'></p></td></tr>";
+	}
+	dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr></tbody></table>";
+
+	var dialog = new AJS.Dialog({
+		width: 600,
+		height: 450,
+		id: "deleteDialog",
+	});
 
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='panelBody'>The following cause will be removed from Hazard report " + getTheHazardNumber() + ": <ul><li>" + causeNumber + ": "+ causeTitle +"</li></ul></p><form class='aui' id='deleteReasonForm'><input class='text' type='text' id='deleteReason' name='deleteReason'></form><span class='deleteReasonText'>Field must not be empty</span>", "panel-body");
+	dialog.addPanel("Panel 1",
+		"<div class='panelBody'>" + dialogContent1 + dialogContent2 + dialogContent3 + "</div>",
+		"panel-body");
 	dialog.get("panel:0").setPadding(0);
 
-	dialog.addButton("Continue", function(dialog) {
+	dialog.addButton("Cancel", function(dialog) {
+		uncheckCausesToBeDeleted();
 		dialog.hide();
-		var reason = AJS.$("#deleteDialog"+causeID).find("input").val();
-		AJS.$.ajax({
-			type: "DELETE",
-			async: false,
-			url: "causeform?key=" + causeID + "&reason=" + reason,
-			success: function(data) {
-				console.log("DELETED");
-				element.remove();
-			},
-			error: function(data) {
-				console.log("error", arguments);
-			}
-		});
-	}, "popUpSubmits");
-
-	AJS.$(".popUpSubmits").prop("disabled", true);
-
-	AJS.$("#deleteDialog"+causeID).find("input").live("change keyup", function() {
-		console.log(AJS.$("#deleteDialog"+causeID).find("input").val());
-		if(AJS.$("#deleteDialog"+causeID).find("input").val().length > 0) {
-			AJS.$(".popUpSubmits").prop("disabled", false);
-		}
-		else {
-			AJS.$(".popUpSubmits").prop("disabled", true);
+		dialog.remove();
+		if (doRefresh) {
+			location.reload();
 		}
 	});
 
-	dialog.addLink("Cancel", function(dialog) {
-		dialog.hide();
-		element.find(".deleteCause").attr('checked', false);
-	}, "#");
+	dialog.addButton("Continue", function(dialog) {
+		var result = getSelectedCausesAndDeleteReasons(arrayOfCauseIDs);
+		if (result.allReasonsFilledOut) {
+			for (var i = 0; i < result.causeIDsAndReasons.length; i++) {
+				sendAjaxRequestToDeleteSpecificCause(result.causeIDsAndReasons[i].causeID, result.causeIDsAndReasons[i].deleteReason);
+			}
+			dialog.hide();
+			location.reload();
+		}
+		else {
+			for (var j = 0; j < result.skippedReasonCauseIDs.length; j++) {
+				addErrorMessageToSpecificCause(result.skippedReasonCauseIDs[j], "For the cause above, please provide a short delete reason.");
+			}
+		}
+	});
+}
+
+function checkForValidationError() {
+	if (AJS.$(".validationError").is(":visible")) {
+		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+function checkForUpdatesToExistingCauses() {
+	var result = {
+		didUpdate: false,
+		arrayOfCauseIDsToDelete: [],
+		validationError: false
+	};
+
+	AJS.$("form.causeForms, form.transferredForms").each(function(){
+		var rowGroup = AJS.$(this).parent().parent().parent();
+		if(rowGroup.find(".deleteCause").is(':checked')) {
+			var self = AJS.$(this);
+			result.arrayOfCauseIDsToDelete.push(self.data("key"));
+		}
+		else {
+			if(AJS.$(this).isDirty()) {
+				AJS.$(this).trigger("submit");
+				if (checkForValidationError()) {
+					result.validationError = true;
+					result.didUpdate = false;
+					result.arrayOfCauseIDsToDelete = [];
+					return result;
+				}
+				else {
+					result.didUpdate = true;
+				}
+			}
+		}
+	});
+
+	return result;
+}
+
+function checkForNewCauseAddition(newCauseRequired) {
+	var result = {
+		didNew: false,
+		validationError: false
+	};
+
+	if (newCauseRequired) {
+		AJS.$("#addNewCauseForm").trigger("submit");
+		if (checkForValidationError()) {
+			result.validationError = true;
+			result.didNew = false;
+			return result;
+		}
+		else {
+			result.didNew = true;
+		}
+	}
+	else {
+		if(AJS.$("#addNewCauseForm").isDirty()) {
+			AJS.$("#addNewCauseForm").trigger("submit");
+			if (checkForValidationError()) {
+				result.validationError = true;
+				result.didNew = false;
+				return result;
+			}
+			else {
+				result.didNew = true;
+			}
+		}
+	}
+
+	return result;
+}
+
+function checkForNewCauseTransfer() {
+	var hazardID = AJS.$("#hazardList").val();
+	var result = {
+		didTransfer: false,
+		validationError: false
+	};
+
+	if (hazardID !== undefined) {
+		AJS.$("#transferForm").trigger("submit");
+		if (checkForValidationError()) {
+			result.validationError = true;
+			result.didTransfer = false;
+			return result;
+		}
+		else {
+			result.didTransfer = true;
+		}
+	}
+
+	return result;
 }
 
 function submitCauses() {
 	AJS.$(".causeSaveAllChanges").live('click', function() {
-		AJS.$("form.causeForms, form.transferredForms").each(function(){
-			var rowGroup = AJS.$(this).parent().parent().parent();
-			if(rowGroup.find(".deleteCause").is(':checked')) {
-				var self = AJS.$(this);
-				deleteConfirmation(rowGroup, self.data("key"));
+		var newCauseRequired = AJS.$(this).data("new");
+
+		var updateExistingCausesResult = checkForUpdatesToExistingCauses();
+		if (updateExistingCausesResult.validationError) { return; }
+
+		var newCauseResult = checkForNewCauseAddition(newCauseRequired);
+		if (newCauseResult.validationError) { return; }
+
+		var transferCauseResult = checkForNewCauseTransfer();
+		if (transferCauseResult.validationError) { return; }
+
+		if (updateExistingCausesResult.arrayOfCauseIDsToDelete.length !== 0) {
+			var doRefreshAfterDelete = false;
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew) {
+				doRefreshAfterDelete = true;
+			}
+			deleteSelectedCauses(doRefreshAfterDelete, updateExistingCausesResult.arrayOfCauseIDsToDelete);
+		}
+		else {
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew) {
+				location.reload();
 			}
 			else {
-				if(AJS.$(this).isDirty()) {
-					AJS.$(this).trigger("submit");
-				}
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
-		});
-
-		if(AJS.$("#addNewCauseForm").isDirty()) {
-			AJS.$("#addNewCauseForm").trigger("submit");
 		}
 
-		var hazardID = AJS.$("#hazardList").val();
-		if(hazardID !== undefined) {
-			AJS.$("#transferForm").trigger("submit");
-		}
-
-		AJS.bind("hide.dialog", function(e, data) {
-			if(!checkIfElementIsVisible(AJS.$(".aui-dialog"))) {
-				checkIfRefresh();
-			}
-		});
-		checkIfRefresh();
 	});
 }
 
@@ -203,15 +405,6 @@ function foldable(element, containerClass) {
 	*                                                         *
 	***********************************************************/
 
-function manipulateTextForOptionInCauses(theText) {
-	if (theText.length >= 85){
-		return theText.substring(0,82) + "...";
-	}
-	else {
-		return theText;
-	}
-}
-
 function transfer() {
 	AJS.$("#transferForm").live("reset", function() {
 		AJS.$(".container").hide();
@@ -233,16 +426,16 @@ function transfer() {
 			});
 			AJS.$(".container").show();
 			var temp = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
-			if(causeList.length > 0) {
-				temp += "<option value=''>-Link to all causes in selected Hazard report-</option>";
+			if (causeList.length > 0) {
+				temp += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				AJS.$(causeList).each(function() {
 					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
-					temp += "<option value=" + this.causeID + ">" + manipulateTextForOptionInCauses(causeNumberAndTitle) + "</option>";
+					temp += "<option value=" + this.causeID + ">" + manipulateCauseTextVariableLength(causeNumberAndTitle, 85) + "</option>";
 				});
 				AJS.$("div.container").append(temp);
 			}
 			else {
-				AJS.$("div.container").append("<p>This Hazard Report has no Causes.</p>");
+				AJS.$("div.container").append("<label class='popupLabels' for='causeList'>Hazard Causes</label><div class='TransferNoProperties'>-Link to all Causes in selected Hazard Report- (Selected HR currently has no Causes)</div>");
 			}
 		}
 		else {
@@ -252,28 +445,29 @@ function transfer() {
 	}).trigger('change');
 }
 
-function manipulateCausesTitles(causesTitles) {
+function manipulateCausesTitles() {
+	var causesTitles = AJS.$(".CausesTableTitleText");
 	if (causesTitles.length > 0) {
 		causesTitles.each(function () {
 			var shortend;
-			if (AJS.$(this)[0].children.length === 0) {
-				if (AJS.$(this)[0].innerText.length >= 128) {
-					shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-					AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).children().length === 0) {
+				if (AJS.$(this).text().length >= 128) {
+					shortend = AJS.$(this).text().substring(0, 125) + "...";
+					AJS.$(this).text(shortend);
 				}
 			}
 			else {
-				var shortendArr = (AJS.$(this)[0].innerText).split(" - ");
+				var shortendArr = AJS.$(this).text().split(" - ");
 				if (shortendArr.length === 2) {
 					if (shortendArr[1].length >= 128) {
 						shortend = shortendArr[1].substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortendArr[0] + " - " + shortend;
+						AJS.$(this).children(":first").text(shortendArr[0] + " - " + shortend);
 					}
 				}
 				else {
-					if (AJS.$(this)[0].innerText.length >= 128) {
-						shortend = (AJS.$(this)[0].innerText).substring(0, 125) + "...";
-						AJS.$(this)[0].children[0].innerText = shortend;
+					if (AJS.$(this).text().length >= 128) {
+						shortend = AJS.$(this).text().substring(0, 125) + "...";
+						AJS.$(this).children(":first").text(shortend);
 					}
 				}
 			}
@@ -282,18 +476,27 @@ function manipulateCausesTitles(causesTitles) {
 }
 
 function manipulateTextForHazardSelectionInCauses(theHazardList) {
-	// if (theHazardList[0].children.length > 0) {
-	// 	(theHazardList.children()).each(function (index) {
-	// 		if ((AJS.$(this)[0].innerText).length >= 85) {
-	// 			AJS.$(this)[0].text = (AJS.$(this)[0].innerText).substring(0,82) + "...";
-	// 		}
-	// 	});
-	// }
+	if (theHazardList.children().length > 0) {
+		theHazardList.children().each(function (index) {
+			if (AJS.$(this).text().length >= 85) {
+				AJS.$(this).text(AJS.$(this).text().substring(0,82) + "...");
+			}
+		});
+	}
 }
 
-AJS.$(document).ready(function(){
-	var causesTitles = AJS.$(".CausesTableTitleText");
-	manipulateCausesTitles(causesTitles);
+function manipulateCauseTextVariableLength(theText, length) {
+	if (theText.length >= length){
+		return theText.substring(0, (length - 3)) + "...";
+	}
+	else {
+		return theText;
+	}
+}
+
+AJS.$(document).ready(function() {
+	manipulateHazardTextForCauses();
+	manipulateCausesTitles();
 	getTheHazardNumber();
 	dateLayout();
 	openDivOnReload();
@@ -352,6 +555,37 @@ AJS.$(document).ready(function(){
 		var hazardID = causeIDAndHazardIDArr[1];
 		updateAssociatedCauseCookie(causeID);
 		window.location.href = AJS.params.baseURL + "/plugins/servlet/controlform?edit=y&key=" + hazardID;
+	});
+
+	AJS.$("#ConfirmDialogDuplBtnCauses").live("click", function() {
+		var reasonTextFields = AJS.$(".ConfirmDialogReasonTextCauses");
+		var reasonToDuplicate;
+		var noReasonGiven = false;
+		var causeID;
+		reasonTextFields.each(function (index) {
+			if (index === 0) {
+				reasonToDuplicate = AJS.$(this).val();
+				if (reasonToDuplicate === "") {
+					causeID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+					addErrorMessageToSpecificCause(causeID, "For the cause above, please provide a short delete reason.");
+					noReasonGiven = true;
+				}
+			}
+			else {
+				if (noReasonGiven) {
+					causeID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+					removeErrorMessageFromSpecificCause(causeID);
+				}
+				else {
+					AJS.$(this)[0].value = reasonToDuplicate;
+				}
+			}
+		});
+	});
+
+	AJS.$(".ConfirmDialogReasonTextCauses").live("input", function() {
+		var causeID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+		removeErrorMessageFromSpecificCause(causeID);
 	});
 
 	var whichForm;

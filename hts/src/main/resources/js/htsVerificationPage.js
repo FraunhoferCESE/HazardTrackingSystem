@@ -1,9 +1,8 @@
-function manipulateDates(dates) {
+function manipulateVerificationDates(dates) {
 	if (dates.length > 0) {
 		dates.each(function () {
-			if (AJS.$(this)[0].innerText != "N/A") {
-				AJS.$(this)[0].innerText = Date.parse(AJS.$(this)[0].innerText.substring(0,19)).toString("MM/dd/yyyy, HH:mm");
-			}
+			var dateToBeInserted = Date.parse(AJS.$(this).text().substring(0,19)).toString("MMMM dd, yyyy, HH:mm");
+			AJS.$(this).text(dateToBeInserted);
 		});
 	}
 }
@@ -20,11 +19,20 @@ function manipulateEstComplDates() {
 function manipulateVerificationText(textElement, textCapNum) {
 	if (textElement.length > 0) {
 		textElement.each(function () {
-			if (AJS.$(this)[0].innerText.length >= textCapNum) {
-				var shortend = (AJS.$(this)[0].innerText).substring(0, (textCapNum - 3)) + "...";
-				AJS.$(this)[0].innerText = shortend;
+			if (AJS.$(this).text().length >= textCapNum) {
+				var shortend = AJS.$(this).text().substring(0, (textCapNum - 3)) + "...";
+				AJS.$(this).text(shortend);
 			}
 		});
+	}
+}
+
+function manipulateTextForVerificationDeleteDialog(theText, length) {
+	if (theText.length >= length){
+		return theText.substring(0, (length - 3)) + "...";
+	}
+	else {
+		return theText;
 	}
 }
 
@@ -83,10 +91,10 @@ function findVerificationWithSpecificID(controlsAssociatedWithVerification, veri
 	});
 }
 
-function checkIfVerificationWasModified(oldControls, newControls) {
-	if (oldControls.length === newControls.length) {
-		for (var j = 0; j < newControls.length; j++) {
-			if (oldControls.indexOf(newControls[j]) === -1) {
+function checkIfVerificationWasModified(oldVerifications, newVerifications) {
+	if (oldVerifications.length === newVerifications.length) {
+		for (var j = 0; j < newVerifications.length; j++) {
+			if (oldVerifications.indexOf(newVerifications[j]) === -1) {
 				return true;
 			}
 		}
@@ -97,7 +105,7 @@ function checkIfVerificationWasModified(oldControls, newControls) {
 	}
 }
 
-function getHazardInformation() {
+function getHazardInformationInVerifications() {
 	var hazardInformation = {};
 	hazardInformation.theNumber = AJS.$("#HazardNumberForVerification").text();
 	hazardInformation.theTitle = AJS.$("#HazardTitleForVerification").text();
@@ -110,7 +118,7 @@ function getVerificationsToBeDeleted() {
 	if (verificationsToBeDeleted.length > 0) {
 		var verifications = [];
 		verificationsToBeDeleted.each(function () {
-			if (AJS.$(this)[0].checked === true) {
+			if (AJS.$(this).is(':checked')) {
 				verifications.push(this.value);
 			}
 		});
@@ -121,7 +129,7 @@ function getVerificationsToBeDeleted() {
 function uncheckVerificationsToBeDeleted() {
 	var verificationsToBeDeleted = AJS.$(".ControlsTableListOfCreatedControls");
 	verificationsToBeDeleted.each(function () {
-		if (AJS.$(this)[0].checked === true) {
+		if (AJS.$(this).is(':checked')) {
 			this.checked = false;
 		}
 	});
@@ -132,7 +140,7 @@ function getVerificationsToBeDeletedAndDeleteReasons(selectedVerifications) {
 	var skippedReasonVerifications = [];
 	var skippedReason = false;
 	for (var i = 0; i < selectedVerifications.length; i++) {
-		var deleteReason = AJS.$("#ReasonTextForVerificationID" + selectedVerifications[i])[0].value;
+		var deleteReason = AJS.$("#ReasonTextForVerificationID" + selectedVerifications[i]).val();
 		if (deleteReason === "") {
 			skippedReason = true;
 			skippedReasonVerifications.push(selectedVerifications[i]);
@@ -160,9 +168,6 @@ function sendAjaxRequestToDeleteSpecificVerification(verificationID, deleteReaso
 		url: "verificationform?verificationID=" + verificationID + "&reason=" + deleteReason,
 		success: function(data) {
 			console.log("SUCCESS");
-			var verificationElementRows = AJS.$(".VerificationsTableEntryID" + verificationID);
-			verificationElementRows[0].remove();
-			verificationElementRows[1].remove();
 		},
 		error: function(data) {
 			console.log("ERROR");
@@ -171,22 +176,23 @@ function sendAjaxRequestToDeleteSpecificVerification(verificationID, deleteReaso
 }
 
 function addErrorMessageToSpecificVerification(verificationID, message) {
-	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID)[0].innerHTML = message;
+	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).text(message);
 	AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).show();
 }
 
 function removeErrorMessageFromSpecificVerification(verificationID) {
 	if (AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).is(":visible")) {
 		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).hide();
-		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID)[0].innerHTML = "";
+		AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationID).text("");
 	}
 }
 
-function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
+function deleteSelectedVerifications(doRefresh){
 	// Hazard specific mark-up:
-	var hazardInformation = getHazardInformation();
-	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theTitle + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + hazardInformation.theNumber + "</span></span>";
+	var hazardInformation = getHazardInformationInVerifications();
+	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForVerificationDeleteDialog(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForVerificationDeleteDialog(hazardInformation.theNumber, 64) + "</span></span>";
 	// Controls specific mark-up:
+	var selectedVerifications = getVerificationsToBeDeleted();
 	var dialogContent2;
 	if (selectedVerifications.length === 1) {
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following verification will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason.</span></div>";
@@ -194,13 +200,13 @@ function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following verifications will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason for each of the verifications.</span></div>";
 	}
 	// Controls specific mark-up, list of controls to be deleted:
-	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneVerifications'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoVerifications'>Description:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeVerifications'>Control group:</th></tr></thead><tbody>";
+	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneVerifications'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoVerifications'>Description:</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeVerifications'>Verification Status:</th></tr></thead><tbody>";
 	for (var i = 0; i < selectedVerifications.length; i++) {
-		var verificationRowElement = AJS.$(".VerificationsTableEntryID" + selectedVerifications[i])[0];
+		var verificationRowElement = AJS.$(".VerificationsTableEntryID" + selectedVerifications[i]).first();
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
-		dialogContent3 = dialogContent3 + "<tr><td class='ConfirmDialogTableAllCells'>" + (verificationRowElement.children[1].innerText).replace("Verification ", "") + "</td>";
-		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'><div class='ConfirmDialogDescriptionText'>" + verificationRowElement.children[2].innerText + "</div></td>";
-		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children[3].innerText + "</td></tr>";
+		dialogContent3 = dialogContent3 + "<tr><td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children(":nth-child(2)").text().replace("Verification ", "") + "</td>";
+		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'><div class='ConfirmDialogDescriptionText'>" + verificationRowElement.children(":nth-child(3)").text() + "</div></td>";
+		dialogContent3 = dialogContent3 + "<td class='ConfirmDialogTableAllCells'>" + verificationRowElement.children(":nth-child(4)").text() + "</td></tr>";
 
 		if (i === 0 && selectedVerifications.length > 1) {
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForVerification'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextVerifications' name='ReasonTextForVerifiction' id='ReasonTextForVerificationID" + selectedVerifications[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnVerifc'>Apply to all</button></div></td></tr>";
@@ -229,7 +235,7 @@ function deleteSelectedVerifications(selectedVerifications, refreshAfterDelete){
 		uncheckVerificationsToBeDeleted();
 		dialog.hide();
 		dialog.remove();
-		if (refreshAfterDelete) {
+		if (doRefresh) {
 			location.reload();
 		}
 	});
@@ -329,6 +335,94 @@ function openVerificationsInCookie() {
 	}
 }
 
+function getAssociatedControlCookie() {
+	return AJS.Cookie.read("ASSOCIATED_CONTROL");
+}
+
+function updateAssociatedControlCookie(theControlID) {
+	AJS.Cookie.save("ASSOCIATED_CONTROL", theControlID);
+}
+
+function checkForValidationError() {
+	if (AJS.$(".validationError").is(":visible")) {
+		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+function checkForUpdatesToExistingVerifications(initialVerificationAndControlAssociation) {
+	var createdVerificationForms = AJS.$(".editVerificationForm");
+	var currentVerificationAndControlAssociation = getCurrentVerificationAndControlAssociation();
+	var verificationsToDelete = getVerificationsToBeDeleted();
+	var result = {
+		didUpdate: false,
+		needToDoDelete: false,
+		validationError: false
+	};
+
+	createdVerificationForms.each(function () {
+		var verificationID = AJS.$(this).find("#verificationID").val();
+		if (verificationsToDelete.indexOf(verificationID) === -1) {
+			var initialAssocation = findVerificationWithSpecificID(initialVerificationAndControlAssociation, verificationID);
+			var currentAssociation = findVerificationWithSpecificID(currentVerificationAndControlAssociation, verificationID);
+			if (editVerificationFormIsDirty(AJS.$(this), initialAssocation[0].controlIDs, currentAssociation[0].controlIDs)) {
+				AJS.$(this).trigger("submit");
+				if (checkForValidationError()) {
+					result.validationError = true;
+					result.didUpdate = false;
+					result.needToDoDelete = false;
+					return result;
+				}
+				else {
+					result.didUpdate = true;
+				}
+			}
+		}
+		else {
+			result.needToDoDelete = true;
+		}
+	});
+
+	return result;
+}
+
+function checkForNewVerificationAddition(newVerificationRequired) {
+	var result = {
+		didNew: false,
+		validationError: false
+	};
+
+	if (newVerificationRequired) {
+		AJS.$("#addNewVerificationForm").trigger("submit");
+		if (checkForValidationError()) {
+			result.validationError = true;
+			result.didNew = false;
+			return result;
+		}
+		else {
+			result.didNew = true;
+		}
+	}
+	else {
+		if (addNewVerificationFormIsDirty()) {
+			AJS.$("#addNewVerificationForm").trigger("submit");
+			if (checkForValidationError()) {
+				result.validationError = true;
+				result.didNew = false;
+				return result;
+			}
+			else {
+				result.didNew = true;
+			}
+		}
+	}
+
+	return result;
+}
+
 AJS.$(document).ready(function(){
 	createVerificationsCookie();
 	openVerificationsInCookie();
@@ -337,7 +431,7 @@ AJS.$(document).ready(function(){
 
 	/* Text manipulation code begins */
 	var dates = AJS.$(".VerificationDate");
-	manipulateDates(dates);
+	manipulateVerificationDates(dates);
 
 	manipulateEstComplDates();
 
@@ -347,51 +441,27 @@ AJS.$(document).ready(function(){
 
 	/* Updating existing verifications functinality begins */
 	AJS.$(".SaveAllVerificationChanges").live("click", function() {
-		var createdVerificationForms = AJS.$(".editVerificationForm");
-		var currentVerificationAndControlAssociation = getCurrentVerificationAndControlAssociation();
-		var verificationsToDelete = getVerificationsToBeDeleted();
-		var newVerification = false;
-		var updatedVerification = false;
-		var deleteVerification = false;
+		var newVerificationRequired = AJS.$(this).data("new");
 
-		// Check if the user wants to add a new Verification
-		if (addNewVerificationFormIsDirty()) {
-			AJS.$("#addNewVerificationForm").trigger("submit");
-			newVerification = true;
-		}
+		var updateExistingVerificationsResults = checkForUpdatesToExistingVerifications(initialVerificationAndControlAssociation);
+		if (updateExistingVerificationsResults.validationError) { return; }
 
-		// Check if the user has edited an existing Verification
-		createdVerificationForms.each(function () {
-			var verificationID = AJS.$(this).find("#verificationID").val();
-			if (verificationsToDelete.indexOf(verificationID) === -1) {
-				var initialAssocation = findVerificationWithSpecificID(initialVerificationAndControlAssociation, verificationID);
-				var currentAssociation = findVerificationWithSpecificID(currentVerificationAndControlAssociation, verificationID);
-				if (editVerificationFormIsDirty(AJS.$(this), initialAssocation[0].controlIDs, currentAssociation[0].controlIDs)) {
-					AJS.$(this).trigger("submit");
-					updatedVerification = true;
-				}
-			}
-			else {
-				deleteVerification = true;
-			}
-		});
+		var newVerificationResult = checkForNewVerificationAddition(newVerificationRequired);
+		if (newVerificationResult.validationError) { return; }
 
-		if (AJS.$(".validationError").is(":visible")) {
-			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-			return;
-		}
-
-		if (deleteVerification) {
-			if (newVerification || updatedVerification) {
-				deleteSelectedVerifications(verificationsToDelete, true);
+		if (updateExistingVerificationsResults.needToDoDelete) {
+			var doRefreshAfterDelete = false;
+			if (updateExistingVerificationsResults.didUpdate || newVerificationResult.didNew) {
+				doRefreshAfterDelete = true;
 			}
-			else {
-				deleteSelectedVerifications(verificationsToDelete, false);
-			}
+			deleteSelectedVerifications(doRefreshAfterDelete);
 		}
 		else {
-			if (newVerification || updatedVerification) {
+			if (updateExistingVerificationsResults.didUpdate || newVerificationResult.didNew) {
 				location.reload();
+			}
+			else {
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
 		}
 	});
@@ -501,6 +571,33 @@ AJS.$(document).ready(function(){
 			return;
 		}
 	});
+
+	var whichForm;
+	if (AJS.$.url().data.seg.path.length === 4) {
+		whichForm = AJS.$.url().data.seg.path[3];
+	}
+	else {
+		whichForm = AJS.$.url().data.seg.path[2];
+	}
+
+	if (whichForm === "verificationform" && getAssociatedControlCookie() !== "none") {
+		var selectedControlID = getAssociatedControlCookie();
+		updateAssociatedControlCookie("none");
+		var associatedControls = AJS.$("#verificationControlsNewms2side__sx").children();
+		associatedControls.each(function () {
+			AJS.$(this).prop("selected", false);
+			if (AJS.$(this).val() === selectedControlID) {
+				AJS.$(this).prop("selected", true);
+				AJS.$(this).trigger("dblclick");
+			}
+		});
+
+		AJS.$('html, body').animate({
+			scrollTop: AJS.$("#addNewVerification").offset().top
+		}, 50);
+		AJS.$("#addNewVerification").trigger("click");
+	}
+
 	/* Expand functionality code ends */
 
 });
