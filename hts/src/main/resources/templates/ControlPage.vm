@@ -79,7 +79,7 @@
 		</table>
 		</div>
 		<div class="ControlsButtonPanel">
-			<button class="aui-button SaveAllChanges">Save All Changes</button>
+			<button class="aui-button SaveAllChanges" data-new="false">Save All Changes</button>
 			<button class="aui-button" id="RenumberAndSave" disabled>Renumber and Save</button>
 			<button class="aui-button" id="ExpandAllControls">Expand all</button>
 		</div>

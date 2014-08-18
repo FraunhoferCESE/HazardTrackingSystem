@@ -492,3 +492,24 @@ form.payloadForm .add:active {
     width: 100%
 }
 /* VERIFICATION STYLES FOR THE CONFIRM DIALOG END */
+
+/* CAUSE STYLES FOR THE CONFIRM DIALOG BEGIN */
+.ConfirmDialogTableCellOneCauses {
+    width: 30px;
+}
+
+.ConfirmDialogTableCellTwoCauses {
+    width: 410px;
+}
+
+.ConfirmDialogTableCellThreeCauses {
+    width: 160px;
+}
+
+.ConfirmDialogReasonTextCauses {
+    width: 100%
+}
+/*.ConfirmDialogReasonTextControls {
+    width: 100%
+}*/
+/* CAUSE STYLES FOR THE CONFIRM DIALOG END */

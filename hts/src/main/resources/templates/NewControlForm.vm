@@ -27,7 +27,7 @@
 		<div class="ControlsTableEditControlsFooterContainerTwo"><span class="ControlsTableEditControlsFooter">Associated Causes</span></div>
 	</div>
 	<div class="buttons-container">
-		<button class="aui-button SaveAllChanges">Save All Changes</button>
+		<input class="button SaveAllChanges" type="button" value="Save All Changes" data-new="true">
 		<input class="button" type="button" value="Clear" id="clearNewControlButton">
 	</div>
 </form>

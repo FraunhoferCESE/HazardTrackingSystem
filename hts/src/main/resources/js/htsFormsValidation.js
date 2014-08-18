@@ -116,7 +116,8 @@ AJS.$(document).ready(function(){
 	$.validator.addMethod("uniquePayload", function(value, element) {
 		var response = false;
 		if (value !== "") {
-			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + value;
+			var payloadNameUpperCase = value.toUpperCase();
+			var actionUrl = baseUrl + "/rest/htsrest/1.0/report/hazardlist/" + payloadNameUpperCase;
 			$.ajax({
 				type:"GET",
 				async: false,

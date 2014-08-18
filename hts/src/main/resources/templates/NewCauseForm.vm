@@ -16,7 +16,7 @@
 	    <textarea class="textarea long-field" rows="6" cols="10" name="causeDescription" id="causeDescription"></textarea>
 	</div>
 	<div class="buttons-container">
-		<button class="aui-button causeSaveAllChanges" type="button">Save All Changes</button>
+		<button class="aui-button causeSaveAllChanges" type="button" data-new="true">Save All Changes</button>
 		<input type="reset" value="Clear" class="aui-button">
 	</div>
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">

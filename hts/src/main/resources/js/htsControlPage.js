@@ -19,7 +19,8 @@ function manipulateControlDates() {
 	}
 }
 
-function manipulateControlText(controlDescriptions) {
+function manipulateControlTextDescriptions() {
+	var controlDescriptions = AJS.$(".ControlsTableDescriptionText");
 	if (controlDescriptions.length > 0) {
 		controlDescriptions.each(function () {
 			var shortend;
@@ -48,16 +49,7 @@ function manipulateControlText(controlDescriptions) {
 	}
 }
 
-function manipulateTextForOptionInControls(theText) {
-	if (theText.length >= 85){
-		return theText.substring(0,82) + "...";
-	}
-	else {
-		return theText;
-	}
-}
-
-function manipulateTextForControlDeleteDialog(theText, length) {
+function manipulateControlTextVariableLength(theText, length) {
 	if (theText.length >= length){
 		return theText.substring(0, (length - 3)) + "...";
 	}
@@ -77,7 +69,8 @@ function manipulateTextForHazardSelectionInControls() {
 	}
 }
 
-function getSelectedControls(createdControls) {
+function getSelectedControls() {
+	var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
 	if (createdControls.length > 0) {
 		var selectedControls = [];
 		createdControls.each(function () {
@@ -128,9 +121,7 @@ function sendAjaxRequestToDeleteSpecificControl(controlID, deleteReason) {
 		async: false,
 		url: "controlform?controlID=" + controlID + "&reason=" + deleteReason,
 		success: function(data) {
-			var controlElementAllRows = AJS.$(".ControlsTableEntryControlID" + controlID);
-			controlElementAllRows[0].remove();
-			controlElementAllRows[1].remove();
+			console.log("SUCCESS");
 		},
 		error: function(data) {
 			console.log("error", arguments);
@@ -150,7 +141,7 @@ function removeErrorMessageFromSpecificControl(controlID) {
 	}
 }
 
-function getHazardInformation() {
+function getHazardInformationInControls() {
 	var hazardInformation = {};
 	hazardInformation.theNumber = AJS.$("#HazardNumberForControl").text();
 	hazardInformation.theTitle = AJS.$("#HazardTitleForControl").text();
@@ -158,10 +149,12 @@ function getHazardInformation() {
 	return hazardInformation;
 }
 
-function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
+function deleteSelectedControls(doRefresh) {
 	// Hazard specific mark-up:
-	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForControlDeleteDialog(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateTextForControlDeleteDialog(hazardInformation.theNumber, 64) + "</span></span>";
+	var hazardInformation = getHazardInformationInControls();
+	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theNumber, 64) + "</span></span>";
 	// Controls specific mark-up:
+	var selectedControls = getSelectedControls();
 	var dialogContent2;
 	if (selectedControls.length === 1) {
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following control will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason.</span></div>";
@@ -208,6 +201,7 @@ function deleteSelectedControls(selectedControls, hazardInformation, doRefresh){
 			location.reload();
 		}
 	});
+
 	dialog.addButton("Continue", function(dialog) {
 		var result = getSelectedControlsAndDeleteReasons(selectedControls);
 		if (result.allReasonsFilledOut) {
@@ -362,6 +356,141 @@ function updateAssociatedControlCookie(theControlID) {
 	AJS.Cookie.save("ASSOCIATED_CONTROL", theControlID);
 }
 
+function checkForValidationError() {
+	if (AJS.$(".validationError").is(":visible")) {
+		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+function checkForUpdatesToExistingControls(oldCausesAssociatedWithControl) {
+	var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
+	var selectedControls = getSelectedControls();
+	var createdControlsForms = AJS.$(".editControlForm");
+	var result = {
+		didUpdate: false,
+		needToDoDelete: false,
+		validationError: false
+	};
+
+	createdControlsForms.each(function () {
+		var controlID = AJS.$(this).find("#controlID").val();
+		if (selectedControls.indexOf(controlID) === -1) {
+			var oldCauses = findControlWithSpecificID(oldCausesAssociatedWithControl, controlID);
+			var newCauses = findControlWithSpecificID(newCausesAssociatedWithControl, controlID);
+			if (checkIfControlWasModified(oldCauses[0].causesIDs, newCauses[0].causesIDs) || AJS.$(this).isDirty()) {
+				AJS.$(this).trigger("submit");
+				if (checkForValidationError()) {
+					result.validationError = true;
+					result.didUpdate = false;
+					result.needToDoDelete = false;
+					return result;
+				}
+				else {
+					result.didUpdate = true;
+				}
+			}
+		}
+		else {
+			result.needToDoDelete = true;
+		}
+	});
+
+	return result;
+}
+
+function checkForUpdatesToExistingTransferredControls() {
+	var createdControlTransfersForms = AJS.$(".editTransferredControlForm");
+	var result = {
+		didUpdate: false,
+		needToDoDelete: false,
+		validationError: false
+	};
+
+	createdControlTransfersForms.each(function () {
+		var controlID = AJS.$(this).find("#controlID").val();
+		if (selectedControls.indexOf(controlID) === -1) {
+			if (AJS.$(this).isDirty()) {
+				AJS.$(this).trigger("submit");
+				if (checkForValidationError()) {
+					result.validationError = true;
+					result.didUpdate = false;
+					result.needToDoDelete = false;
+					return result;
+				}
+				else {
+					result.didUpdate = true;
+				}
+			}
+		}
+		else {
+			result.needToDoDelete = true;
+		}
+	});
+
+	return result;
+}
+
+function checkForNewControlAddition(newControlRequired) {
+	var result = {
+		didNew: false,
+		validationError: false
+	};
+
+	if (newControlRequired) {
+		AJS.$("#addNewControlForm").trigger("submit");
+		if (checkForValidationError()) {
+			result.validationError = true;
+			result.didNew = false;
+			return result;
+		}
+		else {
+			result.didNew = true;
+		}
+	}
+	else {
+		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
+			AJS.$("#addNewControlForm").trigger("submit");
+			if (checkForValidationError()) {
+				result.validationError = true;
+				result.didNew = false;
+				return result;
+			}
+			else {
+				result.didNew = true;
+			}
+		}
+	}
+
+	return result;
+}
+
+function checkForNewControlTransfer() {
+	var hazardID = AJS.$("#controlHazardList").val();
+	var controlID = AJS.$("#controlCauseList").val();
+	var result = {
+		didTransfer: false,
+		validationError: false
+	};
+
+	if (hazardID !== undefined && controlID !== undefined) {
+		AJS.$("#transferControlForm").trigger("submit");
+		if (checkForValidationError()) {
+			result.validationError = true;
+			result.didTransfer = false;
+			return result;
+		}
+		else {
+			result.didTransfer = true;
+		}
+	}
+
+	return result;
+}
+
 AJS.$(document).ready(function(){
 	createControlsCookie();
 	openControlsInCookie();
@@ -374,8 +503,7 @@ AJS.$(document).ready(function(){
 	/* Text manipulation code begins */
 	manipulateHazardTextForControls();
 	manipulateControlDates();
-	var controlDescriptions = AJS.$(".ControlsTableDescriptionText");
-	manipulateControlText(controlDescriptions);
+	manipulateControlTextDescriptions();
 	/* Text manipulation code ends */
 
 	/* Expand functionality code begins */
@@ -464,89 +592,37 @@ AJS.$(document).ready(function(){
 	/* Expand functionality code ends */
 
 	/* Updating existing controls functinality begins */
-	AJS.$(".SaveAllChanges").live("click", function(e) {
-		e.preventDefault();
-		var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
-		var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
-		var selectedControls = getSelectedControls(createdControls);
-		var createdControlsForms = AJS.$(".editControlForm");
-		var createdControlTransfersForms = AJS.$(".editTransferredControlForm");
-		var hazardInformation = getHazardInformation();
-		var doDelete = false;
-		var doUpdate = false;
-		var doNew = false;
-		var doTransfer = false;
-		var doRefresh = false;
-		var validationError = false;
+	AJS.$(".SaveAllChanges").live("click", function() {
+		var newControlRequired = AJS.$(this).data("new");
 
-		// Check for updates to controls or delete requests
-		createdControlsForms.each(function () {
-			var controlID = this.children[2].value;
-			if (selectedControls.indexOf(controlID) === -1) {
-				var oldCauses = findControlWithSpecificID(oldCausesAssociatedWithControl, controlID);
-				var newCauses = findControlWithSpecificID(newCausesAssociatedWithControl, controlID);
-				if (checkIfControlWasModified(oldCauses[0].causesIDs, newCauses[0].causesIDs) || AJS.$(this).isDirty()) {
-					AJS.$(this).trigger("submit");
-					doUpdate = true;
-				}
+		var updateExistingControlsResults = checkForUpdatesToExistingControls(oldCausesAssociatedWithControl);
+		if (updateExistingControlsResults.validationError) { return; }
+
+		var updateExistingTransferredControlsResults = checkForUpdatesToExistingTransferredControls();
+		if (updateExistingTransferredControlsResults.validationError) { return; }
+
+		var newControlResult = checkForNewControlAddition(newControlRequired);
+		if (newControlResult.validationError) { return; }
+
+		var transferControlResult = checkForNewControlTransfer();
+		if (transferControlResult.validationError) { return; }
+
+		if (updateExistingControlsResults.needToDoDelete || updateExistingTransferredControlsResults.needToDoDelete) {
+			var doRefreshAfterDelete = false;
+			if (updateExistingControlsResults.didUpdate ||
+				updateExistingTransferredControlsResults.didUpdate ||
+				newControlResult.didNew) {
+				doRefreshAfterDelete = true;
+			}
+			deleteSelectedControls(doRefreshAfterDelete);
+		}
+		else {
+			if (updateExistingControlsResults.didUpdate || updateExistingTransferredControlsResults.didUpdate || newControlResult.didNew) {
+				location.reload();
 			}
 			else {
-				doDelete = true;
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
-		});
-
-		// Check for updates to transferred controls or delete requests
-		createdControlTransfersForms.each(function () {
-			var controlID = this.children[1].value;
-			if (selectedControls.indexOf(controlID) === -1) {
-				if (AJS.$(this).isDirty()) {
-					AJS.$(this).trigger("submit");
-					doUpdate = true;
-				}
-			}
-			else {
-				doDelete = true;
-			}
-		});
-
-		validationError = AJS.$(".validationError").is(":visible");
-		if (validationError) {
-			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-			return;
-		}
-
-		// Check for new control
-
-		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
-			AJS.$("#addNewControlForm").trigger("submit");
-			doNew = true;
-		}
-
-		validationError = AJS.$(".validationError").is(":visible");
-		if (validationError) {
-			JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-			return;
-		}
-
-		// Check for control transfer
-		var hazardID = AJS.$("#controlHazardList").val();
-		var controlID = AJS.$("#controlCauseList").val();
-		if(hazardID !== undefined && controlID !== undefined) {
-			AJS.$("#transferControlForm").trigger("submit");
-			doTransfer = true;
-		}
-
-		if (doDelete) {
-			if (doUpdate || doNew || doTransfer) {
-				doRefresh = true;
-			}
-			deleteSelectedControls(selectedControls, hazardInformation, doRefresh);
-			return;
-		}
-
-		if (doUpdate || doNew || doTransfer) {
-			location.reload();
-			return;
 		}
 	});
 
@@ -620,7 +696,7 @@ AJS.$(document).ready(function(){
 				temp += "<option value=''>-Select Cause-</option>";
 				AJS.$(causeListForSelectedHazard).each(function() {
 					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
-					temp += "<option value=" + this.causeID + ">" + manipulateTextForOptionInControls(causeNumberAndTitle) + "</option>";
+					temp += "<option value=" + this.causeID + ">" + manipulateControlTextVariableLength(causeNumberAndTitle, 85) + "</option>";
 				});
 				AJS.$("div.TransferControlCauseContainer").append(temp);
 			}
@@ -654,7 +730,7 @@ AJS.$(document).ready(function(){
 				temp += "<option value=''>-Link to all controls in selected cause-</option>";
 				AJS.$(controlListForSelectedCause).each(function() {
 					var controlNumberAndDescription = this.controlNumber + " - " + this.description;
-					temp += "<option value=" + this.controlID + ">" + manipulateTextForOptionInControls(controlNumberAndDescription) + "</option>";
+					temp += "<option value=" + this.controlID + ">" + manipulateControlTextVariableLength(controlNumberAndDescription, 85) + "</option>";
 				});
 				AJS.$("div.TransferControlControlContainer").append(temp);
 			}
