@@ -44,7 +44,6 @@ public interface Hazards extends Entity {
 	void setActive(boolean state);
 
 	@NotNull
-	@Unique
 	String getHazardNum();
 
 	void setHazardNum(String hazardNum);

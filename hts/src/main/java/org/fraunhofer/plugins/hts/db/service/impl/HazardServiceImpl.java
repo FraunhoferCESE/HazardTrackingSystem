@@ -174,13 +174,28 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Boolean hazardNumberExists(String hazardNumber) {
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
-		return hazards.length > 0 ? true : false;
+		
+		if (hazards.length > 0) {
+			boolean inUse = false;
+			for (Hazards current : hazards) {
+				if (current.getActive() == true) {
+					inUse = true;
+					break;
+				}
+			}
+			return inUse;
+		}
+		else {
+			return false;
+		}
 	}
 
 	@Override
 	public void deleteHazard(Hazards hazardToDelete) {
 		// Mark hazards as inactive
 		hazardToDelete.setActive(false);
+		Date deleteDate = new Date();
+		hazardToDelete.setHazardNum(hazardToDelete.getHazardNum() + " (DELETED " + deleteDate.toString() + ")");
 		hazardToDelete.save();
 		
 		// Mark all non-deleted causes as deleted
