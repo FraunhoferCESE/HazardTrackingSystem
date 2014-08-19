@@ -7,7 +7,7 @@ function openDeleteHazardReportDialog(hazardIDToBeDeleted) {
 
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='dialog-panel-body'>Deleting this Hazard Report will premanently remove it from the HTS.<br>Press Continue to confirm this action.</p>", "panel-body");
+	dialog.addPanel("Panel 1", "<p class='dialog-panel-body'>Deleting this Hazard Report will permanently remove it from the HTS.<br>Press Continue to confirm this action.</p>", "panel-body");
 	dialog.get("panel:0").setPadding(0);
 
 	dialog.addButton("Continue", function(dialog) {

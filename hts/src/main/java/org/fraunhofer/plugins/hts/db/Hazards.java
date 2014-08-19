@@ -19,6 +19,7 @@ import net.java.ao.schema.NotNull;
  */
 @Table("Hazards")
 public interface Hazards extends Entity {
+	
 	@NotNull
 	@StringLength(value = 512)
 	String getTitle();
@@ -37,6 +38,10 @@ public interface Hazards extends Entity {
 	String getEmail();
 
 	void setEmail(String email);
+	
+	boolean getActive();
+	
+	void setActive(boolean state);
 
 	@NotNull
 	@Unique

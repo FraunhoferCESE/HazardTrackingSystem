@@ -72,19 +72,22 @@ public class LandingPageServlet extends HttpServlet {
 				context.put("compDate", removeTimeFromDate(hazard.getCompletionDate()));
 				res.setContentType("text/html");
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
-			} else {
+			}
+			else {
 				Map<String, Object> context = Maps.newHashMap();
 				if (!(req.getParameter("key") == null)) {
 					List<Hazards> hazards = hazardService.getHazardsByMissionPayload(req.getParameter("key"));
 					context.put("hazardReports", hazards);
-				} else {
-					context.put("hazardReports", hazardService.all());
+				}
+				else {
+					context.put("hazardReports", hazardService.getAllNonDeletedHazards());
 				}
 				context.put("payloads", missionPayloadService.all());
 				res.setContentType("text/html");
 				templateRenderer.render("templates/LandingPage.vm", context, res.getWriter());
 			}
-		} else {
+		} 
+		else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
@@ -105,7 +108,7 @@ public class LandingPageServlet extends HttpServlet {
 			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
 
 			if (hazard != null) {
-				hazardService.deleteHazard(hazard.getID());
+				hazardService.deleteHazard(hazard);
 				respStr = "{ \"success\" : \"true\" }";
 			}
 			res.setContentType("application/json;charset=utf-8");

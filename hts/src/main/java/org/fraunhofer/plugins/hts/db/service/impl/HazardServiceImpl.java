@@ -6,10 +6,13 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.fraunhofer.plugins.hts.db.GroupToHazard;
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
@@ -20,6 +23,7 @@ import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.db.Subsystems;
+import org.fraunhofer.plugins.hts.db.Verifications;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -50,6 +54,7 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setRiskLikelihood(likelihood);
 		hazard.setReviewPhase(reviewPhase);
 		hazard.setMissionPayload(missionPayload);
+		hazard.setActive(true);
 		hazard.save();
 		if (subsystems != null) {
 			for (Subsystems subsystem : subsystems) {
@@ -85,6 +90,17 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public List<Hazards> all() {
 		return newArrayList(ao.find(Hazards.class));
+	}
+	
+	@Override
+	public List<Hazards> getAllNonDeletedHazards() {
+		List<Hazards> allRemaining = new ArrayList<Hazards>();
+		for (Hazards current : all()) {
+			if (current.getActive() == true) {
+				allRemaining.add(current);
+			}
+		}
+		return allRemaining;
 	}
 
 	@Override
@@ -162,16 +178,42 @@ public class HazardServiceImpl implements HazardService {
 	}
 
 	@Override
-	public void deleteHazard(int id) {
-		removeSubsystems(id);
-		removeHazardGroups(id);
-		removeMissionPhase(id);
-		ao.delete(ao.find(Hazards.class, Query.select().where("ID=?", id)));
+	public void deleteHazard(Hazards hazardToDelete) {
+		// Mark hazards as inactive
+		hazardToDelete.setActive(false);
+		hazardToDelete.save();
+		
+		// Mark all non-deleted causes as deleted
+		for (Hazard_Causes current : hazardToDelete.getHazardCauses()) {
+			current.setDeleteReason("HAZARD_DELETED");
+			current.save();
+		}
+
+		// Mark all non-deleted controls as deleted
+		for (Hazard_Controls current : hazardToDelete.getHazardControls()) {
+			current.setDeleteReason("HAZARD_DELETED");
+			current.save();
+		}
+		
+		// Mark all non-deleted verifications as delete
+		for (Verifications current : hazardToDelete.getVerifications()) {
+			current.setDeleteReason("HAZARD_DELETED");
+			current.save();
+		}
 	}
 
 	@Override
 	public List<Hazards> getHazardsByMissionPayload(String id) {
-		return newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
+		List<Hazards> allHazardsBelongingToMission = newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
+		List<Hazards> allNonDeletedHazards = new ArrayList<Hazards>();
+		
+		for (Hazards current : allHazardsBelongingToMission) {
+			if (current.getActive()) {
+				allNonDeletedHazards.add(current);
+			}
+		}
+		
+		return allNonDeletedHazards;
 	}
 
 	@Override

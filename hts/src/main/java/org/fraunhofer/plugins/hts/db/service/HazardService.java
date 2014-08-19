@@ -29,12 +29,14 @@ public interface HazardService {
 			Mission_Phase[] missionPhase, Mission_Payload missionPayload);
 
 	List<Hazards> all();
+	
+	List<Hazards> getAllNonDeletedHazards();
 
 	Boolean hazardNumberExists(String hazardNumber);
 
 	List<Hazards> getHazardsByMissionPayload(String string);
 
-	void deleteHazard(int id);
+	void deleteHazard(Hazards hazardToDelete);
 
 	Hazards getNewestHazardReport();
 
