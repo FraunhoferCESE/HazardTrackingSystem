@@ -7,6 +7,27 @@
 	    <label for="cause-title">Owner</label>
 	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner">
 	</div>
+
+	<div class="field-group">
+		<label for="causeRisk">Risk Category</label>
+		<select class="select" id="causeRisk" name="causeRisk">
+			<option value="" selected>-Select-</option>
+	    	#foreach ($risk in $riskCategories)
+				<option value="$risk.getID()">$!risk.getValue()</option>
+	    	#end
+		</select>
+	</div>
+
+	<div class="field-group">
+	    <label for="causeLikelihood">Risk Likelihood</label>
+	    <select class="select" id="causeLikelihood" name="causeLikelihood">
+	    	<option value="" selected>-Select-</option>
+	    	#foreach ($!likelihood in $!riskLikelihoods)
+				<option value="$likelihood.getID()">$!likelihood.getValue()</option>
+	    	#end
+	    </select>
+	</div>
+
 	<div class="field-group">
 	    <label for="causeEffects">Effects</label>
 	    <input class="text long-field" type="text" id="causeEffects" name="causeEffects">

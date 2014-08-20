@@ -6,11 +6,15 @@ import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 
 public interface HazardCauseService {
-	Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard);
-
-	Hazard_Causes update(String id, String description, String effects, String owner, String title);
+	Hazard_Causes add(String description, String effects, Risk_Categories risk, 
+			Risk_Likelihoods likelihood, String owner, String title, Hazards hazard);
+	
+	Hazard_Causes update(String id, String description, String effects,
+			String owner, String title, Risk_Categories risk, Risk_Likelihoods likelihood);
 
 	Hazard_Causes getHazardCauseByID(String id);
 	

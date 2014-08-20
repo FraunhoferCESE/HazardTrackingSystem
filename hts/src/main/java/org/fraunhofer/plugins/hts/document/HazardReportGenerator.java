@@ -282,24 +282,24 @@ public class HazardReportGenerator {
 		new ParagraphBuilder().text(h.getTitle()).createCellText(cell);
 
 		// Hazard category and risk likelihood
-		cell = row.getCell(1);
-		for (Risk_Categories category : testRiskCategories) {
-			if (category.getID() == h.getRiskCategory().getID())
-				new ParagraphBuilder().text("\u2612  " + category.getValue()).fontSize(6).createCellText(cell);
-			else
-				new ParagraphBuilder().text("\u2610  " + category.getValue()).fontSize(6).createCellText(cell);
-		}
-
-		cell = row.getCell(2);
-		for (Risk_Likelihoods likelihood : testRiskLikelihoods) {
-			if (likelihood.getID() == h.getRiskLikelihood().getID())
-				new ParagraphBuilder().text("\u2612  " + likelihood.getValue()).leftMargin(100).fontSize(6)
-						.createCellText(cell);
-			else
-				new ParagraphBuilder().text("\u2610  " + likelihood.getValue()).leftMargin(100).fontSize(6)
-						.createCellText(cell);
-
-		}
+//		cell = row.getCell(1);
+//		for (Risk_Categories category : testRiskCategories) {
+//			if (category.getID() == h.getRiskCategory().getID())
+//				new ParagraphBuilder().text("\u2612  " + category.getValue()).fontSize(6).createCellText(cell);
+//			else
+//				new ParagraphBuilder().text("\u2610  " + category.getValue()).fontSize(6).createCellText(cell);
+//		}
+//
+//		cell = row.getCell(2);
+//		for (Risk_Likelihoods likelihood : testRiskLikelihoods) {
+//			if (likelihood.getID() == h.getRiskLikelihood().getID())
+//				new ParagraphBuilder().text("\u2612  " + likelihood.getValue()).leftMargin(100).fontSize(6)
+//						.createCellText(cell);
+//			else
+//				new ParagraphBuilder().text("\u2610  " + likelihood.getValue()).leftMargin(100).fontSize(6)
+//						.createCellText(cell);
+//
+//		}
 		// --------------------------------------
 
 		// Hazard description

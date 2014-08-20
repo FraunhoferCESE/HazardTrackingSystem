@@ -15,6 +15,8 @@ import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
@@ -34,12 +36,14 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes add(String description, String effects, String owner, String title, Hazards hazard) {
+	public Hazard_Causes add(String description, String effects, Risk_Categories risk, Risk_Likelihoods likelihood, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
 		cause.setCauseNumber(getNewCauseNumber(hazard));
 		cause.setDescription(description);
 		cause.setEffects(effects);
 		cause.setOwner(owner);
+		cause.setRiskCategory(risk);
+		cause.setRiskLikelihood(likelihood);
 		cause.setLastUpdated(new Date());
 		cause.setOriginalDate(new Date());
 		cause.save();
@@ -49,7 +53,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	@Override
 	public Hazard_Causes addCauseTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		Hazard_Causes cause = add(transferComment, null, null, null, null, title, hazard);
 		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "CAUSE");
 		cause.setTransfer(transferID);
 		cause.save();
@@ -58,7 +62,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	
 	@Override
 	public Hazard_Causes addHazardTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, title, hazard);
+		Hazard_Causes cause = add(transferComment, null, null, null, null, title, hazard);
 		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "HAZARD");
 		cause.setTransfer(transferID);
 		cause.save();
@@ -66,15 +70,35 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes update(String id, String description, String effects, String owner, String title) {
-		Hazard_Causes causeToBeupdated = getHazardCauseByID(id);
-		causeToBeupdated.setDescription(description);
-		causeToBeupdated.setEffects(effects);
-		causeToBeupdated.setOwner(owner);
-		causeToBeupdated.setTitle(title);
-		causeToBeupdated.setLastUpdated(new Date());
-		causeToBeupdated.save();
-		return causeToBeupdated;
+	public Hazard_Causes update(String id, String description, String effects, String owner, 
+			String title, Risk_Categories risk, Risk_Likelihoods likelihood) {
+		Hazard_Causes causeToBeUpdated = getHazardCauseByID(id);
+		causeToBeUpdated.setDescription(description);
+		causeToBeUpdated.setEffects(effects);
+		causeToBeUpdated.setOwner(owner);
+		causeToBeUpdated.setTitle(title);
+		
+		if (risk != null && causeToBeUpdated.getRiskCategory() != null) {
+			if (risk.getID() != causeToBeUpdated.getRiskCategory().getID()) {
+				causeToBeUpdated.setRiskCategory(risk);
+			}
+		}
+		else {
+			causeToBeUpdated.setRiskCategory(risk);
+		}
+		
+		if (likelihood != null && causeToBeUpdated.getRiskLikelihood() != null) {
+			if (likelihood.getID() != causeToBeUpdated.getRiskLikelihood().getID()) {
+				causeToBeUpdated.setRiskLikelihood(likelihood);
+			}
+		}
+		else {
+			causeToBeUpdated.setRiskLikelihood(likelihood);
+		}
+		
+		causeToBeUpdated.setLastUpdated(new Date());
+		causeToBeUpdated.save();
+		return causeToBeUpdated;
 	}
 
 	@Override
@@ -150,9 +174,29 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				int causeNum = transferredCause.getCauseNumber();
 				String hazardTitle = transferredCause.getHazards()[0].getTitle();
 				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
+				
+				Risk_Categories category = transferredCause.getRiskCategory();
+				String categoryStr;
+				if (category == null) {
+					categoryStr = "Not specified";
+				}
+				else {
+					categoryStr = category.getValue();
+				}
+				
+				Risk_Likelihoods likelihood = transferredCause.getRiskLikelihood();
+				String likelihoodStr;
+				if (likelihood == null) {
+					likelihoodStr = "Not specified";
+				}
+				else {
+					likelihoodStr = likelihood.getValue();
+				}
+				
 				//This is the id of the hazard the cause belongs to, which is needed for the title navigation.
 				int hazardID = transferredCause.getHazards()[0].getID();
-				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle, targetType, hazardID, targetID, causeNum);
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, 
+										hazardTitle, targetType, hazardID, targetID, causeNum, categoryStr, likelihoodStr);
 				transferInfo.add(causeTransfer);
 			}
 			else if(transfer.getTargetType().equals("HAZARD")) {

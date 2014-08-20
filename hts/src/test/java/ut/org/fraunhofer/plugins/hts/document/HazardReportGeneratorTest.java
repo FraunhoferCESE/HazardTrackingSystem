@@ -251,8 +251,8 @@ public class HazardReportGeneratorTest {
 		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
 		when(testHazard.getSubsystems()).thenReturn(testSubsystems);
 		when(testHazard.getHazardGroups()).thenReturn(testGroups);
-		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
-		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
+//		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
+//		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(testHazard.getTitle()).thenReturn(
 				"Failures of Upper Stage during USE operations that lead to USE Cavitation/Fire/Explosion");
 		when(testHazard.getHazardDesc())
@@ -309,8 +309,8 @@ public class HazardReportGeneratorTest {
 		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
 		when(testHazard.getSubsystems()).thenReturn(new Subsystems[0]);
 		when(testHazard.getHazardGroups()).thenReturn(new Hazard_Group[0]);
-		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
-		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
+//		when(testHazard.getRiskCategory()).thenReturn(mockRiskCategories);
+//		when(testHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(testHazard.getTitle()).thenReturn("dfgdfgdfg");
 		// when(testHazard.getHazardDesc())
 		// .thenReturn(

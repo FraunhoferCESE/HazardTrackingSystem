@@ -19,8 +19,6 @@ import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.PhaseToHazard;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
-import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.Verifications;
@@ -39,9 +37,8 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add javadoc and fix the remaining fields.
 	@Override
 	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems,
-			Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
+			Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, Review_Phases reviewPhase, 
+			Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
 		hazard.setHazardDesc(description);
@@ -50,8 +47,6 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setInitiationDate(initationDate);
 		hazard.setCompletionDate(completionDate);
 		hazard.setRevisionDate(revisionDate);
-		hazard.setRiskCategory(risk);
-		hazard.setRiskLikelihood(likelihood);
 		hazard.setReviewPhase(reviewPhase);
 		hazard.setMissionPayload(missionPayload);
 		hazard.setActive(true);
@@ -118,9 +113,8 @@ public class HazardServiceImpl implements HazardService {
 	// TODO add init date and completion and error handling
 	@Override
 	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Risk_Categories risk,
-			Risk_Likelihoods likelihood, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems,
-			Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
+			Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, Review_Phases reviewPhase, 
+			Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -131,8 +125,6 @@ public class HazardServiceImpl implements HazardService {
 			updated.setInitiationDate(initationDate);
 			updated.setCompletionDate(completionDate);
 			updated.setRevisionDate(revisionDate);
-			updated.setRiskCategory(risk);
-			updated.setRiskLikelihood(likelihood);
 			updated.setReviewPhase(reviewPhase);
 			updated.setMissionPayload(missionPayload);
 			updated.save();
@@ -174,13 +166,28 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Boolean hazardNumberExists(String hazardNumber) {
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNumber));
-		return hazards.length > 0 ? true : false;
+		
+		if (hazards.length > 0) {
+			boolean inUse = false;
+			for (Hazards current : hazards) {
+				if (current.getActive() == true) {
+					inUse = true;
+					break;
+				}
+			}
+			return inUse;
+		}
+		else {
+			return false;
+		}
 	}
 
 	@Override
 	public void deleteHazard(Hazards hazardToDelete) {
 		// Mark hazards as inactive
 		hazardToDelete.setActive(false);
+		Date deleteDate = new Date();
+		hazardToDelete.setHazardNum(hazardToDelete.getHazardNum() + " (DELETED " + deleteDate.toString() + ")");
 		hazardToDelete.save();
 		
 		// Mark all non-deleted causes as deleted

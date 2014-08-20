@@ -24,7 +24,7 @@
 		<textarea class="textarea long-field" name="controlTransferReason" id="controlTransferReason"></textarea>
 	</div>
 	<div class="buttons-container">
-		<button class="aui-button SaveAllChanges">Save All Changes</button>
+		<button class="aui-button SaveAllChanges" type="button">Save All Changes</button>
 		<input type="reset" value="Clear" class="aui-button" id="clearTransferControlButton">
 	</div>
 </form>

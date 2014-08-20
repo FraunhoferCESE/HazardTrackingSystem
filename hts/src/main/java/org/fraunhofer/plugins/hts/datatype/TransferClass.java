@@ -7,11 +7,14 @@ public class TransferClass {
 	private String hazardNumb;
 	private String secondaryTitle;
 	private String targetType;
+	private String riskCategory;
+	private String riskLikelihood;
 	private int targetID;
 	private int hazardID;
 	private int causeNum;
 	
-	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String secondaryTitle, String targetType,int hazardID, int targetID, int causeNum) {
+	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String secondaryTitle, 
+			String targetType, int hazardID, int targetID, int causeNum, String riskCategory, String riskLikelihood) {
 		this.transferID = transferID;
 		this.transferReason = transferReason;
 		this.mainTitle = mainTitle;
@@ -21,6 +24,8 @@ public class TransferClass {
 		this.hazardID = hazardID;
 		this.targetID = targetID;
 		this.causeNum = causeNum;
+		this.riskCategory = riskCategory;
+		this.riskLikelihood = riskLikelihood;
 	}
 	
 	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String targetType, int targetID) {
@@ -66,5 +71,13 @@ public class TransferClass {
 	
 	public int getCauseNum() {
 		return this.causeNum;
+	}
+	
+	public String getRiskCategory() {
+		return this.riskCategory;
+	}
+	
+	public String getRiskLikelihood() {
+		return this.riskLikelihood;
 	}
 }

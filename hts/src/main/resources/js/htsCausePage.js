@@ -326,7 +326,7 @@ function checkForNewCauseTransfer() {
 		validationError: false
 	};
 
-	if (hazardID !== undefined) {
+	if (hazardID !== "") {
 		AJS.$("#transferForm").trigger("submit");
 		if (checkForValidationError()) {
 			result.validationError = true;
@@ -356,17 +356,18 @@ function submitCauses() {
 
 		if (updateExistingCausesResult.arrayOfCauseIDsToDelete.length !== 0) {
 			var doRefreshAfterDelete = false;
-			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew) {
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
 				doRefreshAfterDelete = true;
 			}
 			deleteSelectedCauses(doRefreshAfterDelete, updateExistingCausesResult.arrayOfCauseIDsToDelete);
 		}
 		else {
-			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew) {
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
 				location.reload();
 			}
 			else {
-				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
+				console.log("nothing");
+				//JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
 		}
 

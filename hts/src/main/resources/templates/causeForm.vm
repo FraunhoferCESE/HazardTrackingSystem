@@ -8,6 +8,40 @@
 	    <input class="text long-field" type="text" id="causeOwner" name="causeOwner" value="$!cause.getOwner()">
 	</div>
 	<div class="field-group">
+		<label for="causeRisk">Risk Category</label>
+		<select class="select" id="causeRisk" name="causeRisk">
+			#if( !$cause.getRiskCategory() )
+				<option value="" selected>-Select-</option>
+			#else
+				<option value="">-Select-</option>
+			#end
+			#foreach( $risk in $riskCategories )
+				#if( $risk.getID() == $cause.getRiskCategory().getID() )
+					<option value="$risk.getID()" selected>$!risk.getValue()</option>
+				#else
+					<option value="$risk.getID()">$!risk.getValue()</option>
+				#end
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="causeLikelihood">Risk Likelihood</label>
+		<select class="select" id="causeLikelihood" name="causeLikelihood">
+			#if( !$cause.getRiskLikelihood() )
+				<option value="" selected>-Select-</option>
+			#else
+				<option value="">-Select-</option>
+			#end
+			#foreach( $likelihood in $riskLikelihoods )
+				#if( $likelihood.getID() == $cause.getRiskLikelihood().getID() )
+					<option value="$likelihood.getID()" selected>$!likelihood.getValue()</option>
+				#else
+					<option value="$likelihood.getID()">$!likelihood.getValue()</option>
+				#end
+			#end
+		</select>
+	</div>
+	<div class="field-group">
 	    <label for="causeEffects">Effects</label>
 	    <input class="text long-field" type="text" id="causeEffects" name="causeEffects" value="$!cause.getEffects()">
 	</div>
