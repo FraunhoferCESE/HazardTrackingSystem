@@ -27,7 +27,7 @@
 				    		<div class="cell causeTitle"><div class="CausesTableTitleText">$!cause.getTitle()</div></div>
 				    		<div class="cell"><div class="CausesTableOwnerText">$!cause.getOwner()</div></div>
 				    		<div class="cell lastUpdated">$!cause.getLastUpdated()</div>
-				    		<div class="cell"><input type="checkbox" class="deleteCause"></div>
+				    		<div class="cell"><input type="checkbox" class="deleteCause" data-causeid="$!cause.getID()" /></div>
 				    	</div>
 				    	<div class="formContainer row" id="$cause.getID()">
 				    		<div class="cell"></div>

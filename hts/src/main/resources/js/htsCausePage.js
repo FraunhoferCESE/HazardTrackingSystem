@@ -22,6 +22,16 @@ function updateAssociatedCauseCookie(theCauseID) {
 	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
 }
 
+// function createMessageCookie() {
+// 	if (AJS.Cookie.read("UPDATED") === undefined) {
+// 		AJS.Cookie.save("UPDATED", "none");
+// 	}
+// }
+
+// function updateMessageCookie(theCauseID) {
+// 	AJS.Cookie.save("UPDATED", theCauseID);
+// }
+
 function checkIfElementIsVisible(element) {
 	return element.is(":visible");
 }
@@ -140,6 +150,8 @@ function sendAjaxRequestToDeleteSpecificCause(causeID, deleteReason) {
 		url: "causeform?key=" + causeID + "&reason=" + deleteReason,
 		success: function(data) {
 			console.log("SUCCESS");
+			var causeFormElement = AJS.$(".causeForms[data-key='" + causeID + "']");
+			causeFormElement.removeDirtyWarning();
 		},
 		error: function(data) {
 			console.log("error", arguments);
@@ -326,15 +338,18 @@ function checkForNewCauseTransfer() {
 		validationError: false
 	};
 
-	if (hazardID !== "") {
-		AJS.$("#transferForm").trigger("submit");
-		if (checkForValidationError()) {
-			result.validationError = true;
-			result.didTransfer = false;
-			return result;
-		}
-		else {
-			result.didTransfer = true;
+	if (hazardID !== undefined) {
+		if (hazardID !== "") {
+			console.log("here");
+			AJS.$("#transferForm").trigger("submit");
+			if (checkForValidationError()) {
+				result.validationError = true;
+				result.didTransfer = false;
+				return result;
+			}
+			else {
+				result.didTransfer = true;
+			}
 		}
 	}
 
@@ -363,7 +378,10 @@ function submitCauses() {
 		}
 		else {
 			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
+				console.log("reload");
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 				location.reload();
+				console.log("trollface");
 			}
 			else {
 				console.log("nothing");
@@ -374,25 +392,12 @@ function submitCauses() {
 	});
 }
 
-function checkIfRefresh() {
-	if(!checkIfElementIsVisible(AJS.$(".validationError")) && !checkIfElementIsVisible(AJS.$(".aui-dialog"))) {
-		location.reload();
-	}
-	else {
-		AJS.$(".validationError").each(function (counter){
-			console.log(AJS.$(this).parent().parent().find("#causeNumber").val())
-		});
-
-		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
-	}
-}
-
 function foldable(element, containerClass) {
 	var spanElement = AJS.$(element);
 	var formCont = AJS.$("." + containerClass);
 	if(!(checkIfElementIsVisible(formCont))) {
 		addExpandedClass(spanElement);
-		formCont.show()
+		formCont.show();
 	}
 	else {
 		addCollapsedClass(spanElement);
