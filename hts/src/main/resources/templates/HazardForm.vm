@@ -57,30 +57,6 @@
 		</select>
 	</div>
 	<div class="field-group">
-		<label for="hazardRisk">Risk Category</label>
-			<select class="select" id="hazardRisk" name="hazardRisk">
-		    	#foreach( $risk in $riskCategories )
-			    	#if($risk.getID() == $hazard.getRiskCategory().getID())
-						<option value="$risk.getID()" selected>$!risk.getValue()</option>
-					#else
-						<option value="$risk.getID()">$!risk.getValue()</option>
-					#end
-		    	#end
-			</select>
-		</div>
-	<div class="field-group">
-	    <label for="hazardLikelihood">Risk Likelihood</label>
-	    <select class="select" id="hazardLikelihood" name="hazardLikelihood">
-	    	#foreach( $!likelihood in $!riskLikelihoods )
-    			#if($likelihood.getID() == $hazard.getRiskLikelihood().getID())
-					<option value="$likelihood.getID()" selected>$!likelihood.getValue()</option>
-				#else
-					<option value="$likelihood.getID()">$!likelihood.getValue()</option>
-				#end
-	    	#end
-	    </select>
-	</div>
-	<div class="field-group">
 	    <label for="hazardPhase">Mission Phase</label>
 	    <select class="multi-select" size="5" multiple="multiple" id="hazardPhase" name="hazardPhase">
 			#foreach( $selectedHazardPhase in $hazard.getMissionPhases() )

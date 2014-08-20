@@ -403,6 +403,7 @@ function checkForUpdatesToExistingControls(oldCausesAssociatedWithControl) {
 }
 
 function checkForUpdatesToExistingTransferredControls() {
+	var selectedControls = getSelectedControls();
 	var createdControlTransfersForms = AJS.$(".editTransferredControlForm");
 	var result = {
 		didUpdate: false,
@@ -476,7 +477,7 @@ function checkForNewControlTransfer() {
 		validationError: false
 	};
 
-	if (hazardID !== undefined && controlID !== undefined) {
+	if (hazardID !== "" && controlID !== "") {
 		AJS.$("#transferControlForm").trigger("submit");
 		if (checkForValidationError()) {
 			result.validationError = true;
@@ -617,11 +618,13 @@ AJS.$(document).ready(function(){
 			deleteSelectedControls(doRefreshAfterDelete);
 		}
 		else {
-			if (updateExistingControlsResults.didUpdate || updateExistingTransferredControlsResults.didUpdate || newControlResult.didNew) {
+			if (updateExistingControlsResults.didUpdate || updateExistingTransferredControlsResults.didUpdate ||
+				newControlResult.didNew || transferControlResult.didTransfer) {
 				location.reload();
 			}
 			else {
-				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
+				console.log("nothing");
+				//JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
 		}
 	});

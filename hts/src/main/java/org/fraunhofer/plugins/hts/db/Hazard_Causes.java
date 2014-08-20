@@ -36,6 +36,14 @@ public interface Hazard_Causes extends Entity {
 	Hazard_Controls[] getControls();
 
 	String getOwner();
+	
+	void setRiskCategory(Risk_Categories risk);
+
+	Risk_Categories getRiskCategory();
+
+	void setRiskLikelihood(Risk_Likelihoods likelihood);
+
+	Risk_Likelihoods getRiskLikelihood();
 
 	void setOwner(String owner);
 

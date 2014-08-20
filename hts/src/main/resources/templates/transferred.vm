@@ -26,9 +26,17 @@
 						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardNo">Hazard # </label>
 						<div class="CausesTableTransferredCauseText">$!transfer.getHazardNumb()</div>
 					</div>
-	    			<div class="CausesTableEditEntryField CausesTableEditEntryFieldLast">
+	    			<div class="CausesTableEditEntryField">
 						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardCauseTitle">Cause Title </label>
 						<div class="CausesTableTransferredCauseText">$!transfer.getMainTitle()</div>
+					</div>
+	    			<div class="CausesTableEditEntryField">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardCauseRiskCategory">Risk Category </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getRiskCategory()</div>
+					</div>
+	    			<div class="CausesTableEditEntryField CausesTableEditEntryFieldLast">
+						<label class="CausesTableEditEntryFieldLabelHeadingTwo" for="causeTargetHazardCauseRiskLikelihood">Risk Likelihood </label>
+						<div class="CausesTableTransferredCauseText">$!transfer.getRiskLikelihood()</div>
 					</div>
 				#end
 				#if($transfer.getTransferType() == "HAZARD")

@@ -16,16 +16,14 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
-import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+//import org.fraunhofer.plugins.hts.db.Risk_Categories;
+//import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
-import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
-import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import java.io.IOException;
@@ -48,8 +46,6 @@ public final class HazardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final HazardService hazardService;
 	private final HazardGroupService hazardGroupService;
-	private final RiskCategoryService riskCategoryService;
-	private final RiskLikelihoodsService riskLikelihoodService;
 	private final SubsystemService subsystemService;
 	private final ReviewPhaseService reviewPhaseService;
 	private final MissionPayloadService missionPayloadService;
@@ -57,14 +53,11 @@ public final class HazardServlet extends HttpServlet {
 	private final TemplateRenderer templateRenderer;
 
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
-			TemplateRenderer templateRenderer, RiskCategoryService riskCategoryService,
-			RiskLikelihoodsService riskLikelihoodService, SubsystemService subsystemService,
+			TemplateRenderer templateRenderer, SubsystemService subsystemService,
 			ReviewPhaseService reviewPhaseService, MissionPayloadService missionPayloadService,
 			MissionPhaseService missionPhaseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
-		this.riskCategoryService = checkNotNull(riskCategoryService);
-		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
 		this.subsystemService = checkNotNull(subsystemService);
 		this.reviewPhaseService = checkNotNull(reviewPhaseService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
@@ -77,8 +70,6 @@ public final class HazardServlet extends HttpServlet {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
 			context.put("hazardGroups", hazardGroupService.all());
-			context.put("riskCategories", riskCategoryService.all());
-			context.put("riskLikelihoods", riskLikelihoodService.all());
 			context.put("reviewPhases", reviewPhaseService.all());
 			context.put("payloads", missionPayloadService.all());
 			context.put("subsystems", subsystemService.all());
@@ -102,9 +93,6 @@ public final class HazardServlet extends HttpServlet {
 		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
-		final Risk_Categories risk = riskCategoryService.getRiskByID(req.getParameter("hazardRisk"));
-		final Risk_Likelihoods likelihood = riskLikelihoodService.getLikelihoodByID(req
-				.getParameter("hazardLikelihood"));
 		final Hazard_Group[] group = hazardGroupService.getHazardGroupsByID(changeStringArray(req
 				.getParameterValues("hazardGroup")));
 		final Date revisionDate = new Date();
@@ -123,15 +111,14 @@ public final class HazardServlet extends HttpServlet {
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
 			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases,
-					payloadName);
+					completed, revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
 
 			createJson(json, "hazardID", updated.getID());
 			createJson(json, "payloadID", updated.getMissionPayload().getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());
 		} else {
 			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
-					revisionDate, risk, likelihood, group, reviewPhase, subsystems, missionPhases, payloadName);
+					revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
 
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "payloadID", hazard.getMissionPayload().getID());

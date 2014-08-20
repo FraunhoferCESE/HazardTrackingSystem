@@ -332,7 +332,6 @@ AJS.$(document).ready(function(){
 		submitHandler: function(form) {
 			$(form).ajaxSubmit({
 				async: false,
-				url: baseUrl + "/plugins/servlet/controlform",
 				success: function(data) {
 					console.log("SUCCESS");
 					$(form).removeDirtyWarning();
@@ -455,7 +454,6 @@ AJS.$(document).ready(function(){
 				url: baseUrl + "/plugins/servlet/causeform",
 				success: function(data) {
 					console.log("SUCCESS");
-					console.log(form);
 					$(form).removeDirtyWarning();
 				},
 				error: function(error) {

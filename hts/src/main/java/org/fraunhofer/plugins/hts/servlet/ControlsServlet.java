@@ -130,7 +130,7 @@ public class ControlsServlet extends HttpServlet {
     				hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
     			}
     		}
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}
     	else {
     		// Process the new control request

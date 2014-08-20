@@ -8,9 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
+import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -29,13 +33,18 @@ public class CauseServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final MissionPayloadService missionPayloadService;
 	private final TemplateRenderer templateRenderer;
+	private final RiskCategoryService riskCategoryService;
+	private final RiskLikelihoodsService riskLikelihoodService;
 
-	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
-			HazardService hazardService, MissionPayloadService missionPayloadService) {
+	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer, 
+			HazardService hazardService, MissionPayloadService missionPayloadService, 
+			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
+		this.riskCategoryService = checkNotNull(riskCategoryService);
+		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
 	}
 
 	@Override
@@ -47,7 +56,6 @@ public class CauseServlet extends HttpServlet {
 			
 			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
 			Mission_Payload currentPayload = currentHazard.getMissionPayload();
-			
 			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
 			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
 			
@@ -56,6 +64,8 @@ public class CauseServlet extends HttpServlet {
 				context.put("hazardTitle", currentHazard.getTitle());
 				context.put("hazardID", currentHazard.getID());
 				context.put("hazard", currentHazard);
+				context.put("riskCategories", riskCategoryService.all());
+				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
 				context.put("transfers", hazardCauseService.getAllTransferredCauses(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
@@ -80,16 +90,34 @@ public class CauseServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		final String title = req.getParameter("causeTitle");
 		final String owner = req.getParameter("causeOwner");
+		
+		final Risk_Categories risk;
+		if (req.getParameter("causeRisk") != "") {
+			risk = riskCategoryService.getRiskByID(req.getParameter("causeRisk"));
+		}
+		else {
+			risk = null;
+		}
+		
+		final Risk_Likelihoods likelihood;
+		if (req.getParameter("causeLikelihood") != "") {
+			likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("causeLikelihood"));
+		}
+		else {
+			likelihood = null;
+		}
+		
 		final String effects = req.getParameter("causeEffects");
 		final String description = req.getParameter("causeDescription");
 		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
 
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
-			hazardCauseService.update(id, description, effects, owner, title);
+			hazardCauseService.update(id, description, effects, owner, title, risk, likelihood);
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;
-		} else if ("y".equals(req.getParameter("transfer"))) {
+		}
+		else if ("y".equals(req.getParameter("transfer"))) {
 			final String transferComment = req.getParameter("transferReason");
 			final String hazardID = req.getParameter("hazardList");
 			final String causeID = req.getParameter("causeList");
@@ -105,14 +133,15 @@ public class CauseServlet extends HttpServlet {
 				if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
 					hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
 				}
-			}			
-		}
-		else {
-			hazardCauseService.add(description, effects, owner, title, currentHazard);
+			}
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;
 		}
-		res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform");
+		else {
+			hazardCauseService.add(description, effects, risk, likelihood, owner, title, currentHazard);
+			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
+			return;
+		}
 	}
 
 	@Override

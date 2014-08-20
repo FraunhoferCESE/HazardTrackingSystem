@@ -6,7 +6,6 @@ import net.java.ao.Entity;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
-import net.java.ao.schema.Unique;
 import net.java.ao.schema.NotNull;
 
 //TODO look into if skipping preload is better writing javadoc
@@ -60,16 +59,7 @@ public interface Hazards extends Entity {
 
 	void setRevisionDate(Date revisionDate);
 
-	//FOREIGN KEYS
-
-	void setRiskCategory(Risk_Categories risk);
-
-	Risk_Categories getRiskCategory();
-
-	void setRiskLikelihood(Risk_Likelihoods likelihood);
-
-	Risk_Likelihoods getRiskLikelihood();
-
+	// FOREIGN KEYS
 	void setReviewPhase(Review_Phases phase);
 
 	Review_Phases getReviewPhase();
