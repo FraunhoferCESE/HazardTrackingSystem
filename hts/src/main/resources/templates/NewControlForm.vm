@@ -16,7 +16,7 @@
 			#end
 		</select>
 	</div>
-	<div class="field-group">
+	<div class="field-group" id="addNewControlMultiSelect">
 		<label for="controlCausesNew">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCausesNew" id="controlCausesNew">
 			#foreach( $hazardCause in $hazardCauses )

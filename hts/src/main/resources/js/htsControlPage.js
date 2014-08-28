@@ -82,13 +82,25 @@ function getSelectedControls() {
 	}
 }
 
-function uncheckSelectedControls() {
-	var createdControls = AJS.$(".ControlsTableListOfCreatedControls");
-	createdControls.each(function () {
-		if (AJS.$(this).is(':checked')) {
-			this.checked = false;
+function uncheckSelectedControls(arrayOfControlIDsToDelete) {
+	if (arrayOfControlIDsToDelete === undefined) {
+		// uncheck everything
+		var checkboxes = AJS.$(".ControlsTableListOfCreatedControls");
+		checkboxes.each(function () {
+			if (AJS.$(this).is(":checked")) {
+				AJS.$(this).prop("checked", false);
+			}
+		});
+	}
+	else {
+		// uncheck specific
+		for (var i = 0; i < arrayOfControlIDsToDelete.length; i++) {
+			var checkboxElement = AJS.$("input[data-controlid='" + arrayOfControlIDsToDelete[i] + "']");
+			if (AJS.$(checkboxElement).is(":checked")) {
+				AJS.$(checkboxElement).prop("checked", false);
+			}
 		}
-	});
+	}
 }
 
 function getSelectedControlsAndDeleteReasons(selectedControls) {
@@ -122,6 +134,8 @@ function sendAjaxRequestToDeleteSpecificControl(controlID, deleteReason) {
 		url: "controlform?controlID=" + controlID + "&reason=" + deleteReason,
 		success: function(data) {
 			console.log("SUCCESS");
+			var controlFormElement = AJS.$("form[data-key='" + controlID + "']");
+			controlFormElement.removeDirtyWarning();
 		},
 		error: function(data) {
 			console.log("error", arguments);
@@ -149,34 +163,38 @@ function getHazardInformationInControls() {
 	return hazardInformation;
 }
 
-function deleteSelectedControls(doRefresh) {
+function deleteSelectedControls(doRefresh, arrayOfControlIDsToDelete, arrayOfDirtyControlIDs) {
 	// Hazard specific mark-up:
 	var hazardInformation = getHazardInformationInControls();
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theNumber, 64) + "</span></span>";
 	// Controls specific mark-up:
-	var selectedControls = getSelectedControls();
 	var dialogContent2;
-	if (selectedControls.length === 1) {
+	if (arrayOfControlIDsToDelete.length === 1) {
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following control will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason.</span></div>";
 	} else {
 		dialogContent2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>The following controls will be deleted from the above hazard report. In order to complete the deletion, you will need to provide a short delete reason for each of the controls.</span></div>";
 	}
 	// Controls specific mark-up, list of controls to be deleted:
 	var dialogContent3 = "<table><thead><tr><th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneControls'>#</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoControls'>Description</th><th class='ConfirmDialogTableHeader ConfirmDialogTableCellThreeControls'>Control group:</th></tr></thead><tbody>";
-	for (var i = 0; i < selectedControls.length; i++) {
-		var controlElementFirstRow = AJS.$(".ControlsTableEntryControlID" + selectedControls[i]).first();
+	for (var i = 0; i < arrayOfControlIDsToDelete.length; i++) {
+		var controlElementFirstRow = AJS.$(".ControlsTableEntryControlID" + arrayOfControlIDsToDelete[i]).first();
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr>";
 		dialogContent3 = dialogContent3 + "<tr><td>" + controlElementFirstRow.children(":nth-child(2)").text().replace("Control ", "") + "</td>";
 		dialogContent3 = dialogContent3 + "<td><div class='ConfirmDialogDescriptionText'>" + controlElementFirstRow.children(":nth-child(3)").text() + "</div></td>";
 		dialogContent3 = dialogContent3 + "<td>" + controlElementFirstRow.children(":nth-child(4)").text() + "</td></tr>";
 
-		if (i === 0 && selectedControls.length > 1) {
-			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + selectedControls[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnControls'>Apply to all</button></div></td></tr>";
+		if (i === 0 && arrayOfControlIDsToDelete.length > 1) {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainer'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + arrayOfControlIDsToDelete[i] + "'></div><div class='ConfirmDialogDuplButtonContainer'><button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnControls'>Apply to all</button></div></td></tr>";
 		}
 		else {
-			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + selectedControls[i] + "'></div></td></tr>";
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + arrayOfControlIDsToDelete[i] + "'></div></td></tr>";
 		}
-		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + selectedControls[i] +"'></p></td></tr>";
+
+		if (arrayOfDirtyControlIDs.indexOf(arrayOfControlIDsToDelete[i]) !== -1) {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText'>This control has been edited. All changes will be discarded.</p></td></tr>";
+		}
+
+		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + arrayOfControlIDsToDelete[i] +"'></p></td></tr>";
 	}
 	dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr></tbody></table>";
 
@@ -194,21 +212,23 @@ function deleteSelectedControls(doRefresh) {
 	dialog.get("panel:0").setPadding(0);
 
 	dialog.addButton("Cancel", function(dialog) {
-		uncheckSelectedControls();
+		uncheckSelectedControls(arrayOfControlIDsToDelete);
 		dialog.hide();
 		dialog.remove();
 		if (doRefresh) {
+			updateUpdateMessageCookie("updates");
 			location.reload();
 		}
 	});
 
 	dialog.addButton("Continue", function(dialog) {
-		var result = getSelectedControlsAndDeleteReasons(selectedControls);
+		var result = getSelectedControlsAndDeleteReasons(arrayOfControlIDsToDelete);
 		if (result.allReasonsFilledOut) {
 			for (var i = 0; i < result.controlIDAndReasons.length; i++) {
 				sendAjaxRequestToDeleteSpecificControl(result.controlIDAndReasons[i].controlID, result.controlIDAndReasons[i].deleteReason);
 			}
 			dialog.hide();
+			updateUpdateMessageCookie("updates");
 			location.reload();
 		}
 		else {
@@ -242,49 +262,6 @@ function checkIfExpandButtonNeedsRenaming(expanding) {
 		expanding = false;
 	}
 	return expanding;
-}
-
-function findControlWithSpecificID(causesAssociatedWithControl, controlID){
-	return AJS.$.grep(causesAssociatedWithControl, function(item){
-		if (item.controlID === controlID) {
-			return item;
-		}
-	});
-}
-
-function checkIfControlWasModified(oldCauses, newCauses) {
-	if (oldCauses.length === newCauses.length) {
-		for (var j = 0; j < newCauses.length; j++) {
-			if (oldCauses.indexOf(newCauses[j]) === -1) {
-				return true;
-			}
-		}
-		return false;
-	}
-	else {
-		return true;
-	}
-}
-
-function getCurrentControlAndCausesAssociation() {
-	var causesAssociatedWithControl = [];
-	var multiSelectForCauses = AJS.$(".controlCausesEdit");
-	multiSelectForCauses.each(function () {
-		var controlIDWithText = AJS.$(this)[0].id;
-		var controlIDOnly = controlIDWithText.replace("controlCauseEditForControlID", "");
-		var causesIDs = [];
-		var numberOfSelectedCauses = AJS.$(this)[0].children.length;
-		for (var i = 0; i < numberOfSelectedCauses; i++) {
-			if (AJS.$(this)[0].children[i].selected === true) {
-				causesIDs.push(AJS.$(this)[0].children[i].value);
-			}
-		}
-		causesAssociatedWithControl.push({
-			controlID: controlIDOnly,
-			causesIDs: causesIDs
-		});
-	});
-	return causesAssociatedWithControl;
 }
 
 function createControlsCookie() {
@@ -356,6 +333,23 @@ function updateAssociatedControlCookie(theControlID) {
 	AJS.Cookie.save("ASSOCIATED_CONTROL", theControlID);
 }
 
+function createUpdateMessageCookie() {
+	if (AJS.Cookie.read("UPDATE_MESSAGE") === undefined) {
+		AJS.Cookie.save("UPDATE_MESSAGE", "none");
+	}
+}
+
+function updateUpdateMessageCookie(update) {
+	AJS.Cookie.save("UPDATE_MESSAGE", update);
+}
+
+function checkUpdateMessageCookie() {
+	if (AJS.Cookie.read("UPDATE_MESSAGE") !== "none") {
+		JIRA.Messages.showSuccessMsg("All changes were successfully saved.", {closeable: true});
+		updateUpdateMessageCookie("none");
+	}
+}
+
 function checkForValidationError() {
 	if (AJS.$(".validationError").is(":visible")) {
 		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
@@ -366,27 +360,28 @@ function checkForValidationError() {
 	}
 }
 
-function checkForUpdatesToExistingControls(oldCausesAssociatedWithControl) {
-	var newCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
+function checkForUpdatesToExistingControls(originalCreatedControls) {
+	var modifiedCreatedControls = serializeCreatedControls();
 	var selectedControls = getSelectedControls();
-	var createdControlsForms = AJS.$(".editControlForm");
+	var createdControlsForms = AJS.$(".editControlForm, .editTransferredControlForm");
 	var result = {
 		didUpdate: false,
-		needToDoDelete: false,
+		arrayOfControlIDsToDelete: [],
+		arrayOfDirtyControlIDs: [],
 		validationError: false
 	};
 
 	createdControlsForms.each(function () {
 		var controlID = AJS.$(this).find("#controlID").val();
+		var originalSerialized = originalCreatedControls[controlID];
+		var modifiedSerialized = modifiedCreatedControls[controlID];
 		if (selectedControls.indexOf(controlID) === -1) {
-			var oldCauses = findControlWithSpecificID(oldCausesAssociatedWithControl, controlID);
-			var newCauses = findControlWithSpecificID(newCausesAssociatedWithControl, controlID);
-			if (checkIfControlWasModified(oldCauses[0].causesIDs, newCauses[0].causesIDs) || AJS.$(this).isDirty()) {
+			if (originalSerialized !== modifiedSerialized) {
 				AJS.$(this).trigger("submit");
 				if (checkForValidationError()) {
 					result.validationError = true;
 					result.didUpdate = false;
-					result.needToDoDelete = false;
+					result.arrayOfControlIDsToDelete = [];
 					return result;
 				}
 				else {
@@ -395,44 +390,25 @@ function checkForUpdatesToExistingControls(oldCausesAssociatedWithControl) {
 			}
 		}
 		else {
-			result.needToDoDelete = true;
+			result.arrayOfControlIDsToDelete.push(controlID);
+			if (originalSerialized !== modifiedSerialized) {
+				result.arrayOfDirtyControlIDs.push(controlID);
+			}
 		}
 	});
 
 	return result;
 }
 
-function checkForUpdatesToExistingTransferredControls() {
-	var selectedControls = getSelectedControls();
-	var createdControlTransfersForms = AJS.$(".editTransferredControlForm");
-	var result = {
-		didUpdate: false,
-		needToDoDelete: false,
-		validationError: false
-	};
-
-	createdControlTransfersForms.each(function () {
-		var controlID = AJS.$(this).find("#controlID").val();
-		if (selectedControls.indexOf(controlID) === -1) {
-			if (AJS.$(this).isDirty()) {
-				AJS.$(this).trigger("submit");
-				if (checkForValidationError()) {
-					result.validationError = true;
-					result.didUpdate = false;
-					result.needToDoDelete = false;
-					return result;
-				}
-				else {
-					result.didUpdate = true;
-				}
-			}
-		}
-		else {
-			result.needToDoDelete = true;
-		}
-	});
-
-	return result;
+function addNewControlFormIsDirty() {
+	if (AJS.$("#controlDescriptionNew").val() === "" &&
+		AJS.$("#controlGroupNew").val() === "1" &&
+		AJS.$("#controlCausesNewms2side__dx").children().length === 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 function checkForNewControlAddition(newControlRequired) {
@@ -453,7 +429,7 @@ function checkForNewControlAddition(newControlRequired) {
 		}
 	}
 	else {
-		if (AJS.$("#addNewControlForm").isDirty() || (AJS.$("#addNewControlForm")[0][6].children.length !== 0)) {
+		if (addNewControlFormIsDirty()) {
 			AJS.$("#addNewControlForm").trigger("submit");
 			if (checkForValidationError()) {
 				result.validationError = true;
@@ -477,29 +453,45 @@ function checkForNewControlTransfer() {
 		validationError: false
 	};
 
-	if (hazardID !== "" && controlID !== "") {
-		AJS.$("#transferControlForm").trigger("submit");
-		if (checkForValidationError()) {
-			result.validationError = true;
-			result.didTransfer = false;
-			return result;
-		}
-		else {
-			result.didTransfer = true;
+	if (hazardID !== undefined && controlID !== undefined) {
+		if (hazardID !== "" && controlID !== "") {
+			AJS.$("#transferControlForm").trigger("submit");
+			if (checkForValidationError()) {
+				result.validationError = true;
+				result.didTransfer = false;
+				return result;
+			}
+			else {
+				result.didTransfer = true;
+			}
 		}
 	}
 
 	return result;
 }
 
+function serializeCreatedControls() {
+	var rtn = {};
+	var createdControls = AJS.$(".editControlForm, .editTransferredControlForm");
+	createdControls.each(function () {
+		var controlID = AJS.$(this).find("[name='controlID']").val();
+		var serialized = AJS.$(this).serialize();
+		rtn[controlID] = serialized;
+	});
+	return rtn;
+}
+
 AJS.$(document).ready(function(){
 	createControlsCookie();
 	openControlsInCookie();
 	createAssociatedControlCookie();
+	createUpdateMessageCookie();
+	checkUpdateMessageCookie();
+	uncheckSelectedControls();
 
 	var expanding = true;
 	expanding = checkIfExpandButtonNeedsRenaming(expanding);
-	var oldCausesAssociatedWithControl = getCurrentControlAndCausesAssociation();
+	var createdControls = serializeCreatedControls();
 
 	/* Text manipulation code begins */
 	manipulateHazardTextForControls();
@@ -596,11 +588,8 @@ AJS.$(document).ready(function(){
 	AJS.$(".SaveAllChanges").live("click", function() {
 		var newControlRequired = AJS.$(this).data("new");
 
-		var updateExistingControlsResults = checkForUpdatesToExistingControls(oldCausesAssociatedWithControl);
+		var updateExistingControlsResults = checkForUpdatesToExistingControls(createdControls);
 		if (updateExistingControlsResults.validationError) { return; }
-
-		var updateExistingTransferredControlsResults = checkForUpdatesToExistingTransferredControls();
-		if (updateExistingTransferredControlsResults.validationError) { return; }
 
 		var newControlResult = checkForNewControlAddition(newControlRequired);
 		if (newControlResult.validationError) { return; }
@@ -608,23 +597,23 @@ AJS.$(document).ready(function(){
 		var transferControlResult = checkForNewControlTransfer();
 		if (transferControlResult.validationError) { return; }
 
-		if (updateExistingControlsResults.needToDoDelete || updateExistingTransferredControlsResults.needToDoDelete) {
+		if (updateExistingControlsResults.arrayOfControlIDsToDelete.length !== 0 ||
+			updateExistingControlsResults.arrayOfDirtyControlIDs.length !== 0) {
 			var doRefreshAfterDelete = false;
-			if (updateExistingControlsResults.didUpdate ||
-				updateExistingTransferredControlsResults.didUpdate ||
-				newControlResult.didNew) {
+			if (updateExistingControlsResults.didUpdate || newControlResult.didNew) {
 				doRefreshAfterDelete = true;
 			}
-			deleteSelectedControls(doRefreshAfterDelete);
+			deleteSelectedControls(doRefreshAfterDelete, updateExistingControlsResults.arrayOfControlIDsToDelete,
+				updateExistingControlsResults.arrayOfDirtyControlIDs);
 		}
 		else {
-			if (updateExistingControlsResults.didUpdate || updateExistingTransferredControlsResults.didUpdate ||
-				newControlResult.didNew || transferControlResult.didTransfer) {
+			if (updateExistingControlsResults.didUpdate || newControlResult.didNew ||
+				transferControlResult.didTransfer) {
+				updateUpdateMessageCookie("updates");
 				location.reload();
 			}
 			else {
-				console.log("nothing");
-				//JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
 		}
 	});
@@ -665,8 +654,12 @@ AJS.$(document).ready(function(){
 	AJS.$("#clearNewControlButton").live("click", function() {
 		AJS.$("#controlDescriptionNew").val("");
 		AJS.$("#controlGroupNew").val('').trigger('chosen:updated');
-		AJS.$(".RemoveAll").trigger("click");
+
+		var multiSelectElement = AJS.$("#addNewControlMultiSelect");
+		var removeAllBtn = AJS.$(multiSelectElement).find(".RemoveAll");
+		AJS.$(removeAllBtn).trigger("click");
 	});
+	AJS.$("#clearNewControlButton").trigger("click");
 
 	AJS.$("#clearTransferControlButton").live("click", function() {
 		AJS.$(".TransferControlCauseContainer").hide();

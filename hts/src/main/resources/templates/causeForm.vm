@@ -51,7 +51,6 @@
 	</div>
 	<div class="buttons-container">
 		<button type="button" class="button causeButtons transfers" id="causeAddControl" data-key="$cause.getID()-$hazardID">Add Control</button>
-		<button type="button" class="button causeButtons transfers" id="causeAddReference" disabled>Add Reference Doc</button>
 	</div>
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<input type="hidden" name="causeNumber" id="causeNumber" value="$!cause.getCauseNumber()">

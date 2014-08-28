@@ -444,6 +444,9 @@ form.payloadForm .add:active {
     font-size: 10px;
     font-style: italic;
     color: red;
+}
+
+.ConfirmDialogErrorTextHidden {
     display: none;
 }
 

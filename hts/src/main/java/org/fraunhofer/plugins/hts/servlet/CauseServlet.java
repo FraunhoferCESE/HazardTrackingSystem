@@ -114,7 +114,8 @@ public class CauseServlet extends HttpServlet {
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
 			hazardCauseService.update(id, description, effects, owner, title, risk, likelihood);
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
+			int troll = currentHazard.getID();
+			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + troll);
 			return;
 		}
 		else if ("y".equals(req.getParameter("transfer"))) {
