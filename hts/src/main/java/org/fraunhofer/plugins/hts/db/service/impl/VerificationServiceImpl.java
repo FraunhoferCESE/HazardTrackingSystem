@@ -111,6 +111,7 @@ public class VerificationServiceImpl implements VerificationService {
 		else {
 			removeAssociationsVerifcationToControl(verificationToEdit.getID());
 		}
+		verificationToEdit.setLastUpdated(new Date());
 		verificationToEdit.save();
 		return verificationToEdit;
 	}

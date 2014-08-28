@@ -58,7 +58,7 @@
 							<td class="ControlDate ControlsTableAllCells">$hazardControl.getLastUpdated()</td>
 						#end
 						<td class="ControlsTableAllCells">
-							<input type="checkbox" class="ControlsTableListOfCreatedControls" value="$hazardControl.getID()">
+							<input type="checkbox" class="ControlsTableListOfCreatedControls" value="$hazardControl.getID()" data-controlid="$!hazardControl.getID()">
 						</td>
 					</tr>
 					<tr class="ControlsTableEntryControlID$hazardControl.getID()">

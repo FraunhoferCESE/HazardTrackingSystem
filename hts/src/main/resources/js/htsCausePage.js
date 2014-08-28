@@ -22,15 +22,22 @@ function updateAssociatedCauseCookie(theCauseID) {
 	AJS.Cookie.save("ASSOCIATED_CAUSE", theCauseID);
 }
 
-// function createMessageCookie() {
-// 	if (AJS.Cookie.read("UPDATED") === undefined) {
-// 		AJS.Cookie.save("UPDATED", "none");
-// 	}
-// }
+function createUpdateMessageCookie() {
+	if (AJS.Cookie.read("UPDATE_MESSAGE") === undefined) {
+		AJS.Cookie.save("UPDATE_MESSAGE", "none");
+	}
+}
 
-// function updateMessageCookie(theCauseID) {
-// 	AJS.Cookie.save("UPDATED", theCauseID);
-// }
+function updateUpdateMessageCookie(update) {
+	AJS.Cookie.save("UPDATE_MESSAGE", update);
+}
+
+function checkUpdateMessageCookie() {
+	if (AJS.Cookie.read("UPDATE_MESSAGE") !== "none") {
+		JIRA.Messages.showSuccessMsg("All changes were successfully saved.", {closeable: true});
+		updateUpdateMessageCookie("none");
+	}
+}
 
 function checkIfElementIsVisible(element) {
 	return element.is(":visible");
@@ -110,13 +117,25 @@ function getTheHazardNumber() {
 	return AJS.$("#HazardNumberForCause").text();
 }
 
-function uncheckCausesToBeDeleted() {
-	var causesCheckboxElements = AJS.$(".deleteCause");
-	causesCheckboxElements.each(function() {
-		if (AJS.$(this).is(':checked')) {
-			this.checked = false;
+function uncheckCauses(arrayOfCauseIDs) {
+	if (arrayOfCauseIDs === undefined) {
+		// uncheck everything
+		var checkboxes = AJS.$(".deleteCause");
+		checkboxes.each(function () {
+			if (AJS.$(this).is(":checked")) {
+				AJS.$(this).prop("checked", false);
+			}
+		});
+	}
+	else {
+		// uncheck specific
+		for (var i = 0; i < arrayOfCauseIDs.length; i++) {
+		var checkboxElement = AJS.$("input[data-causeid='" + arrayOfCauseIDs[i] + "']");
+			if (AJS.$(checkboxElement).is(":checked")) {
+				AJS.$(checkboxElement).prop("checked", false);
+			}
 		}
-	});
+	}
 }
 
 function getSelectedCausesAndDeleteReasons(arrayOfCauseIDs) {
@@ -150,7 +169,7 @@ function sendAjaxRequestToDeleteSpecificCause(causeID, deleteReason) {
 		url: "causeform?key=" + causeID + "&reason=" + deleteReason,
 		success: function(data) {
 			console.log("SUCCESS");
-			var causeFormElement = AJS.$(".causeForms[data-key='" + causeID + "']");
+			var causeFormElement = AJS.$("form[data-key='" + causeID + "']");
 			causeFormElement.removeDirtyWarning();
 		},
 		error: function(data) {
@@ -179,7 +198,7 @@ function getHazardInformationInCauses() {
 	return hazardInformation;
 }
 
-function deleteSelectedCauses(doRefresh, arrayOfCauseIDs){
+function deleteSelectedCauses(doRefresh, arrayOfCauseIDs, arrayOfDirtyCauseIDs){
 	// Hazard specific mark-up:
 	var hazardInformation = getHazardInformationInControls();
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" +
@@ -212,6 +231,11 @@ function deleteSelectedCauses(doRefresh, arrayOfCauseIDs){
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForCause'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextCauses' name='ReasonTextForCause' id='ReasonTextForCauseID" +
 							arrayOfCauseIDs[i] + "'></div></td></tr>";
 		}
+
+		if (arrayOfDirtyCauseIDs.indexOf(arrayOfCauseIDs[i]) !== -1) {
+			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText'>This cause has been edited. All changes will be discarded.</p></td></tr>";
+		}
+
 		dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForCauseID" + arrayOfCauseIDs[i] +"'></p></td></tr>";
 	}
 	dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConformDialogTopRow'></div></td></tr></tbody></table>";
@@ -230,10 +254,11 @@ function deleteSelectedCauses(doRefresh, arrayOfCauseIDs){
 	dialog.get("panel:0").setPadding(0);
 
 	dialog.addButton("Cancel", function(dialog) {
-		uncheckCausesToBeDeleted();
+		uncheckCauses(arrayOfCauseIDs);
 		dialog.hide();
 		dialog.remove();
 		if (doRefresh) {
+			updateUpdateMessageCookie("updates");
 			location.reload();
 		}
 	});
@@ -245,6 +270,7 @@ function deleteSelectedCauses(doRefresh, arrayOfCauseIDs){
 				sendAjaxRequestToDeleteSpecificCause(result.causeIDsAndReasons[i].causeID, result.causeIDsAndReasons[i].deleteReason);
 			}
 			dialog.hide();
+			updateUpdateMessageCookie("updates");
 			location.reload();
 		}
 		else {
@@ -265,21 +291,32 @@ function checkForValidationError() {
 	}
 }
 
-function checkForUpdatesToExistingCauses() {
+function checkForUpdatesToExistingCauses(originalCreatedCauses) {
+	var modifiedCreatedCauses = serializeCreatedCauses();
 	var result = {
 		didUpdate: false,
 		arrayOfCauseIDsToDelete: [],
+		arrayOfDirtyCauseIDs: [],
 		validationError: false
 	};
 
 	AJS.$("form.causeForms, form.transferredForms").each(function(){
+		var causeID = AJS.$(this).find("[name='key']").val();
 		var rowGroup = AJS.$(this).parent().parent().parent();
+		var originalSerialized;
+		var modifiedSerialized;
 		if(rowGroup.find(".deleteCause").is(':checked')) {
-			var self = AJS.$(this);
-			result.arrayOfCauseIDsToDelete.push(self.data("key"));
+			result.arrayOfCauseIDsToDelete.push(causeID);
+			originalSerialized = originalCreatedCauses[causeID];
+			modifiedSerialized = modifiedCreatedCauses[causeID];
+			if (originalSerialized !== modifiedSerialized) {
+				result.arrayOfDirtyCauseIDs.push(causeID);
+			}
 		}
 		else {
-			if(AJS.$(this).isDirty()) {
+			originalSerialized = originalCreatedCauses[causeID];
+			modifiedSerialized = modifiedCreatedCauses[causeID];
+			if (originalSerialized !== modifiedSerialized) {
 				AJS.$(this).trigger("submit");
 				if (checkForValidationError()) {
 					result.validationError = true;
@@ -295,6 +332,21 @@ function checkForUpdatesToExistingCauses() {
 	});
 
 	return result;
+}
+
+function addNewCauseFormIsDirty() {
+	var formElement = AJS.$("#addNewCauseForm");
+	if (AJS.$(formElement).find("#causeTitle").val() === "" &&
+		AJS.$(formElement).find("#causeOwner").val() === "" &&
+		AJS.$(formElement).find("#causeRisk").val() === "" &&
+		AJS.$(formElement).find("#causeLikelihood").val() === "" &&
+		AJS.$(formElement).find("#causeEffects").val() === "" &&
+		AJS.$(formElement).find("#causeDescription").val() === "") {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 function checkForNewCauseAddition(newCauseRequired) {
@@ -315,7 +367,7 @@ function checkForNewCauseAddition(newCauseRequired) {
 		}
 	}
 	else {
-		if(AJS.$("#addNewCauseForm").isDirty()) {
+		if (addNewCauseFormIsDirty()) {
 			AJS.$("#addNewCauseForm").trigger("submit");
 			if (checkForValidationError()) {
 				result.validationError = true;
@@ -340,7 +392,6 @@ function checkForNewCauseTransfer() {
 
 	if (hazardID !== undefined) {
 		if (hazardID !== "") {
-			console.log("here");
 			AJS.$("#transferForm").trigger("submit");
 			if (checkForValidationError()) {
 				result.validationError = true;
@@ -354,42 +405,6 @@ function checkForNewCauseTransfer() {
 	}
 
 	return result;
-}
-
-function submitCauses() {
-	AJS.$(".causeSaveAllChanges").live('click', function() {
-		var newCauseRequired = AJS.$(this).data("new");
-
-		var updateExistingCausesResult = checkForUpdatesToExistingCauses();
-		if (updateExistingCausesResult.validationError) { return; }
-
-		var newCauseResult = checkForNewCauseAddition(newCauseRequired);
-		if (newCauseResult.validationError) { return; }
-
-		var transferCauseResult = checkForNewCauseTransfer();
-		if (transferCauseResult.validationError) { return; }
-
-		if (updateExistingCausesResult.arrayOfCauseIDsToDelete.length !== 0) {
-			var doRefreshAfterDelete = false;
-			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
-				doRefreshAfterDelete = true;
-			}
-			deleteSelectedCauses(doRefreshAfterDelete, updateExistingCausesResult.arrayOfCauseIDsToDelete);
-		}
-		else {
-			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
-				console.log("reload");
-				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
-				location.reload();
-				console.log("trollface");
-			}
-			else {
-				console.log("nothing");
-				//JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
-			}
-		}
-
-	});
 }
 
 function foldable(element, containerClass) {
@@ -500,15 +515,43 @@ function manipulateCauseTextVariableLength(theText, length) {
 	}
 }
 
+function serializeCreatedCauses() {
+	var rtn = {};
+	var createdCauses = AJS.$(".causeForms, .transferredForms");
+	createdCauses.each(function () {
+		var causeID = AJS.$(this).find("[name='key']").val();
+		var serialized = AJS.$(this).serialize();
+		rtn[causeID] = serialized;
+	});
+	return rtn;
+}
+
+function clearNewAndTransferForm() {
+	var formElement = AJS.$("#addNewCauseForm");
+	AJS.$(formElement).find("#causeTitle").val("");
+	AJS.$(formElement).find("#causeOwner").val("");
+	AJS.$(formElement).find("#causeRisk").val("").trigger('chosen:updated');
+	AJS.$(formElement).find("#causeLikelihood").val("").trigger('chosen:updated');
+	AJS.$(formElement).find("#causeEffects").val("");
+	AJS.$(formElement).find("#causeDescription").val("");
+}
+
 AJS.$(document).ready(function() {
 	manipulateHazardTextForCauses();
 	manipulateCausesTitles();
 	getTheHazardNumber();
 	dateLayout();
 	openDivOnReload();
-	submitCauses();
 	transfer();
+	uncheckCauses();
+	clearNewAndTransferForm();
+
 	createAssociatedCauseCookie();
+	createUpdateMessageCookie();
+	checkUpdateMessageCookie();
+
+	var createdCauses = serializeCreatedCauses();
+
 	AJS.$(".newFormContainer").hide();
 	AJS.$(".transferFormContainer").hide();
 
@@ -592,6 +635,37 @@ AJS.$(document).ready(function() {
 	AJS.$(".ConfirmDialogReasonTextCauses").live("input", function() {
 		var causeID = AJS.$(this).attr("id").replace( /^\D+/g, '');
 		removeErrorMessageFromSpecificCause(causeID);
+	});
+
+	AJS.$(".causeSaveAllChanges").live('click', function() {
+		var newCauseRequired = AJS.$(this).data("new");
+
+		var updateExistingCausesResult = checkForUpdatesToExistingCauses(createdCauses);
+		if (updateExistingCausesResult.validationError) { return; }
+
+		var newCauseResult = checkForNewCauseAddition(newCauseRequired);
+		if (newCauseResult.validationError) { return; }
+
+		var transferCauseResult = checkForNewCauseTransfer();
+		if (transferCauseResult.validationError) { return; }
+
+		if (updateExistingCausesResult.arrayOfCauseIDsToDelete.length !== 0) {
+			var doRefreshAfterDelete = false;
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
+				doRefreshAfterDelete = true;
+			}
+			deleteSelectedCauses(doRefreshAfterDelete, updateExistingCausesResult.arrayOfCauseIDsToDelete,
+								updateExistingCausesResult.arrayOfDirtyCauseIDs);
+		}
+		else {
+			if (updateExistingCausesResult.didUpdate || newCauseResult.didNew || transferCauseResult.didTransfer) {
+				updateUpdateMessageCookie("updates");
+				location.reload();
+			}
+			else {
+				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
+			}
+		}
 	});
 
 	var whichForm;

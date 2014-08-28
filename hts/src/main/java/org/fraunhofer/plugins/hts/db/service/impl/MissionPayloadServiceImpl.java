@@ -1,10 +1,13 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
@@ -67,6 +70,15 @@ public class MissionPayloadServiceImpl implements MissionPayloadService {
 	@Override
 	public List<Hazards> getAllHazardsWithinMission(String id) {
 		Mission_Payload payload = getMissionPayloadByID(id);
-		return newArrayList(payload.getHazards());
+		Hazards[] allHazards = payload.getHazards();
+		
+		List<Hazards> nonDeleteHarzards = new ArrayList<Hazards>();
+		for (Hazards current : allHazards) {
+			if (current.getActive() == true) {
+				nonDeleteHarzards.add(current);
+			}
+		}
+				
+		return nonDeleteHarzards;
 	}
 }

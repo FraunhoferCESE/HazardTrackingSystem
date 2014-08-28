@@ -1,3 +1,10 @@
+function navigateTo(trigger, contentId){
+    AJS.$("#main-nav li").removeClass("aui-nav-selected");
+    AJS.$("#" + trigger).addClass("aui-nav-selected");
+    AJS.$(".nav-content").hide();
+    AJS.$("#" + contentId).show();
+}
+
 function manipulateTextLength(theText, numChars) {
     if (theText.length >= numChars){
         return theText.substring(0, numChars - 3) + "...";
@@ -208,11 +215,4 @@ AJS.$(document).ready(function(){
             AJS.$("#navigationError").hide();
         }
     });
-
-    function navigateTo(trigger, contentId){
-        AJS.$("#main-nav li").removeClass("aui-nav-selected");
-        AJS.$("#" + trigger).addClass("aui-nav-selected");
-        AJS.$(".nav-content").hide();
-        AJS.$("#" + contentId).show();
-    }
 });

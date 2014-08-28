@@ -37,7 +37,7 @@
 						<td class="VerificationsTableAllCells">$verification.getVerificationStatus().getLabel()</td>
 						<td class="VerificationDate VerificationsTableAllCells">$verification.getLastUpdated()</td>
 						<td class="VerificationsTableAllCells">
-							<input type="checkbox" class="VerificationsTableDeleteCheckbox" value="$verification.getID()">
+							<input type="checkbox" class="VerificationsTableDeleteCheckbox" value="$verification.getID()" data-verificationid="$!verification.getID()">
 						</td>
 					</tr>
 					<tr class="VerificationsTableEntryID$verification.getID()">

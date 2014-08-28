@@ -2,11 +2,11 @@
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazardID">
 	<div class="field-group">
 		<label for="controlDescriptionNew">Description <span class="aui-icon icon-required">(required)</span></label>
-		<textarea class="textarea long-field" name="controlDescriptionNew" id="controlDescriptionNew" disabled>FOO</textarea>
+		<textarea class="textarea long-field" name="controlDescriptionNew" id="controlDescriptionNew"></textarea>
 	</div>
 	<div class="field-group">
 		<label for="controlGroupNew">Control group</label>
-		<select class="select" id="controlGroupNew" name="controlGroupNew" disabled>
+		<select class="select" id="controlGroupNew" name="controlGroupNew">
 			#foreach( $controlGroup in $controlGroups )
 				#if($controlGroup.getLabel() == "null")
 					<option value="$controlGroup.getID()" selected>-Select-</option>
@@ -16,7 +16,7 @@
 			#end
 		</select>
 	</div>
-	<div class="field-group">
+	<div class="field-group" id="addNewControlMultiSelect">
 		<label for="controlCausesNew">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCausesNew" id="controlCausesNew">
 			#foreach( $hazardCause in $hazardCauses )

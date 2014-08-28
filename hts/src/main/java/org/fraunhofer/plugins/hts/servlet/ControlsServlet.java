@@ -62,8 +62,6 @@ public class ControlsServlet extends HttpServlet {
 			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
 			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
     		
-    		//context.put("allHazards", hazardService.all());
-    		
     		if ("y".equals(req.getParameter("edit"))) {
 				context.put("hazardNumber", currentHazard.getHazardNum());
 				context.put("hazardTitle", currentHazard.getTitle());
@@ -107,10 +105,11 @@ public class ControlsServlet extends HttpServlet {
         	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}
     	else if ("y".equals(req.getParameter("editTransfer"))) {
+    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
     		String controlID = req.getParameter("originID");
     		String transferReason = req.getParameter("controlTransferReasonEdit");
     		hazardControlService.updateTransferredControl(controlID, transferReason);
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform");
+    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
     	}
     	else if ("y".equals(req.getParameter("transfer"))) {
     		final String hazardID = req.getParameter("hazardID");
