@@ -24,11 +24,26 @@ public interface Hazards extends Entity {
 	String getTitle();
 
 	void setTitle(String title);
+	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardSafetyRequirements();
+
+	void setHazardSafetyRequirements(String safetyRequirements);
 
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardDesc();
 
 	void setHazardDesc(String description);
+	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardJustification();
+
+	void setHazardJustification(String justification);
+	
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardOpenWork();
+
+	void setHazardOpenWork(String openWork);
 
 	String getPreparer();
 
@@ -46,6 +61,10 @@ public interface Hazards extends Entity {
 	String getHazardNum();
 
 	void setHazardNum(String hazardNum);
+	
+	String getHazardVersionNum();
+
+	void setHazardVersionNum(String versionNum);
 
 	Date getInitiationDate();
 

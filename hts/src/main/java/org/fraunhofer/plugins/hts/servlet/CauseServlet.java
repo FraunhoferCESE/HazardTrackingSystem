@@ -107,13 +107,14 @@ public class CauseServlet extends HttpServlet {
 			likelihood = null;
 		}
 		
-		final String effects = req.getParameter("causeEffects");
 		final String description = req.getParameter("causeDescription");
+		final String effects = req.getParameter("causeEffects");
+		final String safetyFeatures = req.getParameter("causeAdditSafetyFeatures");
 		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
 
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
-			hazardCauseService.update(id, description, effects, owner, title, risk, likelihood);
+			hazardCauseService.update(id, description, effects, safetyFeatures, owner, title, risk, likelihood);
 			int troll = currentHazard.getID();
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + troll);
 			return;
@@ -139,7 +140,7 @@ public class CauseServlet extends HttpServlet {
 			return;
 		}
 		else {
-			hazardCauseService.add(description, effects, risk, likelihood, owner, title, currentHazard);
+			hazardCauseService.add(description, effects, safetyFeatures, risk, likelihood, owner, title, currentHazard);
 			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
 			return;
 		}

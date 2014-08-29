@@ -10,10 +10,10 @@ import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 
 public interface HazardCauseService {
-	Hazard_Causes add(String description, String effects, Risk_Categories risk, 
-			Risk_Likelihoods likelihood, String owner, String title, Hazards hazard);
+	Hazard_Causes add(String description, String effects, String safetyFeatures, 
+			Risk_Categories risk, Risk_Likelihoods likelihood, String owner, String title, Hazards hazard);
 	
-	Hazard_Causes update(String id, String description, String effects,
+	Hazard_Causes update(String id, String description, String effects, String safetyFeatures, 
 			String owner, String title, Risk_Categories risk, Risk_Likelihoods likelihood);
 
 	Hazard_Causes getHazardCauseByID(String id);

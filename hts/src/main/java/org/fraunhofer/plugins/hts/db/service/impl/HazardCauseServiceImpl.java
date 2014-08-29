@@ -36,11 +36,13 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes add(String description, String effects, Risk_Categories risk, Risk_Likelihoods likelihood, String owner, String title, Hazards hazard) {
+	public Hazard_Causes add(String description, String effects, String safetyFeatures, Risk_Categories risk, 
+			Risk_Likelihoods likelihood, String owner, String title, Hazards hazard) {
 		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
 		cause.setCauseNumber(getNewCauseNumber(hazard));
 		cause.setDescription(description);
 		cause.setEffects(effects);
+		cause.setAdditionalSafetyFeatures(safetyFeatures);
 		cause.setOwner(owner);
 		cause.setRiskCategory(risk);
 		cause.setRiskLikelihood(likelihood);
@@ -53,7 +55,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 
 	@Override
 	public Hazard_Causes addCauseTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, null, null, title, hazard);
+		Hazard_Causes cause = add(transferComment, null, null, null, null, null, title, hazard);
 		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "CAUSE");
 		cause.setTransfer(transferID);
 		cause.save();
@@ -62,7 +64,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	
 	@Override
 	public Hazard_Causes addHazardTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, null, null, title, hazard);
+		Hazard_Causes cause = add(transferComment, null, null, null, null, null, title, hazard);
 		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "HAZARD");
 		cause.setTransfer(transferID);
 		cause.save();
@@ -70,11 +72,12 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 
 	@Override
-	public Hazard_Causes update(String id, String description, String effects, String owner, 
-			String title, Risk_Categories risk, Risk_Likelihoods likelihood) {
+	public Hazard_Causes update(String id, String description, String safetyFeatures, String effects, 
+			String owner, String title, Risk_Categories risk, Risk_Likelihoods likelihood) {
 		Hazard_Causes causeToBeUpdated = getHazardCauseByID(id);
 		causeToBeUpdated.setDescription(description);
 		causeToBeUpdated.setEffects(effects);
+		causeToBeUpdated.setAdditionalSafetyFeatures(safetyFeatures);
 		causeToBeUpdated.setOwner(owner);
 		causeToBeUpdated.setTitle(title);
 		

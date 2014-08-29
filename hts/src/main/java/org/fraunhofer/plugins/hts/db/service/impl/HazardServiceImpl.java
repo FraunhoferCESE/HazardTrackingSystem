@@ -36,12 +36,16 @@ public class HazardServiceImpl implements HazardService {
 
 	// TODO add javadoc and fix the remaining fields.
 	@Override
-	public Hazards add(String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, Review_Phases reviewPhase, 
-			Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
+	public Hazards add(String title, String safetyRequirements, String description, String justification, String openWork, String preparer,
+			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups,  
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
 				hazardNum));
+		hazard.setHazardVersionNum(hazardVersionNum);
+		hazard.setHazardSafetyRequirements(safetyRequirements);
 		hazard.setHazardDesc(description);
+		hazard.setHazardJustification(justification);
+		hazard.setHazardOpenWork(openWork);
 		hazard.setPreparer(preparer);
 		hazard.setEmail(email);
 		hazard.setInitiationDate(initationDate);
@@ -112,14 +116,18 @@ public class HazardServiceImpl implements HazardService {
 
 	// TODO add init date and completion and error handling
 	@Override
-	public Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, Review_Phases reviewPhase, 
-			Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
+	public Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer, 
+			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, 
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
 			updated.setHazardNum(hazardNum);
+			updated.setHazardVersionNum(hazardVersionNum);
+			updated.setHazardSafetyRequirements(safetyRequirements);
 			updated.setHazardDesc(description);
+			updated.setHazardJustification(justification);
+			updated.setHazardOpenWork(openWork);
 			updated.setPreparer(preparer);
 			updated.setEmail(email);
 			updated.setInitiationDate(initationDate);

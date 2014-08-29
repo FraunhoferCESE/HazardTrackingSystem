@@ -14,15 +14,15 @@ import com.atlassian.activeobjects.tx.Transactional;
 
 @Transactional
 public interface HazardService {
-	Hazards add(String title, String description, String preparer, String email, String hazardNum, Date initationDate,
-			Date completionDate, Date lastEdit, Hazard_Group[] groups, Review_Phases reviewPhase, Subsystems[] subsystems, 
-			Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+	Hazards add(String title, String safetyRequirements, String description, String justification, String openWork, String preparer, String email, 
+			String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date lastEdit, Hazard_Group[] groups,  
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
 
 	Hazards getHazardByID(String id);
 
-	Hazards update(String id, String title, String description, String preparer, String email, String hazardNum,
-			Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, Review_Phases reviewPhase, 
-			Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+	Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer,
+			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups,  
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
 
 	List<Hazards> all();
 	
