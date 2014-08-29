@@ -50,6 +50,10 @@ public interface Hazard_Causes extends Entity {
 	String getEffects();
 
 	void setEffects(String effects);
+	
+	String getAdditionalSafetyFeatures();
+
+	void setAdditionalSafetyFeatures(String safetyFeatures);
 
 	Date getLastUpdated();
 

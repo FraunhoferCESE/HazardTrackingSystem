@@ -6,6 +6,10 @@
 		<input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber" value="$!hazard.getHazardNum()"/>
 	</div>
 	<div class="field-group">
+		<label for="hazardVersionNumber">Version # </label>
+		<input class="text medium-field" type="text" id="hazardVersionNumber" name="hazardVersionNumber" value="$!hazard.getHazardVersionNum()"/>
+	</div>
+	<div class="field-group">
 		<label for="hazardTitle">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
 		<input class="text long-field" type="text" id="hazardTitle" name="hazardTitle" value="$!hazard.getTitle()"/>
 	</div>
@@ -83,8 +87,20 @@
 		<div class="HazardFormMultiSelectFooterContainerTwo"><span class="HazardFormMultiSelectFooter">Associated</span></div>
 	</div>
 	<div class="field-group">
+	    <label for="hazardSafetyRequirements">Applicable Safety Requirements</label>
+	    <textarea class="textarea long-field" name="hazardSafetyRequirements" id="hazardSafetyRequirements">$!hazard.getHazardSafetyRequirements()</textarea>
+	</div>
+	<div class="field-group">
 	    <label for="hazardDescription">Description</label>
 	    <textarea class="textarea long-field" name="hazardDescription" id="hazardDescription">$!hazard.getHazardDesc()</textarea>
+	</div>
+	<div class="field-group">
+	    <label for="hazardJustification">Acceptance Rationale and Likelihood Justification</label>
+	    <textarea class="textarea long-field" rows="4" cols="10" name="hazardJustification" id="hazardJustification">$!hazard.getHazardJustification()</textarea>
+	</div>
+	<div class="field-group">
+	    <label for="hazardOpenWork">Open Work</label>
+	    <textarea class="textarea long-field" name="hazardOpenWork" id="hazardOpenWork">$!hazard.getHazardOpenWork()</textarea>
 	</div>
 	<div class="field-group">
 	    <label for="hazardInitation">Initiation Date</label>

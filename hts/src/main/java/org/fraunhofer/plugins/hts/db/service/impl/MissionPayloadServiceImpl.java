@@ -6,8 +6,6 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Causes;
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;

@@ -88,8 +88,12 @@ public final class HazardServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		final String hazardNum = req.getParameter("hazardNumber");
+		final String hazardVersionNum = req.getParameter("hazardVersionNumber");
 		final String title = req.getParameter("hazardTitle");
+		final String safetyRequirements = req.getParameter("hazardSafetyRequirements");
 		final String description = req.getParameter("hazardDescription");
+		final String justification = req.getParameter("hazardJustification");
+		final String openWork = req.getParameter("hazardOpenWork");
 		final String preparer = ComponentAccessor.getJiraAuthenticationContext().getUser().getName();
 		final String email = ComponentAccessor.getJiraAuthenticationContext().getUser().getEmailAddress();
 		final Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
@@ -110,15 +114,15 @@ public final class HazardServlet extends HttpServlet {
 		// TODO see if they want to pull in the jira project name as payload
 		if ("y".equals(req.getParameter("edit"))) {
 			String id = req.getParameter("key");
-			Hazards updated = hazardService.update(id, title, description, preparer, email, hazardNum, created,
-					completed, revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
+			Hazards updated = hazardService.update(id, title, safetyRequirements, description, justification, openWork, preparer, email, hazardNum, 
+					hazardVersionNum, created, completed, revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
 
 			createJson(json, "hazardID", updated.getID());
 			createJson(json, "payloadID", updated.getMissionPayload().getID());
 			createJson(json, "hazardNumber", updated.getHazardNum());
 		} else {
-			Hazards hazard = hazardService.add(title, description, preparer, email, hazardNum, created, completed,
-					revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
+			Hazards hazard = hazardService.add(title, safetyRequirements, description, justification, openWork, preparer, email, hazardNum, 
+					hazardVersionNum, created, completed, revisionDate, group, reviewPhase, subsystems, missionPhases, payloadName);
 
 			createJson(json, "hazardID", hazard.getID());
 			createJson(json, "payloadID", hazard.getMissionPayload().getID());
