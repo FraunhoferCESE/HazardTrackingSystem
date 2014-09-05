@@ -149,12 +149,15 @@ AJS.$(document).ready(function(){
         whichPage === "causeform" && AJS.$.url().param("edit") === "y" ||
         whichPage === "controlform" && AJS.$.url().param("edit") === "y" ||
         whichPage === "verificationform" && AJS.$.url().param("edit") === "y") {
-        var currentHazardPayloadIDStr = AJS.$("#hazardPayloadID")[0].value;
-        currentHazardPayloadID = parseInt(currentHazardPayloadIDStr, 10);
-        var currentHazardIDStr = AJS.$("#hazardID")[0].value;
-        currentHazardID = parseInt(currentHazardIDStr, 10);
-        initializePayloadDropDownSelection(currentHazardPayloadID);
-        numberOfHazardsFetched = initializeHazardDropDownSelection(currentHazardPayloadID, currentHazardID);
+        var currentHazardPayloadElement = AJS.$("#hazardPayloadID")[0];
+        if (currentHazardPayloadElement !== undefined) {
+            var currentHazardPayloadIDStr = currentHazardPayloadElement.value;
+            currentHazardPayloadID = parseInt(currentHazardPayloadIDStr, 10);
+            var currentHazardIDStr = AJS.$("#hazardID")[0].value;
+            currentHazardID = parseInt(currentHazardIDStr, 10);
+            initializePayloadDropDownSelection(currentHazardPayloadID);
+            numberOfHazardsFetched = initializeHazardDropDownSelection(currentHazardPayloadID, currentHazardID);
+        }
     }
     if (whichPage === "hazardform") {
         if (selectedPayload === null) {
@@ -214,5 +217,9 @@ AJS.$(document).ready(function(){
         if (AJS.$("#navigationError").is(":visible")) {
             AJS.$("#navigationError").hide();
         }
+    });
+
+    AJS.$("#ErrorPageLink").live("click", function() {
+        window.location = AJS.params.baseURL + "/plugins/servlet/hazardlist";
     });
 });

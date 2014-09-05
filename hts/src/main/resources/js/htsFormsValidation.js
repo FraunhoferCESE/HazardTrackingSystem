@@ -221,6 +221,7 @@ AJS.$(document).ready(function(){
 	    			//To remove jiras dirty warning so navigating from the form after successful post is possible
 	    			$("#hazardForm").removeDirtyWarning();
 	    			successfulSave(form);
+	    			showMoreOptions();
 	    			//Retrieving the values from the json response. If it is not successful clean form is rendered(happens when user hits save and create another)
 	    			var data = $.parseJSON(data);
 	    			if(data.redirect) {
@@ -553,17 +554,14 @@ AJS.$(document).ready(function(){
 
 	//After a successful save message needs to be displayed to the user.
 	function successfulSave(form) {
-		//Input the successful save frame
-		var success = $('<div class="aui-message success successMsg"><p><span class="aui-icon icon-success"></span>Changes were saved successfully</p></div>');
-	    if($(".successMsg").length > 0) {
-	    	$(".successMsg").hide();
-	    	setTimeout(function() {
-	    		$(".successMsg").show();
-	    	}, 100);
-	    }
-	    else {
-	    	$(form).after(success);
-	    }
+		JIRA.Messages.showSuccessMsg("All changes were successfully saved.", {closeable: true});
+	}
+
+	function showMoreOptions() {
+		var hiddenOptions = AJS.$(".HazardNavigationHiddenOption");
+		hiddenOptions.each(function () {
+			AJS.$(this).show();
+		});
 	}
 
 	//Need to store the hazard number specified in the field to see if has been changed. If not saving is okay.

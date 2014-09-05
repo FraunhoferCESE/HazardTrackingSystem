@@ -39,6 +39,73 @@
     width: 20%;
 }
 
+/* RISK MATRIX CSS BEGINS */
+#HazardRiskMatrixTable {
+    border-collapse: collapse;
+}
+
+.HazardRiskMatrixText {
+    font-family: Arial, sans-serif;
+    font-weight: lighter;
+    font-size: 14px;
+    color: #707070;
+}
+
+#HazardRiskMatrixTable table {
+    border: 1px dashed #707070;
+    padding: 5px;
+    margin: 0;
+}
+
+#HazardRiskMatrixTable td {
+    border: 1px dashed #707070;
+    padding: 5px;
+}
+
+.HazardRiskMatrixEmptyColumn {
+    width: 145px;
+}
+
+.HazardRiskMatrixCategoryColumns {
+    width: 85px;
+}
+
+#HazardRiskMatrixUnspecified {
+    padding-top: 5px;
+}
+
+.HazardRiskMatrixNone {
+    display: inline-block;
+}
+
+.HazardRiskMatrixLink {
+    color: #333333;
+}
+.HazardRiskMatrixLink:hover {
+    color: #0000FF;
+}
+
+.HazardRiskMatrixLinkCell {
+    max-width: 80px;
+}
+
+.HazardRiskMatrixTableRedCell {
+    background-color: #CC0000;
+}
+
+.HazardRiskMatrixTableYellowCell {
+    background-color: #FFCC00;
+}
+
+.HazardRiskMatrixTableOrangeCell {
+    background-color: #FF8C00;
+}
+
+.HazardRiskMatrixTableGreenCell {
+    background-color: #4CBB17 ;
+}
+/* RISK MATRIX CSS ENDS */
+
 #action {
     width: 15%;
 }
@@ -95,6 +162,10 @@
 #navigationError {
     color: #D04437;
     padding-left: 3px;
+    display: none;
+}
+
+.HazardNavigationHiddenOption {
     display: none;
 }
 
@@ -512,7 +583,19 @@ form.payloadForm .add:active {
 .ConfirmDialogReasonTextCauses {
     width: 100%
 }
-/*.ConfirmDialogReasonTextControls {
-    width: 100%
-}*/
 /* CAUSE STYLES FOR THE CONFIRM DIALOG END */
+
+/* ERROR PAGE STYLES BEGIN */
+.ErrorPageContainer {
+    text-align: center;
+    color: #333;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857142857143;
+}
+
+.ErrorPageStaticMessage {
+    font-weight: bold;
+    color: #D04437;
+}
+/* ERROR PAGE STYLES END */

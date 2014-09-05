@@ -262,8 +262,7 @@ public class HazardReportGeneratorTest {
 				new Hazard_Causes[] { mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause });
 
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
-		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
-				mockTransferService);
+		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService, mockTransferService);
 
 		final File template = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "src"
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"

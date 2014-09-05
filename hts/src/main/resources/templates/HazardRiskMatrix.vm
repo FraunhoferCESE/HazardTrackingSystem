@@ -1,0 +1,162 @@
+#set ($likelihoodNamesMap = {
+	1: "Frequent",
+	2: "Reasonably probable",
+	3: "Occasional",
+	4: "Remote",
+	5: "Extremely improbable"
+})
+
+#set ($likelihoodMap = {
+	1: [],
+	2: [],
+	3: [],
+	4: [],
+	5: []
+})
+
+#set ($categoryNamesMap = {
+	1: "Negligible",
+	2: "Marginal",
+	3: "Critical",
+	4: "Catastrophic"
+})
+
+#set ($categoryMap = {
+	1: [],
+	2: [],
+	3: [],
+	4: []
+})
+
+#set( $notSpecified = [] )
+#set( $causeTransfers = [] )
+
+#foreach ($cause in $hazard.getHazardCauses())
+	#if (!$cause.getDeleteReason())
+		#if ($cause.getTransfer() != 0)
+			#set($result = $causeTransfers.add($cause))
+		#else
+			#if ($cause.getRiskLikelihood().getValue() == "A - Frequent")
+				#set($result = $likelihoodMap.get(1).add($cause))
+			#elseif ($cause.getRiskLikelihood().getValue() == "B - Reasonably probable")
+				#set($result = $likelihoodMap.get(2).add($cause))
+			#elseif ($cause.getRiskLikelihood().getValue() == "C - Occasional")
+				#set($result = $likelihoodMap.get(3).add($cause))
+			#elseif ($cause.getRiskLikelihood().getValue() == "D - Remote")
+				#set($result = $likelihoodMap.get(4).add($cause))
+			#elseif ($cause.getRiskLikelihood().getValue() == "E - Extremely improbable")
+				#set($result = $likelihoodMap.get(5).add($cause))
+			#else
+				#set($result = $notSpecified.add($cause))
+			#end
+		#end
+	#end
+#end
+
+<table id="HazardRiskMatrixTable" class="HazardRiskMatrixText">
+	<tr>
+		<td class="HazardRiskMatrixEmptyColumn"></td>
+		#foreach ($key in $categoryNamesMap.keySet())
+			<td class="HazardRiskMatrixCategoryColumns" data-column="$categoryNamesMap.get($key)">
+				$categoryNamesMap.get($key)
+			</td>
+		#end
+	</tr>
+	#foreach ($keyOne in $likelihoodMap.keySet())
+		#foreach ($cause in $likelihoodMap.get($keyOne))
+			#if ($cause.getRiskCategory().getValue() == "IV - Negligible")
+				#set($result = $categoryMap.get(1).add($cause))
+			#elseif ($cause.getRiskCategory().getValue() == "III - Marginal")
+				#set($result = $categoryMap.get(2).add($cause))
+			#elseif ($cause.getRiskCategory().getValue() == "II - Critical")
+				#set($result = $categoryMap.get(3).add($cause))
+			#elseif ($cause.getRiskCategory().getValue() == "I - Catastrophic")
+				#set($result = $categoryMap.get(4).add($cause))
+			#else
+				#set($result = $notSpecified.add($cause))
+			#end
+		#end
+		<tr data-row="$likelihoodNamesMap.get($keyOne)">
+			<td>$likelihoodNamesMap.get($keyOne)</td>
+			#foreach ($keyTwo in $categoryMap.keySet())
+				#set( $className = "" )
+				#if ($likelihoodNamesMap.get($keyOne) == "Frequent")
+					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
+						#set( $className = "HazardRiskMatrixTableYellowCell" )
+					#else
+						#set( $className = "HazardRiskMatrixTableRedCell" )
+					#end
+				#elseif ($likelihoodNamesMap.get($keyOne) == "Reasonably probable")
+					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
+						#set( $className = "HazardRiskMatrixTableYellowCell" )
+					#elseif ($categoryNamesMap.get($keyTwo) == "Marginal")
+						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+					#else
+						#set( $className = "HazardRiskMatrixTableRedCell" )
+					#end
+				#elseif ($likelihoodNamesMap.get($keyOne) == "Occasional")
+					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
+						#set( $className = "HazardRiskMatrixTableGreenCell" )
+					#elseif ($categoryNamesMap.get($keyTwo) == "Catastrophic")
+						#set( $className = "HazardRiskMatrixTableRedCell" )
+					#else
+						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+					#end
+				#elseif ($likelihoodNamesMap.get($keyOne) == "Remote")
+					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
+						#set( $className = "HazardRiskMatrixTableGreenCell" )
+					#elseif ($categoryNamesMap.get($keyTwo) == "Marginal")
+						#set( $className = "HazardRiskMatrixTableYellowCell" )
+					#else
+						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+					#end
+				#elseif ($likelihoodNamesMap.get($keyOne) == "Extremely improbable")
+					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
+						#set( $className = "HazardRiskMatrixTableGreenCell" )
+					#else
+						#set( $className = "HazardRiskMatrixTableYellowCell" )
+					#end
+				#end
+
+				<td class="$className">
+					<div class="HazardRiskMatrixLinkCell">
+						#foreach ($cause in $categoryMap.get($keyTwo))
+							<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
+								$cause.getCauseNumber()
+							</a>
+						#end
+					</div>
+				</td>
+			#end
+		</tr>
+		#set ($categoryMap = {
+			1: [],
+			2: [],
+			3: [],
+			4: []
+		})
+	#end
+</table>
+
+#if ($notSpecified.size() == 0)
+	<div class="HazardRiskMatrixNone" id="HazardRiskMatrixUnspecified">
+		<div class="HazardRiskMatrixNone HazardRiskMatrixText">Causes with unspecified risk: </div>
+		<div class="HazardRiskMatrixNone">None</div>
+	</div>
+#else
+	<div class="HazardRiskMatrixText" id="HazardRiskMatrixUnspecified">Causes with unspecified category and/or likelihood: </div>
+	#foreach ($cause in $notSpecified)
+		<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
+			$cause.getCauseNumber()
+		</a>
+	#end
+#end
+
+<div id="HazardRiskMatrixTransfersContainer">
+	#if ($causeTransfers.size() != 0)
+		<!-- CauseNumber-CauseID-CauseTransferID -->
+		#foreach ($cause in $causeTransfers)
+			<input type="hidden" class="HazardRiskMatrixTransfer" value="$!cause.getCauseNumber()-$!cause.getID()-$!cause.getTransfer()" />
+		#end
+	#end
+</div>

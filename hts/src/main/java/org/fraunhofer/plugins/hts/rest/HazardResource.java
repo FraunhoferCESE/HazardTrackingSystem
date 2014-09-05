@@ -14,9 +14,11 @@ import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
+import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,12 +30,14 @@ public class HazardResource {
 	private final HazardService hazardService;
 	private final MissionPayloadService missionPayloadService;
 	private final HazardCauseService hazardCauseService;
+	private final TransferService transferService;
 
 	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService,
-			HazardCauseService hazardCauseService) {
+			HazardCauseService hazardCauseService, TransferService transferService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
+		this.transferService = checkNotNull(transferService);
 	}
 
 	@GET
@@ -154,6 +158,22 @@ public class HazardResource {
 				controlList.add(HazardControlResponseList.control(control));
 			}
 			return Response.ok(controlList).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
+					.build();
+		}
+	}
+	
+	@GET
+	@Path("cause/{transferID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getOriginCause(@PathParam("transferID") String transferID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			int transferIDInt = Integer.parseInt(transferID);
+			Transfers transfer = transferService.getTransferByID(transferIDInt);
+			Hazard_Causes cause = hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
+			//return Response.ok(cause).build();
+			return Response.ok(HazardCauseResponseList.causes(cause)).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();

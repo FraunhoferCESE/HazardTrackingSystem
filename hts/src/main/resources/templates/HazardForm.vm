@@ -110,6 +110,10 @@
     	<label for="hazardCompletion">Completion Date</label>
         <input class="aui-date-picker" name="hazardCompletion" id="hazardCompletion" type="date" value="$!compDate"/>
     </div>
+    <div class="field-group">
+    	<label for="hazardRiskMatrix">Risk Matrix</label>
+    	#parse("/templates/HazardRiskMatrix.vm")
+    </div>
 	<div class="buttons-container">
 		<div class="buttons">
 	        <input class="button submit" type="submit" value="Save" name="hazardSave" id="hazardSave">
