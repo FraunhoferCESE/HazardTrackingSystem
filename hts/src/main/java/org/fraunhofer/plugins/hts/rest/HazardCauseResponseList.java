@@ -17,6 +17,8 @@ public class HazardCauseResponseList {
 	private String owner;
 	private String effects;
 	private Date lastUpdated;
+	private String riskCategory;
+	private String riskLikelihood;
 
 	public HazardCauseResponseList() {
 
@@ -49,6 +51,14 @@ public class HazardCauseResponseList {
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
+	
+	public String getRiskCategory() {
+		return riskCategory;
+	}
+	
+	public String getRiskLikelihood() {
+		return riskLikelihood;
+	}
 
 	public static HazardCauseResponseList causes(Hazard_Causes cause) {
 		HazardCauseResponseList list = new HazardCauseResponseList();
@@ -59,6 +69,8 @@ public class HazardCauseResponseList {
 		list.owner = cause.getOwner();
 		list.effects = cause.getEffects();
 		list.lastUpdated = cause.getLastUpdated();
+		list.riskCategory = cause.getRiskCategory().getValue();
+		list.riskLikelihood = cause.getRiskLikelihood().getValue();
 		return list;
 	}
 }

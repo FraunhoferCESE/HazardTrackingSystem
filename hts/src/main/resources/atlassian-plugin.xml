@@ -29,7 +29,7 @@
 		<resource type="download" name="formValidation.js" location="/js/formValidation.js" />
 		<resource type="download" name="date.js" location="/js/date.js" />
 		<resource type="download" name="purl.js" location="/js/purl.js" />
-				<resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js" />
+		<resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js" />
 
 		<resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js" />
 		<resource type="download" name="htsHazardReport.js" location="/js/htsHazardReport.js" />

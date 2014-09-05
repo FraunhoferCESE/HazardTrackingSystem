@@ -100,8 +100,19 @@ function sortListOfPayloads() {
 	AJS.$("#listOfCreatedPayloads li").tsort();
 }
 
+function createRiskMatrixCauseCookie() {
+	if (AJS.Cookie.read("RISK_MATRIX_CAUSE") === undefined) {
+		AJS.Cookie.save("RISK_MATRIX_CAUSE", "none");
+	}
+}
+
+function updateRiskMatrixCauseCookie(theCauseID) {
+	AJS.Cookie.save("RISK_MATRIX_CAUSE", theCauseID);
+}
+
 AJS.$(document).ready(function() {
 	layout();
+	createRiskMatrixCauseCookie();
 	var currentlyViewingPayload = null;
 
 	var whichPage = AJS.$.url();
@@ -151,6 +162,35 @@ AJS.$(document).ready(function() {
 
 	if (whichPage === "hazardlist" && parameters.hasOwnProperty("edit")) {
 		AJS.$("#downloadHazardReportButton").show();
+
+		var riskMatrixContainer = AJS.$("#HazardRiskMatrixTransfersContainer");
+		if (riskMatrixContainer !== undefined) {
+			if (riskMatrixContainer.children().length !== 0) {
+				riskMatrixContainer.children().each(function () {
+					var causeValueArr = AJS.$(this).val().split("-");
+					var causeNumber = causeValueArr[0];
+					var causeID = causeValueArr[1];
+					var transferID = causeValueArr[2];
+
+					var response;
+					AJS.$.ajax({
+						type: "GET",
+						async: false,
+						url: AJS.params.baseURL + "/rest/htsrest/1.0/report/cause/" + transferID,
+						success: function(data) {
+							response = data;
+						}
+					});
+					var category = response.riskCategory.split(" - ")[1];
+					var likelihood = response.riskLikelihood.split(" - ")[1];
+					var column = AJS.$("#HazardRiskMatrixTable").find("[data-column='" + category + "']").index();
+					var row = AJS.$("#HazardRiskMatrixTable").find("[data-row='" + likelihood + "']");
+					var cell = AJS.$(row).find("td").eq(column);
+					var linkContainer = AJS.$(cell).children().first();
+					AJS.$(linkContainer).append("<a href='#' class='HazardRiskMatrixLink' data-causeid='" + causeID + "'>" + causeNumber + "-T</a>");
+				});
+			}
+		}
 	}
 
 	if (whichPage === "hazardform" && !AJS.$.isEmptyObject(parameters)) {
@@ -241,6 +281,14 @@ AJS.$(document).ready(function() {
 	AJS.$(".downloadHazardReportViewAll").live("click", function() {
 		var formElement = AJS.$(this).parent().find("form");
 		formElement.submit();
+	});
+
+	AJS.$(".HazardRiskMatrixLink").live("click", function() {
+		var hazardID = AJS.$("#hazardID").val();
+		var causeID = AJS.$(this).data("causeid");
+		console.log(causeID);
+		updateRiskMatrixCauseCookie(causeID);
+		AJS.$(this).attr("href", AJS.params.baseURL + "/plugins/servlet/causeform?edit=y&key=" + hazardID);
 	});
 
 });

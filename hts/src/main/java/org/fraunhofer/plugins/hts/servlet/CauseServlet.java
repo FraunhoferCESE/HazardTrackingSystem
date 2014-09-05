@@ -56,6 +56,12 @@ public class CauseServlet extends HttpServlet {
 			
 			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
 			Mission_Payload currentPayload = currentHazard.getMissionPayload();
+			if (currentHazard == null || currentPayload == null) {
+				context.put("errorMessage", "The hazard report you were working with cannot be found or opened.");
+				templateRenderer.render("templates/ErrorPage.vm", context, res.getWriter());
+				return;
+			}
+			
 			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
 			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
 			

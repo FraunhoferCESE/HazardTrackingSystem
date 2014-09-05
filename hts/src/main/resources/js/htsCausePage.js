@@ -39,6 +39,25 @@ function checkUpdateMessageCookie() {
 	}
 }
 
+function checkRiskMatrixCauseCookie() {
+	if (AJS.Cookie.read("RISK_MATRIX_CAUSE") !== undefined) {
+		var idOfCauseOpen = AJS.Cookie.read("RISK_MATRIX_CAUSE");
+		if (idOfCauseOpen !== "none") {
+			if(idOfCauseOpen) {
+				closeAllDivs();
+				createCookie(idOfCauseOpen, "expanded");
+				openDivOnReload();
+			}
+
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$("#CausesTableEntry" + idOfCauseOpen).offset().top
+			}, 50);
+
+			AJS.Cookie.save("RISK_MATRIX_CAUSE", "none");
+		}
+	}
+}
+
 function checkIfElementIsVisible(element) {
 	return element.is(":visible");
 }
@@ -532,8 +551,9 @@ function clearNewAndTransferForm() {
 	AJS.$(formElement).find("#causeOwner").val("");
 	AJS.$(formElement).find("#causeRisk").val("").trigger('chosen:updated');
 	AJS.$(formElement).find("#causeLikelihood").val("").trigger('chosen:updated');
-	AJS.$(formElement).find("#causeEffects").val("");
 	AJS.$(formElement).find("#causeDescription").val("");
+	AJS.$(formElement).find("#causeEffects").val("");
+	AJS.$(formElement).find("#causeAdditSafetyFeatures").val("");
 }
 
 AJS.$(document).ready(function() {
@@ -549,6 +569,7 @@ AJS.$(document).ready(function() {
 	createAssociatedCauseCookie();
 	createUpdateMessageCookie();
 	checkUpdateMessageCookie();
+	checkRiskMatrixCauseCookie();
 
 	var createdCauses = serializeCreatedCauses();
 
