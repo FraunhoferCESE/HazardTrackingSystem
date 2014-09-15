@@ -22,6 +22,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.google.common.base.Strings;
 
 public class HazardControlServiceImpl implements HazardControlService {
 	private final ActiveObjects ao;
@@ -132,6 +133,11 @@ public class HazardControlServiceImpl implements HazardControlService {
 				int targetHazardControlNo = targetControl.getControlNumber();
 				String targetHazardControlDescription = targetControl.getDescription();
 				
+				Boolean deleted = false;
+				if (!Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
+					deleted = true;
+				}
+				
 				HazardControlTransfers controlTransfer = new HazardControlTransfers();
 				controlTransfer.setTransferID(transferID);
 				controlTransfer.setTargetID(targetID);
@@ -143,6 +149,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 				controlTransfer.setTargetHazardTitle(targetHazardTitle);
 				controlTransfer.setTargetHazardControlNo(targetHazardControlNo);
 				controlTransfer.setTargetHazardControlDescription(targetHazardControlDescription);
+				controlTransfer.setTargetDeleted(deleted);
 				transferInfo.add(controlTransfer);
 			}
 			
@@ -156,6 +163,11 @@ public class HazardControlServiceImpl implements HazardControlService {
 				int targetHazardCauseNo = targetCause.getCauseNumber();
 				String targetHazardCauseTitle = targetCause.getTitle();
 				
+				Boolean deleted = false;
+				if ( !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+					deleted = true;
+				}
+				
 				HazardControlTransfers causeTransfer = new HazardControlTransfers();
 				causeTransfer.setTransferID(transferID);
 				causeTransfer.setTargetID(targetID);
@@ -167,6 +179,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 				causeTransfer.setTargetHazardTitle(targetHazardTitle);
 				causeTransfer.setTargetHazardCauseNo(targetHazardCauseNo);
 				causeTransfer.setTargetHazardCauseTitle(targetHazardCauseTitle);
+				causeTransfer.setTargetDeleted(deleted);
 				transferInfo.add(causeTransfer);
 			}
 		}
@@ -179,8 +192,9 @@ public class HazardControlServiceImpl implements HazardControlService {
 		controlToBeDeleted.setDeleteReason(reason);
 		if (controlToBeDeleted.getTransfer() != 0) {
 			int transferID = controlToBeDeleted.getTransfer();
-			controlToBeDeleted.setTransfer(0);
-			removeTransfer(transferID);
+			Transfers transfer = transferService.getTransferByID(transferID);
+			transfer.setActive(false);
+			transfer.save();
 		}
 		controlToBeDeleted.save();
 		return controlToBeDeleted;
@@ -253,7 +267,7 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 	
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
-		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType, true);
 		return transfer.getID();
 	}
 	

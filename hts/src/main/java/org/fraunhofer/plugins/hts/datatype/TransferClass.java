@@ -12,9 +12,11 @@ public class TransferClass {
 	private int targetID;
 	private int hazardID;
 	private int causeNum;
+	private Boolean deleted;
 	
-	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String secondaryTitle, 
-			String targetType, int hazardID, int targetID, int causeNum, String riskCategory, String riskLikelihood) {
+	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, 
+			String secondaryTitle, String targetType, int hazardID, int targetID, int causeNum, String riskCategory, 
+			String riskLikelihood, Boolean deleted) {
 		this.transferID = transferID;
 		this.transferReason = transferReason;
 		this.mainTitle = mainTitle;
@@ -26,15 +28,18 @@ public class TransferClass {
 		this.causeNum = causeNum;
 		this.riskCategory = riskCategory;
 		this.riskLikelihood = riskLikelihood;
+		this.deleted = deleted;
 	}
 	
-	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String targetType, int targetID) {
+	public TransferClass(int transferID, String transferReason, String mainTitle, String hazardNumb, String targetType, 
+			int targetID, Boolean deleted) {
 		this.transferID = transferID;
 		this.transferReason = transferReason;
 		this.mainTitle = mainTitle;
 		this.hazardNumb = hazardNumb;
 		this.targetType = targetType;
 		this.targetID = targetID;
+		this.deleted = deleted;
 	}
 	
 	public int getTransferID() {
@@ -79,5 +84,9 @@ public class TransferClass {
 	
 	public String getRiskLikelihood() {
 		return this.riskLikelihood;
+	}
+	
+	public Boolean getDeleted() {
+		return this.deleted;
 	}
 }

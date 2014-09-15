@@ -47,10 +47,12 @@ public interface Hazard_Causes extends Entity {
 
 	void setOwner(String owner);
 
+	@StringLength(value = StringLength.UNLIMITED)
 	String getEffects();
 
 	void setEffects(String effects);
 	
+	@StringLength(value = StringLength.UNLIMITED)
 	String getAdditionalSafetyFeatures();
 
 	void setAdditionalSafetyFeatures(String safetyFeatures);

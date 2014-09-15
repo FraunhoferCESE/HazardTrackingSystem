@@ -20,7 +20,17 @@
 		<label for="controlCausesNew">Causes</label>
 		<select class="multi-select" size="5" multiple="multiple" name="controlCausesNew" id="controlCausesNew">
 			#foreach( $hazardCause in $hazardCauses )
-				<option value="$hazardCause.getID()">$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()</option>
+				#if( !$hazardCause.getDeleteReason() )
+					#if( $hazardCause.getTransfer() != 0 )
+						<option value="$hazardCause.getID()">
+							$!hazardCause.getCauseNumber()-T: $!hazardCause.getTitle()
+						</option>
+					#else
+						<option value="$hazardCause.getID()">
+							$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()
+						</option>
+					#end
+				#end
 			#end
 		</select>
 		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Causes</span></div>

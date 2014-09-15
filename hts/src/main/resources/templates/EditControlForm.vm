@@ -33,13 +33,43 @@
 			#foreach( $hazardCause in $hazardCauses )
 				#foreach( $selectedCause in $hazardControl.getCauses() )
 					#if( $hazardCause.getID() == $selectedCause.getID() )
-						<option value="$hazardCause.getID()" selected>$!hazardCause.getCauseNumber(): $hazardCause.getTitle()</option>
+						#if( $hazardCause.getTransfer() != 0 )
+							#if( !$hazardCause.getDeleteReason() )
+								<option value="$hazardCause.getID()" selected>
+									$!hazardCause.getCauseNumber()-T: $!hazardCause.getTitle()
+								</option>
+							#else
+								<option value="$hazardCause.getID()" selected>
+									$!hazardCause.getCauseNumber()-T (D): $!hazardCause.getTitle()
+								</option>
+							#end
+						#else
+							#if( !$hazardCause.getDeleteReason() )
+								<option value="$hazardCause.getID()" selected>
+									$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()
+								</option>
+							#else
+								<option value="$hazardCause.getID()" selected>
+									$!hazardCause.getCauseNumber() (D): $!hazardCause.getTitle()
+								</option>
+							#end
+						#end
 						#set( $foundMatch = 1 )
 						#break
 					#end
 				#end
 				#if( $foundMatch == 0 )
-					<option value="$hazardCause.getID()">$!hazardCause.getCauseNumber(): $hazardCause.getTitle()</option>
+					#if( !$hazardCause.getDeleteReason() )
+						#if( $hazardCause.getTransfer() != 0 )
+							<option value="$hazardCause.getID()">
+								$!hazardCause.getCauseNumber()-T: $!hazardCause.getTitle()
+							</option>
+						#else
+							<option value="$hazardCause.getID()">
+								$!hazardCause.getCauseNumber(): $!hazardCause.getTitle()
+							</option>
+						#end
+					#end
 				#else
 					#set( $foundMatch = 0 )
 				#end

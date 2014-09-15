@@ -70,17 +70,22 @@
     width: 85px;
 }
 
-#HazardRiskMatrixUnspecified {
-    padding-top: 5px;
+#HazardRiskMatrixHazards {
+    display: none;
 }
 
-.HazardRiskMatrixNone {
-    display: inline-block;
+#HazardRiskMatrixTransfersDeletedContainer {
+    display: none;
 }
 
 .HazardRiskMatrixLink {
     color: #333333;
 }
+
+.HazardRiskMatrixDynamic {
+    padding-right: 3px;
+}
+
 .HazardRiskMatrixLink:hover {
     color: #0000FF;
 }
@@ -90,19 +95,19 @@
 }
 
 .HazardRiskMatrixTableRedCell {
-    background-color: #CC0000;
+    background-color: #FF3030;
 }
 
 .HazardRiskMatrixTableYellowCell {
-    background-color: #FFCC00;
+    background-color: #E5E500;
 }
 
 .HazardRiskMatrixTableOrangeCell {
-    background-color: #FF8C00;
+    background-color: #FFA500;
 }
 
 .HazardRiskMatrixTableGreenCell {
-    background-color: #4CBB17 ;
+    background-color: #7FC424;
 }
 /* RISK MATRIX CSS ENDS */
 
@@ -291,8 +296,12 @@ form.payloadForm .add:active {
     margin-bottom: 5px;
 }
 
+.TargetIsDeleted {
+    text-decoration: line-through;
+}
+
 .table {
-    display:table;
+    display: table;
     width: 960px;
 }
 

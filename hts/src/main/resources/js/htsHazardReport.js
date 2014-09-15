@@ -176,21 +176,42 @@ AJS.$(document).ready(function() {
 					AJS.$.ajax({
 						type: "GET",
 						async: false,
-						url: AJS.params.baseURL + "/rest/htsrest/1.0/report/cause/" + transferID,
+						url: AJS.params.baseURL + "/rest/htsrest/1.0/report/transfers/" + transferID,
 						success: function(data) {
 							response = data;
 						}
 					});
-					var category = response.riskCategory.split(" - ")[1];
-					var likelihood = response.riskLikelihood.split(" - ")[1];
-					var column = AJS.$("#HazardRiskMatrixTable").find("[data-column='" + category + "']").index();
-					var row = AJS.$("#HazardRiskMatrixTable").find("[data-row='" + likelihood + "']");
-					var cell = AJS.$(row).find("td").eq(column);
-					var linkContainer = AJS.$(cell).children().first();
-					AJS.$(linkContainer).append("<a href='#' class='HazardRiskMatrixLink' data-causeid='" + causeID + "'>" + causeNumber + "-T</a>");
+
+					if (response.active === true) {
+						if (response.type === "CAUSE") {
+							var category = response.riskCategory.split(" - ")[1];
+							var likelihood = response.riskLikelihood.split(" - ")[1];
+							var column = AJS.$("#HazardRiskMatrixTable").find("[data-column='" + category + "']").index();
+							var row = AJS.$("#HazardRiskMatrixTable").find("[data-row='" + likelihood + "']");
+							var cell = AJS.$(row).find("td").eq(column);
+							var linkContainer = AJS.$(cell).children().first();
+							linkContainer.append("<a href='#' class='HazardRiskMatrixLink HazardRiskMatrixDynamic' data-causeid='" + causeID + "'>" + causeNumber + "-T</a>");
+						}
+						else {
+							var hazardContainer = AJS.$("#HazardRiskMatrixHazards");
+							if (!hazardContainer.is(':visible')) {
+								hazardContainer.show();
+							}
+							hazardContainer.append("<a href='#' class='HazardRiskMatrixLink HazardRiskMatrixDynamic' data-causeid='" + causeID + "'>" + causeNumber + "-T</a>");
+						}
+					}
+					else {
+						var deletedContainer = AJS.$("#HazardRiskMatrixTransfersDeletedContainer");
+						if (!deletedContainer.is(":visible")) {
+							deletedContainer.show();
+						}
+						deletedContainer.append("<a href='#' class='HazardRiskMatrixLink HazardRiskMatrixDynamic' data-causeid='" + causeID + "'>" + causeNumber + "-T</a>");
+					}
 				});
 			}
 		}
+
+
 	}
 
 	if (whichPage === "hazardform" && !AJS.$.isEmptyObject(parameters)) {
@@ -249,7 +270,19 @@ AJS.$(document).ready(function() {
 
 	AJS.$(".deleteHazardReport").live('click', function() {
 		var hazardIDToBeDeleted = AJS.$(this).data("key");
-		openDeleteHazardReportDialog(hazardIDToBeDeleted);
+		AJS.$.ajax({
+			type: "GET",
+			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardAssociations/" + hazardIDToBeDeleted,
+			success: function(data) {
+				console.log("SUCCESS");
+				console.log(data);
+			},
+			error: function() {
+				console.log("ERROR");
+			}
+		});
+
+		//openDeleteHazardReportDialog(hazardIDToBeDeleted);
 	});
 
 	AJS.$(".createNewHazardReport").live("click", function() {
@@ -286,7 +319,6 @@ AJS.$(document).ready(function() {
 	AJS.$(".HazardRiskMatrixLink").live("click", function() {
 		var hazardID = AJS.$("#hazardID").val();
 		var causeID = AJS.$(this).data("causeid");
-		console.log(causeID);
 		updateRiskMatrixCauseCookie(causeID);
 		AJS.$(this).attr("href", AJS.params.baseURL + "/plugins/servlet/causeform?edit=y&key=" + hazardID);
 	});

@@ -23,6 +23,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.google.common.base.Strings;
 
 public class HazardCauseServiceImpl implements HazardCauseService {
 	private final ActiveObjects ao;
@@ -161,7 +162,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	
 		List<TransferClass> transferInfo = new ArrayList<TransferClass>();
 		for(Transfers transfer : allTransfers) {
-			//Be able to return this somehow in a list
 			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
 			String transferReason = originCause.getDescription();
 			int transferID = transfer.getID();
@@ -196,10 +196,15 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 					likelihoodStr = likelihood.getValue();
 				}
 				
+				Boolean deleted = false;				
+				if (!Strings.isNullOrEmpty(transferredCause.getDeleteReason())) {
+					deleted = true;
+				}
+				
 				//This is the id of the hazard the cause belongs to, which is needed for the title navigation.
 				int hazardID = transferredCause.getHazards()[0].getID();
-				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, 
-										hazardTitle, targetType, hazardID, targetID, causeNum, categoryStr, likelihoodStr);
+				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle,
+										targetType, hazardID, targetID, causeNum, categoryStr, likelihoodStr, deleted);
 				transferInfo.add(causeTransfer);
 			}
 			else if(transfer.getTargetType().equals("HAZARD")) {
@@ -208,7 +213,13 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 				Hazards transferredHazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
 				String hazardTitle = transferredHazard.getTitle();
 				String hazardNumb = transferredHazard.getHazardNum();
-				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, targetType, targetID);
+				Boolean deleted = false;		
+				if (transferredHazard.getActive() == false) {
+					deleted = true;
+				}
+	
+				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, 
+										targetType, targetID, deleted);
 				transferInfo.add(hazardTransfer);
 			}
 		}
@@ -219,6 +230,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
 		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
 		for (Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
+			// is null or empty check?
 			if (current.getDeleteReason() == null) {
 				allRemaining.add(current);
 			}
@@ -229,6 +241,12 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	@Override
 	public Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason) {
 		causeToBeDeleted.setDeleteReason(reason);
+		if (causeToBeDeleted.getTransfer() != 0) {
+			int transferID = causeToBeDeleted.getTransfer();
+			Transfers transfer = transferService.getTransferByID(transferID);
+			transfer.setActive(false);
+			transfer.save();
+		}
 		causeToBeDeleted.save();
 		return causeToBeDeleted;
 	}
@@ -245,7 +263,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
-		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType, true);
 		return transfer.getID();
 	}
 }

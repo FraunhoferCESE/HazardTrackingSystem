@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.ws.rs.*;
@@ -16,6 +18,7 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
@@ -31,13 +34,16 @@ public class HazardResource {
 	private final MissionPayloadService missionPayloadService;
 	private final HazardCauseService hazardCauseService;
 	private final TransferService transferService;
+	private final HazardControlService hazardControlService;
 
 	public HazardResource(HazardService hazardService, MissionPayloadService missionPayloadService,
-			HazardCauseService hazardCauseService, TransferService transferService) {
+			HazardCauseService hazardCauseService, TransferService transferService, 
+			HazardControlService hazardControlService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.transferService = checkNotNull(transferService);
+		this.hazardControlService = checkNotNull(hazardControlService);
 	}
 
 	@GET
@@ -67,6 +73,47 @@ public class HazardResource {
 		}
 
 	}
+	
+//	----
+	@GET
+	@Path("hazardAssociations/{hazardID}")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response checkHazardAssocation(@PathParam("hazardID") String hazardID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			JSONObject json = new JSONObject();
+			
+			Hazards hazard = hazardService.getHazardByID(hazardID);
+			List<Transfers> transfers = transferService.all();
+			for (Transfers transfer : transfers) {
+				if (hazardID.equals(String.valueOf(transfer.getTargetID())) && transfer.getTargetType().equals("HAZARD")) {
+					if (transfer.getActive()) {
+						createJson(json, "hasAssociations", true);
+						createJson(json, "hazard", hazard);
+						String jsonStr = json.toString();
+						return Response.ok(jsonStr, MediaType.APPLICATION_JSON).build();
+					}
+				}
+			}
+
+//			List<Hazard_Causes> causes = hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard);
+			// need to do lookup based on transfer table
+//			for (Transfers transfer : transfers) {
+//				for (Hazard_Causes cause : causes) {
+//					if () {
+//						
+//					}
+//				}
+//			}
+			
+			createJson(json, "hasAssociations", false);
+			String jsonStr = json.toString();
+			return Response.ok(jsonStr, MediaType.APPLICATION_JSON).build();
+		}
+		else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
+		}
+	}
+//	----
 
 	@GET
 	@Path("allhazards")
@@ -165,18 +212,38 @@ public class HazardResource {
 	}
 	
 	@GET
-	@Path("cause/{transferID}")
+	@Path("transfers/{transferID}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getOriginCause(@PathParam("transferID") String transferID) {
+	public Response getTargetProperty(@PathParam("transferID") String transferID) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			int transferIDInt = Integer.parseInt(transferID);
 			Transfers transfer = transferService.getTransferByID(transferIDInt);
-			Hazard_Causes cause = hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-			//return Response.ok(cause).build();
-			return Response.ok(HazardCauseResponseList.causes(cause)).build();
+			String transferType = transfer.getTargetType();
+			if (transferType.equals("HAZARD")) {
+				Hazards hazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
+				return Response.ok(HazardResponseList.hazards(hazard)).build();	
+			}
+			else if (transferType.equals("CAUSE")) {
+				Hazard_Causes cause = hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
+				return Response.ok(HazardCauseResponseList.causes(cause)).build();
+			}
+			else {
+				Hazard_Controls control = hazardControlService.getHazardControlByID(String.valueOf(transfer.getTargetID()));
+				return Response.ok(HazardControlResponseList.control(control)).build();
+			}
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
 		}
+	}
+	
+	private JSONObject createJson(JSONObject json, String key, Object value) {
+		try {
+			json.put(key, value);
+		} catch (JSONException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return json;
 	}
 }

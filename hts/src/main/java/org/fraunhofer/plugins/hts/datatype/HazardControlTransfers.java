@@ -7,6 +7,7 @@ public class HazardControlTransfers {
 	private int targetID;
 	private int originID;
 	private String targetType;
+	private Boolean targetDeleted; 
 	// Joint:
 	private String originHazardControlTransferReason;
 	private String targetHazardNo;
@@ -56,6 +57,14 @@ public class HazardControlTransfers {
 	
 	public void setTargetType(String theTargetType) {
 		this.targetType = theTargetType;
+	}
+	
+	public Boolean getTargetDeleted() {
+		return this.targetDeleted;
+	}
+	
+	public void setTargetDeleted(Boolean deleted) {
+		this.targetDeleted = deleted;
 	}
 	
 	public String getOriginHazardControlTransferReason() {

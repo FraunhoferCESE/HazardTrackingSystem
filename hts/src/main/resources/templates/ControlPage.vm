@@ -33,12 +33,22 @@
 							#if($hazardControl.getTransfer() != 0)
 								#foreach($transfer in $controlTransfers)
 									#if($transfer.getTransferID() == $hazardControl.getTransfer())
-										#set($theTransfer = $transfer)
-										#if($theTransfer.getTargetType() == "CONTROL")
-											<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/controlform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CTRL $!theTransfer.getTargetHazardControlNo() - $!transfer.getTargetHazardControlDescription()</a></div>
-										#end
-										#if($theTransfer.getTargetType() == "CAUSE")
-											<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CAUSE $!theTransfer.getTargetHazardCauseNo() - $!theTransfer.getTargetHazardCauseTitle()</a></div>
+										#if($transfer.getTargetDeleted() == true)
+											#set($theTransfer = $transfer)
+											#if($theTransfer.getTargetType() == "CONTROL")
+												<div class="ControlsTableDescriptionText TargetIsDeleted">$!theTransfer.getTargetHazardNo():CTRL $!theTransfer.getTargetHazardControlNo() - $!transfer.getTargetHazardControlDescription()</div>
+											#end
+											#if($theTransfer.getTargetType() == "CAUSE")
+												<div class="ControlsTableDescriptionText TargetIsDeleted">$!theTransfer.getTargetHazardNo():CAUSE $!theTransfer.getTargetHazardCauseNo() - $!theTransfer.getTargetHazardCauseTitle()</div>
+											#end
+										#else
+											#set($theTransfer = $transfer)
+											#if($theTransfer.getTargetType() == "CONTROL")
+												<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/controlform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CTRL $!theTransfer.getTargetHazardControlNo() - $!transfer.getTargetHazardControlDescription()</a></div>
+											#end
+											#if($theTransfer.getTargetType() == "CAUSE")
+												<div class="ControlsTableDescriptionText"><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getTargetHazardID()&id=$transfer.getTargetID()&trans=y">$!theTransfer.getTargetHazardNo():CAUSE $!theTransfer.getTargetHazardCauseNo() - $!theTransfer.getTargetHazardCauseTitle()</a></div>
+											#end
 										#end
 										#break
 									#end

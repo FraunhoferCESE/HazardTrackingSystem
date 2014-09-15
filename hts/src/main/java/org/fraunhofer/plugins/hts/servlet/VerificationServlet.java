@@ -64,7 +64,8 @@ public class VerificationServlet extends HttpServlet{
 				context.put("verificationTypes", verificationTypeService.all());
 				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
 				context.put("verificationStatuses", verificationStatusService.all());
-				context.put("allControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
+				context.put("allControls", hazardControlService.getAllControlsWithinAHazard(currentHazard));
+				context.put("allTransferredControls", hazardControlService.getAllTransferredControls(currentHazard));
 				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
 			} else {
 				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
