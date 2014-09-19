@@ -15,7 +15,11 @@ public class ParagraphBuilder {
 	private String text = "";
 	private boolean bottomBorder = false;
 	private int leftMargin = 50;
+	private int rightMargin = 50;
 	private int hangingIndent = 0;
+	private int spaceAfter = 10;
+	private int spaceBefore = 10;
+	private boolean pageBreak = false;
 
 	public ParagraphBuilder() {
 	}
@@ -34,9 +38,11 @@ public class ParagraphBuilder {
 		run.setFontFamily(fontFamily);
 		run.setFontSize(fontSize);
 		paragraph.setAlignment(alignment);
-		paragraph.setSpacingAfter(10);
+		paragraph.setSpacingAfter(spaceAfter);
+		paragraph.setSpacingBefore(spaceBefore);
+		paragraph.setPageBreak(pageBreak);
 		paragraph.setIndentationLeft(leftMargin);
-		paragraph.setIndentationRight(50);
+		paragraph.setIndentationRight(rightMargin);
 		paragraph.setIndentationHanging(hangingIndent);
 		if (bottomBorder)
 			paragraph.setBorderBottom(Borders.SINGLE);
@@ -71,10 +77,29 @@ public class ParagraphBuilder {
 		this.leftMargin = margin;
 		return this;
 	}
+	
+	public ParagraphBuilder rightMargin(int margin) {
+		this.rightMargin = margin;
+		return this;
+	}
 
 	public ParagraphBuilder hangingIndent(int hangingIndent) {
 		this.hangingIndent = hangingIndent;
 		return this;
 	}
-
+	
+	public ParagraphBuilder spaceAfter(int space) {
+		this.spaceAfter = space;
+		return this;
+	}
+	
+	public ParagraphBuilder spaceBefore(int space) {
+		this.spaceBefore = space;
+		return this;
+	}
+	
+	public ParagraphBuilder pageBreak(boolean hasPageBreak) {
+		this.pageBreak = hasPageBreak;
+		return this;
+	}
 }
