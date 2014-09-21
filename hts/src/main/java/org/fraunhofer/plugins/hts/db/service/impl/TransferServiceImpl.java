@@ -21,8 +21,10 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers add(int originID, String originType, int targetID, String targetType) {
-		final Transfers transfer = ao.create(Transfers.class, new DBParam("ORIGIN_ID", originID), new DBParam("ORIGIN_TYPE", originType), new DBParam("TARGET_ID", targetID), new DBParam("TARGET_TYPE", targetType));
+	public Transfers add(int originID, String originType, int targetID, String targetType, boolean active) {
+		final Transfers transfer = ao.create(Transfers.class, new DBParam("ORIGIN_ID", originID), 
+				new DBParam("ORIGIN_TYPE", originType), new DBParam("TARGET_ID", targetID), 
+				new DBParam("TARGET_TYPE", targetType), new DBParam("ACTIVE", active));
 		transfer.save();
 		return transfer;
 	}
@@ -42,6 +44,11 @@ public class TransferServiceImpl implements TransferService {
 	public Transfers getTransferByID(int id) {
 		final Transfers[] transfer = ao.find(Transfers.class, Query.select().where("ID=?", id));
 		return transfer.length > 0 ? transfer[0] : null;
+	}
+	
+	public boolean checkForActiveTransferTarget(int targetID, String targetType) {
+		final Transfers[] transfers = ao.find(Transfers.class, Query.select().where("TARGET_ID=? AND TARGET_TYPE=? AND ACTIVE=?", targetID, targetType, true));
+		return transfers.length > 0 ? true : false;
 	}
 
 }

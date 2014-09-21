@@ -3,9 +3,12 @@ package org.fraunhofer.plugins.hts.rest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.Date;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+
+import com.google.common.base.Strings;
 
 @XmlRootElement(name = "causeResponseList")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -19,6 +22,8 @@ public class HazardCauseResponseList {
 	private Date lastUpdated;
 	private String riskCategory;
 	private String riskLikelihood;
+	private Boolean active;
+	private String type;
 
 	public HazardCauseResponseList() {
 
@@ -59,6 +64,14 @@ public class HazardCauseResponseList {
 	public String getRiskLikelihood() {
 		return riskLikelihood;
 	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+	
+	public String getType() {
+		return type;
+	}
 
 	public static HazardCauseResponseList causes(Hazard_Causes cause) {
 		HazardCauseResponseList list = new HazardCauseResponseList();
@@ -71,6 +84,15 @@ public class HazardCauseResponseList {
 		list.lastUpdated = cause.getLastUpdated();
 		list.riskCategory = cause.getRiskCategory().getValue();
 		list.riskLikelihood = cause.getRiskLikelihood().getValue();
+		
+		if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
+			list.active = true;
+		}
+		else {
+			list.active = false;
+		}
+		
+		list.type = "CAUSE";
 		return list;
 	}
 }
