@@ -175,9 +175,9 @@ public class HazardResource {
 				causeList.add(HazardCauseResponseList.causes(cause));
 			}
 			return Response.ok(causeList).build();
-		} else {
-			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
-					.build();
+		}
+		else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
 		}
 	}
 

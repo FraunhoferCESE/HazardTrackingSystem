@@ -22,6 +22,7 @@ public class HazardCauseResponseList {
 	private Date lastUpdated;
 	private String riskCategory;
 	private String riskLikelihood;
+	private boolean transfer;
 	private Boolean active;
 	private String type;
 
@@ -65,6 +66,10 @@ public class HazardCauseResponseList {
 		return riskLikelihood;
 	}
 	
+	public boolean getTransfer() {
+		return transfer;
+	}
+	
 	public Boolean getActive() {
 		return active;
 	}
@@ -82,8 +87,7 @@ public class HazardCauseResponseList {
 		list.owner = cause.getOwner();
 		list.effects = cause.getEffects();
 		list.lastUpdated = cause.getLastUpdated();
-		list.riskCategory = cause.getRiskCategory().getValue();
-		list.riskLikelihood = cause.getRiskLikelihood().getValue();
+		list.type = "CAUSE";
 		
 		if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
 			list.active = true;
@@ -92,7 +96,13 @@ public class HazardCauseResponseList {
 			list.active = false;
 		}
 		
-		list.type = "CAUSE";
+		list.transfer = true;
+		if (cause.getTransfer() == 0) {
+			list.riskCategory = cause.getRiskCategory().getValue();
+			list.riskLikelihood = cause.getRiskLikelihood().getValue();
+			list.transfer = false;
+		}	
+		
 		return list;
 	}
 }

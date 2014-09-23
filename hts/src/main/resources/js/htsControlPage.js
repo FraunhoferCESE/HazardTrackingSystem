@@ -691,9 +691,16 @@ AJS.$(document).ready(function(){
 			if(causeListForSelectedHazard.length > 0) {
 				temp += "<option value=''>-Select Cause-</option>";
 				AJS.$(causeListForSelectedHazard).each(function() {
-					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					var causeNumberAndTitle;
+					if (this.transfer === true) {
+						causeNumberAndTitle = this.causeNumber + "-T - " + this.title;
+					}
+					else {
+						causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					}
 					temp += "<option value=" + this.causeID + ">" + manipulateControlTextVariableLength(causeNumberAndTitle, 85) + "</option>";
 				});
+				temp += "</select>";
 				AJS.$("div.TransferControlCauseContainer").append(temp);
 			}
 			else {
@@ -728,7 +735,9 @@ AJS.$(document).ready(function(){
 					var controlNumberAndDescription = this.controlNumber + " - " + this.description;
 					temp += "<option value=" + this.controlID + ">" + manipulateControlTextVariableLength(controlNumberAndDescription, 85) + "</option>";
 				});
+				temp += "</select>";
 				AJS.$("div.TransferControlControlContainer").append(temp);
+				AJS.$(".TransferControlControlContainer option").tsort();
 			}
 			else {
 				AJS.$("div.TransferControlControlContainer").append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div class='TransferNoProperties'>-Link to all Controls in selected Cause- (Selected Cause currently has no Controls)</div>");

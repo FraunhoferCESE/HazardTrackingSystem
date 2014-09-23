@@ -230,8 +230,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
 		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
 		for (Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
-			// is null or empty check?
-			if (current.getDeleteReason() == null) {
+			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
 				allRemaining.add(current);
 			}
 		}

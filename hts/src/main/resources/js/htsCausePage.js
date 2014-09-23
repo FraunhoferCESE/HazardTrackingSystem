@@ -455,23 +455,36 @@ function transfer() {
 		var elements = AJS.$("div.container").children().remove();
 		var value = AJS.$(this).val();
 		var causeList;
-		if(value.length) {
+		if (value.length) {
 			AJS.$.ajax({
 				type:"GET",
 				async: false,
 				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
 				success: function(data) {
+					console.log("SUCCESS");
 					causeList = data;
+				},
+				error: function() {
+					console.log("ERROR");
 				}
 			});
+
 			AJS.$(".container").show();
 			var temp = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causeList.length > 0) {
 				temp += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				AJS.$(causeList).each(function() {
-					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					var causeNumberAndTitle;
+					if (this.transfer === true) {
+						causeNumberAndTitle = this.causeNumber + "-T - " + this.title;
+					}
+					else {
+						causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					}
+
 					temp += "<option value=" + this.causeID + ">" + manipulateCauseTextVariableLength(causeNumberAndTitle, 85) + "</option>";
 				});
+				temp += "</select>";
 				AJS.$("div.container").append(temp);
 			}
 			else {
