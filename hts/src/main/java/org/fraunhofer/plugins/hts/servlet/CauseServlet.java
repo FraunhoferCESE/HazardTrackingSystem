@@ -15,6 +15,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
+import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -35,16 +36,19 @@ public class CauseServlet extends HttpServlet {
 	private final TemplateRenderer templateRenderer;
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodService;
+	private final TransferService transferService;
 
 	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer, 
 			HazardService hazardService, MissionPayloadService missionPayloadService, 
-			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodService) {
+			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodService, 
+			TransferService transferService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
+		this.transferService = checkNotNull(transferService);
 	}
 
 	@Override

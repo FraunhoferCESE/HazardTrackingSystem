@@ -433,6 +433,7 @@ AJS.$(document).ready(function(){
 					async: false,
 					success: function(data) {
 						$(form).removeDirtyWarning();
+						console.log("TROLLFACE");
 					},
 					error: function(error) {
 						console.log("ERROR");

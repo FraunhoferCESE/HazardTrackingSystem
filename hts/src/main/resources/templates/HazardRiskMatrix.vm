@@ -138,19 +138,24 @@
 	#end
 </table>
 
-#if ($notSpecified.size() == 0)
-	<div class="HazardRiskMatrixNone" id="HazardRiskMatrixUnspecified">
-		<div class="HazardRiskMatrixNone HazardRiskMatrixText">Causes with unspecified risk: </div>
-		<div class="HazardRiskMatrixNone">None</div>
+<div id="HazardRiskMatrixHazards">
+	<div class="HazardRiskMatrixText">Causes associated with entire hazards: </div>
+</div>
+
+#if ($notSpecified.size() != 0)
+	<div>
+		<div class="HazardRiskMatrixText">Causes with unspecified category and/or likelihood: </div>
+		#foreach ($cause in $notSpecified)
+			<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
+				$cause.getCauseNumber()
+			</a>
+		#end
 	</div>
-#else
-	<div class="HazardRiskMatrixText" id="HazardRiskMatrixUnspecified">Causes with unspecified category and/or likelihood: </div>
-	#foreach ($cause in $notSpecified)
-		<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
-			$cause.getCauseNumber()
-		</a>
-	#end
 #end
+
+<div id="HazardRiskMatrixTransfersDeletedContainer">
+	<div class="HazardRiskMatrixText">Causes whose transfers are deleted: </div>
+</div>
 
 <div id="HazardRiskMatrixTransfersContainer">
 	#if ($causeTransfers.size() != 0)

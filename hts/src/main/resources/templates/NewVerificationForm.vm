@@ -34,10 +34,52 @@
 		<input class="aui-date-picker" name="verificationComplDateNew" id="verificationComplDateNew" type="date" />
 	</div>
 	<div class="field-group" id="addNewVerificationMultiSelect">
+		#set( $theControls= [] )
+		#foreach( $control in $allControls )
+			#if( !$control.getDeleteReason() )
+				#if( $control.getTransfer() != 0 )
+					#foreach( $transferredControl in $allTransferredControls )
+						#if ( $control.getID() == $transferredControl.getOriginID() )
+							#if ($transferredControl.getTargetType() == "CONTROL")
+								#set( $item = {} )
+								#set( $item.ID = $control.getID() )
+								#set( $item.number = $control.getControlNumber() )
+								#set( $item.text = $transferredControl.getTargetHazardControlDescription() )
+								#set( $item.transfer = "-T" )
+								#set( $result = $theControls.add($item) )
+							#else
+								#set( $item = {} )
+								#set( $item.ID = $control.getID() )
+								#set( $item.number = $control.getControlNumber() )
+								#set( $item.text = $transferredControl.getTargetHazardCauseTitle() )
+								#set( $item.transfer = "-T" )
+								#set( $result = $theControls.add($item) )
+							#end
+							#break
+						#end
+					#end
+				#else
+					#set( $item = {} )
+					#set( $item.ID = $control.getID() )
+					#set( $item.number = $control.getControlNumber() )
+					#set( $item.text = $control.getDescription() )
+					#set( $item.transfer = false )
+					#set( $result = $theControls.add($item) )
+				#end
+			#end
+		#end
 		<label for="verificationControlsNew">Controls</label>
 		<select class="multi-select" size="5" multiple="multiple" name="verificationControlsNew" id="verificationControlsNew">
-			#foreach( $control in $allControls )
-				<option value="$control.getID()">$!control.getControlNumber(): $!control.getDescription()</option>
+			#foreach ($theControl in $theControls)
+				#if( $theControl.transfer == "-T" )
+					<option value="$theControl.ID">
+						$!theControl.number$!theControl.transfer: $!theControl.text
+					</option>
+				#else
+					<option value="$theControl.ID">
+						$!theControl.number: $!theControl.text
+					</option>
+				#end
 			#end
 		</select>
 		<div class="ControlsTableEditControlsFooterContainerOne"><span class="ControlsTableEditControlsFooter">Non-associated Controls</span></div>

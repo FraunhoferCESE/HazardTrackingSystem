@@ -3,11 +3,30 @@
 		<div class="row">
     		<div class="cell trigger"><span class="aui-icon aui-icon-small aui-iconfont-add"></span>Cause $!cause.getCauseNumber()</div>
     		<div class="cell causeTitle">
-    			#if($transfer.getTransferType() == "CAUSE")
-    				<div class="CausesTableTitleText"><a href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()&trans=y">$!transfer.getHazardNumb():CAUSE $!transfer.getCauseNum() - $!transfer.getMainTitle()</a></div>
-    			#end
-    			#if($transfer.getTransferType() == "HAZARD")
-    				<div class="CausesTableTitleText"><a href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">$!transfer.getHazardNumb() - $!transfer.getMainTitle()</a></div>
+    			#if($transfer.getDeleted() == true)
+    				#if($transfer.getTransferType() == "CAUSE")
+    					<div class="CausesTableTitleText TargetIsDeleted">$!transfer.getHazardNumb():CAUSE $!transfer.getCauseNum() - $!transfer.getMainTitle()</div>
+    				#end
+    				#if($transfer.getTransferType() == "HAZARD")
+    					<div class="CausesTableTitleText TargetIsDeleted">$!transfer.getHazardNumb() - $!transfer.getMainTitle()</div>
+    				#end
+    			#else
+	    			#if($transfer.getTransferType() == "CAUSE")
+    					<div class="CausesTableTitleText">
+    						<a
+    							href="$baseUrl/plugins/servlet/causeform?edit=y&key=$transfer.getHazardID()&id=$transfer.getTargetID()&trans=y">
+    							$!transfer.getHazardNumb():CAUSE $!transfer.getCauseNum() - $!transfer.getMainTitle()
+    						</a>
+    					</div>
+	    			#end
+	    			#if($transfer.getTransferType() == "HAZARD")
+	    				<div class="CausesTableTitleText">
+	    					<a
+	    						href="$baseUrl/plugins/servlet/hazardlist?edit=y&key=$transfer.getTargetID()">
+	    						$!transfer.getHazardNumb() - $!transfer.getMainTitle()
+	    					</a>
+	    				</div>
+	    			#end
     			#end
 			</div>
     		<div class="cell"><div class="CausesTableOwnerText">$!cause.getOwner()</div></div>

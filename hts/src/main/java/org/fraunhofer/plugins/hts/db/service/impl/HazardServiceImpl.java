@@ -6,6 +6,7 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -195,7 +196,8 @@ public class HazardServiceImpl implements HazardService {
 		// Mark hazards as inactive
 		hazardToDelete.setActive(false);
 		Date deleteDate = new Date();
-		hazardToDelete.setHazardNum(hazardToDelete.getHazardNum() + " (DELETED " + deleteDate.toString() + ")");
+		SimpleDateFormat deletedTimestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+		hazardToDelete.setHazardNum(hazardToDelete.getHazardNum() + " (DELETED " + deletedTimestampFormat.format(deleteDate) + ")");
 		hazardToDelete.save();
 		
 		// Mark all non-deleted causes as deleted

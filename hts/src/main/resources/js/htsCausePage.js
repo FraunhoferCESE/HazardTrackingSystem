@@ -39,6 +39,16 @@ function checkUpdateMessageCookie() {
 	}
 }
 
+function createRiskMatrixCauseCookie() {
+	if (AJS.Cookie.read("RISK_MATRIX_CAUSE") === undefined) {
+		AJS.Cookie.save("RISK_MATRIX_CAUSE", "none");
+	}
+}
+
+function updateRiskMatrixCauseCookie(theCauseID) {
+	AJS.Cookie.save("RISK_MATRIX_CAUSE", theCauseID);
+}
+
 function checkRiskMatrixCauseCookie() {
 	if (AJS.Cookie.read("RISK_MATRIX_CAUSE") !== undefined) {
 		var idOfCauseOpen = AJS.Cookie.read("RISK_MATRIX_CAUSE");
@@ -217,7 +227,37 @@ function getHazardInformationInCauses() {
 	return hazardInformation;
 }
 
-function deleteSelectedCauses(doRefresh, arrayOfCauseIDs, arrayOfDirtyCauseIDs){
+function checkCauseAssociation(arrayOfCauseIDs) {
+	var arrayOfCauseIDsStr = arrayOfCauseIDs.toString();
+	var associatedCauses = [];
+	AJS.$.ajax({
+		type: "GET",
+		async: false,
+		url: AJS.params.baseURL + "/rest/htsrest/1.0/report/causeAssociations/" + arrayOfCauseIDsStr,
+		success: function(data) {
+			console.log("SUCCESS");
+			associatedCauses = data;
+		},
+		error: function() {
+			console.log("ERROR");
+		}
+	});
+	console.log(associatedCauses);
+	return associatedCauses;
+}
+
+function associatedCausesArrayContains(associatedCauses, causeID) {
+	var rtn = null;
+	for (var i = 0; i < associatedCauses.length; i++) {
+		if (associatedCauses[i].targetCauseID.toString() === causeID) {
+			rtn = associatedCauses[i];
+		}
+	}
+	return rtn;
+}
+
+function deleteSelectedCauses(doRefresh, arrayOfCauseIDs, arrayOfDirtyCauseIDs) {
+	var associatedCauses = checkCauseAssociation(arrayOfCauseIDs);
 	// Hazard specific mark-up:
 	var hazardInformation = getHazardInformationInControls();
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" +
@@ -251,6 +291,68 @@ function deleteSelectedCauses(doRefresh, arrayOfCauseIDs, arrayOfDirtyCauseIDs){
 							arrayOfCauseIDs[i] + "'></div></td></tr>";
 		}
 
+		var associatedCause = associatedCausesArrayContains(associatedCauses, arrayOfCauseIDs[i]);
+		if (associatedCause !== null) {
+			dialogContent3 = dialogContent3 +
+							"<tr>" +
+								"<td colspan='100%'>" +
+									"<p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p>" +
+								"</td>" +
+							"</tr>";
+			dialogContent3 = dialogContent3 +
+							"<tr>" +
+								"<td colspan='100%'>" +
+									"<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+										"<a href='hazardlist?edit=y&key=" + associatedCause.hazardID + "'>Hazard " + associatedCause.hazardNumber + "</a>" +
+										" (owned by " + associatedCause.hazardOwner + "): ";
+			var whichLoops = {
+				causes: false,
+				controls: false
+			};
+			if (associatedCause.transferType === "BOTH") {
+				whichLoops.causes = true;
+				whichLoops.controls = true;
+			}
+			else if (associatedCause.transferType === "CAUSE-CAUSE" ) {
+				whichLoops.causes = true;
+			}
+			else {
+				whichLoops.controls = true;
+			}
+
+			if (whichLoops.causes) {
+				for (var k = 0; k < associatedCause.originCauses.length; k++) {
+					var comma1 = ", ";
+					if (k === (associatedCause.originCauses.length - 1)) {
+						comma1 = "";
+					}
+
+					dialogContent3 = dialogContent3 +
+									"<a href='causeform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedCause' data-causeid='" + associatedCause.originCauses[k].originCauseID + "'>" +
+											"Cause " + associatedCause.originCauses[k].originCauseNumber +
+									"</a>" + comma1;
+				}
+			}
+			if (whichLoops.controls) {
+				if (whichLoops.causes) {
+					dialogContent3 = dialogContent3 + ", ";
+				}
+				for (var l = 0; l < associatedCause.originControls.length; l++) {
+					var comma2 = ", ";
+					if (l === (associatedCause.originControls.length - 1)) {
+						comma2 = "";
+					}
+
+					dialogContent3 = dialogContent3 +
+									"<a href='controlform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedControl' data-controlid='" + associatedCause.originControls[l].originControlID + "'>" +
+										"Control " + associatedCause.originControls[l].originControlNumber +
+									"</a>" + comma2;
+				}
+			}
+
+			dialogContent3 = dialogContent3 + "</p></td></tr>";
+		}
+
 		if (arrayOfDirtyCauseIDs.indexOf(arrayOfCauseIDs[i]) !== -1) {
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText'>This cause has been edited. All changes will be discarded.</p></td></tr>";
 		}
@@ -261,7 +363,7 @@ function deleteSelectedCauses(doRefresh, arrayOfCauseIDs, arrayOfDirtyCauseIDs){
 
 	var dialog = new AJS.Dialog({
 		width: 600,
-		height: 450,
+		height: 475,
 		id: "deleteDialog",
 	});
 
@@ -455,23 +557,36 @@ function transfer() {
 		var elements = AJS.$("div.container").children().remove();
 		var value = AJS.$(this).val();
 		var causeList;
-		if(value.length) {
+		if (value.length) {
 			AJS.$.ajax({
 				type:"GET",
 				async: false,
 				url: AJS.params.baseURL + "/rest/htsrest/1.0/report/allcauses/" + value,
 				success: function(data) {
+					console.log("SUCCESS");
 					causeList = data;
+				},
+				error: function() {
+					console.log("ERROR");
 				}
 			});
+
 			AJS.$(".container").show();
 			var temp = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causeList.length > 0) {
 				temp += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				AJS.$(causeList).each(function() {
-					var causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					var causeNumberAndTitle;
+					if (this.transfer === true) {
+						causeNumberAndTitle = this.causeNumber + "-T - " + this.title;
+					}
+					else {
+						causeNumberAndTitle = this.causeNumber + " - " + this.title;
+					}
+
 					temp += "<option value=" + this.causeID + ">" + manipulateCauseTextVariableLength(causeNumberAndTitle, 85) + "</option>";
 				});
+				temp += "</select>";
 				AJS.$("div.container").append(temp);
 			}
 			else {
@@ -569,6 +684,7 @@ AJS.$(document).ready(function() {
 	createAssociatedCauseCookie();
 	createUpdateMessageCookie();
 	checkUpdateMessageCookie();
+	createRiskMatrixCauseCookie();
 	checkRiskMatrixCauseCookie();
 
 	var createdCauses = serializeCreatedCauses();
@@ -687,6 +803,11 @@ AJS.$(document).ready(function() {
 				JIRA.Messages.showWarningMsg("No changes have been made.", {closeable: true});
 			}
 		}
+	});
+
+	AJS.$(".openAssociatedCause").live('click', function() {
+		var causeID = AJS.$(this).data("causeid");
+		updateRiskMatrixCauseCookie(causeID);
 	});
 
 	var whichForm;

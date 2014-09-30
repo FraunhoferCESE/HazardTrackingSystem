@@ -350,6 +350,8 @@ function checkForUpdatesToExistingVerifications(originalCreatedVerifications) {
 		var originalSerialized = originalCreatedVerifications[verificationID];
 		var modifiedSerialized = modifiedCreatedVerifications[verificationID];
 		if (verificationsToDelete.indexOf(verificationID) === -1) {
+			console.log(originalSerialized);
+			console.log(modifiedSerialized);
 			if (originalSerialized !== modifiedSerialized) {
 				AJS.$(this).trigger("submit");
 				if (checkForValidationError()) {

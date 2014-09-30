@@ -12,4 +12,6 @@ public interface TransferService {
 	List<Transfers> all();
 	
 	Transfers getTransferByID(int id);
+	
+	boolean checkForActiveTransferTarget(int targetID, String targetType);
 }

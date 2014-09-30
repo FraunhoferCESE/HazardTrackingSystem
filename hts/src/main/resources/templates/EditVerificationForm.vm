@@ -47,21 +47,103 @@
 				type="date" data-date="$!verification.getEstCompletionDate()" />
 	</div>
 	<div class="field-group">
-		<label for="verificationControlsEdit">Controls</label>
-		<select class="multi-select verificationControlsEdit" size="5" multiple="multiple" name="verificationControlsEdit" id="verificationControlsEditForVerificationID$!verification.getID()">
-			#set( $foundMatch = 0 )
-			#foreach( $control in $allControls )
-				#foreach( $selectedControl in $verification.getControls() )
-					#if( $control.getID() == $selectedControl.getID() )
-						<option value="$control.getID()" selected>$!control.getControlNumber(): $control.getDescription()</option>
-						#set( $foundMatch = 1 )
-						#break
+		#set( $theControls = [] )
+		#set( $foundMatch = 0 )
+		#foreach( $control in $allControls )
+			#foreach( $selectedControl in $verification.getControls() )
+				#if( $control.getID() == $selectedControl.getID() )
+					#if( $control.getTransfer() != 0 )
+						#foreach( $transferredControl in $allTransferredControls )
+							#if ( $control.getID() == $transferredControl.getOriginID() )
+								#set( $item = {} )
+								#set( $item.ID = $control.getID() )
+								#set( $item.number = $control.getControlNumber() )
+								#set( $item.transfer = "-T" )
+								#set( $item.selected = true )
+								#if( !$control.getDeleteReason() )
+									#set( $item.deleted = false )
+								#else
+									#set( $item.deleted = true )
+								#end
+								#if ($transferredControl.getTargetType() == "CONTROL")
+									#set( $item.text = $transferredControl.getTargetHazardControlDescription() )
+								#else
+									#set( $item.text = $transferredControl.getTargetHazardCauseTitle() )
+								#end
+								#set( $result = $theControls.add($item) )
+								#break
+							#end
+						#end
+					#else
+						#set( $item = {} )
+						#set( $item.ID = $control.getID() )
+						#set( $item.number = $control.getControlNumber() )
+						#set( $item.text = $control.getDescription() )
+						#set( $item.transfer = "" )
+						#set( $item.selected = true )
+						#if( !$control.getDeleteReason() )
+							#set( $item.deleted = false )
+						#else
+							#set( $item.deleted = true )
+						#end
+						#set( $result = $theControls.add($item) )
+					#end
+					#set( $foundMatch = 1 )
+					#break
+				#end
+			#end
+			#if( $foundMatch == 0 )
+				#if( !$control.getDeleteReason() )
+					#if( $control.getTransfer() != 0 )
+						#foreach( $transferredControl in $allTransferredControls )
+							#if ( $control.getID() == $transferredControl.getOriginID() )
+								#set( $item = {} )
+								#set( $item.ID = $control.getID() )
+								#set( $item.number = $control.getControlNumber() )
+								#set( $item.transfer = "-T" )
+								#set( $item.selected = false )
+								#set( $item.deleted = false )
+								#if ($transferredControl.getTargetType() == "CONTROL")
+									#set( $item.text = $transferredControl.getTargetHazardControlDescription() )
+								#else
+									#set( $item.text = $transferredControl.getTargetHazardCauseTitle() )
+								#end
+								#set( $result = $theControls.add($item) )
+								#break
+							#end
+						#end
+					#else
+						#set( $item = {} )
+						#set( $item.ID = $control.getID() )
+						#set( $item.number = $control.getControlNumber() )
+						#set( $item.text = $control.getDescription() )
+						#set( $item.transfer = "" )
+						#set( $item.selected = false )
+						#set( $item.deleted = false )
+						#set( $result = $theControls.add($item) )
 					#end
 				#end
-				#if( $foundMatch == 0 )
-					<option value="$control.getID()">$!control.getControlNumber(): $control.getDescription()</option>
+			#else
+				#set( $foundMatch = 0 )
+			#end
+		#end
+		<label for="verificationControlsEdit">Controls</label>
+		<select class="multi-select verificationControlsEdit" size="5" multiple="multiple" name="verificationControlsEdit" id="verificationControlsEditForVerificationID$!verification.getID()">
+			#foreach( $theControl in $theControls )
+				#if( $theControl.selected == true )
+					#if( $theControl.deleted == true )
+						<option value="$theControl.ID" selected>
+							$!theControl.number$!theControl.transfer (D): $!theControl.text
+						</option>
+					#else
+						<option value="$theControl.ID" selected>
+							$!theControl.number$!theControl.transfer: $!theControl.text
+						</option>
+					#end
 				#else
-					#set( $foundMatch = 0 )
+					<option value="$theControl.ID">
+						$!theControl.number$!theControl.transfer: $!theControl.text
+					</option>
 				#end
 			#end
 		</select>
