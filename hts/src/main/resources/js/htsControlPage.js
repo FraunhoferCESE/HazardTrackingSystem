@@ -163,7 +163,36 @@ function getHazardInformationInControls() {
 	return hazardInformation;
 }
 
+function checkControlAssociation(arrayOfControlIDs) {
+	var arrayOfControlIDsStr = arrayOfControlIDs.toString();
+	var associatedControls = [];
+	AJS.$.ajax({
+		type: "GET",
+		async: false,
+		url: AJS.params.baseURL + "/rest/htsrest/1.0/report/controlAssociations/" + arrayOfControlIDsStr,
+		success: function(data) {
+			console.log("SUCCESS");
+			associatedControls = data;
+		},
+		error: function() {
+			console.log("ERROR");
+		}
+	});
+	return associatedControls;
+}
+
+function associatedControlArrayContains(associatedControls, controlID) {
+	var rtn = null;
+	for (var i = 0; i < associatedControls.length; i++) {
+		if (associatedControls[i].targetControlID.toString() === controlID) {
+			rtn = associatedControls[i];
+		}
+	}
+	return rtn;
+}
+
 function deleteSelectedControls(doRefresh, arrayOfControlIDsToDelete, arrayOfDirtyControlIDs) {
+	var associatedControls = checkControlAssociation(arrayOfControlIDsToDelete);
 	// Hazard specific mark-up:
 	var hazardInformation = getHazardInformationInControls();
 	var dialogContent1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theTitle, 64) + "</span></span><span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + manipulateControlTextVariableLength(hazardInformation.theNumber, 64) + "</span></span>";
@@ -190,6 +219,34 @@ function deleteSelectedControls(doRefresh, arrayOfControlIDsToDelete, arrayOfDir
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><div class='ConfirmDialogLabelContainer'><label for='ReasonTextForControl'>Reason<span class='aui-icon icon-required '>(required)</span></label></div><div class='ConfirmDialogReasonTextContainerNoButton'><input type='text' class='ConfirmDialogReasonTextControls' name='ReasonTextForControl' id='ReasonTextForControlID" + arrayOfControlIDsToDelete[i] + "'></div></td></tr>";
 		}
 
+		var associatedControl = associatedControlArrayContains(associatedControls, arrayOfControlIDsToDelete[i]);
+		if (associatedControl !== null) {
+			dialogContent3 = dialogContent3 +
+							"<tr>" +
+								"<td colspan='100%'>" +
+									"<p class='ConfirmDialogErrorText'>Warning: This control is the target of a transfer:</p>" +
+								"</td>" +
+							"</tr>";
+			dialogContent3 = dialogContent3 +
+							"<tr>" +
+								"<td colspan='100%'>" +
+									"<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+										"<a href='hazardlist?edit=y&key=" + associatedControl.hazardID + "'>Hazard " + associatedControl.hazardNumber + "</a>" +
+										" (owned by " + associatedControl.hazardOwner + "): ";
+			for (var k = 0; k < associatedControl.originControls.length; k++) {
+				var comma = ", ";
+				if (k == (associatedControl.originControls.length - 1)) {
+					comma = "";
+				}
+
+				dialogContent3 = dialogContent3 +
+								"<a href='controlform?edit=y&key=" + associatedControl.hazardID + "' class='openAssociatedControl' data-controlid='" + associatedControl.originControls[k].originControlID + "'>" +
+									"Control " + associatedControl.originControls[k].originControlNumber +
+								"</a>" + comma;
+			}
+			dialogContent3 = dialogContent3 + "</p></td></tr>";
+		}
+
 		if (arrayOfDirtyControlIDs.indexOf(arrayOfControlIDsToDelete[i]) !== -1) {
 			dialogContent3 = dialogContent3 + "<tr><td colspan='100%'><p class='ConfirmDialogErrorText'>This control has been edited. All changes will be discarded.</p></td></tr>";
 		}
@@ -200,7 +257,7 @@ function deleteSelectedControls(doRefresh, arrayOfControlIDsToDelete, arrayOfDir
 
 	var dialog = new AJS.Dialog({
 		width: 600,
-		height: 450,
+		height: 475,
 		id: "deleteDialog",
 	});
 
@@ -350,6 +407,37 @@ function checkUpdateMessageCookie() {
 	}
 }
 
+function createOpenControlLinkCookie() {
+	if (AJS.Cookie.read("OPEN_CONTROL_LINK") === undefined) {
+		AJS.Cookie.save("OPEN_CONTROL_LINK", "none");
+	}
+}
+
+function updateOpenControlLinkCookie(theControlID) {
+	AJS.Cookie.save("OPEN_CONTROL_LINK", theControlID);
+}
+
+function checkOpenControlLinkCookie() {
+	if (AJS.Cookie.read("OPEN_CONTROL_LINK") !== undefined) {
+		if (AJS.Cookie.read("OPEN_CONTROL_LINK") !== "none") {
+			var idOfControlOpen = AJS.Cookie.read("OPEN_CONTROL_LINK");
+			var entryEdit = AJS.$("#ControlsTableEditEntry" + idOfControlOpen);
+			if (entryEdit.hasClass("ControlsTableEditEntryHidden")) {
+				entryEdit.removeClass("ControlsTableEditEntryHidden");
+				var entry = AJS.$("#ControlsTableEntry" + idOfControlOpen);
+				entry.removeClass("aui-icon aui-icon-small aui-iconfont-add");
+				entry.addClass("aui-icon aui-icon-small aui-iconfont-devtools-task-disabled");
+			}
+
+			AJS.$('html, body').animate({
+				scrollTop: AJS.$("#ControlsTableEditEntry" + idOfControlOpen).offset().top
+			}, 50);
+
+			updateOpenControlLinkCookie("none");
+		}
+	}
+}
+
 function checkForValidationError() {
 	if (AJS.$(".validationError").is(":visible")) {
 		JIRA.Messages.showWarningMsg("Not all changes have been saved. See invalid forms below.", {closeable: true});
@@ -488,6 +576,8 @@ AJS.$(document).ready(function(){
 	createUpdateMessageCookie();
 	checkUpdateMessageCookie();
 	uncheckSelectedControls();
+	createOpenControlLinkCookie();
+	checkOpenControlLinkCookie();
 
 	var expanding = true;
 	expanding = checkIfExpandButtonNeedsRenaming(expanding);
@@ -803,6 +893,12 @@ AJS.$(document).ready(function(){
 		var hazardID = controlIDAndHazardIDArr[1];
 		updateAssociatedControlCookie(controlID);
 		window.location.href = AJS.params.baseURL + "/plugins/servlet/verificationform?edit=y&key=" + hazardID;
+	});
+
+	AJS.$(".openAssociatedControl").live('click', function() {
+		var controlID = AJS.$(this).data("controlid");
+		console.log(controlID);
+		updateOpenControlLinkCookie(controlID);
 	});
 
 });

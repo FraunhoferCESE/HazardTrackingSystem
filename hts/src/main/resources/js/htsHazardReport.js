@@ -1,13 +1,51 @@
-function openDeleteHazardReportDialog(hazardIDToBeDeleted) {
+function openDeleteHazardReportDialog(hazardIDToBeDeleted, hazardAssociations) {
+	var dialogHeight = 190;
+	var markupAssociations = "";
+	if (!AJS.$.isEmptyObject(hazardAssociations)) {
+		dialogHeight = 310;
+		markupAssociations = "<div>" +
+								"<p class='ConfirmDialogHazardAssociations ConfirmDialogErrorText'>This hazard has associations to the following hazards:</p>" +
+								"<table>" +
+									"<thead>" +
+										"<tr>" +
+											"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellOneHazard'>Hazard #:</th>" +
+											"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwoHazard'>Owner:</th>" +
+										"</tr>" +
+									"</thead>" +
+									"<tbody>";
+		console.log(hazardAssociations);
+		for (var i = 0; i < hazardAssociations.length; i++) {
+			markupAssociations += "<tr>" +
+									"<td colspan='100%'><div class='ConformDialogTopRow'></div></td>" +
+								"</tr>" +
+								"<tr>" +
+									"<td>" +
+										"<a href='hazardlist?edit=y&key=" + hazardAssociations[i].hazardID + "'>" +
+											manipulateHazardDeleteText(hazardAssociations[i].hazardNumber, 30) +
+										"</a>" +
+									"</td>" +
+									"<td>" + manipulateHazardDeleteText(hazardAssociations[i].hazardOwner, 20) + "</td>" +
+								"</tr>";
+		}
+		markupAssociations += "<tr>" +
+								"<td colspan='100%'><div class='ConformDialogTopRow'></div></td>" +
+							"</tr>" +
+							"</tbody></table></div>";
+	}
+
+	var markupCombined = "<div class='dialog-panel-body'>" +
+							"Deleting this hazard will permanently remove it from the HTS.<br>Press Continue to confirm this action." +
+							markupAssociations +
+						"</div>";
+
 	var dialog = new AJS.Dialog({
-		width: 500,
-		height: 190,
+		width: 550,
+		height: dialogHeight,
 		id: "deleteDialog",
 	});
-
 	dialog.show();
 	dialog.addHeader("Confirm");
-	dialog.addPanel("Panel 1", "<p class='dialog-panel-body'>Deleting this Hazard Report will permanently remove it from the HTS.<br>Press Continue to confirm this action.</p>", "panel-body");
+	dialog.addPanel("Panel 1", markupCombined, "panel-body");
 	dialog.get("panel:0").setPadding(0);
 
 	dialog.addButton("Continue", function(dialog) {
@@ -20,13 +58,22 @@ function openDeleteHazardReportDialog(hazardIDToBeDeleted) {
 	});
 }
 
+function manipulateHazardDeleteText(theText, length) {
+	if (theText.length >= length){
+		return theText.substring(0, (length - 3)) + "...";
+	}
+	else {
+		return theText;
+	}
+}
+
 function deleteHazardReport(hazardIDToBeDeleted) {
 	AJS.$.ajax({
 		type: "DELETE",
 		url: "hazardlist?key=" + hazardIDToBeDeleted,
 		success: function(data) {
 			AJS.$("#hazardEntryID" + hazardIDToBeDeleted).remove();
-			if(AJS.$("#hazardTable tbody tr").length === 0) {
+			if (AJS.$("#hazardTable tbody tr").length === 0) {
 				AJS.$("#hazardTable").hide();
 				AJS.$("#HazardTableMessage").text("This Mission/Payload contains no Hazard Reports.");
 				AJS.$("#HazardTableMessage").show();
@@ -270,19 +317,21 @@ AJS.$(document).ready(function() {
 
 	AJS.$(".deleteHazardReport").live('click', function() {
 		var hazardIDToBeDeleted = AJS.$(this).data("key");
+		var hazardAssociations;
 		AJS.$.ajax({
 			type: "GET",
+			async: false,
 			url: AJS.params.baseURL + "/rest/htsrest/1.0/report/hazardAssociations/" + hazardIDToBeDeleted,
 			success: function(data) {
 				console.log("SUCCESS");
-				console.log(data);
+				hazardAssociations = data;
 			},
 			error: function() {
 				console.log("ERROR");
 			}
 		});
 
-		//openDeleteHazardReportDialog(hazardIDToBeDeleted);
+		openDeleteHazardReportDialog(hazardIDToBeDeleted, hazardAssociations);
 	});
 
 	AJS.$(".createNewHazardReport").live("click", function() {

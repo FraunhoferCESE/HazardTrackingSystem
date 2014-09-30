@@ -26,9 +26,9 @@ public interface Transfers extends Entity {
 
 	void setTargetType(String targetType);
 	
-	@NotNull
-	boolean getActive();
-
-	void setActive(boolean active);
+//	@NotNull
+//	boolean getActive();
+//
+//	void setActive(boolean active);
 	
 }

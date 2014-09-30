@@ -186,25 +186,28 @@ public class HazardControlServiceImpl implements HazardControlService {
 		
 		return transferInfo;
 	}
-	
+
 	@Override
 	public Hazard_Controls deleteControl(Hazard_Controls controlToBeDeleted, String reason) {
 		controlToBeDeleted.setDeleteReason(reason);
 		if (controlToBeDeleted.getTransfer() != 0) {
-			int transferID = controlToBeDeleted.getTransfer();
-			Transfers transfer = transferService.getTransferByID(transferID);
-			transfer.setActive(false);
+			Transfers transfer = transferService.getTransferByID(controlToBeDeleted.getTransfer());
+			removeTransfer(transfer.getID());
 			transfer.save();
+			controlToBeDeleted.setTransfer(0);
 		}
 		controlToBeDeleted.save();
 		return controlToBeDeleted;
 	}
-
 	
 	@Override
 	public Hazard_Controls addControlTransfer(String transferComment, int targetID, Hazards hazard) {
 		Hazard_Controls control = add(hazard, transferComment, null, null);
-		int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
+		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
+		//if (transferID == 0) {
+			int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
+		//}
+		
 		control.setTransfer(transferID);
 		control.save();
 		return control;
@@ -213,7 +216,11 @@ public class HazardControlServiceImpl implements HazardControlService {
 	@Override
 	public Hazard_Controls addCauseTransfer(String transferComment, int targetID, Hazards hazard) {
 		Hazard_Controls control = add(hazard, transferComment, null, null);
-		int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
+		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
+		//if (transferID == 0) {
+			int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
+		//}
+
 		control.setTransfer(transferID);
 		control.save();
 		return control;
@@ -267,11 +274,27 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 	
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
-		Transfers transfer = transferService.add(originID, originType, targetID, targetType, true);
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
 		return transfer.getID();
 	}
 	
 	private void removeTransfer(int id) {
 		ao.delete(ao.find(Transfers.class, Query.select().where("ID=?", id)));
+	}
+	
+	private int checkForInactiveTransfer(int originID, String originType, int targetID, String targetType) {
+		int rtn = 0;
+		List<Transfers> allTransfers = transferService.all();
+		for (Transfers currentTransfer : allTransfers) {
+			if (currentTransfer.getTargetID() == targetID &&
+				currentTransfer.getOriginType() == originType &&
+				currentTransfer.getTargetType() == targetType) {
+					rtn = currentTransfer.getID();
+					currentTransfer.setOriginID(originID);
+					currentTransfer.save();
+					break;
+			}
+		}
+		return rtn;
 	}
 }

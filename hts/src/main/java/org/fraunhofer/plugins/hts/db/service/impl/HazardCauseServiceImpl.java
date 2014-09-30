@@ -49,6 +49,7 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		cause.setRiskLikelihood(likelihood);
 		cause.setLastUpdated(new Date());
 		cause.setOriginalDate(new Date());
+		cause.setTransfer(0);
 		cause.save();
 		associateCauseToHazard(hazard, cause);
 		return cause;
@@ -154,25 +155,22 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public List<TransferClass> getAllTransferredCauses(Hazards hazard) {
 		List<Hazard_Causes> allCauses = getAllCausesWithinAHazard(hazard);
 		List<Transfers> allTransfers = new ArrayList<Transfers>();
-		for(Hazard_Causes cause : allCauses) {
-			if(cause.getTransfer() != 0) {
+		for (Hazard_Causes cause : allCauses) {
+			if (cause.getTransfer() != 0) {
 				allTransfers.add(transferService.getTransferByID(cause.getTransfer()));
 			}
 		}
 	
 		List<TransferClass> transferInfo = new ArrayList<TransferClass>();
-		for(Transfers transfer : allTransfers) {
+		for (Transfers transfer : allTransfers) {
 			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
 			String transferReason = originCause.getDescription();
 			int transferID = transfer.getID();
 			String targetType = transfer.getTargetType();
 			int targetID = transfer.getTargetID();
 			
-			if(transfer.getTargetType().equals("CAUSE")) {
+			if (transfer.getTargetType().equals("CAUSE")) {
 				Hazard_Causes transferredCause = getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-				//Get the title
-				//get the hazard name and number
-				//get reason
 				String causeTitle = transferredCause.getTitle();
 				int causeNum = transferredCause.getCauseNumber();
 				String hazardTitle = transferredCause.getHazards()[0].getTitle();
@@ -241,10 +239,10 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	public Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason) {
 		causeToBeDeleted.setDeleteReason(reason);
 		if (causeToBeDeleted.getTransfer() != 0) {
-			int transferID = causeToBeDeleted.getTransfer();
-			Transfers transfer = transferService.getTransferByID(transferID);
-			transfer.setActive(false);
+			Transfers transfer = transferService.getTransferByID(causeToBeDeleted.getTransfer());
+			removeTransfer(transfer.getID());
 			transfer.save();
+			causeToBeDeleted.setTransfer(0);
 		}
 		causeToBeDeleted.save();
 		return causeToBeDeleted;
@@ -262,8 +260,28 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
-		Transfers transfer = transferService.add(originID, originType, targetID, targetType, true);
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
 		return transfer.getID();
+	}
+	
+	private int checkForInactiveTransfer(int originID, String originType, int targetID, String targetType) {
+		int rtn = 0;
+		List<Transfers> allTransfers = transferService.all();
+		for (Transfers currentTransfer : allTransfers) {
+			if (currentTransfer.getTargetID() == targetID &&
+				currentTransfer.getOriginType() == originType &&
+				currentTransfer.getTargetType() == targetType) {
+					rtn = currentTransfer.getID();
+					currentTransfer.setOriginID(originID);
+					currentTransfer.save();
+					break;
+			}
+		}
+		return rtn;
+	}
+	
+	private void removeTransfer(int id) {
+		ao.delete(ao.find(Transfers.class, Query.select().where("ID=?", id)));
 	}
 }
 

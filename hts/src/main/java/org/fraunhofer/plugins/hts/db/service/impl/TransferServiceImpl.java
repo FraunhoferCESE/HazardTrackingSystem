@@ -21,10 +21,10 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers add(int originID, String originType, int targetID, String targetType, boolean active) {
+	public Transfers add(int originID, String originType, int targetID, String targetType) {
 		final Transfers transfer = ao.create(Transfers.class, new DBParam("ORIGIN_ID", originID), 
 				new DBParam("ORIGIN_TYPE", originType), new DBParam("TARGET_ID", targetID), 
-				new DBParam("TARGET_TYPE", targetType), new DBParam("ACTIVE", active));
+				new DBParam("TARGET_TYPE", targetType));
 		transfer.save();
 		return transfer;
 	}

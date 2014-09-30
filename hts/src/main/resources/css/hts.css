@@ -521,7 +521,7 @@ form.payloadForm .add:active {
 
 .ConfirmDialogErrorText {
     margin: 0;
-    font-size: 10px;
+    font-size: 11px;
     font-style: italic;
     color: red;
 }
@@ -593,6 +593,24 @@ form.payloadForm .add:active {
     width: 100%
 }
 /* CAUSE STYLES FOR THE CONFIRM DIALOG END */
+
+/* HAZARD DELETION STYLES FOR THE CONFIRM DIALOG BEGIN */
+.ConfirmDialogTableCellOneHazard {
+    width: 300px;
+}
+
+.ConfirmDialogTableCellTwoHazard {
+    width: 200px;
+}
+
+.ConfirmDialogHazardAssociations {
+    padding-top: 10px;
+}
+
+.ConfirmDialogHazardAssociationText {
+    padding-left: 10px;
+}
+/* HAZARD DELETION STYLES FOR THE CONFIRM DIALOG END */
 
 /* ERROR PAGE STYLES BEGIN */
 .ErrorPageContainer {
