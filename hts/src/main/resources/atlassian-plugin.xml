@@ -72,8 +72,12 @@
 		<entity>org.fraunhofer.plugins.hts.db.Transfers</entity>
 	</ao>
 	<component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter="" />
+	<component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
 	<component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
 		<decription>Processes @Transactional annotations.</decription>
+	</component>
+	<component key="eventListener" >
+		<description>A Listener for plugin lifecycle events</description>
 	</component>
 	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
 	<component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl" />
