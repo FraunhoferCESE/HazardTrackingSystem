@@ -76,7 +76,7 @@
 	<component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
 		<decription>Processes @Transactional annotations.</decription>
 	</component>
-	<component key="eventListener" >
+	<component key="eventListener" name="Event Listener" class="org.fraunhofer.plugins.hts.issues.PluginListener" >
 		<description>A Listener for plugin lifecycle events</description>
 	</component>
 	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
