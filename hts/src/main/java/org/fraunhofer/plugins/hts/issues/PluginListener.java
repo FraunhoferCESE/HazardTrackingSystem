@@ -1,69 +1,47 @@
 package org.fraunhofer.plugins.hts.issues;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ofbiz.core.entity.GenericValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.atlassian.jira.config.IssueTypeManager;
-import com.atlassian.jira.issue.CustomFieldManager;
-import com.atlassian.jira.issue.context.GlobalIssueContext;
-import com.atlassian.jira.issue.context.JiraContextNode;
-import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
-import com.atlassian.jira.issue.customfields.CustomFieldType;
-import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.screen.FieldScreen;
-import com.atlassian.jira.issue.fields.screen.FieldScreenManager;
-import com.atlassian.jira.issue.fields.screen.FieldScreenTab;
-import com.atlassian.jira.issue.issuetype.IssueType;
-
+import com.atlassian.event.api.EventListener;
+import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jira.event.issue.IssueEvent;
+import com.atlassian.jira.event.type.EventType;
+import com.atlassian.jira.issue.Issue;
+ 
 public class PluginListener implements InitializingBean, DisposableBean {
-
-	private final IssueTypeManager issueTypeManager;
-	private final CustomFieldManager customFieldManager;
-	private final FieldScreenManager fieldScreenManager;
 	
-	public PluginListener(IssueTypeManager issueTypeManager, CustomFieldManager customFieldManager, FieldScreenManager fieldScreenManager) {
-		this.issueTypeManager = issueTypeManager;
-		this.customFieldManager = customFieldManager;
-		this.fieldScreenManager = fieldScreenManager;
+	private final EventPublisher eventPublisher;
+	
+	public PluginListener(EventPublisher eventPublisher) {
+	    this.eventPublisher = eventPublisher;
 	}
 	
-    @Override
-    public void destroy() throws Exception {
-        // Handle plugin disabling or un-installation here
-    }
+	@EventListener
+	public void onIssueEvent(IssueEvent issueEvent) {
+	   Long eventTypeId = issueEvent.getEventTypeId();
+	   Issue issue = issueEvent.getIssue();
+	 
+	   if (eventTypeId.equals(EventType.ISSUE_CREATED_ID)) {
+		   System.out.println("========= ISSUE CREATED =========");
+	   }
+	   else if (eventTypeId.equals(EventType.ISSUE_RESOLVED_ID)) {
+		   System.out.println("========= ISSUE RESOLVED =========");
+	   }
+	   else if (eventTypeId.equals(EventType.ISSUE_CLOSED_ID)) {
+		   System.out.println("========= ISSUE CLOSED =========");
+	   }
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // Handle plugin enabling or installation here    	
-    	
-    	// Create issue type:
-    	IssueType issueType = this.issueTypeManager.createIssueType("TheType", "TheDescription", "/images/icons/issuetypes/genericissue.png");
-    	
-    	// Create custom field:
-    	// Create a list of issue types for which the custom field needs to be available  	
-    	List<GenericValue> issueTypes = new ArrayList<GenericValue>();
-    	issueTypes.add(null);
-    	
-        // Create a list of project contexts for which the custom field needs to be available
-        List<JiraContextNode> contexts = new ArrayList<JiraContextNode>();
-        contexts.add(GlobalIssueContext.getInstance());
-        
-        CustomFieldType fieldType = this.customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:textfield");        
-        CustomFieldSearcher fieldSearcher = this.customFieldManager.getCustomFieldSearcher("com.atlassian.jira.plugin.system.customfieldtypes:textsearcher");
-        
-        // Add custom field
-        final CustomField cField = this.customFieldManager.createCustomField("FOO", "BAR", fieldType, fieldSearcher, contexts, issueTypes);
-        
-        // Add field to default Screen
-        FieldScreen defaultScreen = fieldScreenManager.getFieldScreen(FieldScreen.DEFAULT_SCREEN_ID);
-        if (!defaultScreen.containsField(cField.getId())) {
-            FieldScreenTab firstTab = defaultScreen.getTab(0);
-            firstTab.addFieldScreenLayoutItem(cField.getId());
-        }
-    }
-}
+	@Override
+	public void destroy() throws Exception {
+        // Unregister ourselves with the EventPublisher
+        eventPublisher.unregister(this);
+	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+        // Register ourselves with the EventPublisher
+        eventPublisher.register(this);
+	}
+ }

@@ -76,8 +76,11 @@
 	<component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
 		<decription>Processes @Transactional annotations.</decription>
 	</component>
-	<component key="eventListener" name="Event Listener" class="org.fraunhofer.plugins.hts.issues.PluginListener" >
-		<description>A Listener for plugin lifecycle events</description>
+	<component key="eventListener" class="org.fraunhofer.plugins.hts.issues.PluginListener">
+		<description>Class that processes the incoming JIRA issue events.</description>
+	</component>
+	<component key="PluginInstallation" class="org.fraunhofer.plugins.hts.issues.PluginInstallation" public="true">
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
 	</component>
 	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
 	<component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl" />
