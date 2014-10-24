@@ -21,9 +21,12 @@ public class PluginListener implements InitializingBean, DisposableBean {
 	public void onIssueEvent(IssueEvent issueEvent) {
 	   Long eventTypeId = issueEvent.getEventTypeId();
 	   Issue issue = issueEvent.getIssue();
-	 
+	   
 	   if (eventTypeId.equals(EventType.ISSUE_CREATED_ID)) {
 		   System.out.println("========= ISSUE CREATED =========");
+		   if (issue.getIssueTypeObject().getName() == "Hazard") {
+			   System.out.println("========= HAZARD =========");
+		   }
 	   }
 	   else if (eventTypeId.equals(EventType.ISSUE_RESOLVED_ID)) {
 		   System.out.println("========= ISSUE RESOLVED =========");

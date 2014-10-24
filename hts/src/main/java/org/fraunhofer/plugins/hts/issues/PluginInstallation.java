@@ -1,8 +1,8 @@
 package org.fraunhofer.plugins.hts.issues;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
@@ -19,6 +19,7 @@ import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.OrderableField;
 import com.atlassian.jira.issue.fields.screen.FieldScreen;
 import com.atlassian.jira.issue.fields.screen.FieldScreenImpl;
+import com.atlassian.jira.issue.fields.screen.FieldScreenLayoutItem;
 import com.atlassian.jira.issue.fields.screen.FieldScreenManager;
 import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
 import com.atlassian.jira.issue.fields.screen.FieldScreenSchemeImpl;
@@ -56,30 +57,40 @@ public class PluginInstallation implements LifecycleAware {
 		this.constantsManager = constantsManager;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
     public void onStart() {
 		System.out.println("========= ON START BEGINS =========");
 		
-		// Create issue type:
-    	IssueType hazardIssueType = this.issueTypeManager.createIssueType("Hazard", "A hazard issue type for the HTS plugin.", "/images/icons/issuetypes/genericissue.png");
+		// Create sub-task issue type:
+		IssueType hazardIssueSubType = this.issueTypeManager.createSubTaskIssueType("Hazard", "A Hazard sub-task issue type for the HTS plugin.", "/images/icons/issuetypes/subtask_alternate.png");
 		
     	// Create custom field:
     	// Create a list of issue types for which the custom field needs to be available  	
     	List<GenericValue> issueTypes = new ArrayList<GenericValue>();
-    	issueTypes.add(hazardIssueType.getGenericValue());
+    	issueTypes.add(hazardIssueSubType.getGenericValue());
     	
         // Create a list of project contexts for which the custom field needs to be available
         List<JiraContextNode> contexts = new ArrayList<JiraContextNode>();
         contexts.add(GlobalIssueContext.getInstance());
         
-        CustomFieldType fieldType = this.customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:textfield");        
+        CustomFieldType fieldType = this.customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:textfield");  
         CustomFieldSearcher fieldSearcher = this.customFieldManager.getCustomFieldSearcher("com.atlassian.jira.plugin.system.customfieldtypes:textsearcher");
         
+        CustomFieldType fieldType2 = this.customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:url");
+        
         // Add custom field
-        CustomField cField = null;
+        CustomField hazardNumberField = null;
+        CustomField hazardTitleField = null;
+        CustomField hazardURLField = null;
 		try {
-			cField = this.customFieldManager.createCustomField("Hazard Title", "The title of a Hazard.", fieldType, fieldSearcher, contexts, issueTypes);
-	        
+			hazardNumberField = this.customFieldManager.createCustomField("Hazard Number", null, 
+					fieldType, fieldSearcher, contexts, issueTypes);
+			hazardTitleField = this.customFieldManager.createCustomField("Hazard Title", null, 
+					fieldType, fieldSearcher, contexts, issueTypes);
+			hazardURLField = this.customFieldManager.createCustomField("Hazard URL", null, 
+					fieldType, null, contexts, issueTypes);
+
 			// Create screen
 	        FieldScreen htsScreen = new FieldScreenImpl(fieldScreenManager);
 			htsScreen.setName("HTS Screen");
@@ -89,30 +100,50 @@ public class PluginInstallation implements LifecycleAware {
 			// Create tab
 			FieldScreenTab htsScreenTab = htsScreen.addTab("Tab 1");
 			
-			// Add field to tab
-			OrderableField orderableField = fieldManager.getOrderableField(cField.getId());
-			htsScreenTab.addFieldScreenLayoutItem(orderableField.getId());
+			// Add fields to new tab
+			// First add the "default" fields (from "Default Screen")
+			FieldScreen defaultScreen = fieldScreenManager.getFieldScreen(FieldScreen.DEFAULT_SCREEN_ID);
+			List<FieldScreenLayoutItem> defaultScreenListOfFields = defaultScreen.getTab(0).getFieldScreenLayoutItems();
+			for (FieldScreenLayoutItem field : defaultScreenListOfFields) {
+				//System.out.println(field.getOrderableField().getName());
+				htsScreenTab.addFieldScreenLayoutItem(field.getOrderableField().getId());
+			}
+			// Add the new custom fields
+			htsScreenTab.addFieldScreenLayoutItem(hazardNumberField.getId());
+			htsScreenTab.addFieldScreenLayoutItem(hazardTitleField.getId());
+			htsScreenTab.addFieldScreenLayoutItem(hazardURLField.getId());
 			htsScreenTab.store();
-		
+			
 			// Create screen scheme
 			FieldScreenScheme htsScreenScheme = new FieldScreenSchemeImpl(fieldScreenSchemeManager);
 			htsScreenScheme.setName("HTS Screen Scheme");
 			htsScreenScheme.setDescription("This screen scheme is specific to the Hazard Issue Type.");
 			htsScreenScheme.store();
 
-			// Add screen
-			FieldScreenSchemeItem htsScreenSchemeItem = new FieldScreenSchemeItemImpl(fieldScreenSchemeManager, fieldScreenManager);
-			htsScreenSchemeItem.setIssueOperation(IssueOperations.CREATE_ISSUE_OPERATION);
-			htsScreenSchemeItem.setFieldScreen(htsScreen);
-			htsScreenScheme.addFieldScreenSchemeItem(htsScreenSchemeItem);
+			// Add screen and operation to screen scheme
+			// Create operation
+			FieldScreenSchemeItem htsScreenSchemeCreateItem = new FieldScreenSchemeItemImpl(fieldScreenSchemeManager, fieldScreenManager);
+			htsScreenSchemeCreateItem.setFieldScreen(htsScreen);
+			htsScreenSchemeCreateItem.setIssueOperation(IssueOperations.CREATE_ISSUE_OPERATION);
+			htsScreenScheme.addFieldScreenSchemeItem(htsScreenSchemeCreateItem);
+			// Create operation
+			FieldScreenSchemeItem htsScreenSchemeEditItem = new FieldScreenSchemeItemImpl(fieldScreenSchemeManager, fieldScreenManager);
+			htsScreenSchemeEditItem.setFieldScreen(htsScreen);
+			htsScreenSchemeEditItem.setIssueOperation(IssueOperations.EDIT_ISSUE_OPERATION);
+			htsScreenScheme.addFieldScreenSchemeItem(htsScreenSchemeEditItem);
+			// View operation
+			FieldScreenSchemeItem htsScreenSchemeViewItem = new FieldScreenSchemeItemImpl(fieldScreenSchemeManager, fieldScreenManager);
+			htsScreenSchemeViewItem.setFieldScreen(htsScreen);
+			htsScreenSchemeViewItem.setIssueOperation(IssueOperations.VIEW_ISSUE_OPERATION);
+			htsScreenScheme.addFieldScreenSchemeItem(htsScreenSchemeViewItem);
 			
-			// Get "Default Issue Type Screen Scheme" and config that
+			// Get "Default Issue Type Screen Scheme" and configure it
 			IssueTypeScreenScheme defaultIssueTypeScreenScheme = issueTypeScreenSchemeManager.getDefaultScheme();
 			
 			// Add "HTS Screen Scheme" to "Default Issue Type Screen Scheme"
 			IssueTypeScreenSchemeEntity htsScreenSchemeEntity = 
 					new IssueTypeScreenSchemeEntityImpl(issueTypeScreenSchemeManager, (GenericValue) null, fieldScreenSchemeManager, constantsManager);
-			htsScreenSchemeEntity.setIssueTypeId(hazardIssueType.getId());
+			htsScreenSchemeEntity.setIssueTypeId(hazardIssueSubType.getId());
 			htsScreenSchemeEntity.setFieldScreenScheme(htsScreenScheme);
 			defaultIssueTypeScreenScheme.addEntity(htsScreenSchemeEntity);
 
