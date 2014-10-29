@@ -25,6 +25,20 @@ public interface Hazards extends Entity {
 
 	void setTitle(String title);
 	
+	String getHazardNum();
+
+	void setHazardNum(String hazardNum);
+	
+	@NotNull
+	Long getProjectID();
+	
+	void setProjectID(Long projectID);
+	
+	@NotNull
+	Long getIssueID();
+	
+	void setIssueID(Long projectID);
+	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardSafetyRequirements();
 
@@ -57,10 +71,7 @@ public interface Hazards extends Entity {
 	
 	void setActive(boolean state);
 
-	@NotNull
-	String getHazardNum();
 
-	void setHazardNum(String hazardNum);
 	
 	String getHazardVersionNum();
 
@@ -83,9 +94,9 @@ public interface Hazards extends Entity {
 
 	Review_Phases getReviewPhase();
 
-	void setMissionPayload(Mission_Payload missionPayload);
-
-	Mission_Payload getMissionPayload();
+//	void setMissionPayload(Mission_Payload missionPayload);
+//
+//	Mission_Payload getMissionPayload();
 
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();

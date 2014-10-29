@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Subsystems;
@@ -16,15 +15,15 @@ import com.atlassian.activeobjects.tx.Transactional;
 public interface HazardService {
 	Hazards add(String title, String safetyRequirements, String description, String justification, String openWork, String preparer, String email, 
 			String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date lastEdit, Hazard_Group[] groups,  
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Long projectID, Long issueID);
 	
-	Hazards addFromJira(String title, String hazardNum, Mission_Payload missionPayload);
+	Hazards addFromJira(String title, String hazardNum, Long projectID, Long issueID);
 
 	Hazards getHazardByID(String id);
 
 	Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer,
 			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups,  
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase);
 
 	List<Hazards> all();
 	
@@ -39,4 +38,8 @@ public interface HazardService {
 	Hazards getNewestHazardReport();
 
 	Hazards getHazardByHazardNum(String hazardNum);
+	
+	List<Long> getProjectsWithHazards();
+	
+	
 }

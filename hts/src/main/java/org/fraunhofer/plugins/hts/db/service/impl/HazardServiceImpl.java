@@ -1,9 +1,7 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
-
-import net.java.ao.DBParam;
-import net.java.ao.Query;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -11,12 +9,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.java.ao.DBParam;
+import net.java.ao.Query;
+
 import org.fraunhofer.plugins.hts.db.GroupToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
 import org.fraunhofer.plugins.hts.db.PhaseToHazard;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
@@ -25,8 +25,7 @@ import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.Verifications;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
+import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class HazardServiceImpl implements HazardService {
 	private final ActiveObjects ao;
@@ -39,9 +38,13 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards add(String title, String safetyRequirements, String description, String justification, String openWork, String preparer,
 			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups,  
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
-		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("HAZARD_NUM",
-				hazardNum));
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Long projectID, Long issueID) {
+		
+		
+		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("PROJECT_ID",
+				projectID), new DBParam("ISSUE_ID", issueID));
+		
+		
 		hazard.setHazardVersionNum(hazardVersionNum);
 		hazard.setHazardSafetyRequirements(safetyRequirements);
 		hazard.setHazardDesc(description);
@@ -53,7 +56,6 @@ public class HazardServiceImpl implements HazardService {
 		hazard.setCompletionDate(completionDate);
 		hazard.setRevisionDate(revisionDate);
 		hazard.setReviewPhase(reviewPhase);
-		hazard.setMissionPayload(missionPayload);
 		hazard.setActive(true);
 		hazard.save();
 		if (subsystems != null) {
@@ -88,10 +90,10 @@ public class HazardServiceImpl implements HazardService {
 	}
 	
 	@Override
-	public Hazards addFromJira(String title, String hazardNum, Mission_Payload missionPayload) {
-		final Hazards hazard = ao.create(Hazards.class, 
-				new DBParam("TITLE", title), new DBParam("HAZARD_NUM", hazardNum));
-		hazard.setMissionPayload(missionPayload);
+	public Hazards addFromJira(String title, String hazardNum, Long projectID, Long issueID) {
+		final Hazards hazard = ao.create(Hazards.class, new DBParam("TITLE", title), new DBParam("PROJECT_ID",
+				projectID), new DBParam("ISSUE_ID", issueID));
+		hazard.setHazardNum(hazardNum);
 		hazard.setActive(true);
 		hazard.save();
 		return hazard;
@@ -104,12 +106,7 @@ public class HazardServiceImpl implements HazardService {
 	
 	@Override
 	public List<Hazards> getAllNonDeletedHazards() {
-		List<Hazards> allRemaining = new ArrayList<Hazards>();
-		for (Hazards current : all()) {
-			if (current.getActive() == true) {
-				allRemaining.add(current);
-			}
-		}
+		List<Hazards> allRemaining = newArrayList(ao.find(Hazards.class, Query.select().where("ACTIVE=?", true)));
 		return allRemaining;
 	}
 
@@ -129,7 +126,7 @@ public class HazardServiceImpl implements HazardService {
 	@Override
 	public Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer, 
 			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, 
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload) {
+			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase) {
 		Hazards updated = getHazardByID(id);
 		if (updated != null) {
 			updated.setTitle(title);
@@ -145,7 +142,6 @@ public class HazardServiceImpl implements HazardService {
 			updated.setCompletionDate(completionDate);
 			updated.setRevisionDate(revisionDate);
 			updated.setReviewPhase(reviewPhase);
-			updated.setMissionPayload(missionPayload);
 			updated.save();
 			removeSubsystems(updated.getID());
 			removeHazardGroups(updated.getID());
@@ -231,16 +227,9 @@ public class HazardServiceImpl implements HazardService {
 
 	@Override
 	public List<Hazards> getHazardsByMissionPayload(String id) {
-		List<Hazards> allHazardsBelongingToMission = newArrayList(ao.find(Hazards.class, Query.select().where("MISSION_PAYLOAD_ID=?", id)));
-		List<Hazards> allNonDeletedHazards = new ArrayList<Hazards>();
-		
-		for (Hazards current : allHazardsBelongingToMission) {
-			if (current.getActive()) {
-				allNonDeletedHazards.add(current);
-			}
-		}
-		
-		return allNonDeletedHazards;
+		Long projectID = Long.parseLong(id);
+		List<Hazards> allActiveHazards = newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", projectID, true)));
+		return allActiveHazards;
 	}
 
 	@Override
@@ -251,6 +240,18 @@ public class HazardServiceImpl implements HazardService {
 			lastCreated = hazard[0];
 		}
 		return lastCreated;
+	}
+	
+	@Override
+	public List<Long> getProjectsWithHazards() {
+		List<Long> ids = new ArrayList<Long>();
+		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").distinct());
+		if (hazards != null) {
+			for (Hazards hazard : hazards) {
+				ids.add(new Long(hazard.getID()));
+			}
+		}
+		return ids;
 	}
 
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
@@ -285,5 +286,7 @@ public class HazardServiceImpl implements HazardService {
 	private void removeHazardGroups(int id) {
 		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
 	}
+	
+
 
 }

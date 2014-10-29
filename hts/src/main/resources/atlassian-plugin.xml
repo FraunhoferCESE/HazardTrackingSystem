@@ -88,7 +88,7 @@
 	<component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl" />
 	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl" />
 	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl" />
-	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPayloadServiceImpl" />
+	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.JIRAProjectServiceImpl" />
 	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl" />
 	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardControlServiceImpl" />
 	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl" />

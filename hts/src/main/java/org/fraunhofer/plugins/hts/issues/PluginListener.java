@@ -13,10 +13,14 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
  
 public class PluginListener implements InitializingBean, DisposableBean {
 	
@@ -54,8 +58,10 @@ public class PluginListener implements InitializingBean, DisposableBean {
 				   // Create the hazard				   
 				   hazardService.addFromJira(hazardTitleObj.toString(), hazardNumberObj.toString(), htsProject);
 				   // Add HTS link to issue
-				   Object hazardLinkObj = issue.getCustomFieldValue(pluginCustomization.getHazardURLField());
-				   //issue.g
+				   
+
+				   
+				   
 			   }
 			   else {
 				   // TODO: Hazard Title and/or Hazard Number = null, assign default value
