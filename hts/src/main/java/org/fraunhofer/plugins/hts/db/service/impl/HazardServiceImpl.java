@@ -86,6 +86,16 @@ public class HazardServiceImpl implements HazardService {
 		}
 		return hazard;
 	}
+	
+	@Override
+	public Hazards addFromJira(String title, String hazardNum, Mission_Payload missionPayload) {
+		final Hazards hazard = ao.create(Hazards.class, 
+				new DBParam("TITLE", title), new DBParam("HAZARD_NUM", hazardNum));
+		hazard.setMissionPayload(missionPayload);
+		hazard.setActive(true);
+		hazard.save();
+		return hazard;
+	}
 
 	@Override
 	public List<Hazards> all() {

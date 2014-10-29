@@ -17,6 +17,8 @@ public interface HazardService {
 	Hazards add(String title, String safetyRequirements, String description, String justification, String openWork, String preparer, String email, 
 			String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date lastEdit, Hazard_Group[] groups,  
 			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase, Mission_Payload missionPayload);
+	
+	Hazards addFromJira(String title, String hazardNum, Mission_Payload missionPayload);
 
 	Hazards getHazardByID(String id);
 
