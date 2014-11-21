@@ -68,7 +68,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 
 			stream = response.getOutputStream();
 			response.setContentType("application/msword");
-			response.addHeader("Content-Disposition", "attachment; filename=" + currentHazard.getHazardNum() + ".docx");
+			response.addHeader("Content-Disposition", "attachment; filename=" + currentHazard.getHazardNumber() + ".docx");
 			stream.write(results.get(0));
 		} catch (IOException | XmlException ioe) {
 			throw new ServletException(ioe.getMessage());

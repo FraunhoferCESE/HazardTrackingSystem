@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<title>HTS</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("HTSContext")
+	</head>
+	<body class="aui-layout aui-theme-default">
+		#parse("/templates/general-navigation.vm")
+		<div id="MainContent">
+			<div id="ContentHolder">
+				#parse("/templates/mission-page-mission-hazard-nav.vm")
+				<div class="aui-page-panel">
+					<div class="aui-page-panel-inner">
+						<div class="aui-page-panel-nav" style="padding-top: 0px; padding-bottom: 0px;">
+							<nav class="aui-navgroup aui-navgroup-vertical">
+								<div class="MissionPageMissionHeader">Missions/Payloads</div>
+								<div class="aui-navgroup-inner">
+									<ul class="aui-nav">
+										#if ($missions.size() == 0)
+											<li class="MissionPageLink">-None-</li>
+										#else
+											<li class="MissionPageLink">
+												<a class="LandingPageMissionLink" data-mission="all">
+													-All Hazard Reports-
+												</a>
+											</li>
+											#foreach ($mission in $missions)
+												<li class="MissionPageLink">
+													<a class="LandingPageMissionLink" data-mission="$mission.getID()">
+														$!mission.getName()
+													</a>
+												</li>
+											#end
+										#end
+									</ul>
+								</div>
+							</nav>
+						</div>
+						<div>
+							#if ($hazards.size() == 0)
+								<div id="MissionPageNoHazardsContainer">
+									<div>No Hazard Reports have been created.</div>
+									<div>To create a Hazard Report, navigate to a project and create a Sub-Task with the type set to "Hazard".</div>
+								</div>
+							#else
+								<table class="aui" id="MissionPageTable">
+									<thead>
+										<tr>
+											<th class="MissionPageTableCell1">Hazard #</th>
+											<th class="MissionPageTableCell2">Title</th>
+											<th class="MissionPageTableCell3">Mission/Payload</th>
+											<th class="MissionPageTableCell4">Last Revision</th>
+											<th class="MissionPageTableCell5">Actions</th>
+											<th class="MissionPageTableCell6">JIRA Sub-Task</th>
+										</tr>
+									</thead>
+									<tbody id="MissionPageTableBody">
+										#foreach ($hazard in $hazards)
+											<tr>
+												#if (!$hazard.getHazardNumber() || $hazard.getHazardNumber() == "")
+													<td>&lt;To Be Determined&gt;</td>
+												#else
+													<td>$hazard.getHazardNumber()</td>
+												#end
+												#if (!$hazard.getHazardTitle() || $hazard.getHazardTitle() == "")
+													<td>&lt;To Be Determined&gt;</td>
+												#else
+													<td>$hazard.getHazardTitle()</td>
+												#end
+												<td>$!hazard.getMissionTitle()</td>
+												<td class="HTSDate">$!hazard.getRevisionDate()</td>
+												<td>
+													<ul class='menu'>
+														<li>
+															<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+																Edit
+															</a>
+														</li>
+														<li><a href="#">Print</a></li>
+													</ul>
+												</td>
+												<td>
+													<a href="$!hazard.getJiraURL()">
+														Open
+													</a>
+												</td>
+											</tr>
+										#end
+									</tbody>
+								</table>
+							#end
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

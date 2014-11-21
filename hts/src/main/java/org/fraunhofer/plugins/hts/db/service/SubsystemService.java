@@ -15,5 +15,5 @@ public interface SubsystemService {
 
 	List<Subsystems> all();
 
-	List<Subsystems> getRemainingGroups(Subsystems[] currentList);
+	List<Subsystems> getRemaining(Subsystems[] currentList);
 }

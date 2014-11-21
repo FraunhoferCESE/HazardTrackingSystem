@@ -10,6 +10,7 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.datatype.HazardCauseTransferDT;
 import org.fraunhofer.plugins.hts.datatype.TransferClass;
 import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
@@ -35,82 +36,155 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		this.transferService = checkNotNull(transferService);
 		this.hazardService = checkNotNull(hazardService);
 	}
-
+	
 	@Override
-	public Hazard_Causes add(String description, String effects, String safetyFeatures, Risk_Categories risk, 
-			Risk_Likelihoods likelihood, String owner, String title, Hazards hazard) {
-		final Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
-		cause.setCauseNumber(getNewCauseNumber(hazard));
-		cause.setDescription(description);
-		cause.setEffects(effects);
-		cause.setAdditionalSafetyFeatures(safetyFeatures);
+	public Hazard_Causes add(int hazardID, String title, String owner, Risk_Categories risk, 
+			Risk_Likelihoods likelihood, String description, String effects, String safetyFeatures) {
+		Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
+		Hazards hazard = hazardService.getHazardByID(hazardID);
+		cause.setCauseNumber(hazard.getHazardCauses().length + 1);
+		cause.setTransfer(0);
 		cause.setOwner(owner);
 		cause.setRiskCategory(risk);
 		cause.setRiskLikelihood(likelihood);
+		cause.setDescription(description);
+		cause.setEffects(effects);
+		cause.setAdditionalSafetyFeatures(safetyFeatures);
 		cause.setLastUpdated(new Date());
-		cause.setOriginalDate(new Date());
-		cause.setTransfer(0);
 		cause.save();
 		associateCauseToHazard(hazard, cause);
 		return cause;
 	}
-
+	
 	@Override
-	public Hazard_Causes addCauseTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, null, null, null, title, hazard);
-		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "CAUSE");
+	public Hazard_Causes updateRegularCause(int causeID, String title, String owner, Risk_Categories risk,
+			Risk_Likelihoods likelihood, String description, String effects, String safetyFeatures) {
+		Hazard_Causes cause = getHazardCauseByID(causeID);
+		cause.setTitle(title);
+		cause.setOwner(owner);
+		
+		if (risk != null && cause.getRiskCategory() != null) {
+			if (risk.getID() != cause.getRiskCategory().getID()) {
+				cause.setRiskCategory(risk);
+			}
+		} else {
+			cause.setRiskCategory(risk);
+		}
+		
+		if (likelihood != null && cause.getRiskLikelihood() != null) {
+			if (likelihood.getID() != cause.getRiskLikelihood().getID()) {
+				cause.setRiskLikelihood(likelihood);
+			}
+		} else {
+			cause.setRiskLikelihood(likelihood);
+		}
+		
+		cause.setDescription(description);
+		cause.setEffects(effects);
+		cause.setAdditionalSafetyFeatures(safetyFeatures);
+		cause.setLastUpdated(new Date());
+		cause.save();
+		return cause;
+	}
+	
+	public Hazard_Causes updateTransferredCause(int causeID, String transferReason) {
+		Hazard_Causes cause = getHazardCauseByID(causeID);
+		cause.setDescription(transferReason);
+		cause.setLastUpdated(new Date());
+		cause.save();
+		return cause;
+	}
+	
+	@Override
+	public List<Hazard_Causes> getAllCauses() {
+		return newArrayList(ao.find(Hazard_Causes.class));
+	}
+	
+	@Override
+	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
+		return newArrayList(hazard.getHazardCauses());
+	}
+	
+	@Override
+	public List<HazardCauseTransferDT> getAllTransferredCauses(Hazards hazard) {
+		List<HazardCauseTransferDT> transferredCauses = new ArrayList<HazardCauseTransferDT>();
+		List<Hazard_Causes> allCausesWithinHazard = getAllCausesWithinAHazard(hazard);
+		for (Hazard_Causes originCause : allCausesWithinHazard) {
+			if (originCause.getTransfer() != 0) {
+				Transfers transfer = transferService.getTransferByID(originCause.getTransfer());
+				if (transfer.getTargetType().equals("CAUSE")) {
+					// CauseToCause transfer
+					Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
+					transferredCauses.add(HazardCauseTransferDT.createCauseToCause(transfer, originCause, targetCause));
+				} else {
+					// CauseToHazard transfer
+					Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+					transferredCauses.add(HazardCauseTransferDT.createCauseToHazard(transfer, originCause, targetHazard));
+				}
+			}
+		}
+		return transferredCauses;
+	}
+	
+	@Override
+	public Hazard_Causes getHazardCauseByID(int causeID) {
+		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?", causeID));
+		return hazardCause.length > 0 ? hazardCause[0] : null;
+	}
+	
+	@Override
+	public Hazard_Causes getHazardCauseByID(String causeID) {
+		int causeIDInt = Integer.parseInt(causeID);
+		return getHazardCauseByID(causeIDInt);
+	}
+	
+	@Override
+	public Hazard_Causes addHazardTransfer(int originHazardID, int targetHazardID, String transferReason) {
+		//Hazards targetHazard = hazardService.getHazardByID(targetHazardID);
+		Hazard_Causes cause = add(originHazardID, "transfer", null, null, null, transferReason, null, null);
+		int transferID = createTransfer(cause.getID(), "CAUSE", targetHazardID, "HAZARD");
 		cause.setTransfer(transferID);
 		cause.save();
 		return cause;
 	}
 	
 	@Override
-	public Hazard_Causes addHazardTransfer(String transferComment, int targetID, String title, Hazards hazard) {
-		Hazard_Causes cause = add(transferComment, null, null, null, null, null, title, hazard);
-		int transferID = createTransfer(cause.getID(), "CAUSE", targetID, "HAZARD");
+	public Hazard_Causes addCauseTransfer(int originHazardID, int targetCauseID, String transferReason) {
+		//Hazard_Causes targetCause = getHazardCauseByID(targetCauseID);
+		Hazard_Causes cause = add(originHazardID, "transfer", null, null, null, transferReason, null, null);
+		int transferID = createTransfer(cause.getID(), "CAUSE", targetCauseID, "CAUSE");
 		cause.setTransfer(transferID);
 		cause.save();
 		return cause;
 	}
 
 	@Override
-	public Hazard_Causes update(String id, String description, String safetyFeatures, String effects, 
-			String owner, String title, Risk_Categories risk, Risk_Likelihoods likelihood) {
-		Hazard_Causes causeToBeUpdated = getHazardCauseByID(id);
-		causeToBeUpdated.setDescription(description);
-		causeToBeUpdated.setEffects(effects);
-		causeToBeUpdated.setAdditionalSafetyFeatures(safetyFeatures);
-		causeToBeUpdated.setOwner(owner);
-		causeToBeUpdated.setTitle(title);
-		
-		if (risk != null && causeToBeUpdated.getRiskCategory() != null) {
-			if (risk.getID() != causeToBeUpdated.getRiskCategory().getID()) {
-				causeToBeUpdated.setRiskCategory(risk);
+	public Hazard_Causes deleteCause(int causeID, String deleteReason) {
+		Hazard_Causes cause = getHazardCauseByID(causeID);
+		if (cause != null) {
+			cause.setDeleteReason(deleteReason);
+			if (cause.getTransfer() != 0) {
+				Transfers transfer = transferService.getTransferByID(cause.getTransfer());
+				removeTransfer(transfer.getID());
+				transfer.save();
+				cause.setTransfer(0);
 			}
+			cause.save();
 		}
-		else {
-			causeToBeUpdated.setRiskCategory(risk);
-		}
-		
-		if (likelihood != null && causeToBeUpdated.getRiskLikelihood() != null) {
-			if (likelihood.getID() != causeToBeUpdated.getRiskLikelihood().getID()) {
-				causeToBeUpdated.setRiskLikelihood(likelihood);
-			}
-		}
-		else {
-			causeToBeUpdated.setRiskLikelihood(likelihood);
-		}
-		
-		causeToBeUpdated.setLastUpdated(new Date());
-		causeToBeUpdated.save();
-		return causeToBeUpdated;
+		return cause;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
-	@Override
-	public Hazard_Causes getHazardCauseByID(String id) {
-		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?", id));
-		return hazardCause.length > 0 ? hazardCause[0] : null;
-	}
+
+
+
 	
 	@Override
 	public Hazard_Causes[] getHazardCausesByID(Integer[] id) {
@@ -123,16 +197,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 			}
 			return causesArr;
 		}
-	}
-
-	@Override
-	public List<Hazard_Causes> all() {
-		return newArrayList(ao.find(Hazard_Causes.class));
-	}
-
-	@Override
-	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
-		return newArrayList(hazard.getHazardCauses());
 	}
 	
 	@Override
@@ -150,79 +214,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		}
 		return allRemaining;
 	}
-	
-	@Override
-	public List<TransferClass> getAllTransferredCauses(Hazards hazard) {
-		List<Hazard_Causes> allCauses = getAllCausesWithinAHazard(hazard);
-		List<Transfers> allTransfers = new ArrayList<Transfers>();
-		for (Hazard_Causes cause : allCauses) {
-			if (cause.getTransfer() != 0) {
-				allTransfers.add(transferService.getTransferByID(cause.getTransfer()));
-			}
-		}
-	
-		List<TransferClass> transferInfo = new ArrayList<TransferClass>();
-		for (Transfers transfer : allTransfers) {
-			Hazard_Causes originCause = getHazardCauseByID(String.valueOf(transfer.getOriginID()));
-			String transferReason = originCause.getDescription();
-			int transferID = transfer.getID();
-			String targetType = transfer.getTargetType();
-			int targetID = transfer.getTargetID();
-			
-			if (transfer.getTargetType().equals("CAUSE")) {
-				Hazard_Causes transferredCause = getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-				String causeTitle = transferredCause.getTitle();
-				int causeNum = transferredCause.getCauseNumber();
-				String hazardTitle = transferredCause.getHazards()[0].getTitle();
-				String hazardNumb = transferredCause.getHazards()[0].getHazardNum();
-				
-				Risk_Categories category = transferredCause.getRiskCategory();
-				String categoryStr;
-				if (category == null) {
-					categoryStr = "Not specified";
-				}
-				else {
-					categoryStr = category.getValue();
-				}
-				
-				Risk_Likelihoods likelihood = transferredCause.getRiskLikelihood();
-				String likelihoodStr;
-				if (likelihood == null) {
-					likelihoodStr = "Not specified";
-				}
-				else {
-					likelihoodStr = likelihood.getValue();
-				}
-				
-				Boolean deleted = false;				
-				if (!Strings.isNullOrEmpty(transferredCause.getDeleteReason())) {
-					deleted = true;
-				}
-				
-				//This is the id of the hazard the cause belongs to, which is needed for the title navigation.
-				int hazardID = transferredCause.getHazards()[0].getID();
-				TransferClass causeTransfer = new TransferClass(transferID, transferReason, causeTitle, hazardNumb, hazardTitle,
-										targetType, hazardID, targetID, causeNum, categoryStr, likelihoodStr, deleted);
-				transferInfo.add(causeTransfer);
-			}
-			else if(transfer.getTargetType().equals("HAZARD")) {
-				//get the hazard name and number
-				//get reason
-				Hazards transferredHazard = hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
-				String hazardTitle = transferredHazard.getTitle();
-				String hazardNumb = transferredHazard.getHazardNum();
-				Boolean deleted = false;		
-				if (transferredHazard.getActive() == false) {
-					deleted = true;
-				}
-	
-				TransferClass hazardTransfer = new TransferClass(transferID, transferReason, hazardTitle, hazardNumb, 
-										targetType, targetID, deleted);
-				transferInfo.add(hazardTransfer);
-			}
-		}
-		return transferInfo;
-	}
 
 	@Override
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinAHazard(Hazards hazard) {
@@ -235,28 +226,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 		return allRemaining;
 	}
 
-	@Override
-	public Hazard_Causes deleteCause(Hazard_Causes causeToBeDeleted, String reason) {
-		causeToBeDeleted.setDeleteReason(reason);
-		if (causeToBeDeleted.getTransfer() != 0) {
-			Transfers transfer = transferService.getTransferByID(causeToBeDeleted.getTransfer());
-			removeTransfer(transfer.getID());
-			transfer.save();
-			causeToBeDeleted.setTransfer(0);
-		}
-		causeToBeDeleted.save();
-		return causeToBeDeleted;
-	}
-
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {
 		final CausesToHazards causeToHazard = ao.create(CausesToHazards.class);
 		causeToHazard.setHazard(hazard);
 		causeToHazard.setHazardCause(hazardCause);
 		causeToHazard.save();
-	}
-
-	private int getNewCauseNumber(Hazards hazard) {
-		return hazard.getHazardCauses().length + 1;
 	}
 	
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
@@ -283,5 +257,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	private void removeTransfer(int id) {
 		ao.delete(ao.find(Transfers.class, Query.select().where("ID=?", id)));
 	}
+
 }
 

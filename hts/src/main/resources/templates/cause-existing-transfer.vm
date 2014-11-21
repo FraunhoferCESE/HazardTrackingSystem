@@ -1,0 +1,94 @@
+#set ($theCause = 0)
+#foreach ($transferredCause in $transferredCauses)
+	#if ($transferredCause.getTransferID() == $cause.getTransfer())
+		#set ($theCause = $transferredCause)
+		#break
+	#end
+#end
+
+<tr id="CauseTableEntryID$cause.getID()">
+	<td class="HazardPropertyTableTd">
+		<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
+	</td>
+	<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
+	<td class="HazardPropertyTableTd">
+		#if ($theCause.getTransferTargetType() == "CAUSE")
+			#if ($theCause.isDeleted() == true)
+				<div>$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()</div>
+			#else
+				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()">
+					$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
+				</a>
+			#end
+		#else
+			#if ($theCause.isDeleted() == true)
+				<div>$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()</div>
+			#else
+				<a href="/jira/plugins/servlet/hazards?id=$!theCause.getTargetHazardID()">
+					$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()
+				</a>
+			#end
+		#end
+	</td>
+	<td class="HazardPropertyTableTd">
+		#if (!$theCause.getTargetCauseOwner() || $theCause.getTargetCauseOwner() == "")
+			N/A
+		#else
+			$theCause.getTargetCauseOwner()
+		#end
+	</td>
+	<td class="HTSDate HazardPropertyTableTd">$cause.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">
+		<input type="checkbox" value="$cause.getID()" class="CausePageDeleteBox">
+	</td>
+</tr>
+<tr id="CauseTableEntryContentID$cause.getID()" class="HazardPropertyContentRow">
+	<td colspan="100%">
+		<div class="HazardPropertyContentHolder">
+			<form method="post" action="causes" class="aui CausePageFormExisting">
+				<input type="hidden" name="regular" id="regular" value="false">
+				<input type="hidden" name="existing" id="existing" value="true">
+				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+				<input type="hidden" name="causeID" id="causeID" value="$!cause.getID()">
+
+				<div class="field-group">
+					<label for="causeTargetHazardTitle">Hazard Title</label>
+					<div class="field-group-static">
+						$!theCause.getTargetHazardTitle()
+					</div>
+				</div>
+				<div class="field-group">
+					<label for="causeTargetHazardNumber">Hazard #</label>
+					<div class="field-group-static">
+						$!theCause.getTargetHazardNumber()
+					</div>
+				</div>
+				#if ($theCause.getTransferTargetType() == "CAUSE")
+					<div class="field-group">
+						<label for="causeTargetHazardNumber">Cause Title</label>
+						<div class="field-group-static">
+							$!theCause.getTargetCauseTitle()
+						</div>
+					</div>
+					<div class="field-group">
+						<label for="causeTargetHazardNumber">Risk Category</label>
+						<div class="field-group-static">
+							$!theCause.getTargetCauseRiskCategoryTitle()
+						</div>
+					</div>
+					<div class="field-group">
+						<label for="causeTargetHazardNumber">Risk Likelihood</label>
+						<div class="field-group-static">
+							$!theCause.getTargetCauseRiskLikelihoodTitle()
+						</div>
+					</div>
+				#end
+
+				<div class="field-group">
+					<label for="transferReason">Transfer Reason</label>
+					<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$theCause.getTransferReason()</textarea>
+				</div>
+			</form>
+		</div>
+	</td>
+</tr>

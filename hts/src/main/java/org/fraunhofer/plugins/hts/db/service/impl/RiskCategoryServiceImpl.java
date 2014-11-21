@@ -1,5 +1,8 @@
 package org.fraunhofer.plugins.hts.db.service.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.List;
 
 import net.java.ao.Query;
@@ -8,9 +11,6 @@ import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 public class RiskCategoryServiceImpl implements RiskCategoryService {
 	private final ActiveObjects ao;

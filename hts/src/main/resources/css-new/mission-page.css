@@ -1,0 +1,38 @@
+.MissionPageLink {
+    cursor: pointer;
+}
+
+.MissionPageMissionHeader {
+	border-bottom: 1px solid #CCC;
+	font-weight: bold;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+#MissionPageNoHazardsContainer {
+	padding: 7px 10px 7px 10px;
+}
+
+.MissionPageTableCell1 {
+    width: 9%;
+}
+
+.MissionPageTableCell2 {
+    width: 20%;
+}
+
+.MissionPageTableCell3 {
+    width: 13%;
+}
+
+.MissionPageTableCell4 {
+    width: 9%;
+}
+
+.MissionPageTableCell5 {
+    width: 5%;
+}
+
+.MissionPageTableCell6 {
+    width: 8%;
+}

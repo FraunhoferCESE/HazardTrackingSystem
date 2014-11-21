@@ -126,7 +126,7 @@ public class HazardGroupServiceImplTest {
 		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
 
 		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
-		List<Hazard_Group> result = test.getRemainingHazardGroups(mockList);
+		List<Hazard_Group> result = test.getRemaining(mockList);
 
 		assertTrue(HazardGroupServiceImpl.isInitialized());
 		assertEquals(1, result.size());
@@ -139,7 +139,7 @@ public class HazardGroupServiceImplTest {
 		when(mockActiveObjects.find(eq(Hazard_Group.class), any(Query.class))).thenReturn(mockHazardGroups);
 
 		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
-		List<Hazard_Group> result = test.getRemainingHazardGroups(mockHazardGroups);
+		List<Hazard_Group> result = test.getRemaining(mockHazardGroups);
 
 		assertTrue(HazardGroupServiceImpl.isInitialized());
 		assertEquals(0, result.size());
@@ -153,7 +153,7 @@ public class HazardGroupServiceImplTest {
 		when(mockActiveObjects.find(eq(Hazard_Group.class))).thenReturn(mockMissionPhases);
 
 		HazardGroupService test = new HazardGroupServiceImpl(mockActiveObjects);
-		List<Hazard_Group> result = test.getRemainingHazardGroups(mockList);
+		List<Hazard_Group> result = test.getRemaining(mockList);
 
 		assertTrue(HazardGroupServiceImpl.isInitialized());
 		assertTrue(result.isEmpty());

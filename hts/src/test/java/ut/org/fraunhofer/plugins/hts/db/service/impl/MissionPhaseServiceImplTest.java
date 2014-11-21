@@ -110,7 +110,7 @@ public class MissionPhaseServiceImplTest {
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 
 		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
-		List<Mission_Phase> result = test.getRemainingMissionPhases(mockList);
+		List<Mission_Phase> result = test.getRemaining(mockList);
 
 		assertTrue(MissionPhaseServiceImpl.isInitialized());
 		assertEquals(1, result.size());
@@ -123,7 +123,7 @@ public class MissionPhaseServiceImplTest {
 		when(mockActiveObjects.find(eq(Mission_Phase.class), any(Query.class))).thenReturn(mockMissionPhases);
 
 		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
-		List<Mission_Phase> result = test.getRemainingMissionPhases(mockMissionPhases);
+		List<Mission_Phase> result = test.getRemaining(mockMissionPhases);
 
 		assertTrue(MissionPhaseServiceImpl.isInitialized());
 		assertEquals(0, result.size());
@@ -137,7 +137,7 @@ public class MissionPhaseServiceImplTest {
 		when(mockActiveObjects.find(eq(Mission_Phase.class))).thenReturn(mockMissionPhases);
 
 		MissionPhaseService test = new MissionPhaseServiceImpl(mockActiveObjects);
-		List<Mission_Phase> result = test.getRemainingMissionPhases(mockList);
+		List<Mission_Phase> result = test.getRemaining(mockList);
 
 		assertTrue(MissionPhaseServiceImpl.isInitialized());
 		assertTrue(result.isEmpty());

@@ -8,7 +8,7 @@ import org.fraunhofer.plugins.hts.db.Hazards;
 
 @XmlRootElement(name = "hazardResponseList")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class HazardResponseList {
+public class HazardResponse {
 	private int hazardID;
 	private String title;
 	private String hazardNumber;
@@ -35,11 +35,11 @@ public class HazardResponseList {
 		return active;
 	}
 
-	public static HazardResponseList hazards(Hazards hazard) {
-		HazardResponseList list = new HazardResponseList();
+	public static HazardResponse createHazardResponse(Hazards hazard) {
+		HazardResponse list = new HazardResponse();
 		list.hazardID = hazard.getID();
-		list.title = hazard.getTitle();
-		list.hazardNumber = hazard.getHazardNum();
+		list.title = hazard.getHazardTitle();
+		list.hazardNumber = hazard.getHazardNumber();
 		list.active = hazard.getActive();
 		list.type = "HAZARD";
 		return list;

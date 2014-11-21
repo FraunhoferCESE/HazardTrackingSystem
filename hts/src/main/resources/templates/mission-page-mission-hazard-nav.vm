@@ -1,0 +1,9 @@
+<header class="aui-page-header" style="padding-top: 5px; padding-bottom: 5px;">
+	<div class="aui-page-header-inner">
+		<div class="MissionHazardNavContentHolder">
+			<div class="MissionHazardNavContentHeader">Welcome to the Hazard Tracking System</div>
+			<div class="MissionHazardNavContentHeader">Currently viewing:</div>
+			<div class="MissionHazardNavContent">Mission/Payload Page</div>
+		</div>
+	</div>
+</header>

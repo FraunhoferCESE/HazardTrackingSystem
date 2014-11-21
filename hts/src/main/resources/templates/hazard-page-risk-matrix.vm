@@ -53,11 +53,11 @@
 	#end
 #end
 
-<table id="HazardRiskMatrixTable" class="HazardRiskMatrixText">
+<table id="HazardPageRiskMatrixTable" class="HazardPageRiskMatrixText">
 	<tr>
-		<td class="HazardRiskMatrixEmptyColumn"></td>
+		<td class="HazardPageRiskMatrixEmptyColumn"></td>
 		#foreach ($key in $categoryNamesMap.keySet())
-			<td class="HazardRiskMatrixCategoryColumns" data-column="$categoryNamesMap.get($key)">
+			<td class="HazardPageRiskMatrixCategoryColumns" data-column="$categoryNamesMap.get($key)">
 				$categoryNamesMap.get($key)
 			</td>
 		#end
@@ -82,46 +82,46 @@
 				#set( $className = "" )
 				#if ($likelihoodNamesMap.get($keyOne) == "Frequent")
 					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
-						#set( $className = "HazardRiskMatrixTableYellowCell" )
+						#set( $className = "HazardPageRiskMatrixTableYellowCell" )
 					#else
-						#set( $className = "HazardRiskMatrixTableRedCell" )
+						#set( $className = "HazardPageRiskMatrixTableRedCell" )
 					#end
 				#elseif ($likelihoodNamesMap.get($keyOne) == "Reasonably probable")
 					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
-						#set( $className = "HazardRiskMatrixTableYellowCell" )
+						#set( $className = "HazardPageRiskMatrixTableYellowCell" )
 					#elseif ($categoryNamesMap.get($keyTwo) == "Marginal")
-						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+						#set( $className = "HazardPageRiskMatrixTableOrangeCell" )
 					#else
-						#set( $className = "HazardRiskMatrixTableRedCell" )
+						#set( $className = "HazardPageRiskMatrixTableRedCell" )
 					#end
 				#elseif ($likelihoodNamesMap.get($keyOne) == "Occasional")
 					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
-						#set( $className = "HazardRiskMatrixTableGreenCell" )
+						#set( $className = "HazardPageRiskMatrixTableGreenCell" )
 					#elseif ($categoryNamesMap.get($keyTwo) == "Catastrophic")
-						#set( $className = "HazardRiskMatrixTableRedCell" )
+						#set( $className = "HazardPageRiskMatrixTableRedCell" )
 					#else
-						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+						#set( $className = "HazardPageRiskMatrixTableOrangeCell" )
 					#end
 				#elseif ($likelihoodNamesMap.get($keyOne) == "Remote")
 					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
-						#set( $className = "HazardRiskMatrixTableGreenCell" )
+						#set( $className = "HazardPageRiskMatrixTableGreenCell" )
 					#elseif ($categoryNamesMap.get($keyTwo) == "Marginal")
-						#set( $className = "HazardRiskMatrixTableYellowCell" )
+						#set( $className = "HazardPageRiskMatrixTableYellowCell" )
 					#else
-						#set( $className = "HazardRiskMatrixTableOrangeCell" )
+						#set( $className = "HazardPageRiskMatrixTableOrangeCell" )
 					#end
 				#elseif ($likelihoodNamesMap.get($keyOne) == "Extremely improbable")
 					#if ($categoryNamesMap.get($keyTwo) == "Negligible")
-						#set( $className = "HazardRiskMatrixTableGreenCell" )
+						#set( $className = "HazardPageRiskMatrixTableGreenCell" )
 					#else
-						#set( $className = "HazardRiskMatrixTableYellowCell" )
+						#set( $className = "HazardPageRiskMatrixTableYellowCell" )
 					#end
 				#end
 
 				<td class="$className">
-					<div class="HazardRiskMatrixLinkCell">
+					<div class="HazardPageRiskMatrixLinkCell">
 						#foreach ($cause in $categoryMap.get($keyTwo))
-							<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
+							<a href="#" class="HazardPageRiskMatrixLink" data-causeid="$cause.getID()">
 								$cause.getCauseNumber()
 							</a>
 						#end
@@ -138,23 +138,23 @@
 	#end
 </table>
 
-<div id="HazardRiskMatrixHazards">
-	<div class="HazardRiskMatrixText">Causes associated with entire hazards: </div>
+<div id="HazardPageRiskMatrixHazards">
+	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: </div>
 </div>
 
 #if ($notSpecified.size() != 0)
 	<div>
-		<div class="HazardRiskMatrixText">Causes with unspecified category and/or likelihood: </div>
+		<div class="HazardPageRiskMatrixText">Causes with unspecified category and/or likelihood: </div>
 		#foreach ($cause in $notSpecified)
-			<a href="#" class="HazardRiskMatrixLink" data-causeid="$cause.getID()">
+			<a href="#" class="HazardPageRiskMatrixLink" data-causeid="$cause.getID()">
 				$cause.getCauseNumber()
 			</a>
 		#end
 	</div>
 #end
 
-<div id="HazardRiskMatrixTransfersDeletedContainer">
-	<div class="HazardRiskMatrixText">Causes whose transfers are deleted: </div>
+<div id="HazardPageRiskMatrixTransfersDeletedContainer">
+	<div class="HazardPageRiskMatrixText">Causes whose transfers are deleted: </div>
 </div>
 
 <div id="HazardRiskMatrixTransfersContainer">

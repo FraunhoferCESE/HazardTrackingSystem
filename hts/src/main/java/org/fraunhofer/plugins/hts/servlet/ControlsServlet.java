@@ -1,17 +1,20 @@
 package org.fraunhofer.plugins.hts.servlet;
 
-import javax.servlet.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
@@ -24,10 +27,6 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class ControlsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -51,45 +50,55 @@ public class ControlsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-    		Map<String, Object> context = Maps.newHashMap();
-    		resp.setContentType("text/html;charset=utf-8");
-    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-
-			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
-			Mission_Payload currentPayload = currentHazard.getMissionPayload();
-			
-			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
-			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
-    		
-    		if ("y".equals(req.getParameter("edit"))) {
-				context.put("hazardNumber", currentHazard.getHazardNum());
-				context.put("hazardTitle", currentHazard.getTitle());
-				context.put("hazardID", currentHazard.getID());
-				context.put("hazard", currentHazard);
-    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
-    			context.put("hazardCauses", hazardCauseService.getAllCausesWithinAHazard(currentHazard));
-        		context.put("controlGroups", controlGroupsService.all());
-        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(currentHazard));
-				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
-    		}
-//    		else {
-//    			Hazards newestHazardReport = hazardService.getNewestHazardReport();
-//    			// Content for upper part of page; hazard info and list of previously defined controls
-//    			context.put("hazardNumber", newestHazardReport.getHazardNum());
-//    			context.put("hazardTitle", newestHazardReport.getTitle());
-//    			context.put("hazardID", newestHazardReport.getID());
-//    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
-//    			// Content for lower part of page; creating a new control
-//    			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+		Map<String, Object> context = Maps.newHashMap();
+		resp.setContentType("text/html;charset=utf-8");
+		templateRenderer.render("templates/controls-page.vm", context, resp.getWriter());
+   
+//		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
+//    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+//    		Map<String, Object> context = Maps.newHashMap();
+//    		resp.setContentType("text/html;charset=utf-8");
+//    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
+//	
+//			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+//			if (currentHazard == null || currentHazard.getProjectID() == null) {
+//				context.put("errorMessage", "The hazard report you were working with cannot be found or opened.");
+//				templateRenderer.render("templates/ErrorPage.vm", context, resp.getWriter());
+//				return;
+//			}
+//			
+//			List<Hazards> allHazardsBelongingToPayload = hazardService.getHazardsByMissionPayload(currentHazard.getProjectID());
+//			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
+//			
+//    		
+//    		if ("y".equals(req.getParameter("edit"))) {
+//				context.put("hazardNumber", currentHazard.getHazardNumber());
+//				context.put("hazardTitle", currentHazard.getHazardTitle());
+//				context.put("hazardID", currentHazard.getID());
+//				context.put("hazard", currentHazard);
+//    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
+//    			context.put("hazardCauses", hazardCauseService.getAllCausesWithinAHazard(currentHazard));
 //        		context.put("controlGroups", controlGroupsService.all());
-//        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(newestHazardReport));
-//            	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+//        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(currentHazard));
+//				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
 //    		}
-    	}
-    	else {
-    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
-    	}
+////    		else {
+////    			Hazards newestHazardReport = hazardService.getNewestHazardReport();
+////    			// Content for upper part of page; hazard info and list of previously defined controls
+////    			context.put("hazardNumber", newestHazardReport.getHazardNum());
+////    			context.put("hazardTitle", newestHazardReport.getTitle());
+////    			context.put("hazardID", newestHazardReport.getID());
+////    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
+////    			// Content for lower part of page; creating a new control
+////    			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
+////        		context.put("controlGroups", controlGroupsService.all());
+////        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(newestHazardReport));
+////            	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+////    		}
+//    	}
+//    	else {
+//    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
+//    	}
     }
     
     @Override

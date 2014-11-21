@@ -1,0 +1,253 @@
+/* THIS FILE CONTAINS CSS THAT IS SHARED ACCROSS ALL PAGES */
+
+/* FOR FORM ELEMENTS, REQUIRED STYLE */
+.HTSRequired {
+    color: red;
+}
+
+.HTSRequiredContainer {
+    display: none;
+}
+
+/* ADJUSTMENT CLASS FOR REGULAR DIVs INSTED OF INPUTS FOR FROMS */
+.field-group-static {
+	margin-top: 5px;
+}
+
+/* STYLES FOR THE GENERAL NAVIGATION; INDEX, REPORT BUG, ETC. */
+.GeneralNavContent1 {
+    float: left;
+}
+
+.GeneralNavContent2 {
+    float: right;
+}
+
+/* CONTAINER FOR THE CONTENT INSIDE THE MISSION/HAZARD NAV BAR */
+.MissionHazardNavContentHolder {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333333;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 68px;
+}
+
+.MissionHazardNavContentHeader {
+    font-weight: bold;
+}
+
+.MissionHazardNavContent {
+    text-indent: 10px;
+}
+
+.MissionHazardNavStatic {
+    float: left;
+}
+
+.MissionHazardNavDynamic {
+    float: right;
+}
+
+.MissionHazardNavDynamicContainer {
+    padding-left: 10px;
+}
+
+.MissionHazardNavDynamicSelectContainer {
+    display: inline-block;
+    width: 250px;
+}
+
+.MissionHazardNavDynamicHeader {
+    font-size: 11px;
+}
+
+/* STYLES FOR HAZARD PROPERTIES (CAUSES, CONTROLS, VERIFICATIONS) */
+/* GENERAL STYLES*/
+.HazardPropertyHeadingTwo {
+    border-top: 1px solid #CCC;
+    /*border-top: 1px black solid;*/
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+}
+
+/* TABLE STYLES */
+.HazardPropertyTable {
+    width: 100%;
+}
+
+.HazardPropertyTableTh {
+    text-align: left;
+    border-bottom: 1px solid #CCC;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.HazardPropertyTableTd {
+    border-bottom: 1px solid #CCC;
+    padding: 7px 10px 7px 10px;
+}
+
+.HazardPropertyTableCell1 {
+    width: 2%;
+}
+
+.HazardPropertyTableCell2 {
+    width: 7%;
+}
+
+.HazardPropertyTableCell3 {
+    width: 52%;
+}
+
+.HazardPropertyTableCell4 {
+    width: 18%;
+}
+
+.HazardPropertyTableCell5 {
+    width: 18%;
+}
+
+.HazardPropertyTableCell6 {
+    width: 3%;
+
+}
+
+.HazardPropertyTableCell6Img {
+    background-image: url("images/delete.png");
+    background-repeat: no-repeat;
+    height: 18px;
+    width: 18px;
+}
+
+.HazardPropertyContentRow {
+    display: none;
+}
+
+.HazardPropertyContentHolder {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: none;
+    background-color: #FAFAFA;
+    border-bottom: 1px solid #CCC;
+}
+
+.HazardPropertyTableButtonsContainer {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* JOINT STYLES FOR TRANSFERS */
+.HTSNoTransfersContainer {
+    padding-left: 20px;
+}
+
+.HTSNoTransfersText {
+    color: red;
+}
+
+/* JOINT STYLES FOR THE DELETE DIALOG */
+.ConfirmDialogHeadingOne {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    display: block;
+}
+
+.ConfirmDialogHeadingTwo {
+    margin: 0;
+    padding: 0;
+}
+
+.ConfirmDialogContentTwo {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.ConfirmDialogHeadingOneContent {
+    font-weight: normal;
+    display: inline;
+}
+
+.ConfirmDialogTableHeader {
+    text-align: left;
+    border: none;
+}
+
+.ConfirmDialogTableNoBorder {
+    border: none;
+}
+
+.ConfirmDialogDescriptionText {
+    max-width: 370px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ConfirmDialogLabelContainer {
+    width: 12%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonTextContainer {
+    width: 70%;
+    display: inline-block;
+}
+
+.ConfirmDialogReasonTextInput {
+    width: 99%
+}
+
+.ConfirmDialogReasonTextContainerNoButton {
+    width: 88%;
+    display: inline-block;
+}
+
+.ConfirmDialogDuplButtonContainer {
+    width: 16%;
+    display: inline-block;
+}
+
+.ConfirmDialogDuplButton {
+    margin-left: 10px;
+    padding: 2px 5px 2px 5px;
+}
+
+.ConfirmDialogErrorText {
+    margin: 0;
+    font-size: 11px;
+    font-style: italic;
+    color: red;
+}
+
+.ConfirmDialogErrorTextHidden {
+    display: none;
+}
+
+.ConformDialogEmptyRow {
+    border-top: 1px solid #CCC;
+}
+
+.ConfirmDialogTableCellOne {
+    width: 30px;
+}
+
+.ConfirmDialogTableCellTwo {
+    width: 410px;
+}
+
+.ConfirmDialogTableCellThree {
+    width: 160px;
+}
+
+.ConfirmDialogReasonText {
+    width: 100%
+}

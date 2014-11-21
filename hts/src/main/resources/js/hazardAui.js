@@ -1,9 +1,9 @@
-function navigateTo(trigger, contentId){
-    AJS.$("#main-nav li").removeClass("aui-nav-selected");
-    AJS.$("#" + trigger).addClass("aui-nav-selected");
-    AJS.$(".nav-content").hide();
-    AJS.$("#" + contentId).show();
-}
+// function navigateTo(trigger, contentId){
+//     AJS.$("#main-nav li").removeClass("aui-nav-selected");
+//     AJS.$("#" + trigger).addClass("aui-nav-selected");
+//     AJS.$(".nav-content").hide();
+//     AJS.$("#" + contentId).show();
+// }
 
 function manipulateTextLength(theText, numChars) {
     if (theText.length >= numChars){
@@ -104,18 +104,18 @@ AJS.$(document).ready(function(){
 
     AJS.$(".aui-page-header").css({"padding-top":"5px", "padding-bottom":"5px"});
     AJS.$(".error").hide();
-    if(window.location.href.indexOf("hazardform") > -1 || window.location.href.indexOf("hazardlist") > -1) {
-        navigateTo("hazard-nav-item", "content-1");
-    }
-    else if(window.location.href.indexOf("causeform") > -1) {
-        navigateTo("cause-nav-item", "content-2");
-    }
-    else if(window.location.href.indexOf("controlform") > -1) {
-        navigateTo("control-nav-item", "content-3");
-    }
-    else if(window.location.href.indexOf("verificationform") > -1) {
-        navigateTo("verification-nav-item", "content-4");
-    }
+    // if(window.location.href.indexOf("hazardform") > -1 || window.location.href.indexOf("hazardlist") > -1) {
+    //     navigateTo("hazard-nav-item", "content-1");
+    // }
+    // else if(window.location.href.indexOf("causeform") > -1) {
+    //     navigateTo("cause-nav-item", "content-2");
+    // }
+    // else if(window.location.href.indexOf("controlform") > -1) {
+    //     navigateTo("control-nav-item", "content-3");
+    // }
+    // else if(window.location.href.indexOf("verificationform") > -1) {
+    //     navigateTo("verification-nav-item", "content-4");
+    // }
 
     if(window.location.href.indexOf("?edit=y") > -1) {
         AJS.$("#ViewAllNav").removeClass("aui-nav-selected");

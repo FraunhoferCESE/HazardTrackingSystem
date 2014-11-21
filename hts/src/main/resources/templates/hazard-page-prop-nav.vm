@@ -1,0 +1,20 @@
+<nav id="main-nav" class="aui-navgroup aui-navgroup-horizontal">
+	<div class="aui-navgroup-inner">
+		<div class="aui-navgroup-primary">
+			<ul id="HazardPagePropertiesNavigation" class="aui-nav">
+				<li id="HazardNavItem">
+					<a href="/jira/plugins/servlet/hazards?id=$!hazard.getID()" class="RouteLink">Hazard</a>
+				</li>
+				<li id="CausesNavItem">
+					<a href="/jira/plugins/servlet/causes?id=$!hazard.getID()" class="RouteLink">Causes</a>
+				</li>
+				<li id="ControlsNavItem">
+					<a href="/jira/plugins/servlet/controls?id=$!hazard.getID()" class="RouteLink">Controls</a>
+				</li>
+				<li id="VerificationsNavItem">
+					<a href="/jira/plugins/servlet/verifications?id=$!hazard.getID()" class="RouteLink">Verifications</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

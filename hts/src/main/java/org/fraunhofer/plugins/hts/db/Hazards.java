@@ -8,7 +8,6 @@ import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 import net.java.ao.schema.NotNull;
 
-//TODO look into if skipping preload is better writing javadoc
 /**
  * The table definition for the Hazards table. It extends Entity which provides
  * the ID field and getID method.
@@ -18,85 +17,66 @@ import net.java.ao.schema.NotNull;
  */
 @Table("Hazards")
 public interface Hazards extends Entity {
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardTitle();
+	void setHazardTitle(String title);
 	
-	@NotNull
-	@StringLength(value = 512)
-	String getTitle();
-
-	void setTitle(String title);
-	
-	String getHazardNum();
-
-	void setHazardNum(String hazardNum);
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardNumber();
+	void setHazardNumber(String hazardNumber);
 	
 	@NotNull
 	Long getProjectID();
-	
 	void setProjectID(Long projectID);
 	
 	@NotNull
 	Long getIssueID();
-	
 	void setIssueID(Long projectID);
+
+	String getJiraURL();
+	void setJiraURL(String URL);
 	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardSafetyRequirements();
-
 	void setHazardSafetyRequirements(String safetyRequirements);
 
 	@StringLength(value = StringLength.UNLIMITED)
-	String getHazardDesc();
-
-	void setHazardDesc(String description);
+	String getHazardDescription();
+	void setHazardDescription(String description);
 	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardJustification();
-
 	void setHazardJustification(String justification);
 	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardOpenWork();
-
 	void setHazardOpenWork(String openWork);
 
 	String getPreparer();
-
 	void setPreparer(String preparer);
 
 	String getEmail();
-
 	void setEmail(String email);
 	
 	boolean getActive();
-	
 	void setActive(boolean state);
 
-
-	
-	String getHazardVersionNum();
-
-	void setHazardVersionNum(String versionNum);
+	@StringLength(value = StringLength.UNLIMITED)
+	String getHazardVersionNumber();
+	void setHazardVersionNumber(String versionNum);
 
 	Date getInitiationDate();
-
 	void setInitiationDate(Date initationDate);
-
+	
 	Date getCompletionDate();
-
 	void setCompletionDate(Date completionDate);
 
 	Date getRevisionDate();
-
 	void setRevisionDate(Date revisionDate);
 
 	// FOREIGN KEYS
 	void setReviewPhase(Review_Phases phase);
-
 	Review_Phases getReviewPhase();
-
-//	void setMissionPayload(Mission_Payload missionPayload);
-//
-//	Mission_Payload getMissionPayload();
 
 	@ManyToMany(value = SubsystemToHazard.class)
 	Subsystems[] getSubsystems();

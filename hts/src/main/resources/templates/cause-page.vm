@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<title>HTS</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("HTSContext")
+	</head>
+	<body class="aui-layout aui-theme-default">
+		#parse("/templates/general-navigation.vm")
+		<div id="MainContent">
+			<div id="ContentHolder">
+				#parse("/templates/hazard-page-mission-hazard-nav.vm")
+				#parse("/templates/hazard-page-prop-nav.vm")
+				<div class="aui-page-panel">
+					<div class="aui-page-panel-inner">
+						<section class="aui-page-panel-content">
+							#if ($causes.size() == 0)
+								<p>No Causes have been created for this Hazard Report.</p>
+							#else
+								<table cellspacing="0" class="HazardPropertyTable" id="CausePageTable">
+									<thead>
+										<tr>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell1"></th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell2"></th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell3">Title</th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell4">Owner</th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell5">Last updated</th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell6">
+												<div class="HazardPropertyTableCell6Img"></div>
+											</th>
+										</tr>
+									</thead>
+									<tbody id="HazardPropertyTableBody">
+										#foreach ($cause in $causes)
+											#if( $cause.getTransfer() != 0)
+												#parse("/templates/cause-existing-transfer.vm")
+											#else
+												#parse("/templates/cause-existing-regular.vm")
+											#end
+										#end
+									</tbody>
+								</table>
+								<div class="HazardPropertyTableButtonsContainer">
+									<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
+									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
+									<input class="aui-button" type="button" value="Expand All" id="CausePageExpandAllButton" style="margin: 0">
+								</div>
+							#end
+							<div>
+								<div class="HazardPropertyHeadingTwo">
+									<span class="aui-icon aui-icon-small aui-iconfont-add" id="CausePageAddNewCause"></span>
+									<span>Add New Cause</span>
+								</div>
+								<div id="CausePageNewContainer">
+									#parse("/templates/cause-new.vm")
+								</div>
+								<div class="HazardPropertyHeadingTwo">
+									<span class="aui-icon aui-icon-small aui-iconfont-add" id="CausePageAddTransfer"></span>
+									<span>Add Cause Transfer</span>
+								</div>
+								<div id="CausePageTransferContainer">
+									#parse("/templates/cause-transfer.vm")
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

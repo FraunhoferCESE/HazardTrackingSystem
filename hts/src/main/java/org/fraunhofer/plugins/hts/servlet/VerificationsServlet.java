@@ -28,9 +28,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-public class VerificationServlet extends HttpServlet{
+public class VerificationsServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(VerificationServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(VerificationsServlet.class);
 	private final TemplateRenderer templateRenderer;
 	private final HazardService hazardService;
 	private final VerificationTypeService verificationTypeService;
@@ -38,7 +38,7 @@ public class VerificationServlet extends HttpServlet{
 	private final VerificationService verificationService;
 	private final HazardControlService hazardControlService;
 	
-	public VerificationServlet(TemplateRenderer templateRenderer, HazardService hazardService,
+	public VerificationsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
 			VerificationService verificationService, HazardControlService hazardControlService) {
 		this.templateRenderer = templateRenderer;
@@ -51,29 +51,33 @@ public class VerificationServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-    		Map<String, Object> context = Maps.newHashMap();
-    		resp.setContentType("text/html;charset=utf-8");
-    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-			if ("y".equals(req.getParameter("edit"))) {
-				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
-				context.put("hazardNumber", currentHazard.getHazardNum());
-				context.put("hazardTitle", currentHazard.getTitle());
-				context.put("hazardID", currentHazard.getID());
-				context.put("hazard", currentHazard);
-				context.put("verificationTypes", verificationTypeService.all());
-				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
-				context.put("verificationStatuses", verificationStatusService.all());
-				context.put("allControls", hazardControlService.getAllControlsWithinAHazard(currentHazard));
-				context.put("allTransferredControls", hazardControlService.getAllTransferredControls(currentHazard));
-				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
-			} else {
-				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
-			}
-       	}
-    	else {
-    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
-    	}
+		Map<String, Object> context = Maps.newHashMap();
+		resp.setContentType("text/html;charset=utf-8");
+		templateRenderer.render("templates/verifications-page.vm", context, resp.getWriter());
+    	
+//    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+//    		Map<String, Object> context = Maps.newHashMap();
+//    		resp.setContentType("text/html;charset=utf-8");
+//    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
+//			if ("y".equals(req.getParameter("edit"))) {
+//				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
+//				context.put("hazardNumber", currentHazard.getHazardNumber());
+//				context.put("hazardTitle", currentHazard.getHazardTitle());
+//				context.put("hazardID", currentHazard.getID());
+//				context.put("hazard", currentHazard);
+//				context.put("verificationTypes", verificationTypeService.all());
+//				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
+//				context.put("verificationStatuses", verificationStatusService.all());
+//				context.put("allControls", hazardControlService.getAllControlsWithinAHazard(currentHazard));
+//				context.put("allTransferredControls", hazardControlService.getAllTransferredControls(currentHazard));
+//				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
+//			} else {
+//				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
+//			}
+//       	}
+//    	else {
+//    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
+//    	}
     }
     
     @Override

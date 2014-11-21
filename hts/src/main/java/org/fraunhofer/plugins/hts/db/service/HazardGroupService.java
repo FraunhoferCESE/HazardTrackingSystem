@@ -16,5 +16,5 @@ public interface HazardGroupService {
 
 	Hazard_Group[] getHazardGroupsByID(Integer[] id);
 
-	List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList);
+	List<Hazard_Group> getRemaining(Hazard_Group[] currentList);
 }

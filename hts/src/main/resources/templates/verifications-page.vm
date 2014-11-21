@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>HTS</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("HTSContext")
+	</head>
+	<body class="aui-layout aui-theme-default">
+		#parse("/templates/general-navigation.vm")
+		<div id="MainContent">
+			<div id="ContentHolder">
+				#parse("/templates/hazard-page-mission-hazard-nav.vm")
+				#parse("/templates/hazard-page-prop-nav.vm")
+				<div class="aui-page-panel">
+					<div class="aui-page-panel-inner">
+						<section class="aui-page-panel-content">
+							Verifications
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

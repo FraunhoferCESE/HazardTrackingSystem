@@ -1,0 +1,50 @@
+<form method="post" action="causes" class="aui" id="CausePageFormAddNew">
+	<input type="hidden" name="regular" id="regular" value="true">
+	<input type="hidden" name="existing" id="existing" value="false">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+	<div class="field-group">
+		<label for="causeTitle"><span class="HTSRequired">* </span>Title</label>
+		<input class="text long-field" type="text" id="causeTitle" name="causeTitle">
+	</div>
+	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="causeTitle">
+		<span class="HTSRequired">This field is required.</span>
+	</div>
+	<div class="field-group">
+		<label for="cause-title">Owner</label>
+		<input class="text long-field" type="text" id="causeOwner" name="causeOwner">
+	</div>
+		<div class="field-group">
+		<label for="causeRisk">Risk Category</label>
+		<select class="select" id="causeRisk" name="causeRisk">
+			<option value="" selected>-Select-</option>
+			#foreach ($risk in $riskCategories)
+				<option value="$risk.getID()">$!risk.getValue()</option>
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="causeLikelihood">Risk Likelihood</label>
+		<select class="select" id="causeLikelihood" name="causeLikelihood">
+			<option value="" selected>-Select-</option>
+			#foreach ($likelihood in $riskLikelihoods)
+				<option value="$likelihood.getID()">$!likelihood.getValue()</option>
+			#end
+		</select>
+	</div>
+	<div class="field-group">
+		<label for="causeDescription">Description</label>
+		<textarea class="textarea long-field" rows="4" cols="10" name="causeDescription" id="causeDescription"></textarea>
+	</div>
+	<div class="field-group">
+		<label for="causeEffects">Effects</label>
+		<textarea class="textarea long-field" rows="4" cols="10" name="causeEffects" id="causeEffects"></textarea>
+	</div>
+	<div class="field-group">
+		<label for="causeAdditSafetyFeatures">Additional Safety Features</label>
+		<textarea class="textarea long-field" rows="4" cols="10" name="causeAdditSafetyFeatures" id="causeAdditSafetyFeatures"></textarea>
+	</div>
+	<div class="field-group">
+		<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="new">
+		<input class="button" type="button" value="Clear" id="CausePageClearNew">
+	</div>
+</form>

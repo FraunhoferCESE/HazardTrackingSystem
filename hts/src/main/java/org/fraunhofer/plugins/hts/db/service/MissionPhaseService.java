@@ -16,5 +16,5 @@ public interface MissionPhaseService {
 
 	Mission_Phase[] getMissionPhasesByID(Integer[] id);
 
-	List<Mission_Phase> getRemainingMissionPhases(Mission_Phase[] currentList);
+	List<Mission_Phase> getRemaining(Mission_Phase[] currentList);
 }

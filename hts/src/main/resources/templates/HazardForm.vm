@@ -2,30 +2,20 @@
 	<input type="hidden" name="hazardPayloadID" id="hazardPayloadID" value="$!hazard.getMissionPayload().getID()">
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
 	<div class="field-group">
-		<label for="hazardNumber">Hazard # <span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
+		<label for="hazardNumber">Hazard #<span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardNum">Hazard # is required</span></label>
 		<input class="text medium-field" type="text" id="hazardNumber" name="hazardNumber" value="$!hazard.getHazardNum()"/>
 	</div>
 	<div class="field-group">
-		<label for="hazardVersionNumber">Version # </label>
+		<label for="hazardVersionNumber">Version #</label>
 		<input class="text medium-field" type="text" id="hazardVersionNumber" name="hazardVersionNumber" value="$!hazard.getHazardVersionNum()"/>
 	</div>
 	<div class="field-group">
-		<label for="hazardTitle">Title <span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
+		<label for="hazardTitle">Title<span class="required aui-icon icon-required">(required)</span> <span class="error" id="hazardTitle">Title is required</span></label>
 		<input class="text long-field" type="text" id="hazardTitle" name="hazardTitle" value="$!hazard.getTitle()"/>
 	</div>
 	<div class="field-group">
-		<label for="hazardPayload">Mission/Payload<span class="aui-icon icon-required">(required)</span> <span class="error" id="hazardPaylod">Mission/Payload association is required.</span></label>
-
-		<select class="select" id="hazardPayload" name="hazardPayload">
-			<option value="">-Select Mission/Payload-</option>
-		   	#foreach( $payload in $payloads )
-		    	#if($payload.getID() == $hazard.getMissionPayload().getID())
-					<option value="$payload.getID()" selected>$!payload.getName()</option>
-				#else
-					<option value="$payload.getID()">$!payload.getName()</option>
-				#end
-		   	#end
-		</select>
+		<label for="hazardPayload">JIRA Sub-task</label>
+		<div class="htsFormDivAdjustment"><a href="$hazard.getJiraURL()">$hazard.getJiraURL()</a></div>
 	</div>
 	<div class="field-group">
 		<label for="hazardSubsystem">System/Subsystems</label>

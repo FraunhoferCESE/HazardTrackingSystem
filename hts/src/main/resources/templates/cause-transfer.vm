@@ -1,0 +1,46 @@
+#if ($allHazardsBelongingToMission.size() == 1)
+	<div class="HTSNoTransfersContainer">
+		<p class="HTSNoTransfersText">No other Hazard Reports have been created for this Mission/Payload.</p>
+	</div>
+#else
+	<form method="post" action="causes" class="aui" id="CausePageFormAddTransfer">
+		<input type="hidden" name="regular" id="regular" value="false">
+		<input type="hidden" name="existing" id="existing" value="false">
+		<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+		<div class='field-group'>
+			<label for='hazardList'>Hazard Reports</label>
+			<select size="1" class="select long-field" name="hazardList" id="hazardList">
+				<option value=''>-Select Hazard Report-</option>
+				#foreach ($currentHazard in $allHazardsBelongingToMission)
+					#if ($currentHazard.getID() != $hazard.getID())
+						#set ($optionText = "")
+						#if (!$currentHazard.getHazardNumber() || $currentHazard.getHazardNumber() == "")
+							#set ($optionText = "<Haz # TBD> - ")
+						#else
+							#set ($optionText = $currentHazard.getHazardNumber() + " - ")
+						#end
+						#if (!$currentHazard.getHazardTitle() || $currentHazard.getHazardTitle() == "")
+							#set ($optionText = $optionText + "<Title TBD>")
+						#else
+							#set ($optionText = $optionText + $currentHazard.getHazardTitle())
+						#end
+						<option value="$currentHazard.getID()">$optionText</option>
+					#end
+				#end
+			</select>
+		</div>
+		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="hazardList">
+			<span class="HTSRequired">Please select a Hazard Report.</span>
+		</div>
+		<div class="field-group" id="CausePageCauseTransferContainer">
+		</div>
+		<div class='field-group'>
+			<label for='transferReason'>Transfer Reason</label>
+			<textarea class='textarea long-field' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea>
+		</div>
+		<div class="field-group">
+			<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="transfer">
+			<input class="button" type="button" value="Clear" id="CausePageClearTransfer">
+		</div>
+	</form>
+#end

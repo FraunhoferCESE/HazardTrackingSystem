@@ -1,0 +1,146 @@
+<html>
+	<head>
+		<title>HTS</title>
+		<meta name="decorator" content="atl.general">
+		$webResourceManager.requireResourcesForContext("HTSContext")
+	</head>
+	<body class="aui-layout aui-theme-default">
+		#parse("/templates/general-navigation.vm")
+		<div id="MainContent">
+			<div id="ContentHolder">
+				#parse("/templates/hazard-page-mission-hazard-nav.vm")
+				#parse("/templates/hazard-page-prop-nav.vm")
+				<div class="aui-page-panel">
+					<div class="aui-page-panel-inner">
+						<section class="aui-page-panel-content">
+							<form method="post" action="hazards" class="aui" id="HazardPageForm">
+								<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()" />
+								<div class="field-group">
+									<label for="hazardNumber">Hazard #</label>
+									<input class="text long-field" type="text" name="hazardNumber"
+										id="hazardNumber" value="$!hazard.getHazardNumber()" />
+								</div>
+								<div class="field-group">
+									<label for="hazardVersionNumber">Version #</label>
+									<input class="text long-field" type="text" name="hazardVersionNumber"
+										id="hazardVersionNumber" value="$!hazard.getHazardVersionNumber()" />
+								</div>
+								<div class="field-group">
+									<label for="hazardTitle">Hazard Title</label>
+									<input class="text long-field" type="text" name="hazardTitle"
+										id="hazardTitle" value="$!hazard.getHazardTitle()" />
+								</div>
+								<div class="field-group">
+									<label for="hazardPayload">JIRA Sub-Task</label>
+									<div class="field-group-static">
+										<a href="$hazard.getJiraURL()">Open</a>
+									</div>
+								</div>
+								<div class="field-group">
+									<label for="hazardSubsystem">System/Subsystems</label>
+									<select class="multi-select" size="5" multiple="multiple" name="hazardSubsystem" id="hazardSubsystem">
+										#foreach ($associatedSubs in $hazard.getSubsystems())
+											<option value="$associatedSubs.getID()" selected>$!associatedSubs.getLabel()</option>
+										#end
+										#foreach ($nonAssociatedSubs in $nonAssociatedSubsystems)
+											<option value="$nonAssociatedSubs.getID()">$!nonAssociatedSubs.getLabel()</option>
+										#end
+									</select>
+									<div class="HazardPageMultiSelectFooterContainerOne">
+										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									</div>
+									<div class="HazardPageMultiSelectFooterContainerTwo">
+										<span class="HazardPageMultiSelectFooter">Associated</span>
+									</div>
+								</div>
+								<div class="field-group">
+									<label for="hazardPreparer">Preparer</label>
+									<input class="text long-field" type="text" id="hazardPreparer" name="hazardPreparer" placeholder="$!hazardPreparer" disabled/>
+								</div>
+								<div class="field-group">
+									<label for="hazardReviewPhase">Review Phase</label>
+									<select class="select" id="hazardReviewPhase" name="hazardReviewPhase">
+										#foreach( $reviewPhase in $reviewPhases )
+											#if($reviewPhase.getID() == $hazard.getReviewPhase().getID())
+												<option value="$reviewPhase.getID()" selected>$!reviewPhase.getLabel()</option>
+											#else
+												<option value="$reviewPhase.getID()">$!reviewPhase.getLabel()</option>
+											#end
+										#end
+									</select>
+								</div>
+								<div class="field-group">
+									<label for="hazardPhase">Mission Phase</label>
+									<select class="multi-select" size="5" multiple="multiple" id="hazardPhase" name="hazardPhase">
+										#foreach ($missionPhase in $hazard.getMissionPhases())
+											<option value="$missionPhase.getID()" selected>$!missionPhase.getLabel()</option>
+										#end
+										#foreach ($nonAssociatedMissionPhase in $nonAssociatedMissionPhases)
+											<option value="$nonAssociatedMissionPhase.getID()">$!nonAssociatedMissionPhase.getLabel()</option>
+										#end
+									</select>
+									<div class="HazardPageMultiSelectFooterContainerOne">
+										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									</div>
+									<div class="HazardPageMultiSelectFooterContainerTwo">
+										<span class="HazardPageMultiSelectFooter">Associated</span>
+									</div>
+								</div>
+								<div class="field-group">
+									<label for="hazardGroup">Hazard Group</label>
+									<select class="multi-select" size="5" multiple="multiple" id="hazardGroup" name="hazardGroup">
+										#foreach ($hazardGroup in $hazard.getHazardGroups())
+											<option value="$hazardGroup.getID()" selected>$!hazardGroup.getLabel()</option>
+										#end
+										#foreach ($!nonAssociatedHazardGroup in $!nonAssociatedHazardGroups)
+											<option value="$!nonAssociatedHazardGroup.getID()">$!nonAssociatedHazardGroup.getLabel()</option>
+										#end
+									</select>
+									<div class="HazardPageMultiSelectFooterContainerOne">
+										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									</div>
+									<div class="HazardPageMultiSelectFooterContainerTwo">
+										<span class="HazardPageMultiSelectFooter">Associated</span>
+									</div>
+								</div>
+								<div class="field-group">
+									<label for="hazardSafetyRequirements">Applicable Safety Requirements</label>
+									<textarea class="textarea long-field" name="hazardSafetyRequirements" id="hazardSafetyRequirements">$!hazard.getHazardSafetyRequirements()</textarea>
+								</div>
+								<div class="field-group">
+									<label for="hazardDescription">Description</label>
+									<textarea class="textarea long-field" name="hazardDescription" id="hazardDescription">$!hazard.getHazardDescription()</textarea>
+								</div>
+								<div class="field-group">
+									<label for="hazardJustification">Acceptance Rationale and Likelihood Justification</label>
+									<textarea class="textarea long-field" rows="4" cols="10" name="hazardJustification" id="hazardJustification">$!hazard.getHazardJustification()</textarea>
+								</div>
+								<div class="field-group">
+									<label for="hazardOpenWork">Open Work</label>
+									<textarea class="textarea long-field" name="hazardOpenWork" id="hazardOpenWork">$!hazard.getHazardOpenWork()</textarea>
+								</div>
+								<div class="field-group">
+									<label for="hazardInitation">Initiation Date</label>
+									<input class="aui-date-picker" name="hazardInitation" id="hazardInitation" value="$!initiationDate" type="date"/>
+								</div>
+								<div class="field-group">
+									<label for="hazardCompletion">Completion Date</label>
+									<input class="aui-date-picker" name="hazardCompletion" id="hazardCompletion" type="date" value="$!completionDate"/>
+								</div>
+
+								<div class="field-group">
+									<label for="hazardRiskMatrix">Risk Matrix</label>
+									#parse("/templates/hazard-page-risk-matrix.vm")
+								</div>
+								<div class="field-group">
+									<input class="button" type="button" value="Save All Changes" id="HazardPageSave">
+									<input class="button" type="button" value="Print" id="HazardPagePrint">
+								</div>
+							</form>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -19,11 +19,13 @@
 		</dependency>
 		<resource type="download" name="images/" location="/images" />
 
+		<resource type="download" name="shared.css" location="/css-new/shared.css" />
 		<resource type="download" name="hts.css" location="/css/hts.css" />
 		<resource type="download" name="controlPageStyles.css" location="/css/controlPageStyles.css" />
 		<resource type="download" name="verificationPageStyles.css" location="/css/verificationPageStyles.css"/>
 		<resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css" />
 
+		<!-- OLD JS FILES -->
 		<resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js" />
 		<resource type="download" name="jquery.tinysort.min.js" location="/js/jquery.tinysort.min.js" />
 		<resource type="download" name="formValidation.js" location="/js/formValidation.js" />
@@ -37,8 +39,40 @@
 		<resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js" />
 		<resource type="download" name="htsControlPage.js" location="/js/htsControlPage.js" />
 		<resource type="download" name="htsVerificationPage.js" location="/js/htsVerificationPage.js"/>
-		<context>hts</context>
+		<!-- <context>hts</context> -->
 	</web-resource>
+
+	<!-- The shared resource package -->
+	<web-resource name="HTSResources" key="HTSResources">
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+
+		<resource type="download" name="images/" location="/images" />
+
+		<resource name="purl.js" type="download" location="/js/purl.js" />
+		<resource name="history.js" type="download" location="/js/history.js" />
+		<resource name="jquery.multiselect2side.css" type="download" location="/css/jquery.multiselect2side.css" />
+		<resource name="jquery.multiselect2side.js" type="download" location="/js/jquery.multiselect2side.js" />
+		<resource name="formValidation.js" type="download" location="/js/formValidation.js" />
+
+		<resource name="shared.css" type="download" location="/css-new/shared.css" />
+		<resource name="shared-router.js" type="download" location="/js-new/shared-router.js" />
+		<resource name="shared-general.js" type="download" location="/js-new/shared-general.js" />
+		<resource name="shared-rest.js" type="download" location="/js-new/shared-rest.js" />
+		<resource name="shared-cookies.js" type="download" location="/js-new/shared-cookies.js" />
+
+		<resource name="mission-page.css" type="download" location="/css-new/mission-page.css" />
+		<resource name="mission-page.js" type="download" location="/js-new/mission-page.js" />
+
+		<resource name="hazard-page.css" type="download" location="/css-new/hazard-page.css" />
+		<resource name="hazard-page.js" type="download" location="/js-new/hazard-page.js" />
+
+		<resource name="cause-page.css" type="download" location="/css-new/cause-page.css" />
+		<resource name="cause-page.js" type="download" location="/js-new/cause-page.js" />
+
+		<context>HTSContext</context>
+	</web-resource>
+
 	<!-- import from the product container -->
 	<component-import key="applicationProperties"
 		interface="com.atlassian.sal.api.ApplicationProperties" />
@@ -47,7 +81,7 @@
 		<description>The module configuring active objects service
 		</description>
 		<entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Causes_to_Hazards</entity>
+		<entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
 		<entity>org.fraunhofer.plugins.hts.db.ControlToHazard</entity>
 		<entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
@@ -63,7 +97,6 @@
 		<entity>org.fraunhofer.plugins.hts.db.VerifcToControl</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Mission_Payload</entity>
 		<entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
 		<entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
 		<entity>org.fraunhofer.plugins.hts.db.Mission_Phase</entity>
@@ -97,52 +130,80 @@
 	<component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationServiceImpl"/>
 	<component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationTypeServiceImpl"/>
 	<component key="VerificationStatus-service" name="VerificationStatus service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationStatusServiceImpl"/>
-	<component-import key="templateRenderer"
-		interface="com.atlassian.templaterenderer.TemplateRenderer" filter="" />
-	<servlet name="Landing Page Servlet" i18n-name-key="landing-page-servlet.name"
-		key="landing-page-servlet" class="org.fraunhofer.plugins.hts.servlet.LandingPageServlet">
-		<description key="landing-page-servlet.description">The Landing Page Servlet Plugin
-		</description>
-		<url-pattern>/hazardlist</url-pattern>
-	</servlet>
-	<servlet name="Hazard Servlet" i18n-name-key="hazard-servlet.name"
-		key="hazard-servlet" class="org.fraunhofer.plugins.hts.servlet.HazardServlet">
-		<description key="hazard-servlet.description">The Hazard Servlet Plugin</description>
-		<url-pattern>/hazardform</url-pattern>
-	</servlet>
-	<servlet name="Controls Servlet" i18n-name-key="controls-servlet.name"
-		key="controls-servlet" class="org.fraunhofer.plugins.hts.servlet.ControlsServlet">
-		<description key="controls-servlet.description">The Controls Servlet Plugin</description>
-		<url-pattern>/controlform</url-pattern>
-	</servlet>
-	<web-item name="View all Hazard reports" i18n-name-key="viewall-hazardreports.name"
-		key="viewall-hazardreports" section="system.top.navigation.bar"
-		weight="1000">
-		<description key="viewall-hazardreports.description">The View all Hazard reports Plugin
-		</description>
-		<label key="viewall-hazardreports.label" />
-		<link linkId="viewall-hazardreports-link">/plugins/servlet/hazardlist</link>
+	<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter="" />
+
+	<web-item name="HTS Plugin" i18n-name-key="hts-plugin.name"
+		key="hts-plugin.name" section="system.top.navigation.bar" weight="1000">
+		<description key="hts-plugin.description">HTS Plugin</description>
+		<label key="hts-plugin.label" />
+		<link>/plugins/servlet/missions</link>
 		<condition
 			class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
 			<param name="permission">user</param>
 		</condition>
 	</web-item>
-	<rest name="Hazard Resource" i18n-name-key="hazard-resource.name"
+
+	<servlet name="Mission Servlet" i18n-name-key="mission-servlet.name"
+		key="mission-servlet" class="org.fraunhofer.plugins.hts.servlet.MissionServlet">
+		<description key="mission-servlet.description">Mission Servlet</description>
+		<url-pattern>/missions</url-pattern>
+	</servlet>
+
+	<servlet name="Report Generation Servlet" i18n-name-key="report-generation-servlet.name"
+		key="report-generation-servlet" class="org.fraunhofer.plugins.hts.servlet.ReportGenerationServlet">
+		<description key="report-generation-servlet.description">Report Generation Servlet</description>
+		<url-pattern>/report-generation</url-pattern>
+	</servlet>
+
+	<servlet name="Hazards Servlet" i18n-name-key="hazards-servlet.name"
+		key="hazards-servlet" class="org.fraunhofer.plugins.hts.servlet.HazardServlet">
+		<description key="hazards-servlet.description">Hazards Servlet</description>
+		<url-pattern>/hazards</url-pattern>
+	</servlet>
+
+	<servlet name="Causes Servlet" i18n-name-key="causes-servlet.name"
+		key="causes-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
+		<description key="causes-servlet.description">Causes Servlet</description>
+		<url-pattern>/causes</url-pattern>
+	</servlet>
+
+	<servlet name="Controls Servlet" i18n-name-key="controls-servlet.name"
+		key="controls-servlet" class="org.fraunhofer.plugins.hts.servlet.ControlsServlet">
+		<description key="controls-servlet.description">Controls Servlet</description>
+		<url-pattern>/controls</url-pattern>
+	</servlet>
+
+	<servlet name="Verifications Servlet" i18n-name-key="verifications-servlet.name"
+		key="verifications-servlet" class="org.fraunhofer.plugins.hts.servlet.VerificationsServlet">
+		<description key="verifications-servlet.description">Verifications Servlet</description>
+		<url-pattern>/verifications</url-pattern>
+	</servlet>
+
+
+
+
+
+
+
+
+<!-- 	<rest name="Hazard Resource" i18n-name-key="hazard-resource.name"
 		key="hazard-resource" path="/htsrest" version="1.0">
 		<description key="hazard-resource.description">The Hazard Resource Plugin</description>
+	</rest> -->
+
+	<rest name="Mission REST Service" i18n-name-key="mission-rest.name"
+		key="mission-rest" path="/hts" version="1.0">
+		<description key="mission-rest.description">Mission REST Service</description>
 	</rest>
-	<servlet name="Cause Servlet" i18n-name-key="cause-servlet.name"
-		key="cause-servlet" class="org.fraunhofer.plugins.hts.servlet.CauseServlet">
-		<description key="cause-servlet.description">The Cause Servlet Plugin</description>
-		<url-pattern>/causeform</url-pattern>
-	</servlet>
-	<servlet name="Report Generation Servlet" i18n-name-key="report-gen-servlet.name"
-		key="report-gen-servlet" class="org.fraunhofer.plugins.hts.servlet.ReportGenerationServlet">
-		<description key="report-gen-servlet.description">The Report Generation Servlet Plugin</description>
-		<url-pattern>/reportgeneration</url-pattern>
-	</servlet>
-	<servlet name="Verification Servlet" i18n-name-key="verification-servlet.name" key="verification-servlet" class="org.fraunhofer.plugins.hts.servlet.VerificationServlet">
-		<description key="verification-servlet.description">The Verification Servlet Plugin</description>
-		<url-pattern>/verificationform</url-pattern>
-	</servlet>
+
+	<rest name="Hazard REST Service" i18n-name-key="hazard-rest.name"
+		key="hazard-rest" path="/hts" version="1.0">
+		<description key="hazard-rest.description">Hazard REST Service</description>
+	</rest>
+
+	<rest name="Cause REST Service" i18n-name-key="cause-rest.name"
+		key="cause-rest" path="/hts" version="1.0">
+		<description key="cause-rest.description">Cause REST Service</description>
+	</rest>
+
 </atlassian-plugin>

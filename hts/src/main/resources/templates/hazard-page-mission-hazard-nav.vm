@@ -1,0 +1,31 @@
+<header class="aui-page-header" style="padding-top: 5px; padding-bottom: 5px;">
+	<div class="aui-page-header-inner">
+		<div class="MissionHazardNavContentHolder">
+			<div class="MissionHazardNavStatic">
+				<div class="MissionHazardNavContentHeader">Currently viewing:</div>
+				<div class="MissionHazardNavContent">Mission/Payload Page</div>
+			</div>
+			<div class="MissionHazardNavDynamic">
+				<div class="MissionHazardNavContentHeader">Quick navigation:</div>
+				<div class="MissionHazardNavDynamicContainer">
+					<form class="aui">
+						<div class="field-group" style="padding: 0">
+							<div class="MissionHazardNavDynamicSelectContainer">
+								<div class="MissionHazardNavDynamicHeader">Mission/Payload</div>
+								<select size='1' class='select' name='payloadNavigationList' id='missionNavigation'>
+								</select>
+							</div>
+							<div class="MissionHazardNavDynamicSelectContainer">
+								<div class="MissionHazardNavDynamicHeader">Hazard</div>
+								<select size='1' class='select' name='hazardNavigationList' id='hazardNavigation'>
+								</select>
+							</div>
+							<input type="button" class="aui-button" id="gotoSelectedHazardReport" value="Go"/>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+

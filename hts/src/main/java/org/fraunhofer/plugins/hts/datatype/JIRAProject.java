@@ -1,24 +1,20 @@
 package org.fraunhofer.plugins.hts.datatype;
 
 public class JIRAProject {
-	private Long id;
+	private Long ID;
 	private String name;
 	
-	public JIRAProject(Long id, String name) {
-		this.id = id;
+	public JIRAProject(Long ID, String name) {
+		this.ID = ID;
 		this.name = name;
 	}
 	
-	public Long getId() {
-		return id;
+	public Long getID() {
+		return ID;
 	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+	
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+
 }

@@ -66,7 +66,7 @@ public class SubsystemServiceImpl implements SubsystemService {
 	}
 
 	@Override
-	public List<Subsystems> getRemainingGroups(Subsystems[] currentList) {
+	public List<Subsystems> getRemaining(Subsystems[] currentList) {
 		List<Subsystems> listAll = all();
 
 		for (Subsystems currRegistered : currentList) {

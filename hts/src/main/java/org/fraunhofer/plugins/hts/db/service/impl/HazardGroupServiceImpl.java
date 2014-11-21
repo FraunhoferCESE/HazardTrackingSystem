@@ -59,7 +59,7 @@ public class HazardGroupServiceImpl implements HazardGroupService {
 	}
 
 	@Override
-	public List<Hazard_Group> getRemainingHazardGroups(Hazard_Group[] currentList) {
+	public List<Hazard_Group> getRemaining(Hazard_Group[] currentList) {
 		List<Hazard_Group> listAll = all();
 
 		if (!listAll.isEmpty()) {

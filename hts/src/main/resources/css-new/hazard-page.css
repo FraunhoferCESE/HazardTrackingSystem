@@ -1,0 +1,91 @@
+.HazardPageMultiSelectFooterContainerOne {
+    float: left;
+    width: 277px;
+    padding-top: 3px;
+    padding-left: 3px;
+    margin-top: -5px;
+}
+
+.HazardPageMultiSelectFooterContainerTwo {
+    float: left;
+    padding-top: 3px;
+    margin-top: -5px;
+}
+
+.HazardPageMultiSelectFooter {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}
+
+/* RISK MATRIX CSS BEGINS */
+#HazardPageRiskMatrixTable {
+    border-collapse: collapse;
+}
+
+.HazardPageRiskMatrixText {
+    font-family: Arial, sans-serif;
+    font-weight: lighter;
+    font-size: 14px;
+    color: #707070;
+}
+
+#HazardPageRiskMatrixTable table {
+    border: 1px dashed #707070;
+    padding: 5px;
+    margin: 0;
+}
+
+#HazardPageRiskMatrixTable td {
+    border: 1px dashed #707070;
+    padding: 5px;
+}
+
+.HazardPageRiskMatrixEmptyColumn {
+    width: 145px;
+}
+
+.HazardPageRiskMatrixCategoryColumns {
+    width: 85px;
+}
+
+#HazardPageRiskMatrixHazards {
+    display: none;
+}
+
+#HazardPageRiskMatrixTransfersDeletedContainer {
+    display: none;
+}
+
+.HazardPageRiskMatrixLink {
+    color: #333333;
+}
+
+.HazardPageRiskMatrixDynamic {
+    padding-right: 3px;
+}
+
+.HazardPageRiskMatrixLink:hover {
+    color: #0000FF;
+}
+
+.HazardPageRiskMatrixLinkCell {
+    max-width: 80px;
+}
+
+.HazardPageRiskMatrixTableRedCell {
+    background-color: #FF3030;
+}
+
+.HazardPageRiskMatrixTableYellowCell {
+    background-color: #E5E500;
+}
+
+.HazardPageRiskMatrixTableOrangeCell {
+    background-color: #FFA500;
+}
+
+.HazardPageRiskMatrixTableGreenCell {
+    background-color: #7FC424;
+}
+/* RISK MATRIX CSS ENDS */

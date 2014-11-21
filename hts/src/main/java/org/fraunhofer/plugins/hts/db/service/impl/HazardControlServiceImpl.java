@@ -127,8 +127,8 @@ public class HazardControlServiceImpl implements HazardControlService {
 				Hazard_Controls targetControl = getHazardControlByID(String.valueOf(transfer.getTargetID()));
 				Hazards targetHazard = targetControl.getHazard()[0];
 				int targetHazardID = targetHazard.getID();
-				String targetHazardNo = targetHazard.getHazardNum();
-				String targetHazardTitle = targetHazard.getTitle();
+				String targetHazardNo = targetHazard.getHazardNumber();
+				String targetHazardTitle = targetHazard.getHazardTitle();
 				
 				int targetHazardControlNo = targetControl.getControlNumber();
 				String targetHazardControlDescription = targetControl.getDescription();
@@ -157,8 +157,8 @@ public class HazardControlServiceImpl implements HazardControlService {
 				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
 				Hazards targetHazard = targetCause.getHazards()[0];
 				int targetHazardID = targetHazard.getID();
-				String targetHazardNo = targetHazard.getHazardNum();
-				String targetHazardTitle = targetHazard.getTitle();
+				String targetHazardNo = targetHazard.getHazardNumber();
+				String targetHazardTitle = targetHazard.getHazardTitle();
 				
 				int targetHazardCauseNo = targetCause.getCauseNumber();
 				String targetHazardCauseTitle = targetCause.getTitle();

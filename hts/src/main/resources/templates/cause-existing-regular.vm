@@ -1,0 +1,90 @@
+<tr id="CauseTableEntryID$cause.getID()">
+	<td class="HazardPropertyTableTd">
+		<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
+	</td>
+	<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
+	<td class="HazardPropertyTableTd">$cause.getTitle()</td>
+	<td class="HazardPropertyTableTd">
+		#if (!$cause.getOwner() || $cause.getOwner() == "")
+			N/A
+		#else
+			$cause.getOwner()
+		#end
+	</td>
+	<td class="HTSDate HazardPropertyTableTd">$cause.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">
+		<input type="checkbox" value="$cause.getID()" class="CausePageDeleteBox">
+	</td>
+</tr>
+<tr id="CauseTableEntryContentID$cause.getID()" class="HazardPropertyContentRow">
+	<td colspan="100%">
+		<div class="HazardPropertyContentHolder">
+			<form method="post" action="causes" class="aui CausePageFormExisting">
+				<input type="hidden" name="regular" id="regular" value="true">
+				<input type="hidden" name="existing" id="existing" value="true">
+				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+				<input type="hidden" name="causeID" id="causeID" value="$!cause.getID()">
+				<div class="field-group">
+					<label for="causeTitle"><span class="HTSRequired">* </span>Title</label>
+					<input class="text long-field" type="text" id="causeTitle" name="causeTitle" value="$!cause.getTitle()">
+				</div>
+				<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="causeTitle">
+					<span class="HTSRequired">This field is required.</span>
+				</div>
+				<div class="field-group">
+					<label for="cause-title">Owner</label>
+					<input class="text long-field" type="text" id="causeOwner" name="causeOwner" value="$!cause.getOwner()">
+				</div>
+					<div class="field-group">
+					<label for="causeRisk">Risk Category</label>
+					<select class="select" id="causeRisk" name="causeRisk">
+						#if (!$cause.getRiskCategory())
+							<option value="" selected>-Select-</option>
+						#else
+							<option value="">-Select-</option>
+						#end
+						#foreach ($risk in $riskCategories)
+							#if ($risk.getID() == $cause.getRiskCategory().getID())
+								<option value="$risk.getID()" selected>$!risk.getValue()</option>
+							#else
+								<option value="$risk.getID()">$!risk.getValue()</option>
+							#end
+						#end
+					</select>
+				</div>
+				<div class="field-group">
+					<label for="causeLikelihood">Risk Likelihood</label>
+					<select class="select" id="causeLikelihood" name="causeLikelihood">
+						#if (!$cause.getRiskLikelihood())
+							<option value="" selected>-Select-</option>
+						#else
+							<option value="">-Select-</option>
+						#end
+						#foreach ($likelihood in $riskLikelihoods)
+							#if ($likelihood.getID() == $cause.getRiskLikelihood().getID())
+								<option value="$likelihood.getID()" selected>$!likelihood.getValue()</option>
+							#else
+								<option value="$likelihood.getID()">$!likelihood.getValue()</option>
+							#end
+						#end
+					</select>
+				</div>
+				<div class="field-group">
+					<label for="causeDescription">Description</label>
+					<textarea class="textarea long-field" rows="4" cols="10" name="causeDescription" id="causeDescription">$!cause.getDescription()</textarea>
+				</div>
+				<div class="field-group">
+					<label for="causeEffects">Effects</label>
+					<textarea class="textarea long-field" rows="4" cols="10" name="causeEffects" id="causeEffects">$!cause.getEffects()</textarea>
+				</div>
+				<div class="field-group">
+					<label for="causeAdditSafetyFeatures">Additional Safety Features</label>
+					<textarea class="textarea long-field" rows="4" cols="10" name="causeAdditSafetyFeatures" id="causeAdditSafetyFeatures">$!cause.getAdditionalSafetyFeatures()</textarea>
+				</div>
+				<div class="field-group">
+					<input class="button" type="button" value="Add Control" id="CausePageAddControl">
+				</div>
+			</form>
+		</div>
+	</td>
+</tr>

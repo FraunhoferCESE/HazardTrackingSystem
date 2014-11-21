@@ -1,13 +1,18 @@
 package org.fraunhofer.plugins.hts.servlet;
 
-import javax.servlet.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -18,15 +23,11 @@ import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.*;
 
 public class CauseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -52,147 +53,137 @@ public class CauseServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
-			res.setContentType("text/html;charset=utf-8");
-			context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-			
-			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
-			Mission_Payload currentPayload = currentHazard.getMissionPayload();
-			if (currentHazard == null || currentPayload == null) {
-				context.put("errorMessage", "The hazard report you were working with cannot be found or opened.");
-				templateRenderer.render("templates/ErrorPage.vm", context, res.getWriter());
-				return;
-			}
-			
-			List<Hazards> allHazardsBelongingToPayload = missionPayloadService.getAllHazardsWithinMission(String.valueOf(currentPayload.getID()));
-			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
-			
-			if ("y".equals(req.getParameter("edit"))) {
-				context.put("hazardNumber", currentHazard.getHazardNum());
-				context.put("hazardTitle", currentHazard.getTitle());
-				context.put("hazardID", currentHazard.getID());
+			boolean contains = req.getParameterMap().containsKey("id");
+			if (contains == true) {
+				String hazardIDStr = req.getParameter("id");
+				// TODO: Parsing could fail, will throw NumberFormatException.
+				int hazardID =  Integer.parseInt(hazardIDStr);
+				// TODO: CurrentHazard could be returned as null.
+				Hazards currentHazard = hazardService.getHazardByID(hazardID);
 				context.put("hazard", currentHazard);
+				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
+				context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(currentHazard));
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
-				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
-				context.put("transfers", hazardCauseService.getAllTransferredCauses(currentHazard));
-				templateRenderer.render("templates/EditHazard.vm", context, res.getWriter());
+				List<Hazards> allHazardsBelongingToMission = hazardService.getHazardsByMissionPayload(currentHazard.getProjectID());
+				context.put("allHazardsBelongingToMission", allHazardsBelongingToMission);
+				resp.setContentType("text/html;charset=utf-8");
+				templateRenderer.render("templates/cause-page.vm", context, resp.getWriter());
 			}
-			// This else is outdated, will no longer be used after issue #169 has been completed
-//			else {
-//				Hazards newestHazardReport = hazardService.getNewestHazardReport();
-//				context.put("hazardNumber", newestHazardReport.getHazardNum());
-//				context.put("hazardTitle", newestHazardReport.getTitle());
-//				context.put("hazardID", newestHazardReport.getID());
-//				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
-//				context.put("transfers", hazardCauseService.getAllTransferredCauses(newestHazardReport));
-//				templateRenderer.render("templates/HazardPage.vm", context, res.getWriter());
-//			}
-		}
-		else {
-			res.sendRedirect(req.getContextPath() + "/login.jsp");
-		}
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		final String title = req.getParameter("causeTitle");
-		final String owner = req.getParameter("causeOwner");
-		
-		final Risk_Categories risk;
-		if (req.getParameter("causeRisk") != "") {
-			risk = riskCategoryService.getRiskByID(req.getParameter("causeRisk"));
-		}
-		else {
-			risk = null;
-		}
-		
-		final Risk_Likelihoods likelihood;
-		if (req.getParameter("causeLikelihood") != "") {
-			likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("causeLikelihood"));
-		}
-		else {
-			likelihood = null;
-		}
-		
-		final String description = req.getParameter("causeDescription");
-		final String effects = req.getParameter("causeEffects");
-		final String safetyFeatures = req.getParameter("causeAdditSafetyFeatures");
-		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-
-		if ("y".equals(req.getParameter("edit"))) {
-			String id = req.getParameter("key");
-			hazardCauseService.update(id, description, effects, safetyFeatures, owner, title, risk, likelihood);
-			int troll = currentHazard.getID();
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + troll);
-			return;
-		}
-		else if ("y".equals(req.getParameter("transfer"))) {
-			final String transferComment = req.getParameter("transferReason");
-			final String hazardID = req.getParameter("hazardList");
-			final String causeID = req.getParameter("causeList");
-			
-			if (Strings.isNullOrEmpty(causeID)) {
-				Hazards targetHazard = hazardService.getHazardByID(hazardID);
-				if (!checkIfInternalHazardTransfer(currentHazard, targetHazard)) {
-					hazardCauseService.addHazardTransfer(transferComment, targetHazard.getID(), targetHazard.getTitle(), currentHazard);
-				}
-			}
-			else {
-				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-				if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
-					hazardCauseService.addCauseTransfer(transferComment, targetCause.getID(), targetCause.getTitle(), currentHazard);
-				}
-			}
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
-			return;
-		}
-		else {
-			hazardCauseService.add(description, effects, safetyFeatures, risk, likelihood, owner, title, currentHazard);
-			res.sendRedirect(req.getContextPath() + "/plugins/servlet/causeform?edit=y&key=" + currentHazard.getID());
-			return;
-		}
-	}
-
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			Hazard_Causes causeToBeDeleted = hazardCauseService.getHazardCauseByID(req.getParameter("key"));
-			String reason = req.getParameter("reason");
-			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
-
-			if (causeToBeDeleted != null) {
-				hazardCauseService.deleteCause(causeToBeDeleted, reason);
-				respStr = "{ \"success\" : \"true\" }";
-			}
-
-			res.setContentType("application/json;charset=utf-8");
-			// Send the raw output string
-			res.getWriter().write(respStr);
 		} else {
-			res.sendRedirect(req.getContextPath() + "/login.jsp");
+			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
-	}
-	
-	private Boolean checkIfInternalHazardTransfer(Hazards originHazard, Hazards targetHazard) {
-		if (originHazard.getID() == targetHazard.getID()) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	private Boolean checkIfInternalCauseTransfer(Hazards targetHazard, Hazard_Causes targetCause) {
-		List<Hazard_Causes> allCausesBelongingToHazard = hazardCauseService.getAllCausesWithinAHazard(targetHazard);
-		for (Hazard_Causes cause : allCausesBelongingToHazard) {
-			if (cause.getID() == targetCause.getID()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {			
+			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
+			if (regular == true) {
+				String title = req.getParameter("causeTitle");
+				String owner = req.getParameter("causeOwner");
+				
+				Risk_Categories risk;
+				if (req.getParameter("causeRisk") != "") {
+					risk = riskCategoryService.getRiskByID(req.getParameter("causeRisk"));
+				} else {
+					risk = null;
+				}
+				
+				Risk_Likelihoods likelihood;
+				if (req.getParameter("causeLikelihood") != "") {
+					likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("causeLikelihood"));
+				} else {
+					likelihood = null;
+				}
+				
+				String description = req.getParameter("causeDescription");
+				String effects = req.getParameter("causeEffects");
+				String safetyFeatures = req.getParameter("causeAdditSafetyFeatures");
+				
+				// Regular cause (not a transfer)
+				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
+				if (existing == true) {
+					// Regular cause update
+					String causeIDStr = req.getParameter("causeID");
+					int causeID = Integer.parseInt(causeIDStr);
+					hazardCauseService.updateRegularCause(causeID, title, owner, risk, likelihood, description, effects, safetyFeatures);
+				} else {
+					// Regular cause creation
+					String hazardIDStr = req.getParameter("hazardID");
+					int hazardID = Integer.parseInt(hazardIDStr);
+					hazardCauseService.add(hazardID, title, owner, risk, likelihood, description, effects, safetyFeatures);
+				}
+			} else {
+				boolean existing = Boolean.parseBoolean(req.getParameter("regular"));
+				if (existing == true) {
+					// Cause transfer update
+					String causeIDStr = req.getParameter("causeID");
+					int causeID = Integer.parseInt(causeIDStr);
+					String transferReason = req.getParameter("transferReason");
+					hazardCauseService.updateTransferredCause(causeID, transferReason);
+				} else {
+					// Cause transfer creation				
+					int targetHazardID = Integer.parseInt(req.getParameter("hazardList"));
+					int targetCauseID = 0;
+					boolean contains = req.getParameterMap().containsKey("causeList");
+					if (contains == true) {
+						targetCauseID = Integer.parseInt(req.getParameter("causeList"));
+					}
+					
+					int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
+					String transferReason = req.getParameter("transferReason");
+					
+					if (targetCauseID == 0) {
+						hazardCauseService.addHazardTransfer(originHazardID, targetHazardID, transferReason);
+					} else {
+						hazardCauseService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+					}
+				}
+			}
+			
+			JSONObject jsonResponse = new JSONObject();
+			createJson(jsonResponse, "updateSuccess", true);
+			createJson(jsonResponse, "errorMessage", "none");
+			resp.setContentType("application/json");
+			resp.getWriter().println(jsonResponse);
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			int causeID = Integer.parseInt(req.getParameter("id"));
+			String deleteReason = req.getParameter("reason");
+			Hazard_Causes cause = hazardCauseService.deleteCause(causeID, deleteReason);
+			
+			JSONObject jsonResponse = new JSONObject();
+			if (cause != null) {
+				createJson(jsonResponse, "updateSuccess", true);
+				createJson(jsonResponse, "errorMessage", "none");
+			} else {
+				createJson(jsonResponse, "updateSuccess", false);
+				createJson(jsonResponse, "errorMessage", "Could not find Cause.");	
+			}
+			resp.setContentType("application/json");
+			resp.getWriter().println(jsonResponse);			
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+	}
+	
+	private JSONObject createJson(JSONObject json, String key, Object value) {
+		try {
+			json.put(key, value);
+		} catch (JSONException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return json;
+	}
 }

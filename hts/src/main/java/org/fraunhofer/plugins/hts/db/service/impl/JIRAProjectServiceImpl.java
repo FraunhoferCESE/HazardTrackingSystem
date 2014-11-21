@@ -28,6 +28,6 @@ public class JIRAProjectServiceImpl implements MissionPayloadService {
 		for (Long projectID : projectsWithHazards) {
 			jiraProjectList.add(new JIRAProject(projectID, projectManager.getProjectObj(projectID).getName()));
 		}
-		return jiraProjectList;	
+		return jiraProjectList;
 	}
 }

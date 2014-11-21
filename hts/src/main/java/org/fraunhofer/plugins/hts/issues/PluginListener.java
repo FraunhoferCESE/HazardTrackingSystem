@@ -1,40 +1,35 @@
 package org.fraunhofer.plugins.hts.issues;
 
 import java.util.Collection;
-import java.util.Objects;
+import java.util.List;
 
-import org.fraunhofer.plugins.hts.db.Mission_Payload;
+import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.ofbiz.core.entity.GenericEntityException;
-import org.ofbiz.core.entity.GenericValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.event.ProjectDeletedEvent;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueInputParameters;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.ProjectManager;
- 
+import com.atlassian.jira.issue.fields.CustomField;
+
+//System.out.println("");
 public class PluginListener implements InitializingBean, DisposableBean {
 	
 	private final EventPublisher eventPublisher;
-	private final MissionPayloadService missionPayloadService;
 	private final HazardService hazardService;
 	
-	public PluginListener(EventPublisher eventPublisher, MissionPayloadService missionPayloadService, 
-			HazardService hazardService) {
+	public PluginListener(EventPublisher eventPublisher, HazardService hazardService) {
 	    this.eventPublisher = eventPublisher;
-	    this.missionPayloadService = missionPayloadService;
 	    this.hazardService = hazardService;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@EventListener
 	public void onIssueEvent(IssueEvent issueEvent) throws GenericEntityException {
 	   Long eventTypeId = issueEvent.getEventTypeId();
@@ -42,39 +37,98 @@ public class PluginListener implements InitializingBean, DisposableBean {
 	   PluginCustomization pluginCustomization = PluginCustomization.getInstance();
 	   
 	   if (eventTypeId.equals(EventType.ISSUE_CREATED_ID)) {
-		   System.out.println("========= ISSUE CREATED =========");
-		   if (issue.getIssueTypeObject().getName() == "Hazard") {
-			   System.out.println("========= HAZARD =========");
+		   if (issue.getIssueTypeObject().getName().equals("Hazard")) {
 			   Object hazardTitleObj = issue.getCustomFieldValue(pluginCustomization.getHazardTitleField());
 			   Object hazardNumberObj = issue.getCustomFieldValue(pluginCustomization.getHazardNumberField());
-			   if (hazardTitleObj != null && hazardNumberObj != null) {
-				   // Check if JIRA project exists as HTS mission/payload
-				   String jiraProjectIDStr = Objects.toString(issue.getProjectId(), "0");
-				   Mission_Payload htsProject = missionPayloadService.getMissionPayloadByID(jiraProjectIDStr);
-				   if (htsProject == null) {
-					   // Mission does not exist, need to create it before creating the hazard
-					   htsProject = missionPayloadService.add(issue.getProjectObject().getName());
-				   }
-				   // Create the hazard				   
-				   hazardService.addFromJira(hazardTitleObj.toString(), hazardNumberObj.toString(), htsProject);
-				   // Add HTS link to issue
-				   
-
-				   
-				   
+			   String hazardTitle;
+			   String hazardNumber;
+			   
+			   if (hazardTitleObj != null) {   				   
+				   hazardTitle = hazardTitleObj.toString();
+			   } else {
+				   hazardTitle = null;
+				   CustomField hazardTitleField = pluginCustomization.getHazardTitleField();
+				   hazardTitleField.getCustomFieldType().updateValue(hazardTitleField, issue, hazardTitle);
 			   }
-			   else {
-				   // TODO: Hazard Title and/or Hazard Number = null, assign default value
-				   // 
+			   
+			   if (hazardNumberObj != null) {
+				   hazardNumber = hazardNumberObj.toString();
+			   } else {
+				   hazardNumber = null;
+				   CustomField hazardNumberField = pluginCustomization.getHazardNumberField();
+				   hazardNumberField.getCustomFieldType().updateValue(hazardNumberField, issue, hazardNumber);
+			   }
+			   
+			   // Create the URLs and save them:
+			   String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+			   // JIRA URL, save to the hazard:
+			   String jiraCompleteURL = baseURL + "/browse/" + issue.getProjectObject().getKey() + "-" + issue.getNumber();
+			   Hazards hazard = hazardService.add(hazardTitle, hazardNumber, jiraCompleteURL, 
+					   issue.getProjectId(), issue.getId());
+			   // HTS URL, save to the issue:
+			   String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
+			   CustomField hazardURL = pluginCustomization.getHazardURLField();
+		       hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
+		   }
+	   } else if (eventTypeId.equals(EventType.ISSUE_UPDATED_ID)) {
+		   if (issue.getIssueTypeObject().getName().equals("Hazard")) {
+			   Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
+			   if (hazard != null) {			   
+				   String hazardTitle;
+				   String hazardNumber;
+				   
+				   Object hazardTitleObj = issue.getCustomFieldValue(pluginCustomization.getHazardTitleField());
+				   if (hazardTitleObj != null) {
+					   hazardTitle = hazardTitleObj.toString();
+				   } else {
+					   hazardTitle = null;
+				   }
+				   
+				   Object hazardNumberObj = issue.getCustomFieldValue(pluginCustomization.getHazardNumberField());
+				   if (hazardNumberObj != null) {
+					   hazardNumber = hazardNumberObj.toString();
+				   } else {
+					   hazardNumber = null;
+				   }
+				   hazardService.update(hazard, hazardTitle, hazardNumber);
+			   }
+		   }
+	   } else if (eventTypeId.equals(EventType.ISSUE_DELETED_ID)) {
+		   System.out.println("=== ISSUE DELETED EVENT ===");
+		   
+		   // Two scenarios; 1) issue is issue, 2) issue is sub-task
+		   if (issue.isSubTask() == true) {
+			   // Sub-task scenario
+			   if (issue.getIssueTypeObject().getName().equals("Hazard")) {
+				   Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
+				   if (hazard != null) {
+					   hazardService.deleteHazard(hazard);
+				   }
+			   }
+		   } else {
+			   // Issue scenario
+			   Collection<Issue> subtasks = issue.getSubTaskObjects();
+			   for (Issue subtask : subtasks) {
+				   if (subtask.getIssueTypeObject().getName().equals("Hazard")) {
+					   Hazards hazard = hazardService.getHazardByIssueID(subtask.getId());
+					   if (hazard != null) {
+						   hazardService.deleteHazard(hazard);
+					   }
+				   }
 			   }
 		   }
 	   }
-	   else if (eventTypeId.equals(EventType.ISSUE_RESOLVED_ID)) {
-		   System.out.println("========= ISSUE RESOLVED =========");
-	   }
-	   else if (eventTypeId.equals(EventType.ISSUE_CLOSED_ID)) {
-		   System.out.println("========= ISSUE CLOSED =========");
-	   }
+	}
+	
+	@EventListener
+	public void onProjectEvent(ProjectDeletedEvent projectEvent) {
+		// get the ID of the project
+		Long projectID = projectEvent.getProject().getId();
+		// get all hazards that contain the projectID
+		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
+		for (Hazards hazard : hazards) {
+			hazardService.deleteHazard(hazard);
+		}
 	}
 
 	@Override

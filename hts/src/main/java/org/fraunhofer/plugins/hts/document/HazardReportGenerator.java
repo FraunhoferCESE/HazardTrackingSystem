@@ -124,7 +124,7 @@ public class HazardReportGenerator {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				doc.write(out);
 				results.add(out.toByteArray());
-				log.info("Writing byte array for " + h.getHazardNum());
+				log.info("Writing byte array for " + h.getHazardNumber());
 			} finally {
 				if (inputStream != null)
 					inputStream.close();
@@ -179,7 +179,7 @@ public class HazardReportGenerator {
 		// with a paragraph border.
 		cell = row.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardNum()).bold(true).fontSize(10).leftMargin(0)
+		new ParagraphBuilder().text(h.getHazardNumber()).bold(true).fontSize(10).leftMargin(0)
 				.alignment(ParagraphAlignment.CENTER).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
@@ -195,8 +195,8 @@ public class HazardReportGenerator {
 		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
 		setGridSpan(cell, 3);
 
-		new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
+		//new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
+		//new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
@@ -279,7 +279,7 @@ public class HazardReportGenerator {
 		// HAzard Title
 		cell = row.getCell(0);
 		setGridSpan(cell, 2);
-		new ParagraphBuilder().text(h.getTitle()).createCellText(cell);
+		new ParagraphBuilder().text(h.getHazardTitle()).createCellText(cell);
 
 		// Hazard category and risk likelihood
 //		cell = row.getCell(1);
@@ -307,7 +307,7 @@ public class HazardReportGenerator {
 		cell = row.getCell(0);
 		setGridSpan(cell, 4);
 		new CellHeaderBuilder().text("11. Description of hazard:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardDesc()).createCellText(cell);
+		new ParagraphBuilder().text(h.getHazardDescription()).createCellText(cell);
 
 		// --------------------------------------
 		// Cause summary
@@ -332,13 +332,13 @@ public class HazardReportGenerator {
 		if (transfer.getTargetType().equals("HAZARD")) {
 			Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
 			new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNum() + " \u2013 "
-							+ hazard.getTitle()).leftMargin(350).hangingIndent(300).createCellText(cell);
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
+							+ hazard.getHazardTitle()).leftMargin(350).hangingIndent(300).createCellText(cell);
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
 			Hazards hazard = targetCause.getHazards()[0];
 			new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNum() + ", Cause "
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
 							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).leftMargin(350)
 					.hangingIndent(300).createCellText(cell);
 		}

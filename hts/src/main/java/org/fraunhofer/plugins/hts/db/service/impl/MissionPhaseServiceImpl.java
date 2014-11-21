@@ -58,7 +58,7 @@ public class MissionPhaseServiceImpl implements MissionPhaseService {
 	}
 
 	@Override
-	public List<Mission_Phase> getRemainingMissionPhases(Mission_Phase[] currentList) {
+	public List<Mission_Phase> getRemaining(Mission_Phase[] currentList) {
 		List<Mission_Phase> listAll = all();
 
 		if (!listAll.isEmpty()) {

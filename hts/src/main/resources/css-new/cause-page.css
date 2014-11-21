@@ -1,0 +1,12 @@
+#CausePageNewContainer {
+	display: none;
+}
+
+#CausePageTransferContainer {
+	display: none;
+}
+
+/* Styles for cause-transfer.vm file */
+#CausePageCauseTransferContainer {
+	display: none;
+}
