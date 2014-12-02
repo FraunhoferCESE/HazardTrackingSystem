@@ -1,6 +1,9 @@
 console.log("=== mission-page.js ===");
 
 function initializeMissionPage() {
+	var foo = getAllHazards();
+	console.log(foo);
+
 	if (INIT.MISSIONS === true) {
 		INIT.MISSIONS = false;
 		initMissionClickEvents();

@@ -6,6 +6,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import net.java.ao.Query;
 
 import org.fraunhofer.plugins.hts.datatype.HazardDTMinimal;
 import org.fraunhofer.plugins.hts.datatype.HazardDTMinimalJson;
+import org.fraunhofer.plugins.hts.datatype.JIRAProject;
 import org.fraunhofer.plugins.hts.db.GroupToHazard;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
@@ -37,6 +39,10 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.ApplicationUser;
+import com.google.common.collect.Lists;
 
 public class HazardServiceImpl implements HazardService {
 	private final ActiveObjects ao;
@@ -150,32 +156,34 @@ public class HazardServiceImpl implements HazardService {
 	}
 	
 	@Override
-	public List<HazardDTMinimal> getAllHazardsMinimal() {
-		List<Hazards> allHazards = getAllNonDeletedHazards();
-		List<HazardDTMinimal> allHazardsMinimal = new ArrayList<HazardDTMinimal>();
+	public List<HazardDTMinimal> getUserHazardsMinimal(List<JIRAProject> projects) {
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
-		for (Hazards hazard : allHazards) {
-			Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
-			allHazardsMinimal.add(new HazardDTMinimal(
-						hazard.getID(),
-						hazard.getHazardTitle(),
-						hazard.getHazardNumber(),
-						jiraProject.getName(),
-						hazard.getRevisionDate().toString(),
-						hazard.getJiraURL()
-					));
+		List<HazardDTMinimal> hazardsMinimal = new ArrayList<HazardDTMinimal>();
+		for (JIRAProject project : projects) {
+			for (Hazards hazard : getHazardsByMissionPayload(project.getID())) {
+				Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
+				hazardsMinimal.add(new HazardDTMinimal(
+							hazard.getID(),
+							hazard.getHazardTitle(),
+							hazard.getHazardNumber(),
+							jiraProject.getName(),
+							hazard.getRevisionDate().toString(),
+							hazard.getJiraURL()
+						));
+			}
 		}
-		return allHazardsMinimal;
+		return hazardsMinimal;
 	}
 	
 	@Override
-	public List<HazardDTMinimalJson> getAllHazardsMinimalJson() {
+	public List<HazardDTMinimalJson> getUserHazardsMinimalJson(ApplicationUser user) {
 		List<Hazards> allHazards = getAllNonDeletedHazards();
 		List<HazardDTMinimalJson> allHazardsMinimal = new ArrayList<HazardDTMinimalJson>();
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		for (Hazards hazard : allHazards) {
-			Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
-			allHazardsMinimal.add(new HazardDTMinimalJson(
+			if (hasHazardPermission(hazard.getProjectID(), user)) {
+				Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
+				allHazardsMinimal.add(new HazardDTMinimalJson(
 						hazard.getID(),
 						hazard.getHazardTitle(),
 						hazard.getHazardNumber(),
@@ -183,6 +191,7 @@ public class HazardServiceImpl implements HazardService {
 						hazard.getRevisionDate().toString(),
 						hazard.getJiraURL()
 					));
+			}
 		}
 		return allHazardsMinimal;
 	}
@@ -239,6 +248,7 @@ public class HazardServiceImpl implements HazardService {
 	public List<Hazards> getHazardsByMissionPayload(String id) {
 		return getHazardsByMissionPayload(Long.parseLong(id));
 	}
+
 	
 	@Override
 	public String getHazardPreparerInformation(Hazards hazard) {
@@ -276,69 +286,6 @@ public class HazardServiceImpl implements HazardService {
 		}
 	}
 	
-	// OLD FUNCTIONS
-
-	@Override
-	public Hazards getHazardByHazardNum(String hazardNum) {
-		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("HAZARD_NUM=?", hazardNum));
-		return hazards.length > 0 ? hazards[0] : null;
-	}
-
-	@Override
-	public Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer, 
-			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups, 
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase) {
-		Hazards updated = getHazardByID(id);
-		if (updated != null) {
-			updated.setHazardTitle(title);
-			updated.setHazardNumber(hazardNum);
-			updated.setHazardVersionNumber(hazardVersionNum);
-			updated.setHazardSafetyRequirements(safetyRequirements);
-			updated.setHazardDescription(description);
-			updated.setHazardJustification(justification);
-			updated.setHazardOpenWork(openWork);
-			updated.setPreparer(preparer);
-			updated.setEmail(email);
-			updated.setInitiationDate(initationDate);
-			updated.setCompletionDate(completionDate);
-			updated.setRevisionDate(revisionDate);
-			updated.setReviewPhase(reviewPhase);
-			updated.save();
-			removeSubsystems(updated.getID());
-			removeHazardGroups(updated.getID());
-			removeMissionPhase(updated.getID());
-			if (subsystems != null) {
-				for (Subsystems subsystem : subsystems) {
-					try {
-						associateSubsystemToHazard(subsystem, updated);
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			if (groups != null) {
-				for (Hazard_Group group : groups) {
-					try {
-						associateHazardGroupToHazard(group, updated);
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			if (missionPhase != null) {
-				for (Mission_Phase phase : missionPhase) {
-					try {
-						associateMissionPhaseToHazard(phase, updated);
-					} catch (SQLException e) {
-						// TODO: handle exception
-					}
-				}
-			}
-		}
-		return updated;
-	}
-	
 	@Override
 	public List<Long> getProjectsWithHazards() {
 		List<Long> ids = new ArrayList<Long>();
@@ -351,8 +298,37 @@ public class HazardServiceImpl implements HazardService {
 		return ids;
 	}
 
+	@Override
+	public List<Long> getProjectsWithHazards(Collection<Project> userProjects) {
+		List<Long> ids = new ArrayList<Long>();
+		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").where("ACTIVE=?", true).distinct());
+		if (hazards != null) {
+			for (Hazards hazard : hazards) {
+				for (Project project : userProjects) {
+					if (hazard.getProjectID().equals(project.getId())) {
+						ids.add(new Long(hazard.getID()));
+					}
+				}
+			}
+		}
+		return ids;
+	}
 	
 	
+	@Override
+	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
+		boolean hasPermission;
+		ProjectManager projectManager = ComponentAccessor.getProjectManager();
+		Project jiraProject = projectManager.getProjectObj(projectID);
+		PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
+		if (permissionManager.hasPermission(Permissions.CREATE_ISSUE, jiraProject, user) ||
+			permissionManager.hasPermission(Permissions.EDIT_ISSUE, jiraProject, user)) {
+			hasPermission = true;
+		} else {
+			hasPermission = false;
+		}
+		return hasPermission;
+	}
 	
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
 		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);

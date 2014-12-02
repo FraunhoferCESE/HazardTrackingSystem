@@ -23,7 +23,4 @@ public interface Risk_Likelihoods extends Entity {
 	String getLikelihoodDesc();
 
 	void setLikelihoodDesc(String likeliHoodDesc);
-
-	@OneToOne
-	Hazards getHazards();
 }

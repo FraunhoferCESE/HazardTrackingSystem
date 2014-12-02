@@ -1,10 +1,12 @@
 package org.fraunhofer.plugins.hts.db.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.fraunhofer.plugins.hts.datatype.HazardDTMinimal;
 import org.fraunhofer.plugins.hts.datatype.HazardDTMinimalJson;
+import org.fraunhofer.plugins.hts.datatype.JIRAProject;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Mission_Phase;
@@ -12,6 +14,8 @@ import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 
 import com.atlassian.activeobjects.tx.Transactional;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.user.ApplicationUser;
 
 @Transactional
 public interface HazardService {
@@ -27,9 +31,9 @@ public interface HazardService {
 	
 	List<Hazards> getAllNonDeletedHazards();
 	
-	List<HazardDTMinimal> getAllHazardsMinimal();
+	List<HazardDTMinimal> getUserHazardsMinimal(List<JIRAProject> projects);
 	
-	List<HazardDTMinimalJson> getAllHazardsMinimalJson();
+	List<HazardDTMinimalJson> getUserHazardsMinimalJson(ApplicationUser user);
 	
 	List<Hazards> getAllHazardsByMissionID(Long missionID);
 	
@@ -48,18 +52,10 @@ public interface HazardService {
 	String getHazardPreparerInformation(Hazards hazard);
 	
 	void deleteHazard(Hazards hazard);
-		
-	
-	// OLD FUNCTIONS
-	Hazards update(String id, String title, String safetyRequirements, String description, String justification, String openWork, String preparer,
-			String email, String hazardNum, String hazardVersionNum, Date initationDate, Date completionDate, Date revisionDate, Hazard_Group[] groups,  
-			Review_Phases reviewPhase, Subsystems[] subsystems, Mission_Phase[] missionPhase);
-
-	Hazards getHazardByHazardNum(String hazardNum);
 	
 	List<Long> getProjectsWithHazards();
-
 	
+	List<Long> getProjectsWithHazards(Collection<Project> userProjects);
 	
-	
+	Boolean hasHazardPermission(Long projectID, ApplicationUser user);
 }

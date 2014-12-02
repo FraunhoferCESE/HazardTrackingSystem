@@ -1,0 +1,19 @@
+#ErrorPageHeader {
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FF3030;
+}
+
+#ErrorPageMessageContainer {
+	text-align: center;
+	background-color: #F5F5F5;
+	margin-left: 20%;
+	margin-right: 20%;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+#ErrorPageMessageContainer > div {
+	padding-top: 3px;
+}

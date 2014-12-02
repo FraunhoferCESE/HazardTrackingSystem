@@ -1,6 +1,6 @@
 #if ($allHazardsBelongingToMission.size() == 1)
 	<div class="HTSNoTransfersContainer">
-		<p class="HTSNoTransfersText">No other Hazard Reports have been created for this Mission/Payload.</p>
+		<p class="HTSNoTransfersText">No other Hazard Reports (JIRA Sub-Tasks) have been created for this Project.</p>
 	</div>
 #else
 	<form method="post" action="causes" class="aui" id="CausePageFormAddTransfer">

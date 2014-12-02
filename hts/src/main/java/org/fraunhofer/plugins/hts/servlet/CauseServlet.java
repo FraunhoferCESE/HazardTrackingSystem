@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.servlet;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,12 @@ import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -54,25 +61,68 @@ public class CauseServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
+		resp.setContentType("text/html;charset=utf-8");
+
+		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			boolean error = false;
+			String errorMessage = null;
+			List<String> errorList = new ArrayList<String>();
+			
 			boolean contains = req.getParameterMap().containsKey("id");
+			Hazards hazard = null;
 			if (contains == true) {
 				String hazardIDStr = req.getParameter("id");
-				// TODO: Parsing could fail, will throw NumberFormatException.
-				int hazardID =  Integer.parseInt(hazardIDStr);
-				// TODO: CurrentHazard could be returned as null.
-				Hazards currentHazard = hazardService.getHazardByID(hazardID);
-				context.put("hazard", currentHazard);
-				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(currentHazard));
-				context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(currentHazard));
+				// Parsing from String to Integer could fail
+				try {
+					int hazardID =  Integer.parseInt(hazardIDStr);
+					hazard = hazardService.getHazardByID(hazardID);
+					if (hazard != null) {
+						// Check user permission
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
+							error = true;
+							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+									jiraAuthenticationContext.getUser().getUsername() + 
+									") do not have permission to view/edit it.";
+						}
+					} else {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+								jiraAuthenticationContext.getUser().getUsername() + 
+								") do not have permission to view/edit it.";
+					}
+					
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
+			} else {
+				error = true;
+				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
+				errorList.add(".../hazards?id=[number]");
+				errorList.add(".../causes?id=[number]");
+				errorList.add(".../controls?id=[number]");
+				errorList.add(".../verifications?id=[number]");
+				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			}
+			
+			// Decide which page to render for the user, error-page or hazard-page
+			if (error == true) {
+				context.put("errorMessage", errorMessage);
+				context.put("errorList", errorList);
+				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
+			} else {
+				context.put("hazard", hazard);
+				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard));
+				context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(hazard));
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
-				List<Hazards> allHazardsBelongingToMission = hazardService.getHazardsByMissionPayload(currentHazard.getProjectID());
+				List<Hazards> allHazardsBelongingToMission = hazardService.getHazardsByMissionPayload(hazard.getProjectID());
 				context.put("allHazardsBelongingToMission", allHazardsBelongingToMission);
 				resp.setContentType("text/html;charset=utf-8");
 				templateRenderer.render("templates/cause-page.vm", context, resp.getWriter());
-			}
+			}			
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}

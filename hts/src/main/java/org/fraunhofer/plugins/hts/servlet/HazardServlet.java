@@ -5,7 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -25,6 +27,12 @@ import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -40,8 +48,8 @@ public final class HazardServlet extends HttpServlet {
 	private final TemplateRenderer templateRenderer;
 
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
-			TemplateRenderer templateRenderer, SubsystemService subsystemService,
-			ReviewPhaseService reviewPhaseService, MissionPhaseService missionPhaseService) {
+			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
+			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.subsystemService = checkNotNull(subsystemService);
@@ -52,27 +60,66 @@ public final class HazardServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {			
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
+		resp.setContentType("text/html;charset=utf-8");
+		
+		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			boolean error = false;
+			String errorMessage = null;
+			List<String> errorList = new ArrayList<String>();
+			
 			boolean contains = req.getParameterMap().containsKey("id");
+			Hazards hazard = null;
 			if (contains == true) {
 				String hazardIDStr = req.getParameter("id");
-				// TODO: Parsing could fail, will throw NumberFormatException.
-				int hazardID =  Integer.parseInt(hazardIDStr);
-				// TODO: CurrentHazard could be returned as null.
-				Hazards currentHazard = hazardService.getHazardByID(hazardID);
-				context.put("hazard", currentHazard);
-				context.put("nonAssociatedSubsystems", subsystemService.getRemaining(currentHazard.getSubsystems()));
-				context.put("hazardPreparer", hazardService.getHazardPreparerInformation(currentHazard));
-				context.put("reviewPhases", reviewPhaseService.all());
-				context.put("nonAssociatedMissionPhases", missionPhaseService.getRemaining(currentHazard.getMissionPhases()));
-				context.put("nonAssociatedHazardGroups", hazardGroupService.getRemaining(currentHazard.getHazardGroups()));
-				context.put("initiationDate", removeTimeFromDate(currentHazard.getInitiationDate()));
-				context.put("completionDate", removeTimeFromDate(currentHazard.getCompletionDate()));
-				resp.setContentType("text/html;charset=utf-8");
-				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
+				// Parsing from String to Integer could fail
+			    try {
+					int hazardID = Integer.parseInt(hazardIDStr);
+				    hazard = hazardService.getHazardByID(hazardID);	
+					if (hazard != null) {
+						// Check user permission
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
+							error = true;
+							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+									jiraAuthenticationContext.getUser().getUsername() + 
+									") do not have permission to view/edit it.";
+						}			
+					} else {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+										jiraAuthenticationContext.getUser().getUsername() + 
+										") do not have permission to view/edit it.";
+					}
+			    } catch (NumberFormatException e) {
+			    	error = true;
+			    	errorMessage = "ID parameter in the URL is not a valid a number.";
+			    }
 			} else {
-				// TODO: Missing ID parameter.
+				error = true;
+				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
+				errorList.add(".../hazards?id=[number]");
+				errorList.add(".../causes?id=[number]");
+				errorList.add(".../controls?id=[number]");
+				errorList.add(".../verifications?id=[number]");
+				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			}
+			
+			// Decide which page to render for the user, error-page or hazard-page
+			if (error == true) {
+				context.put("errorMessage", errorMessage);
+				context.put("errorList", errorList);
+				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
+			} else {
+				context.put("hazard", hazard);
+				context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
+				context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
+				context.put("reviewPhases", reviewPhaseService.all());
+				context.put("nonAssociatedMissionPhases", missionPhaseService.getRemaining(hazard.getMissionPhases()));
+				context.put("nonAssociatedHazardGroups", hazardGroupService.getRemaining(hazard.getHazardGroups()));
+				context.put("initiationDate", removeTimeFromDate(hazard.getInitiationDate()));
+				context.put("completionDate", removeTimeFromDate(hazard.getCompletionDate()));
+				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
@@ -110,7 +157,7 @@ public final class HazardServlet extends HttpServlet {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
-	
+
 	private String removeTimeFromDate(Date date) {
 		if (date != null) {
 			return date.toString().substring(0, 10);

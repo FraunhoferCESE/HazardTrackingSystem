@@ -23,7 +23,4 @@ public interface Risk_Categories extends Entity {
 	String getRiskDesc();
 
 	void setRiskDesc(String riskDesc);
-
-	@OneToOne
-	Hazards getHazards();
 }

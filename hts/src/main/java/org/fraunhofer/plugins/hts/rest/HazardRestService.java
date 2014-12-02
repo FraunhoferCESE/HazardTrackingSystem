@@ -18,6 +18,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 
 //String respStr = "{ \"success\" : \"true\" }";
 @Path("/hazard")
@@ -34,8 +35,9 @@ public class HazardRestService {
 	@Path("all")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazards() {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			List<HazardDTMinimalJson> hazards = hazardService.getAllHazardsMinimalJson();
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
+		if (jiraAuthenticationContext.isLoggedInUser()) {
+			List<HazardDTMinimalJson> hazards = hazardService.getUserHazardsMinimalJson(jiraAuthenticationContext.getUser());
 			return Response.ok(hazards).build();
 		}
 		else {
@@ -47,7 +49,8 @@ public class HazardRestService {
 	@Path("causes/{hazardID}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllCausesBelongingToHazard(@PathParam("hazardID") int hazardID) {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext(); 
+		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(hazardID);
 			List<HazardCauseDTMinimalJson> causes = new ArrayList<HazardCauseDTMinimalJson>();
 			for (Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard)) {
@@ -59,8 +62,5 @@ public class HazardRestService {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
 		}
 	}
-	
-	
-	
 	
 }
