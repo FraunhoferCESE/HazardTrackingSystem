@@ -25,6 +25,7 @@ import org.fraunhofer.plugins.hts.document.HazardReportGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.collect.Lists;
 
 public final class ReportGenerationServlet extends HttpServlet {
@@ -59,7 +60,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 		List<Risk_Categories> riskCategoriesList = new ArrayList<Risk_Categories>(riskCategoryService.all());
 		List<Risk_Likelihoods> riskLikelihoodsList = new ArrayList<Risk_Likelihoods>(riskLikelihoodsService.all());
 
-		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService);
+		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService, ComponentAccessor.getProjectManager());
 
 		ServletOutputStream stream = null;
 		try {

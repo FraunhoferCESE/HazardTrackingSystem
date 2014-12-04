@@ -33,6 +33,8 @@ import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -51,6 +53,7 @@ public class HazardReportGenerator {
 	private final HazardService hazardService;
 	private final HazardCauseService causeService;
 	private final TransferService transferService;
+	private final ProjectManager projectManager;
 
 	DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -64,10 +67,11 @@ public class HazardReportGenerator {
 	 * @param transferService
 	 */
 	public HazardReportGenerator(HazardService hazardService, HazardCauseService causeService,
-			TransferService transferService) {
+			TransferService transferService, ProjectManager projectManager) {
 		this.hazardService = hazardService;
 		this.causeService = causeService;
 		this.transferService = transferService;
+		this.projectManager = projectManager;
 	}
 
 	/**
@@ -195,8 +199,11 @@ public class HazardReportGenerator {
 		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
 		setGridSpan(cell, 3);
 
-		//new CellHeaderBuilder().text("3. Mission/Payload Project Name:").createCellHeader(cell);
-		//new ParagraphBuilder().text(h.getMissionPayload().getName()).bottomBorder().createCellText(cell);
+		new CellHeaderBuilder().text("3. Project Name:").createCellHeader(cell);
+		Project projectObj = projectManager.getProjectObj(h.getProjectID());
+		String hProjectName = projectObj == null ? "" : projectObj.getName();
+		
+		new ParagraphBuilder().text(hProjectName).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
