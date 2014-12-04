@@ -33,6 +33,7 @@ import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -199,8 +200,8 @@ public class HazardReportGenerator {
 		setGridSpan(cell, 3);
 
 		new CellHeaderBuilder().text("3. Project Name:").createCellHeader(cell);
-		Project hProject = projectManager.getProjectObj(h.getProjectID());
-		String hProjectName = hProject == null ? "" : hProject.getName();
+		Project projectObj = projectManager.getProjectObj(h.getProjectID());
+		String hProjectName = projectObj == null ? "" : projectObj.getName();
 		
 		new ParagraphBuilder().text(hProjectName).bottomBorder().createCellText(cell);
 
