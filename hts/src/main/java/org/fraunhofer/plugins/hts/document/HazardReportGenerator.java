@@ -199,7 +199,10 @@ public class HazardReportGenerator {
 		setGridSpan(cell, 3);
 
 		new CellHeaderBuilder().text("3. Project Name:").createCellHeader(cell);
-		new ParagraphBuilder().text(projectManager.getProjectObj(h.getProjectID()).getName()).bottomBorder().createCellText(cell);
+		Project hProject = projectManager.getProjectObj(h.getProjectID());
+		String hProjectName = hProject == null ? "" : hProject.getName();
+		
+		new ParagraphBuilder().text(hProjectName).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getPreparer()).createCellText(cell);
