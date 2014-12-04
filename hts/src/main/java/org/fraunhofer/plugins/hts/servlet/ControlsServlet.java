@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.servlet;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -50,10 +52,32 @@ public class ControlsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> context = Maps.newHashMap();
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
-		templateRenderer.render("templates/controls-page.vm", context, resp.getWriter());
-   
+		
+		if (jiraAuthenticationContext.isLoggedInUser()) {
+	    	Map<String, Object> context = Maps.newHashMap();
+			boolean error = false;
+			String errorMessage = null;
+			List<String> errorList = new ArrayList<String>();
+			
+			boolean contains = req.getParameterMap().containsKey("id");
+			Hazards hazard = null;
+			if (contains == true) {
+				String hazardIDStr = req.getParameter("id");
+				int hazardID = Integer.parseInt(hazardIDStr);
+				hazard = hazardService.getHazardByID(hazardID);	
+				context.put("hazard", hazard);
+				context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
+				context.put("controlGroups", controlGroupsService.all());
+				context.put("causes", hazardCauseService.getAllCausesWithinAHazard(hazard));
+				context.put("allHazardsBelongingToMission", hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
+				templateRenderer.render("templates/control-page.vm", context, resp.getWriter());
+			}
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+		
 //		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
 //    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 //    		Map<String, Object> context = Maps.newHashMap();
@@ -103,57 +127,98 @@ public class ControlsServlet extends HttpServlet {
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    	if ("y".equals(req.getParameter("edit"))) {
-    		// Process the editing request
-    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-    		String controlID = req.getParameter("controlID");
-    		final String description = req.getParameter("controlDescriptionEdit");
-        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
-        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
-        	hazardControlService.update(controlID, description, controlGroup, causes);
-        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-    	}
-    	else if ("y".equals(req.getParameter("editTransfer"))) {
-    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-    		String controlID = req.getParameter("originID");
-    		String transferReason = req.getParameter("controlTransferReasonEdit");
-    		hazardControlService.updateTransferredControl(controlID, transferReason);
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-    	}
-    	else if ("y".equals(req.getParameter("transfer"))) {
-    		final String hazardID = req.getParameter("hazardID");
-    		final Hazards currentHazard = hazardService.getHazardByID(hazardID);
-    		final String transferComment = req.getParameter("controlTransferReason");
-    		final String causeID = req.getParameter("controlCauseList");   		
-    		final String controlID = req.getParameter("controlControlList");
-    		if (Strings.isNullOrEmpty(controlID)) {
-    			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-    			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
-        			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
+    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+    		boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
+    		if (regular == true) {
+    			String description = req.getParameter("controlDescription");
+    			ControlGroups controlGroup;
+    			if (req.getParameter("controlGroup") != "") {
+    				controlGroup = controlGroupsService.getControlGroupByID(req.getParameter("controlGroup"));
+    			} else {
+    				controlGroup = null;
     			}
-    		}
-    		else {
-    			Hazard_Controls targetControl = hazardControlService.getHazardControlByID(controlID);
-    			if (!checkIfInternalControlTransfer(currentHazard, targetControl)) {
-    				hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
+    			
+    			String[] causesStr = req.getParameterValues("controlCauses");
+    			Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(causesStr));
+    			
+    			// Regular control (not a transfer)
+    			boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
+    			if (existing == true) {
+    				// Regular control update
+    				String controlIDStr = req.getParameter("controlID");
+    				int controlID = Integer.parseInt(controlIDStr);
+    				hazardControlService.updateRegularControl(controlID, description, controlGroup, causes);
+    			} else {
+    				// Regular control creation
+					String hazardIDStr = req.getParameter("hazardID");
+					int hazardID = Integer.parseInt(hazardIDStr);
+					hazardControlService.add(hazardID, description, controlGroup, causes);
     			}
+    		} else {
+    			
     		}
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-    	}
-    	else {
-    		// Process the new control request
-        	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-        	final String description = req.getParameter("controlDescriptionNew");
-        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
-        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
-        	hazardControlService.add(currentHazard, description, controlGroup, causes);
-        	
-        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-//        	JSONObject json = new JSONObject();
-//        	createJson(json, "hazardID", currentHazard.getID());
-//        	res.setContentType("application/json;charset=utf-8");
-//        	res.getWriter().println(json);
-    	}
+    		
+			JSONObject jsonResponse = new JSONObject();
+			createJson(jsonResponse, "updateSuccess", true);
+			createJson(jsonResponse, "errorMessage", "none");
+			res.setContentType("application/json");
+			res.getWriter().println(jsonResponse);
+    	} else {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+    	
+    	
+//    	if ("y".equals(req.getParameter("edit"))) {
+//    		// Process the editing request
+//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+//    		String controlID = req.getParameter("controlID");
+//    		final String description = req.getParameter("controlDescriptionEdit");
+//        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
+//        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
+//        	hazardControlService.update(controlID, description, controlGroup, causes);
+//        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+//    	}
+//    	else if ("y".equals(req.getParameter("editTransfer"))) {
+//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+//    		String controlID = req.getParameter("originID");
+//    		String transferReason = req.getParameter("controlTransferReasonEdit");
+//    		hazardControlService.updateTransferredControl(controlID, transferReason);
+//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+//    	}
+//    	else if ("y".equals(req.getParameter("transfer"))) {
+//    		final String hazardID = req.getParameter("hazardID");
+//    		final Hazards currentHazard = hazardService.getHazardByID(hazardID);
+//    		final String transferComment = req.getParameter("controlTransferReason");
+//    		final String causeID = req.getParameter("controlCauseList");   		
+//    		final String controlID = req.getParameter("controlControlList");
+//    		if (Strings.isNullOrEmpty(controlID)) {
+//    			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
+//    			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
+//        			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
+//    			}
+//    		}
+//    		else {
+//    			Hazard_Controls targetControl = hazardControlService.getHazardControlByID(controlID);
+//    			if (!checkIfInternalControlTransfer(currentHazard, targetControl)) {
+//    				hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
+//    			}
+//    		}
+//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+//    	}
+//    	else {
+//    		// Process the new control request
+//        	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+//        	final String description = req.getParameter("controlDescriptionNew");
+//        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
+//        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
+//        	hazardControlService.add(currentHazard, description, controlGroup, causes);
+//        	
+//        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
+////        	JSONObject json = new JSONObject();
+////        	createJson(json, "hazardID", currentHazard.getID());
+////        	res.setContentType("application/json;charset=utf-8");
+////        	res.getWriter().println(json);
+//    	}
     }
     
 	@Override

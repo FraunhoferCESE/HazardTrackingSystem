@@ -1,0 +1,8 @@
+#ControlPageNewContainer, #ControlPageTransferContainer {
+	display: none;
+}
+
+/* Styles for control-transfer.vm file */
+#ControlPageCauseTransferContainer, #ControlPageControlTransferContainer {
+	display: none;
+}

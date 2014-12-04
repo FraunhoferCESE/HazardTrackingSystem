@@ -1,8 +1,4 @@
-#CausePageNewContainer {
-	display: none;
-}
-
-#CausePageTransferContainer {
+#CausePageNewContainer, #CausePageTransferContainer {
 	display: none;
 }
 

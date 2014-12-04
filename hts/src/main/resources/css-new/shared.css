@@ -9,6 +9,30 @@
     display: none;
 }
 
+/* FOR MULTISELECTS, STYLES THE "NON-ASSOCIATED" AND "ASSOCIATED" TEXT */
+/*HazardPageMultiSelectFooterContainerOne*/
+.HTSMultiSelectFooterContainerOne {
+    float: left;
+    width: 277px;
+    padding-top: 3px;
+    padding-left: 3px;
+    margin-top: -5px;
+}
+
+/*HazardPageMultiSelectFooterContainerTwo*/
+.HTSMultiSelectFooterContainerTwo {
+    float: left;
+    padding-top: 3px;
+    margin-top: -5px;
+}
+
+/*HazardPageMultiSelectFooter*/
+.HTSMultiSelectFooter {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #707070;
+}
+
 /* ADJUSTMENT CLASS FOR REGULAR DIVs INSTED OF INPUTS FOR FROMS */
 .field-group-static {
 	margin-top: 5px;
@@ -37,8 +61,16 @@
     font-weight: bold;
 }
 
-.MissionHazardNavContent {
+.MissionHazardNavContentHeader > span {
+    font-weight: normal;
+}
+
+.MissionHazardNavContentSmaller {
     text-indent: 10px;
+}
+
+.MissionHazardNavContentSmaller > span {
+    font-weight: bold;
 }
 
 .MissionHazardNavStatic {

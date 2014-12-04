@@ -34,6 +34,7 @@ import org.ofbiz.core.entity.GenericValue;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -52,11 +53,10 @@ public class HazardServiceImpl implements HazardService {
 	}
 	
 	@Override
-	public Hazards add(String title, String hazardNum, String jiraURL, Long projectID, Long issueID) {
+	public Hazards add(String title, String hazardNum, Long projectID, Long issueID) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("PROJECT_ID", projectID), new DBParam("ISSUE_ID", issueID));
 		hazard.setHazardTitle(title);
 		hazard.setHazardNumber(hazardNum);
-		hazard.setJiraURL(jiraURL);
 		hazard.setRevisionDate(new Date());
 		hazard.setActive(true);
 		hazard.save();
@@ -161,15 +161,20 @@ public class HazardServiceImpl implements HazardService {
 		List<HazardDTMinimal> hazardsMinimal = new ArrayList<HazardDTMinimal>();
 		for (JIRAProject project : projects) {
 			for (Hazards hazard : getHazardsByMissionPayload(project.getID())) {
-				Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
+				Project jiraProject = getHazardProject(hazard);
+				Issue jiraSubtask = getHazardSubTask(hazard);
+				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+				
 				hazardsMinimal.add(new HazardDTMinimal(
 							hazard.getID(),
 							hazard.getHazardTitle(),
 							hazard.getHazardNumber(),
+							jiraSubtask.getSummary(),
+							baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
 							jiraProject.getName(),
-							hazard.getRevisionDate().toString(),
-							hazard.getJiraURL()
-						));
+							baseURL + "/browse/" + jiraProject.getKey(),
+							hazard.getRevisionDate().toString()
+						));		
 			}
 		}
 		return hazardsMinimal;
@@ -182,15 +187,20 @@ public class HazardServiceImpl implements HazardService {
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		for (Hazards hazard : allHazards) {
 			if (hasHazardPermission(hazard.getProjectID(), user)) {
-				Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
+				Project jiraProject = getHazardProject(hazard);
+				Issue jiraSubtask = getHazardSubTask(hazard);
+				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+				
 				allHazardsMinimal.add(new HazardDTMinimalJson(
-						hazard.getID(),
-						hazard.getHazardTitle(),
-						hazard.getHazardNumber(),
-						jiraProject.getName(),
-						hazard.getRevisionDate().toString(),
-						hazard.getJiraURL()
-					));
+							hazard.getID(),
+							hazard.getHazardTitle(),
+							hazard.getHazardNumber(),
+							jiraSubtask.getSummary(),
+							baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
+							jiraProject.getName(),
+							baseURL + "/browse/" + jiraProject.getKey(),
+							hazard.getRevisionDate().toString()
+						));
 			}
 		}
 		return allHazardsMinimal;
@@ -206,16 +216,20 @@ public class HazardServiceImpl implements HazardService {
 	public List<HazardDTMinimalJson> getAllHazardsByMissionIDMinimalJson(Long missionID) {
 		List<Hazards> allHazards = getAllHazardsByMissionID(missionID);
 		List<HazardDTMinimalJson> allHazardsByIDMinimal = new ArrayList<HazardDTMinimalJson>();
-		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		for (Hazards hazard : allHazards) {
-			Project jiraProject = projectManager.getProjectObj(hazard.getProjectID());
+			Project jiraProject = getHazardProject(hazard);
+			Issue jiraSubtask = getHazardSubTask(hazard);
+			String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+			
 			allHazardsByIDMinimal.add(new HazardDTMinimalJson(
 						hazard.getID(),
 						hazard.getHazardTitle(),
 						hazard.getHazardNumber(),
+						jiraSubtask.getSummary(),
+						baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
 						jiraProject.getName(),
-						hazard.getRevisionDate().toString(),
-						hazard.getJiraURL()
+						baseURL + "/browse/" + jiraProject.getKey(),
+						hazard.getRevisionDate().toString()
 					));
 		}
 		return allHazardsByIDMinimal;
@@ -240,8 +254,7 @@ public class HazardServiceImpl implements HazardService {
 	
 	@Override
 	public List<Hazards> getHazardsByMissionPayload(Long id) {
-		List<Hazards> allActiveHazards = newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", id, true)));
-		return allActiveHazards;
+		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", id, true)));
 	}
 	
 	@Override
@@ -249,7 +262,6 @@ public class HazardServiceImpl implements HazardService {
 		return getHazardsByMissionPayload(Long.parseLong(id));
 	}
 
-	
 	@Override
 	public String getHazardPreparerInformation(Hazards hazard) {
 		IssueManager issueManager = ComponentAccessor.getIssueManager();
@@ -297,7 +309,7 @@ public class HazardServiceImpl implements HazardService {
 		}
 		return ids;
 	}
-
+	
 	@Override
 	public List<Long> getProjectsWithHazards(Collection<Project> userProjects) {
 		List<Long> ids = new ArrayList<Long>();
@@ -314,7 +326,6 @@ public class HazardServiceImpl implements HazardService {
 		return ids;
 	}
 	
-	
 	@Override
 	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
 		boolean hasPermission;
@@ -328,6 +339,16 @@ public class HazardServiceImpl implements HazardService {
 			hasPermission = false;
 		}
 		return hasPermission;
+	}
+
+	@Override
+	public Project getHazardProject(Hazards hazard) {
+		return ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
+	}
+	
+	@Override
+	public Issue getHazardSubTask(Hazards hazard) {
+		return ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 	}
 	
 	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {

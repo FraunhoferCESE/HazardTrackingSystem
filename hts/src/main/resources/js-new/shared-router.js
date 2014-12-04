@@ -16,37 +16,9 @@ var INIT = {
 	VERIFICATIONS: true
 };
 
-function loadTemplate(path) {
-	AJS.$("#MainContent").load(path + " #ContentHolder", function() {
-		var route = path.substr(0, path.indexOf("?"));
-		updateSelected(route);
-	});
-}
-
-function updateSelected(route) {
-	if (route === ROUTES.MISSIONS || route === "") {
-		AJS.$("#MissionNavItem").addClass("aui-nav-selected");
-		initializeMissionPage();
-	} else if (route === ROUTES.HAZARDS) {
-		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
-		AJS.$("#HazardPagePropertiesNavigation [id='HazardNavItem']").addClass("aui-nav-selected");
-		initializeHazardPage();
-	} else if (route === ROUTES.CAUSES) {
-		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
-		AJS.$("#HazardPagePropertiesNavigation [id='CausesNavItem']").addClass("aui-nav-selected");
-		initializeCausePage();
-	} else if (route === ROUTES.CONTROLS) {
-		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
-		AJS.$("#HazardPagePropertiesNavigation [id='ControlsNavItem']").addClass("aui-nav-selected");
-	} else if (route === ROUTES.VERIFICATIONS) {
-		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
-		AJS.$("#HazardPagePropertiesNavigation [id='VerificationsNavItem']").addClass("aui-nav-selected");
-	}
-}
-
 AJS.$(document).ready(function() {
 	var currentRoute = AJS.$.url().data.attr.path;
-	updateSelected(currentRoute);
+	updateUI(currentRoute);
 	// Calling function in shared-cookies.js file
 	initHTSCookie();
 
@@ -89,5 +61,38 @@ AJS.$(document).ready(function() {
 		var path = AJS.$(this).attr("href");
 		History.pushState(null, null, path);
 	});
-
 });
+
+function loadTemplate(path) {
+	AJS.$("#MainContent").load(path + " #ContentHolder", function() {
+		var route = path.substr(0, path.indexOf("?"));
+		updateUI(route);
+	});
+}
+
+function updateUI(route) {
+	if (route === ROUTES.MISSIONS || route === "") {
+		AJS.$("#MissionNavItem").addClass("aui-nav-selected");
+		AJS.$("#MissionHazardNavLine1").text("Missions Page");
+		initializeMissionPage();
+	} else if (route === ROUTES.HAZARDS) {
+		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
+		AJS.$("#HazardPagePropertiesNavigation [id='HazardNavItem']").addClass("aui-nav-selected");
+		AJS.$("#MissionHazardNavLine1").text("Hazard Form");
+		initializeHazardPage();
+	} else if (route === ROUTES.CAUSES) {
+		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
+		AJS.$("#HazardPagePropertiesNavigation [id='CausesNavItem']").addClass("aui-nav-selected");
+		AJS.$("#MissionHazardNavLine1").text("Cause Form");
+		initializeCausePage();
+	} else if (route === ROUTES.CONTROLS) {
+		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
+		AJS.$("#HazardPagePropertiesNavigation [id='ControlsNavItem']").addClass("aui-nav-selected");
+		AJS.$("#MissionHazardNavLine1").text("Control Form");
+		initializeControlPage();
+	} else if (route === ROUTES.VERIFICATIONS) {
+		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
+		AJS.$("#MissionHazardNavLine1").text("Verification Form");
+		AJS.$("#HazardPagePropertiesNavigation [id='VerificationsNavItem']").addClass("aui-nav-selected");
+	}
+}

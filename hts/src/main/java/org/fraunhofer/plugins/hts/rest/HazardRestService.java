@@ -39,8 +39,7 @@ public class HazardRestService {
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			List<HazardDTMinimalJson> hazards = hazardService.getUserHazardsMinimalJson(jiraAuthenticationContext.getUser());
 			return Response.ok(hazards).build();
-		}
-		else {
+		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
 		}
 	}
@@ -53,7 +52,7 @@ public class HazardRestService {
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Hazards hazard = hazardService.getHazardByID(hazardID);
 			List<HazardCauseDTMinimalJson> causes = new ArrayList<HazardCauseDTMinimalJson>();
-			for (Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard)) {
+			for (Hazard_Causes cause : hazardCauseService.getAllNonDeletedCausesWithinHazard(hazard)) {
 				causes.add(new HazardCauseDTMinimalJson(cause));
 			}
 			return Response.ok(causes).build();

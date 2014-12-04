@@ -14,12 +14,13 @@ import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 
 import com.atlassian.activeobjects.tx.Transactional;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 
 @Transactional
 public interface HazardService {
-	Hazards add(String title, String hazardNum, String jiraURL, Long projectID, Long issueID);
+	Hazards add(String title, String hazardNum, Long projectID, Long issueID);
 	
 	Hazards update(int hazardID, String hazardNumber, String version, String hazardTitle, Subsystems[] subsystems, Review_Phases reviewPhase,
 			Mission_Phase[] missionPhases, Hazard_Group[] hazardGroups, String safetyRequirements, String description, String justification,
@@ -58,4 +59,8 @@ public interface HazardService {
 	List<Long> getProjectsWithHazards(Collection<Project> userProjects);
 	
 	Boolean hasHazardPermission(Long projectID, ApplicationUser user);
+	
+	Project getHazardProject(Hazards hazard);
+	
+	Issue getHazardSubTask(Hazards hazard);
 }

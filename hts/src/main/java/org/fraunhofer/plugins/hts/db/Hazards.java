@@ -32,9 +32,6 @@ public interface Hazards extends Entity {
 	@NotNull
 	Long getIssueID();
 	void setIssueID(Long projectID);
-
-	String getJiraURL();
-	void setJiraURL(String URL);
 	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getHazardSafetyRequirements();

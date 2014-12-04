@@ -31,9 +31,15 @@
 										id="hazardTitle" value="$!hazard.getHazardTitle()" />
 								</div>
 								<div class="field-group">
+									<label for="hazardPayload">JIRA Project</label>
+									<div class="field-group-static">
+										<a href="$jiraProjectURL">$jiraProjectName</a>
+									</div>
+								</div>
+								<div class="field-group">
 									<label for="hazardPayload">JIRA Sub-Task</label>
 									<div class="field-group-static">
-										<a href="$hazard.getJiraURL()">Open</a>
+										<a href="$jiraSubtaskURL">$jiraSubTaskSummary</a>
 									</div>
 								</div>
 								<div class="field-group">
@@ -46,11 +52,11 @@
 											<option value="$nonAssociatedSubs.getID()">$!nonAssociatedSubs.getLabel()</option>
 										#end
 									</select>
-									<div class="HazardPageMultiSelectFooterContainerOne">
-										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									<div class="HTSMultiSelectFooterContainerOne">
+										<span class="HTSMultiSelectFooter">Non-associated</span>
 									</div>
-									<div class="HazardPageMultiSelectFooterContainerTwo">
-										<span class="HazardPageMultiSelectFooter">Associated</span>
+									<div class="HTSMultiSelectFooterContainerTwo">
+										<span class="HTSMultiSelectFooter">Associated</span>
 									</div>
 								</div>
 								<div class="field-group">
@@ -79,11 +85,11 @@
 											<option value="$nonAssociatedMissionPhase.getID()">$!nonAssociatedMissionPhase.getLabel()</option>
 										#end
 									</select>
-									<div class="HazardPageMultiSelectFooterContainerOne">
-										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									<div class="HTSMultiSelectFooterContainerOne">
+										<span class="HTSMultiSelectFooter">Non-associated</span>
 									</div>
-									<div class="HazardPageMultiSelectFooterContainerTwo">
-										<span class="HazardPageMultiSelectFooter">Associated</span>
+									<div class="HTSMultiSelectFooterContainerTwo">
+										<span class="HTSMultiSelectFooter">Associated</span>
 									</div>
 								</div>
 								<div class="field-group">
@@ -96,11 +102,11 @@
 											<option value="$!nonAssociatedHazardGroup.getID()">$!nonAssociatedHazardGroup.getLabel()</option>
 										#end
 									</select>
-									<div class="HazardPageMultiSelectFooterContainerOne">
-										<span class="HazardPageMultiSelectFooter">Non-associated</span>
+									<div class="HTSMultiSelectFooterContainerOne">
+										<span class="HTSMultiSelectFooter">Non-associated</span>
 									</div>
-									<div class="HazardPageMultiSelectFooterContainerTwo">
-										<span class="HazardPageMultiSelectFooter">Associated</span>
+									<div class="HTSMultiSelectFooterContainerTwo">
+										<span class="HTSMultiSelectFooter">Associated</span>
 									</div>
 								</div>
 								<div class="field-group">

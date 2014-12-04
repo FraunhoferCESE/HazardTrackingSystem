@@ -27,6 +27,7 @@ import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.SubsystemService;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -111,7 +112,19 @@ public final class HazardServlet extends HttpServlet {
 				context.put("errorList", errorList);
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
+				Project jiraProject = hazardService.getHazardProject(hazard); 
+				Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+				String jiraSubTaskSummary = jiraSubtask.getSummary();
+				String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber();
+				String jiraProjectName = jiraProject.getName();
+				String jiraProjectURL = baseURL + "/browse/" + jiraProject.getKey();
+
 				context.put("hazard", hazard);
+				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
+				context.put("jiraSubtaskURL", jiraSubtaskURL);
+				context.put("jiraProjectName", jiraProjectName);
+				context.put("jiraProjectURL", jiraProjectURL);
 				context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
 				context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
 				context.put("reviewPhases", reviewPhaseService.all());

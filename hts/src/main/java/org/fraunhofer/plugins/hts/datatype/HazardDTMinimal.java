@@ -4,18 +4,22 @@ public class HazardDTMinimal {
 	private int hazardID;
 	private String hazardTitle;
 	private String hazardNumber;
+	private String jiraSubtaskSummary;
+	private String jiraSubtaskURL;
 	private String missionTitle;
+	private String jiraProjectURL;
 	private String revisionDate;
-	private String jiraURL;
 	
-	public HazardDTMinimal(int hazardID, String hazardTitle, String hazardNumber, 
-			String missionTitle, String lastRevision, String jiraLink) {
+	public HazardDTMinimal(int hazardID, String hazardTitle, String hazardNumber, String jiraSubtaskSummary,
+			String jiraSubtaskURL, String missionTitle, String jiraProjectURL, String lastRevision) {
 		this.hazardID = hazardID;
 		this.hazardTitle = hazardTitle;
 		this.hazardNumber = hazardNumber;
+		this.jiraSubtaskSummary = jiraSubtaskSummary;
+		this.jiraSubtaskURL = jiraSubtaskURL;
 		this.missionTitle = missionTitle;
+		this.jiraProjectURL = jiraProjectURL;
 		this.revisionDate = lastRevision;
-		this.jiraURL = jiraLink;
 	}
 	
 	public int getHazardID() {
@@ -29,17 +33,25 @@ public class HazardDTMinimal {
 	public String getHazardNumber() {
 		return hazardNumber;
 	}
+	
+	public String getJiraSubtaskSummary() {
+		return jiraSubtaskSummary;
+	}
+	
+	public String getJiraSubtaskURL() {
+		return jiraSubtaskURL;
+	}
 
 	public String getMissionTitle() {
 		return missionTitle;
 	}
+	
+	public String getJiraProjectURL() {
+		return jiraProjectURL;
+	}
 
 	public String getRevisionDate() {
 		return revisionDate;
-	}
-
-	public String getJiraURL() {
-		return jiraURL;
 	}
 
 }

@@ -1,7 +1,10 @@
 console.log("=== hazard-page.js ===");
 
 function initializeHazardPage() {
-	initHazardPageClickEvents();
+	if (INIT.HAZARDS === true) {
+		INIT.HAZARDS = false;
+		initHazardPageClickEvents();
+	}
 	initHazardPageMultiSelectes();
 }
 

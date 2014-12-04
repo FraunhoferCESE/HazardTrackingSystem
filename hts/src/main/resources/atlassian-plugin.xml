@@ -72,6 +72,9 @@
 		<resource name="cause-page.css" type="download" location="/css-new/cause-page.css" />
 		<resource name="cause-page.js" type="download" location="/js-new/cause-page.js" />
 
+		<resource name="control-page.css" type="download" location="/css-new/control-page.css" />
+		<resource name="control-page.js" type="download" location="/js-new/control-page.js" />
+
 		<context>HTSContext</context>
 	</web-resource>
 

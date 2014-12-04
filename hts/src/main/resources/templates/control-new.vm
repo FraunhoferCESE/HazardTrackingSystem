@@ -1,0 +1,48 @@
+<form method="post" action="controls" class="aui" id="ControlPageFormAddNew">
+	<input type="hidden" name="regular" id="regular" value="true">
+	<input type="hidden" name="existing" id="existing" value="false">
+	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+	<div class="field-group">
+		<label for="controlDescription"><span class="HTSRequired">* </span>Description</label>
+		<textarea class="textarea long-field" name="controlDescription" id="controlDescription"></textarea>
+	</div>
+	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlDescription">
+		<span class="HTSRequired">This field is required.</span>
+	</div>
+	<div class="field-group">
+		<label for="controlGroup">Control group</label>
+		<select class="select" id="controlGroup" name="controlGroup">
+			<option value="" selected>-Select-</option>
+			#foreach ($controlGroup in $controlGroups)
+				<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+			#end
+		</select>
+	</div>
+	<!-- id here was id="addNewControlMultiSelect"  -->
+	<div class="field-group" id="ControlPageFormAddNewMultiSelect">
+		<label for="controlCauses">Causes</label>
+		<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
+			#foreach ($cause in $causes)
+				#if (!$cause.getDeleteReason())
+					<option value="$cause.getID()">
+						#if ($cause.getTransfer() != 0)
+							$!cause.getCauseNumber()-T: $!cause.getTitle()
+						#else
+							$!cause.getCauseNumber(): $!cause.getTitle()
+						#end
+					</option>
+				#end
+			#end
+		</select>
+		<div class="HTSMultiSelectFooterContainerOne">
+			<span class="HTSMultiSelectFooter">Non-associated</span>
+		</div>
+		<div class="HTSMultiSelectFooterContainerTwo">
+			<span class="HTSMultiSelectFooter">Associated</span>
+		</div>
+	</div>
+	<div class="field-group">
+		<input class="aui-button ControlPageSaveAllChanges" type="button" value="Save All Changes" data-ops="new">
+		<input class="button" type="button" value="Clear" id="ControlPageClearNew">
+	</div>
+</form>

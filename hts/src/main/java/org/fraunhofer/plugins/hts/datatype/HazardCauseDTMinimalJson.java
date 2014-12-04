@@ -10,14 +10,14 @@ import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HazardCauseDTMinimalJson {
 	private int causeID;
-	private String title;
 	private int causeNumber;
+	private String title;
 	private boolean transfer;
 	
 	public HazardCauseDTMinimalJson(Hazard_Causes cause) {
 		this.causeID = cause.getID();
-		this.title = cause.getTitle();
 		this.causeNumber = cause.getCauseNumber();
+		this.title = cause.getTitle();
 		if (cause.getTransfer() == 0) {
 			this.transfer = false;
 		} else {
@@ -29,12 +29,12 @@ public class HazardCauseDTMinimalJson {
 		return causeID;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
 	public int getCauseNumber() {
 		return causeNumber;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 
 	public boolean isTransfer() {

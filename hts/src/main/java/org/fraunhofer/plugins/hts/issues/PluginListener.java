@@ -57,15 +57,11 @@ public class PluginListener implements InitializingBean, DisposableBean {
 				   hazardNumber = null;
 				   CustomField hazardNumberField = pluginCustomization.getHazardNumberField();
 				   hazardNumberField.getCustomFieldType().updateValue(hazardNumberField, issue, hazardNumber);
-			   }
-			   
-			   // Create the URLs and save them:
+			   }		   
+			   // Create a new Hazard in the HTS representing the newly created Sub-Task:
+			   Hazards hazard = hazardService.add(hazardTitle, hazardNumber, issue.getProjectId(), issue.getId());
+			   // Save the HTS URL in the Sub-Task:
 			   String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-			   // JIRA URL, save to the hazard:
-			   String jiraCompleteURL = baseURL + "/browse/" + issue.getProjectObject().getKey() + "-" + issue.getNumber();
-			   Hazards hazard = hazardService.add(hazardTitle, hazardNumber, jiraCompleteURL, 
-					   issue.getProjectId(), issue.getId());
-			   // HTS URL, save to the issue:
 			   String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
 			   CustomField hazardURL = pluginCustomization.getHazardURLField();
 		       hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);

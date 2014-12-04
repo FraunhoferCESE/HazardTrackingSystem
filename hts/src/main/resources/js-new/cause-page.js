@@ -35,7 +35,7 @@ function initCausePageClickEvents() {
 		AJS.$("#CausePageCauseTransferContainer").hide();
 		AJS.$("#CausePageCauseTransferContainer").children().remove();
 		AJS.$(formElement).find("#transferReason").val("");
-		AJS.$(formElement).find("#hazardList").val("").trigger('chosen:updated');
+		AJS.$(formElement).find("#causeHazardList").val("").trigger('chosen:updated');
 	});
 
 	// Add new cause click event
@@ -158,7 +158,6 @@ function initCausePageClickEvents() {
 			result.existingPost = true;
 			for (var i = 0; i < existingResult.modifiedExistingCausesIDs.length; i++) {
 				var formElement = AJS.$("input[name='causeID'][value='" + existingResult.modifiedExistingCausesIDs[i] +"']").closest("form");
-				console.log(formElement);
 				postFormToCauseServlet(formElement);
 			}
 		}
@@ -173,7 +172,7 @@ function initCausePageClickEvents() {
 	});
 
 	// Transfer click event
-	AJS.$("#hazardList").live("change reset", function() {
+	AJS.$("#causeHazardList").live("change reset", function() {
 		var causeContainer = AJS.$("#CausePageCauseTransferContainer");
 		AJS.$(causeContainer).children().remove();
 		var hazardID = AJS.$(this).val();
@@ -181,7 +180,7 @@ function initCausePageClickEvents() {
 			var causes = getAllCausesWithinHazard(hazardID);
 			var html = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causes.length !== 0) {
-				html += "<option value='0'>-Link to all Causes in selected Hazard Report-</option>";
+				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				for (var i = 0; i < causes.length; i++) {
 					var optionText;
 					if (causes[i].transfer === true) {
@@ -309,7 +308,7 @@ function addTransferCauseFormValidation() {
 	var dirty = false;
 	var validated = false;
 
-	var hazardListElement = AJS.$(formElement).find("#hazardList").val();
+	var hazardListElement = AJS.$(formElement).find("#causeHazardList").val();
 	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
 
 	if (hazardListElement !== undefined && transferReasonElement !== undefined) {
@@ -319,7 +318,7 @@ function addTransferCauseFormValidation() {
 		}
 		if (dirty === true) {
 			if (hazardListElement === "") {
-				AJS.$(formElement).find("[data-error='hazardList']").show();
+				AJS.$(formElement).find("[data-error='causeHazardList']").show();
 			} else {
 				validated = true;
 			}
@@ -331,7 +330,6 @@ function addTransferCauseFormValidation() {
 }
 
 function postFormToCauseServlet(formElement) {
-	console.log(formElement);
 	AJS.$(formElement).ajaxSubmit({
 		async: false,
 		success: function(data) {

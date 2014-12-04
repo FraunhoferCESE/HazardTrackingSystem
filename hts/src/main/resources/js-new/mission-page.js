@@ -1,9 +1,6 @@
 console.log("=== mission-page.js ===");
 
 function initializeMissionPage() {
-	var foo = getAllHazards();
-	console.log(foo);
-
 	if (INIT.MISSIONS === true) {
 		INIT.MISSIONS = false;
 		initMissionClickEvents();
@@ -74,7 +71,7 @@ function updateHazardTable(hazards) {
 							"<li><a href='#'>Print</a></li>" +
 						"</ul>" +
 					"</td>" +
-					"<td><a href='" + hazards[i].jiraURL + "'>Open</a></td>" +
+					"<td><a href='" + hazards[i].jiraSubtaskURL + "'>Open</a></td>" +
 				"</tr>";
 	}
 	AJS.$("#MissionPageTableBody").empty();

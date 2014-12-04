@@ -1,7 +1,5 @@
 package org.fraunhofer.plugins.hts.rest;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,34 +10,47 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.datatype.JIRAProject;
+import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.util.json.JSONArray;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 //String respStr = "{ \"success\" : \"true\" }";
 @Path("/cause")
 public class CauseRestService {
+	private HazardCauseService hazardCauseService;
 	private HazardControlService hazardControlService;
 	private TransferService transferService;
 	
-	public CauseRestService(HazardControlService hazardControlService, TransferService transferService) {
+	public CauseRestService(HazardControlService hazardControlService, HazardCauseService hazardCauseService, 
+			TransferService transferService) {
 		this.hazardControlService = hazardControlService;
+		this.hazardCauseService = hazardCauseService;
 		this.transferService = transferService;
 	}
-
+	
+	@GET
+	@Path("control/{causeID}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAllControlsBelongingToCause(@PathParam("causeID") int causeID) {
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			return Response.ok(hazardCauseService.getAllNonDeletedControlsWithinCauseMinimalJson(causeID)).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
+		}
+	}
+	
+	
+	// Rename the path to control/association/{controlIDs}
 	@GET
 	@Path("controlAssociations/{controlIDs}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

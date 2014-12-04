@@ -114,12 +114,11 @@ public class CauseServlet extends HttpServlet {
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
 				context.put("hazard", hazard);
-				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinAHazard(hazard));
+				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinHazard(hazard));
 				context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(hazard));
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
-				List<Hazards> allHazardsBelongingToMission = hazardService.getHazardsByMissionPayload(hazard.getProjectID());
-				context.put("allHazardsBelongingToMission", allHazardsBelongingToMission);
+				context.put("allHazardsBelongingToMission", hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
 				resp.setContentType("text/html;charset=utf-8");
 				templateRenderer.render("templates/cause-page.vm", context, resp.getWriter());
 			}			
@@ -177,10 +176,10 @@ public class CauseServlet extends HttpServlet {
 					hazardCauseService.updateTransferredCause(causeID, transferReason);
 				} else {
 					// Cause transfer creation				
-					int targetHazardID = Integer.parseInt(req.getParameter("hazardList"));
+					int targetHazardID = Integer.parseInt(req.getParameter("causeHazardList"));
 					int targetCauseID = 0;
-					boolean contains = req.getParameterMap().containsKey("causeList");
-					if (contains == true) {
+					
+					if (!Strings.isNullOrEmpty(req.getParameter("causeList"))) {
 						targetCauseID = Integer.parseInt(req.getParameter("causeList"));
 					}
 					

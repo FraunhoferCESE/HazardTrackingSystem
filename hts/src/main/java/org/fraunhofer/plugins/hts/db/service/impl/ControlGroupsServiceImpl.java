@@ -26,7 +26,6 @@ public class ControlGroupsServiceImpl implements ControlGroupsService {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(ControlGroups.class).length == 0) {
-					add("null");
 					add("Design");
 					add("Safety devices");
 					add("Cautions/warnings");
@@ -59,7 +58,7 @@ public class ControlGroupsServiceImpl implements ControlGroupsService {
 	}
 
 	@Override
-	public ControlGroups getControlGroupServicebyID(String id) {
+	public ControlGroups getControlGroupByID(String id) {
 		initializeTable();
 		
 		final ControlGroups[] cg = ao.find(ControlGroups.class, Query.select().where("ID=?", id));
