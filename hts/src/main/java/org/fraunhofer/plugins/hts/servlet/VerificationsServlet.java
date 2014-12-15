@@ -55,6 +55,8 @@ public class VerificationsServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	// TODO: Look into re-factoring permissions/generating error messages is done - see issue on the Huboard.
+    	
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
 		
@@ -156,47 +158,6 @@ public class VerificationsServlet extends HttpServlet{
     			verificationService.add(hazardID, description, status, type, responsibleParty, estimatedCompletionDate, controls);
     		}
     	}
-    	
-    	
-    	
-//    	if ("y".equals(req.getParameter("edit"))) {
-//    		final Verifications verificationToEdit = verificationService.getVerificationByID(req.getParameter("verificationID"));
-//    		final String description = req.getParameter("verificationDescriptionEdit");
-//    		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
-//    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
-//        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
-//        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsEdit")));
-//        	
-//        	final VerificationType verificationType;
-//    		if (req.getParameter("verificationTypeEdit") != "") {
-//    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeEdit"));
-//    		}
-//    		else {
-//    			verificationType = null;
-//    		}
-//
-//    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
-//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
-//    	}
-//    	else {
-//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-//    		final String description = req.getParameter("verificationDescriptionNew");
-//        	final String responsibleParty = req.getParameter("verificationRespPartyNew");
-//    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
-//        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
-//        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsNew")));
-//        	
-//        	final VerificationType verificationType;
-//    		if (req.getParameter("verificationTypeNew") != "") {
-//    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
-//    		}
-//    		else {
-//    			verificationType = null;
-//    		}
-//
-//    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
-//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
-//    	}
     }
     
 	@Override

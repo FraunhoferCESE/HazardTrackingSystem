@@ -1,3 +1,16 @@
+
+/*
+ * TODO:
+ * This is the original REST Service java file. It contained all the REST service functions.
+ * What needs to be done:
+ * 		Put in the correct java file
+ * 			MissionRestService.java, HazardRestService.java, etc. 
+ * 		Add permission checks to each
+ * 		Re-factor based on updated methods in services and new datatypes in the datatype package.
+ */
+
+
+
 //package org.fraunhofer.plugins.hts.rest;
 //
 //import static com.google.common.base.Preconditions.checkNotNull;

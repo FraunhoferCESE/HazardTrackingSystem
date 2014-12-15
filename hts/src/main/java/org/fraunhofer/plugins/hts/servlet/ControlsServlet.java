@@ -49,7 +49,9 @@ public class ControlsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
+		// TODO: Look into re-factoring permissions/generating error messages is done - see issue on the Huboard.
+    	
+    	JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
 		
 		if (jiraAuthenticationContext.isLoggedInUser()) {
