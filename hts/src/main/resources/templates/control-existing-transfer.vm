@@ -1,0 +1,100 @@
+#set ($theControl = 0)
+#foreach ($transferredControl in $transferredControls)
+	#if ($transferredControl.getTransferID() == $control.getTransfer())
+		#set ($theControl = $transferredControl)
+		#break
+	#end
+#end
+
+<tr id="ControlTableEntryID$control.getID()">
+	<td class="HazardPropertyTableTd">
+		<div class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
+	</td>
+	<td class="HazardPropertyTableTd">Control $control.getControlNumber()</td>
+	<td class="HazardPropertyTableTd">
+		#if ($theControl.getTransferTargetType() == "CONTROL")
+			#if ($theControl.isDeleted() == true)
+				<div class="HTSTransferDeletedOrigin">$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()</div>
+			#else
+				<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()">
+					$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+				</a>
+			#end
+		#else
+			#if ($theControl.isDeleted() == true)
+				<div class="HTSTransferDeletedOrigin">$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()</div>
+			#else
+				<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()">
+					$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+				</a>
+			#end
+		#end
+	</td>
+	<td class="HazardPropertyTableTd">
+		#if (!$theControl.getTargetControlControlGroup())
+			N/A
+		#else
+			$theControl.getTargetControlControlGroup()
+		#end
+	</td>
+	<td class="HTSDate HazardPropertyTableTd">$control.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">
+		<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
+	</td>
+</tr>
+<tr id="ControlTableEntryContentID$control.getID()" class="HazardPropertyContentRow">
+	<td colspan="100%">
+		<div class="HazardPropertyContentHolder">
+			<form method="post" action="controls" class="aui ControlPageFormExisting">
+				<input type="hidden" name="regular" id="regular" value="false">
+				<input type="hidden" name="existing" id="existing" value="true">
+				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+				<input type="hidden" name="controlID" id="controlID" value="$!control.getID()">
+				<div class="field-group">
+					<label for="controlTargetHazardTitle">Hazard Title</label>
+					<div class="field-group-static">
+						$!theControl.getTargetHazardTitle()
+					</div>
+				</div>
+				<div class="field-group">
+					<label for="controlTargetHazardNumber">Hazard #</label>
+					<div class="field-group-static">
+						$!theControl.getTargetHazardNumber()
+					</div>
+				</div>
+				#if ($theControl.getTransferTargetType() == "CONTROL")
+					<div class="field-group">
+						<label for="controlTargetControlDescription">Control Description</label>
+						<div class="field-group-static">
+							$!theControl.getTargetControlDescription()
+						</div>
+					</div>
+					<div class="field-group">
+						<label for="controlTargetControlNumber">Control #</label>
+						<div class="field-group-static">
+							$!theControl.getTargetControlNumber()
+						</div>
+					</div>
+				#end
+				#if ($theControl.getTransferTargetType() == "CAUSE")
+					<div class="field-group">
+						<label for="controlTargetCauseTitle">Cause Title</label>
+						<div class="field-group-static">
+							$!theControl.getTargetCauseTitle()
+						</div>
+					</div>
+					<div class="field-group">
+						<label for="controlTargetCauseNumber">Cause #</label>
+						<div class="field-group-static">
+							$!theControl.getTargetCauseNumber()
+						</div>
+					</div>
+				#end
+				<div class="field-group">
+					<label for="transferReason">Transfer Reason</label>
+					<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$theControl.getTransferReason()</textarea>
+				</div>
+			</form>
+		</div>
+	</td>
+</tr>

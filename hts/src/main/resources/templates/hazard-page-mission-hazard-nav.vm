@@ -9,17 +9,17 @@
 				<div class="MissionHazardNavContentSmaller" id="MissionHazardNavLine2">
 					<span>Hazard Title: </span>
 					#if (!$hazard.getHazardTitle())
-						N/A
+						<span id="MissionHazardNavHazardTitle">N/A</span>
 					#else
-						$hazard.getHazardTitle()
+						<span id="MissionHazardNavHazardTitle">$hazard.getHazardTitle()</span>
 					#end
 				</div>
 				<div class="MissionHazardNavContentSmaller" id="MissionHazardNavLine3">
 					<span>Hazard #: </span>
 					#if (!$hazard.getHazardNumber())
-						N/A
+						<span id="MissionHazardNavHazardNumber">N/A</span>
 					#else
-						$hazard.getHazardNumber()
+						<span id="MissionHazardNavHazardNumber">$hazard.getHazardNumber()</span>
 					#end
 				</div>
 			</div>

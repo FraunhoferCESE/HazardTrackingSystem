@@ -1,5 +1,20 @@
 package org.fraunhofer.plugins.hts.servlet;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
@@ -10,27 +25,16 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.VerificationService;
 import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
 import org.fraunhofer.plugins.hts.db.service.VerificationTypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 public class VerificationsServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(VerificationsServlet.class);
 	private final TemplateRenderer templateRenderer;
 	private final HazardService hazardService;
 	private final VerificationTypeService verificationTypeService;
@@ -41,85 +45,158 @@ public class VerificationsServlet extends HttpServlet{
 	public VerificationsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
 			VerificationService verificationService, HazardControlService hazardControlService) {
-		this.templateRenderer = templateRenderer;
-		this.hazardService = hazardService;
-		this.verificationTypeService = verificationTypeService;
-		this.verificationStatusService = verificationStatusService;
-		this.verificationService = verificationService;
-		this.hazardControlService = hazardControlService;
+		this.templateRenderer = checkNotNull(templateRenderer);
+		this.hazardService = checkNotNull(hazardService);
+		this.verificationTypeService = checkNotNull(verificationTypeService);
+		this.verificationStatusService = checkNotNull(verificationStatusService);
+		this.verificationService = checkNotNull(verificationService);
+		this.hazardControlService = checkNotNull(hazardControlService);
 	}
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> context = Maps.newHashMap();
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
-		templateRenderer.render("templates/verifications-page.vm", context, resp.getWriter());
-    	
-//    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-//    		Map<String, Object> context = Maps.newHashMap();
-//    		resp.setContentType("text/html;charset=utf-8");
-//    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-//			if ("y".equals(req.getParameter("edit"))) {
-//				Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
-//				context.put("hazardNumber", currentHazard.getHazardNumber());
-//				context.put("hazardTitle", currentHazard.getHazardTitle());
-//				context.put("hazardID", currentHazard.getID());
-//				context.put("hazard", currentHazard);
-//				context.put("verificationTypes", verificationTypeService.all());
-//				context.put("allVerifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(currentHazard));
-//				context.put("verificationStatuses", verificationStatusService.all());
-//				context.put("allControls", hazardControlService.getAllControlsWithinAHazard(currentHazard));
-//				context.put("allTransferredControls", hazardControlService.getAllTransferredControls(currentHazard));
-//				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
-//			} else {
-//				templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
-//			}
-//       	}
-//    	else {
-//    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
-//    	}
+		
+		if (jiraAuthenticationContext.isLoggedInUser()) {
+			Map<String, Object> context = Maps.newHashMap();
+			boolean error = false;
+			String errorMessage = null;
+			List<String> errorList = new ArrayList<String>();
+			
+			boolean contains = req.getParameterMap().containsKey("id");
+			Hazards hazard = null;
+			if (contains == true) {
+				String hazardIDStr = req.getParameter("id");
+				// Parsing from String to Integer could fail
+				try {
+					int hazardID =  Integer.parseInt(hazardIDStr);
+					hazard = hazardService.getHazardByID(hazardID);
+					if (hazard != null) {
+						// Check user permission
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
+							error = true;
+							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+									jiraAuthenticationContext.getUser().getUsername() + 
+									") do not have permission to view/edit it.";
+						}
+					} else {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+								jiraAuthenticationContext.getUser().getUsername() + 
+								") do not have permission to view/edit it.";
+					}
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
+			} else {
+				error = true;
+				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
+				errorList.add(".../hazards?id=[number]");
+				errorList.add(".../causes?id=[number]");
+				errorList.add(".../controls?id=[number]");
+				errorList.add(".../verifications?id=[number]");
+				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			}
+			
+			// Decide which page to render for the user, error-page or cause-page
+			if (error == true) {
+				context.put("errorMessage", errorMessage);
+				context.put("errorList", errorList);
+				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
+			} else {
+				context.put("hazard", hazard);
+				context.put("verifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
+				context.put("statuses", verificationStatusService.all());
+				context.put("types", verificationTypeService.all());
+				context.put("controls", hazardControlService.getAllControlsWithinAHazard(hazard));
+				context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
+				templateRenderer.render("templates/verification-page.vm", context, resp.getWriter());
+			}
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
     }
     
     @Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    	if ("y".equals(req.getParameter("edit"))) {
-    		final Verifications verificationToEdit = verificationService.getVerificationByID(req.getParameter("verificationID"));
-    		final String description = req.getParameter("verificationDescriptionEdit");
-    		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
-    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
-        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
-        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsEdit")));
-        	
-        	final VerificationType verificationType;
-    		if (req.getParameter("verificationTypeEdit") != "") {
-    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeEdit"));
+    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {  		
+			String hazardIDStr = req.getParameter("hazardID");
+			int hazardID = Integer.parseInt(hazardIDStr);
+    		
+    		String description = req.getParameter("verificationDescription");
+    		VerificationStatus status;
+    		if (req.getParameter("verificationStatus") != "") {
+    			status = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatus"));
+    		} else {
+    			status = null;
     		}
-    		else {
-    			verificationType = null;
+    		
+    		VerificationType type;
+    		if (req.getParameter("verificationType") != "") {
+    			type = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationType"));
+    		} else {
+    			type = null;
     		}
-
-    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
+    		
+    		String responsibleParty = req.getParameter("verificationRespParty");
+    		String dateStr = req.getParameter("verificationEstComplDate");
+    		Date estimatedCompletionDate = changeToDate(req.getParameter("verificationEstComplDate"));
+    		
+    		String[] controlsStr = req.getParameterValues("verificationControls");
+    		Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(controlsStr));
+    		
+    		boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
+    		if (existing == true) {
+				String verificationIDStr = req.getParameter("verificationID");
+				int verificationID = Integer.parseInt(verificationIDStr);
+    			verificationService.update(verificationID, description, status, type, responsibleParty, estimatedCompletionDate, controls);
+    		} else {
+    			verificationService.add(hazardID, description, status, type, responsibleParty, estimatedCompletionDate, controls);
+    		}
     	}
-    	else {
-    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-    		final String description = req.getParameter("verificationDescriptionNew");
-        	final String responsibleParty = req.getParameter("verificationRespPartyNew");
-    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
-        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
-        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsNew")));
-        	
-        	final VerificationType verificationType;
-    		if (req.getParameter("verificationTypeNew") != "") {
-    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
-    		}
-    		else {
-    			verificationType = null;
-    		}
-
-    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
-    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
-    	}
+    	
+    	
+    	
+//    	if ("y".equals(req.getParameter("edit"))) {
+//    		final Verifications verificationToEdit = verificationService.getVerificationByID(req.getParameter("verificationID"));
+//    		final String description = req.getParameter("verificationDescriptionEdit");
+//    		final String responsibleParty = req.getParameter("verificationRespPartyEdit");
+//    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateEdit"));
+//        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusEdit"));
+//        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsEdit")));
+//        	
+//        	final VerificationType verificationType;
+//    		if (req.getParameter("verificationTypeEdit") != "") {
+//    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeEdit"));
+//    		}
+//    		else {
+//    			verificationType = null;
+//    		}
+//
+//    		verificationService.update(verificationToEdit, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
+//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform");
+//    	}
+//    	else {
+//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
+//    		final String description = req.getParameter("verificationDescriptionNew");
+//        	final String responsibleParty = req.getParameter("verificationRespPartyNew");
+//    		final Date estCompletionDate = changeToDate(req.getParameter("verificationComplDateNew"));
+//        	final VerificationStatus verificationStatus = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatusNew"));
+//        	final Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(req.getParameterValues("verificationControlsNew")));
+//        	
+//        	final VerificationType verificationType;
+//    		if (req.getParameter("verificationTypeNew") != "") {
+//    			verificationType = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationTypeNew"));
+//    		}
+//    		else {
+//    			verificationType = null;
+//    		}
+//
+//    		verificationService.add(currentHazard, description, verificationType, responsibleParty, estCompletionDate, verificationStatus, controls);
+//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/verificationform?edit=y&key=" + currentHazard.getID());
+//    	}
     }
     
 	@Override

@@ -11,8 +11,8 @@ function initializeCausePage() {
 	EXISTING_CAUSES_SERIALIZED = serializeExistingCauses();
 
 	// Calling functions in shared-cookies.js file
-	openHTSCookieOpenCauses(existingCausesCount);
 	var existingCausesCount = AJS.$(".CauseTableToggle").length;
+	openHTSCookieOpenCauses(existingCausesCount);
 	renameCausePageExpandButton(existingCausesCount);
 }
 
@@ -31,14 +31,14 @@ function initCausePageClickEvents() {
 
 	// Clear new transfer Cause form
 	AJS.$("#CausePageClearTransfer").live("click", function() {
-		var formElement = AJS.$("#CausePageFormAddTransfer");
 		AJS.$("#CausePageCauseTransferContainer").hide();
 		AJS.$("#CausePageCauseTransferContainer").children().remove();
+		var formElement = AJS.$("#CausePageFormAddTransfer");
 		AJS.$(formElement).find("#transferReason").val("");
 		AJS.$(formElement).find("#causeHazardList").val("").trigger('chosen:updated');
 	});
 
-	// Add new cause click event
+	// Add new Cause click event
 	AJS.$("#CausePageAddNewCause").live("click", function() {
 		// Calling function in shared-cookies.js file
 		toggleOpenCloseIcon(AJS.$(this), AJS.$("#CausePageNewContainer"));
@@ -114,14 +114,11 @@ function initCausePageClickEvents() {
 		if (operation === "new" || operation === "all") {
 			var addNewResult = addNewCauseFormValidation();
 			if (addNewResult.dirty === true && addNewResult.validated === true) {
-				//console.log("post form");
 				result.addNewPost = true;
 				postFormToCauseServlet(AJS.$("#CausePageFormAddNew"));
 			} else if (addNewResult.dirty === true && addNewResult.validated === false) {
-				//console.log("errors");
 				result.addNewErrors = true;
 			} else if (addNewResult.dirty === false && addNewResult.validated === false) {
-				//console.log("no changes made");
 				result.addNewNoChanges = true;
 			}
 		}
@@ -129,14 +126,11 @@ function initCausePageClickEvents() {
 		if (operation === "transfer" || operation === "all") {
 			var addTransferResult = addTransferCauseFormValidation();
 			if (addTransferResult.dirty === true && addTransferResult.validated === true) {
-				console.log("post form");
 				result.addTransferPost = true;
 				postFormToCauseServlet(AJS.$("#CausePageFormAddTransfer"));
 			} else if (addTransferResult.dirty === true && addTransferResult.validated === false) {
-				//console.log("errors");
 				result.addTransferErrors = true;
 			} else if (addTransferResult.dirty === false && addTransferResult.validated === false) {
-				//console.log("no changes made");
 				result.addTransferNoChanges = true;
 			}
 		}
@@ -154,7 +148,6 @@ function initCausePageClickEvents() {
 			result.existingNoChanges = true;
 		}
 		if (existingResult.modifiedExistingCausesIDs.length !== 0) {
-			console.log("post existing");
 			result.existingPost = true;
 			for (var i = 0; i < existingResult.modifiedExistingCausesIDs.length; i++) {
 				var formElement = AJS.$("input[name='causeID'][value='" + existingResult.modifiedExistingCausesIDs[i] +"']").closest("form");
@@ -162,12 +155,11 @@ function initCausePageClickEvents() {
 			}
 		}
 		if (existingResult.deleteExistingCausesIDs.length !== 0) {
-			//console.log("delete existing");
 			result.existingDelete = true;
 			openDeleteCauseDialog(existingResult.deleteExistingCausesIDs, result);
 		} else {
 			// Display appropriate message and load the template again to see the changes
-			displayAppropriateMessage(result);
+			displayAppropriateMessage(result, "Cause");
 		}
 	});
 
@@ -178,15 +170,16 @@ function initCausePageClickEvents() {
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
 			var causes = getAllCausesWithinHazard(hazardID);
+			console.log(causes);
 			var html = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causes.length !== 0) {
 				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				for (var i = 0; i < causes.length; i++) {
 					var optionText;
 					if (causes[i].transfer === true) {
-						optionText = causes[i].causeNumber + "-T - " + causes[i].title;
+						optionText = causes[i].causeNumber + "-T - " + causes[i].text;
 					} else {
-						optionText = causes[i].causeNumber + " - " + causes[i].title;
+						optionText = causes[i].causeNumber + " - " + causes[i].text;
 					}
 					html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 				}
@@ -194,7 +187,6 @@ function initCausePageClickEvents() {
 				AJS.$(causeContainer).append(html);
 			} else {
 				AJS.$(causeContainer).append("<label class='popupLabels' for='causeList'>Hazard Causes</label><div class='TransferNoProperties'>-Link to all Causes in selected Hazard Report- (Selected HR currently has no Causes)</div>");
-
 			}
 			AJS.$(causeContainer).show();
 		} else {
@@ -202,6 +194,7 @@ function initCausePageClickEvents() {
 		}
 	});
 
+	// Duplicate delete reason in delete dialog
 	AJS.$("#ConfirmDialogDuplBtnCauses").live("click", function() {
 		var reasonTextFields = AJS.$(".ConfirmDialogReasonTextInput");
 		var reasonToDuplicate;
@@ -312,8 +305,7 @@ function addTransferCauseFormValidation() {
 	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
 
 	if (hazardListElement !== undefined && transferReasonElement !== undefined) {
-		if (hazardListElement !== "" ||
-			transferReasonElement !== "") {
+		if (hazardListElement !== "" || transferReasonElement !== "") {
 			dirty = true;
 		}
 		if (dirty === true) {
@@ -345,47 +337,6 @@ function postFormToCauseServlet(formElement) {
 	});
 }
 
-function displayAppropriateMessage(result) {
-	if (result.existingNoChanges === true && result.addNewNoChanges === true &&
-		result.addTransferNoChanges === true) {
-		JIRA.Messages.showWarningMsg("No changes were made.", {closeable: true});
-	}
-	if (result.existingPost === true || result.addNewPost === true ||
-		result.addTransferPost === true || result.existingDelete) {
-		var successMessage = "The following changes were made:<br>";
-		if (result.addNewPost === true) {
-			successMessage += "<b> &#149; Created a new Cause<b><br>";
-		}
-		if (result.addTransferPost === true) {
-			successMessage += "<b> &#149; Created a new transferred Cause<b><br>";
-		}
-		if (result.existingPost === true) {
-			successMessage += "<b> &#149; Updated existing Cause(s)<b><br>";
-		}
-		if (result.existingDelete === true) {
-			successMessage += "<b> &#149; Deleted existing Cause(s)<b><br>";
-		}
-		JIRA.Messages.showSuccessMsg(successMessage, {closeable: true});
-		var path = AJS.$.url().data.attr.relative;
-		loadTemplate(path);
-
-	}
-	if (result.existingErrors === true || result.addNewErrors === true ||
-		result.addTransferErrors === true) {
-		var errorMessage = "There was a problem with the following:<br>";
-		if (result.addNewErrors === true) {
-			errorMessage += "<b> &#149; Creating a new Cause<b><br>";
-		}
-		if (result.addTransferErrors === true) {
-			errorMessage += "<b> &#149; Creating a new transferred Cause.<b><br>";
-		}
-		if (result.existingErrors === true) {
-			errorMessage += "<b> &#149; Updating existing Cause(s)<b><br>";
-		}
-		JIRA.Messages.showErrorMsg(errorMessage, {closeable: true});
-	}
-}
-
 function removeAnyVisibleErrorsFromForm(formElement) {
 	var errors = AJS.$(formElement).find(".HTSRequiredContainer");
 	errors.each(function() {
@@ -397,8 +348,8 @@ function removeAnyVisibleErrorsFromForm(formElement) {
 
 // The following functions have to do with deleting Causes
 function openDeleteCauseDialog(causeIDsToDelete, result) {
-	var html1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + "Title" + "</span></span>" +
-				"<span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + "Number" + "</span></span>";
+	var html1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardTitle").text() + "</span></span>" +
+				"<span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardNumber").text() + "</span></span>";
 	var html2;
 	if (causeIDsToDelete.length === 1) {
 		html2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>" +
@@ -414,7 +365,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 						"<tr>" +
 							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellOne'>#</th>" +
 							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwo'>Title</th>" +
-							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellThree'>Owner:</th>" +
+							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellThree'>Owner</th>" +
 						"</tr>" +
 					"</thead>" +
 					"<tbody>";
@@ -465,7 +416,6 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 		id: "deleteDialog",
 	});
 
-	dialog.show();
 	dialog.addHeader("Confirm");
 	dialog.addPanel("Panel 1",
 		"<div class='panelBody'>" + html1 + html2 + html3 + "</div>",
@@ -477,7 +427,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 		dialog.remove();
 		deselectAllCauses();
 		result.existingDelete = false;
-		displayAppropriateMessage(result);
+		displayAppropriateMessage(result, "Cause");
 	});
 
 	dialog.addButton("Continue", function(dialog) {
@@ -488,7 +438,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 			}
 			dialog.hide();
 			dialog.remove();
-			displayAppropriateMessage(result);
+			displayAppropriateMessage(result, "Cause");
 		}
 	});
 

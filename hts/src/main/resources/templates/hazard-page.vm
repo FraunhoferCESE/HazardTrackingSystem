@@ -133,7 +133,6 @@
 									<label for="hazardCompletion">Completion Date</label>
 									<input class="aui-date-picker" name="hazardCompletion" id="hazardCompletion" type="date" value="$!completionDate"/>
 								</div>
-
 								<div class="field-group">
 									<label for="hazardRiskMatrix">Risk Matrix</label>
 									#parse("/templates/hazard-page-risk-matrix.vm")

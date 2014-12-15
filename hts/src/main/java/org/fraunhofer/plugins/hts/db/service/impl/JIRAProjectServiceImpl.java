@@ -3,10 +3,7 @@ package org.fraunhofer.plugins.hts.db.service.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.fraunhofer.plugins.hts.datatype.JIRAProject;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
@@ -40,19 +37,19 @@ public class JIRAProjectServiceImpl implements MissionPayloadService {
 	
 	@Override
 	public List<JIRAProject> getUserProjects(ApplicationUser user) { 
+		List<Long> projectsWithHazards = hazardService.getProjectsWithHazards();
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
-		Collection<Project> userProjectsColl1 = permissionManager.getProjects(Permissions.CREATE_ISSUE, user);
-		Collection<Project> userProjectsColl2 = permissionManager.getProjects(Permissions.EDIT_ISSUE, user);
-			
-		Set<Project> userProjectsSet = new HashSet<Project>(userProjectsColl1);
-		userProjectsSet.addAll(userProjectsColl2);
 		
-		// Create a new list that contains only the project ID and project name
 		List<JIRAProject> jiraProjectList = new ArrayList<JIRAProject>();
-		for (Project project : userProjectsSet) {
-			jiraProjectList.add(new JIRAProject(project.getId(), projectManager.getProjectObj(project.getId()).getName()));
+		for (Long projectID : projectsWithHazards) {
+			Project jiraProject = projectManager.getProjectObj(projectID);
+			if (permissionManager.hasPermission(Permissions.CREATE_ISSUE, jiraProject, user) || 
+				permissionManager.hasPermission(Permissions.EDIT_ISSUE, jiraProject, user)) {
+					jiraProjectList.add(new JIRAProject(jiraProject.getId(), projectManager.getProjectObj(jiraProject.getId()).getName()));
+			}
 		}
+		
 		return jiraProjectList;
 	}
 }

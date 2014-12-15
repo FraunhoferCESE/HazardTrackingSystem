@@ -72,27 +72,33 @@ function loadTemplate(path) {
 
 function updateUI(route) {
 	if (route === ROUTES.MISSIONS || route === "") {
+		AJS.$(document).prop("title", "HTS - Missions page");
 		AJS.$("#MissionNavItem").addClass("aui-nav-selected");
 		AJS.$("#MissionHazardNavLine1").text("Missions Page");
 		initializeMissionPage();
 	} else if (route === ROUTES.HAZARDS) {
+		AJS.$(document).prop("title", "HTS - Hazard page");
 		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
 		AJS.$("#HazardPagePropertiesNavigation [id='HazardNavItem']").addClass("aui-nav-selected");
 		AJS.$("#MissionHazardNavLine1").text("Hazard Form");
 		initializeHazardPage();
 	} else if (route === ROUTES.CAUSES) {
+		AJS.$(document).prop("title", "HTS - Causes page");
 		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
 		AJS.$("#HazardPagePropertiesNavigation [id='CausesNavItem']").addClass("aui-nav-selected");
 		AJS.$("#MissionHazardNavLine1").text("Cause Form");
 		initializeCausePage();
 	} else if (route === ROUTES.CONTROLS) {
+		AJS.$(document).prop("title", "HTS - Controls page");
 		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
 		AJS.$("#HazardPagePropertiesNavigation [id='ControlsNavItem']").addClass("aui-nav-selected");
 		AJS.$("#MissionHazardNavLine1").text("Control Form");
 		initializeControlPage();
 	} else if (route === ROUTES.VERIFICATIONS) {
+		AJS.$(document).prop("title", "HTS - Verifications page");
 		AJS.$("#MissionNavItem").removeClass("aui-nav-selected");
 		AJS.$("#MissionHazardNavLine1").text("Verification Form");
 		AJS.$("#HazardPagePropertiesNavigation [id='VerificationsNavItem']").addClass("aui-nav-selected");
+		initializeVerificationPage();
 	}
 }

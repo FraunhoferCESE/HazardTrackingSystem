@@ -13,16 +13,16 @@
 				<div class="aui-page-panel">
 					<div class="aui-page-panel-inner">
 						<section class="aui-page-panel-content">
-							#if ($causes.size() == 0)
-								<p>No Causes have been created for this Hazard Report.</p>
+							#if ($verifications.size() == 0)
+								<p>No Verifications have been created for this Hazard Report.</p>
 							#else
-								<table cellspacing="0" class="HazardPropertyTable" id="CausePageTable">
+								<table cellspacing="0" class="HazardPropertyTable" id="VerificationPageTable">
 									<thead>
 										<tr>
 											<th class="HazardPropertyTableTh HazardPropertyTableCell1"></th>
 											<th class="HazardPropertyTableTh HazardPropertyTableCell2"></th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell3">Title</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell4">Owner</th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell3">Description</th>
+											<th class="HazardPropertyTableTh HazardPropertyTableCell4">Status</th>
 											<th class="HazardPropertyTableTh HazardPropertyTableCell5">Last updated</th>
 											<th class="HazardPropertyTableTh HazardPropertyTableCell6">
 												<div class="HazardPropertyTableCell6Img"></div>
@@ -30,35 +30,24 @@
 										</tr>
 									</thead>
 									<tbody id="HazardPropertyTableBody">
-										#foreach ($cause in $causes)
-											#if ($cause.getTransfer() != 0)
-												#parse("/templates/cause-existing-transfer.vm")
-											#else
-												#parse("/templates/cause-existing-regular.vm")
-											#end
+										#foreach ($verification in $verifications)
+											#parse("/templates/verification-existing-regular.vm")
 										#end
 									</tbody>
 								</table>
 								<div class="HazardPropertyTableButtonsContainer">
-									<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
+									<input class="aui-button VerificationPageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
 									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
-									<input class="aui-button" type="button" value="Expand All" id="CausePageExpandAllButton" style="margin: 0">
+									<input class="aui-button" type="button" value="Expand All" id="VerificationPageExpandAllButton" style="margin: 0">
 								</div>
 							#end
 							<div>
 								<div class="HazardPropertyHeadingTwo">
-									<span class="aui-icon aui-icon-small aui-iconfont-add" id="CausePageAddNewCause"></span>
-									<span>Add New Cause</span>
+									<span class="aui-icon aui-icon-small aui-iconfont-add" id="VerificationPageAddNewVerification"></span>
+									<span>Add New Verification</span>
 								</div>
-								<div id="CausePageNewContainer">
-									#parse("/templates/cause-new.vm")
-								</div>
-								<div class="HazardPropertyHeadingTwo">
-									<span class="aui-icon aui-icon-small aui-iconfont-add" id="CausePageAddTransfer"></span>
-									<span>Add Cause Transfer</span>
-								</div>
-								<div id="CausePageTransferContainer">
-									#parse("/templates/cause-transfer.vm")
+								<div id="VerificationPageNewContainer">
+									#parse("/templates/verification-new.vm")
 								</div>
 							</div>
 						</section>

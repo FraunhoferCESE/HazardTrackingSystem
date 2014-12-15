@@ -14,7 +14,7 @@
 	<td class="HazardPropertyTableTd">
 		#if ($theCause.getTransferTargetType() == "CAUSE")
 			#if ($theCause.isDeleted() == true)
-				<div>$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()</div>
+				<div class="HTSTransferDeletedOrigin">$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()</div>
 			#else
 				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()">
 					$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
@@ -22,7 +22,7 @@
 			#end
 		#else
 			#if ($theCause.isDeleted() == true)
-				<div>$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()</div>
+				<div class="HTSTransferDeletedOrigin">$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()</div>
 			#else
 				<a href="/jira/plugins/servlet/hazards?id=$!theCause.getTargetHazardID()">
 					$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()
@@ -50,7 +50,6 @@
 				<input type="hidden" name="existing" id="existing" value="true">
 				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
 				<input type="hidden" name="causeID" id="causeID" value="$!cause.getID()">
-
 				<div class="field-group">
 					<label for="causeTargetHazardTitle">Hazard Title</label>
 					<div class="field-group-static">
@@ -83,7 +82,6 @@
 						</div>
 					</div>
 				#end
-
 				<div class="field-group">
 					<label for="transferReason">Transfer Reason</label>
 					<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$theCause.getTransferReason()</textarea>

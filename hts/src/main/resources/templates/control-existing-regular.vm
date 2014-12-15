@@ -24,7 +24,7 @@
 				<input type="hidden" name="existing" id="existing" value="true">
 				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
 				<input type="hidden" name="controlID" id="controlID" value="$!control.getID()">
-				<div class="field-group">
+				<div class="field-group" style="padding-bottom: 0">
 					<label for="controlDescription"><span class="HTSRequired">* </span>Description</label>
 					<textarea class="textarea long-field" name="controlDescription" id="controlDescription">$!control.getDescription()</textarea>
 				</div>

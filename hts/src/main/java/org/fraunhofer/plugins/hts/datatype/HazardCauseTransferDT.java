@@ -9,7 +9,7 @@ import org.fraunhofer.plugins.hts.db.Transfers;
 import com.google.common.base.Strings;
 
 public class HazardCauseTransferDT {
-	// Joint - general
+	// Joint
 	private int transferID;
 	private String transferTargetType;
 	private int targetHazardID;
@@ -18,34 +18,15 @@ public class HazardCauseTransferDT {
 	private String transferReason;
 	private int targetID; // targetCauseID or targetHazardID
 	private int originID; // always originCauseID, might not need this?
-	private boolean deleted; 
-	// For CauseToHazard transfers
-	// Nothing
+	private boolean deleted;
 	// For CauseToCause transfers
 	private String targetCauseTitle;
 	private int targetCauseNumber;
 	private String targetCauseOwner;
 	private String targetCauseRiskCategoryTitle;
 	private String targetCauseRiskLikelihoodTitle;
-	
-	public static HazardCauseTransferDT createCauseToHazard(Transfers transfer,
-			Hazard_Causes originCause, Hazards targetHazard) {
-		HazardCauseTransferDT instance = new HazardCauseTransferDT();
-		instance.setTransferID(transfer.getID());
-		instance.setTransferTargetType(transfer.getTargetType());
-		instance.setTargetHazardID(targetHazard.getID());
-		instance.setTargetHazardTitle(targetHazard.getHazardTitle());
-		instance.setTargetHazardNumber(targetHazard.getHazardNumber());
-		instance.setTransferReason(originCause.getDescription());
-		instance.setTargetID(transfer.getTargetID());
-		instance.setOriginID(transfer.getOriginID());
-		if (targetHazard.getActive() == true) {
-			instance.setDeleted(false);
-		} else {
-			instance.setDeleted(true);
-		}
-		return instance;
-	}
+	// For CauseToHazard transfers
+	// ...
 	
 	public static HazardCauseTransferDT createCauseToCause(Transfers transfer,
 			Hazard_Causes originCause, Hazard_Causes targetCause) {
@@ -77,6 +58,27 @@ public class HazardCauseTransferDT {
 		}
 		
 		if (Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+			instance.setDeleted(false);
+		} else {
+			instance.setDeleted(true);
+		}
+		
+		return instance;
+	}
+	
+	public static HazardCauseTransferDT createCauseToHazard(Transfers transfer,
+			Hazard_Causes originCause, Hazards targetHazard) {
+		HazardCauseTransferDT instance = new HazardCauseTransferDT();
+		instance.setTransferID(transfer.getID());
+		instance.setTransferTargetType(transfer.getTargetType());
+		instance.setTargetHazardID(targetHazard.getID());
+		instance.setTargetHazardTitle(targetHazard.getHazardTitle());
+		instance.setTargetHazardNumber(targetHazard.getHazardNumber());
+		instance.setTransferReason(originCause.getDescription());
+		instance.setTargetID(transfer.getTargetID());
+		instance.setOriginID(transfer.getOriginID());
+		
+		if (targetHazard.getActive() == true) {
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);

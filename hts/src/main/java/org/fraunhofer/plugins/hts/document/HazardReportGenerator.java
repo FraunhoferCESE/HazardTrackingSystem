@@ -213,10 +213,12 @@ public class HazardReportGenerator {
 		new CellHeaderBuilder().text("4. Review Phase: ").createCellHeader(cell);
 
 		for (Review_Phases phase : reviewPhases) {
-			if (phase.getID() == h.getReviewPhase().getID())
-				new ParagraphBuilder().text("\u2612\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
-			else
-				new ParagraphBuilder().text("\u2610\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
+			if (h.getReviewPhase() != null) {
+				if (phase.getID() == h.getReviewPhase().getID())
+					new ParagraphBuilder().text("\u2612\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
+				else
+					new ParagraphBuilder().text("\u2610\t\t" + phase.getLabel()).leftMargin(100).createCellText(cell);
+			}
 		}
 
 		// --------------------------------------

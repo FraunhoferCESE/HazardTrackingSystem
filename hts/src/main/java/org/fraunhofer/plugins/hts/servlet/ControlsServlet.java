@@ -20,7 +20,6 @@ import org.fraunhofer.plugins.hts.db.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -37,17 +36,15 @@ public class ControlsServlet extends HttpServlet {
 	private final HazardControlService hazardControlService;
 	private final ControlGroupsService controlGroupsService;
 	private final HazardCauseService hazardCauseService;
-	private final MissionPayloadService missionPayloadService;
 	
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService, 
 			HazardControlService hazardControlService, ControlGroupsService controlGroupsService,
-			HazardCauseService hazardCauseService, MissionPayloadService missionPayloadService) {
+			HazardCauseService hazardCauseService) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardControlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
-		this.missionPayloadService = missionPayloadService;
 	}
 
     @Override
@@ -65,10 +62,46 @@ public class ControlsServlet extends HttpServlet {
 			Hazards hazard = null;
 			if (contains == true) {
 				String hazardIDStr = req.getParameter("id");
-				int hazardID = Integer.parseInt(hazardIDStr);
-				hazard = hazardService.getHazardByID(hazardID);	
+				try {
+					int hazardID = Integer.parseInt(hazardIDStr);
+					hazard = hazardService.getHazardByID(hazardID);
+					if (hazard != null) {
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
+							error = true;
+							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+									jiraAuthenticationContext.getUser().getUsername() + 
+									") do not have permission to view/edit it.";
+						}
+						
+					} else {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
+								jiraAuthenticationContext.getUser().getUsername() + 
+								") do not have permission to view/edit it.";
+					}
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
+			} else {
+				error = true;
+				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
+				errorList.add(".../hazards?id=[number]");
+				errorList.add(".../causes?id=[number]");
+				errorList.add(".../controls?id=[number]");
+				errorList.add(".../verifications?id=[number]");
+				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			}
+			
+			// Decide which page to render for the user, error-page or cause-page
+			if (error == true) {
+				context.put("errorMessage", errorMessage);
+				context.put("errorList", errorList);
+				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
+			} else {
 				context.put("hazard", hazard);
 				context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
+				context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
 				context.put("controlGroups", controlGroupsService.all());
 				context.put("causes", hazardCauseService.getAllCausesWithinAHazard(hazard));
 				context.put("allHazardsBelongingToMission", hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
@@ -77,52 +110,6 @@ public class ControlsServlet extends HttpServlet {
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
-		
-//		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-//    	if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-//    		Map<String, Object> context = Maps.newHashMap();
-//    		resp.setContentType("text/html;charset=utf-8");
-//    		context.put("baseUrl", ComponentAccessor.getApplicationProperties().getString("jira.baseurl"));
-//	
-//			Hazards currentHazard = hazardService.getHazardByID(req.getParameter("key"));
-//			if (currentHazard == null || currentHazard.getProjectID() == null) {
-//				context.put("errorMessage", "The hazard report you were working with cannot be found or opened.");
-//				templateRenderer.render("templates/ErrorPage.vm", context, resp.getWriter());
-//				return;
-//			}
-//			
-//			List<Hazards> allHazardsBelongingToPayload = hazardService.getHazardsByMissionPayload(currentHazard.getProjectID());
-//			context.put("allHazardsBelongingToPayload", allHazardsBelongingToPayload);
-//			
-//    		
-//    		if ("y".equals(req.getParameter("edit"))) {
-//				context.put("hazardNumber", currentHazard.getHazardNumber());
-//				context.put("hazardTitle", currentHazard.getHazardTitle());
-//				context.put("hazardID", currentHazard.getID());
-//				context.put("hazard", currentHazard);
-//    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(currentHazard));
-//    			context.put("hazardCauses", hazardCauseService.getAllCausesWithinAHazard(currentHazard));
-//        		context.put("controlGroups", controlGroupsService.all());
-//        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(currentHazard));
-//				templateRenderer.render("templates/EditHazard.vm", context, resp.getWriter());
-//    		}
-////    		else {
-////    			Hazards newestHazardReport = hazardService.getNewestHazardReport();
-////    			// Content for upper part of page; hazard info and list of previously defined controls
-////    			context.put("hazardNumber", newestHazardReport.getHazardNum());
-////    			context.put("hazardTitle", newestHazardReport.getTitle());
-////    			context.put("hazardID", newestHazardReport.getID());
-////    			context.put("hazardControls", hazardControlService.getAllNonDeletedControlsWithinAHazard(newestHazardReport));
-////    			// Content for lower part of page; creating a new control
-////    			context.put("hazardCauses", hazardCauseService.getAllNonDeletedCausesWithinAHazard(newestHazardReport));
-////        		context.put("controlGroups", controlGroupsService.all());
-////        		context.put("controlTransfers", hazardControlService.getAllTransferredControls(newestHazardReport));
-////            	templateRenderer.render("templates/HazardPage.vm", context, resp.getWriter());
-////    		}
-//    	}
-//    	else {
-//    		resp.sendRedirect(req.getContextPath() + "/login.jsp");
-//    	}
     }
     
     @Override
@@ -155,7 +142,31 @@ public class ControlsServlet extends HttpServlet {
 					hazardControlService.add(hazardID, description, controlGroup, causes);
     			}
     		} else {
-    			
+    			boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
+    			if (existing == true) {
+    				// Control transfer update
+    				String controlIDStr = req.getParameter("controlID");
+    				int controlID = Integer.parseInt(controlIDStr);
+    				String transferReason = req.getParameter("transferReason");
+    				hazardControlService.updateTransferredControl(controlID, transferReason);
+    			} else {
+    				// Control transfer creation
+    				int targetCauseID = Integer.parseInt(req.getParameter("controlCauseList"));
+    				int targetControlID = 0;
+    				
+    				if (!Strings.isNullOrEmpty(req.getParameter("controlControlList"))) {
+    					targetControlID = Integer.parseInt(req.getParameter("controlControlList"));
+    				}
+    				
+    				int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
+    				String transferReason = req.getParameter("transferReason");
+    				
+					if (targetControlID == 0) {
+						hazardControlService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+					} else {
+						hazardControlService.addControlTransfer(originHazardID, targetControlID, transferReason);
+					}
+    			}
     		}
     		
 			JSONObject jsonResponse = new JSONObject();
@@ -166,77 +177,25 @@ public class ControlsServlet extends HttpServlet {
     	} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
-    	
-    	
-//    	if ("y".equals(req.getParameter("edit"))) {
-//    		// Process the editing request
-//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-//    		String controlID = req.getParameter("controlID");
-//    		final String description = req.getParameter("controlDescriptionEdit");
-//        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupEdit"));
-//        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesEdit")));
-//        	hazardControlService.update(controlID, description, controlGroup, causes);
-//        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-//    	}
-//    	else if ("y".equals(req.getParameter("editTransfer"))) {
-//    		final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-//    		String controlID = req.getParameter("originID");
-//    		String transferReason = req.getParameter("controlTransferReasonEdit");
-//    		hazardControlService.updateTransferredControl(controlID, transferReason);
-//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-//    	}
-//    	else if ("y".equals(req.getParameter("transfer"))) {
-//    		final String hazardID = req.getParameter("hazardID");
-//    		final Hazards currentHazard = hazardService.getHazardByID(hazardID);
-//    		final String transferComment = req.getParameter("controlTransferReason");
-//    		final String causeID = req.getParameter("controlCauseList");   		
-//    		final String controlID = req.getParameter("controlControlList");
-//    		if (Strings.isNullOrEmpty(controlID)) {
-//    			Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(causeID);
-//    			if (!checkIfInternalCauseTransfer(currentHazard, targetCause)) {
-//        			hazardControlService.addCauseTransfer(transferComment, targetCause.getID(), currentHazard);
-//    			}
-//    		}
-//    		else {
-//    			Hazard_Controls targetControl = hazardControlService.getHazardControlByID(controlID);
-//    			if (!checkIfInternalControlTransfer(currentHazard, targetControl)) {
-//    				hazardControlService.addControlTransfer(transferComment, targetControl.getID(), currentHazard);
-//    			}
-//    		}
-//    		res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-//    	}
-//    	else {
-//    		// Process the new control request
-//        	final Hazards currentHazard = hazardService.getHazardByID(req.getParameter("hazardID"));
-//        	final String description = req.getParameter("controlDescriptionNew");
-//        	final ControlGroups controlGroup = controlGroupsService.getControlGroupServicebyID(req.getParameter("controlGroupNew"));
-//        	final Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(req.getParameterValues("controlCausesNew")));
-//        	hazardControlService.add(currentHazard, description, controlGroup, causes);
-//        	
-//        	res.sendRedirect(req.getContextPath() + "/plugins/servlet/controlform?edit=y&key=" + currentHazard.getID());
-////        	JSONObject json = new JSONObject();
-////        	createJson(json, "hazardID", currentHazard.getID());
-////        	res.setContentType("application/json;charset=utf-8");
-////        	res.getWriter().println(json);
-//    	}
     }
     
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			Hazard_Controls controlToBeDeleted = hazardControlService.getHazardControlByID(req.getParameter("controlID"));
-			String reason = req.getParameter("reason");
-			String respStr = "{ \"success\" : \"false\", error: \"Couldn't find hazard report\"}";
+			int controlID = Integer.parseInt(req.getParameter("id"));
+			String deleteReason = req.getParameter("reason");
+			Hazard_Controls control = hazardControlService.deleteControl(controlID, deleteReason);
 			
-			if (controlToBeDeleted != null) {
-				hazardControlService.deleteControl(controlToBeDeleted, reason);
-				respStr = "{ \"success\" : \"true\" }";
+			JSONObject jsonResponse = new JSONObject();
+			if (control != null) {
+				createJson(jsonResponse, "updateSuccess", true);
+				createJson(jsonResponse, "errorMessage", "none");
+			} else {
+				createJson(jsonResponse, "updateSuccess", false);
+				createJson(jsonResponse, "errorMessage", "Could not find Control.");	
 			}
-
-			res.setContentType("application/json;charset=utf-8");
-			// Send the raw output string
-			res.getWriter().write(respStr);
-			
+			res.setContentType("application/json");
+			res.getWriter().println(jsonResponse);
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
@@ -254,26 +213,6 @@ public class ControlsServlet extends HttpServlet {
 		}
 	}
 	
-	private Boolean checkIfInternalCauseTransfer(Hazards hazard, Hazard_Causes targetCause) {
-		List<Hazard_Causes> allCausesBelongingToHazard = hazardCauseService.getAllCausesWithinAHazard(hazard);
-		for (Hazard_Causes cause : allCausesBelongingToHazard) {
-			if (cause.getID() == targetCause.getID()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private Boolean checkIfInternalControlTransfer(Hazards hazard, Hazard_Controls targetControl) {
-		List<Hazard_Controls> allControlsBelongingToHazard = hazardControlService.getAllControlsWithinAHazard(hazard);
-		for (Hazard_Controls control : allControlsBelongingToHazard) {
-			if (control.getID() == targetControl.getID()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	private JSONObject createJson(JSONObject json, String key, Object value) {
 		try {
 			json.put(key, value);
@@ -283,5 +222,4 @@ public class ControlsServlet extends HttpServlet {
 		}
 		return json;
 	}
-
 }

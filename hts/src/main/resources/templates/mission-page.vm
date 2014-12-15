@@ -78,7 +78,10 @@
 																Edit
 															</a>
 														</li>
-														<li><a href="#">Print</a></li>
+														<li><a href="#" class="PrintLink" data-id="$!hazard.getHazardID()">Print</a></li>
+														<form method="post" action="report-generation" id="report-generation$!hazard.getHazardID()">
+															<input type="hidden" name="hazardToDownload" id="hazardToDownload" value="$!hazard.getHazardID()" />
+														</form>
 													</ul>
 												</td>
 												<td>

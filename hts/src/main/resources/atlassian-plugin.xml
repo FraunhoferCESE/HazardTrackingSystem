@@ -12,37 +12,6 @@
 	<!-- add our i18n resource -->
 	<resource type="i18n" name="i18n" location="hts" />
 	<!-- add our web resources -->
-	<web-resource key="hts-resources" name="hts Web Resources">
-		<dependency>com.atlassian.auiplugin:ajs</dependency>
-		<dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
-		<dependency>com.atlassian.auiplugin:aui-experimental-iconfont
-		</dependency>
-		<resource type="download" name="images/" location="/images" />
-
-		<resource type="download" name="shared.css" location="/css-new/shared.css" />
-		<resource type="download" name="hts.css" location="/css/hts.css" />
-		<resource type="download" name="controlPageStyles.css" location="/css/controlPageStyles.css" />
-		<resource type="download" name="verificationPageStyles.css" location="/css/verificationPageStyles.css"/>
-		<resource type="download" name="jquery.multiselect2side.css" location="/css/jquery.multiselect2side.css" />
-
-		<!-- OLD JS FILES -->
-		<resource type="download" name="jquery.multiselect2side.js" location="/js/jquery.multiselect2side.js" />
-		<resource type="download" name="jquery.tinysort.min.js" location="/js/jquery.tinysort.min.js" />
-		<resource type="download" name="formValidation.js" location="/js/formValidation.js" />
-		<resource type="download" name="date.js" location="/js/date.js" />
-		<resource type="download" name="purl.js" location="/js/purl.js" />
-		<resource type="download" name="jquery.cookie.js" location="/js/jquery.cookie.js" />
-
-		<resource type="download" name="htsFormsValidation.js" location="/js/htsFormsValidation.js" />
-		<resource type="download" name="htsHazardReport.js" location="/js/htsHazardReport.js" />
-		<resource type="download" name="hazardAui.js" location="/js/hazardAui.js" />
-		<resource type="download" name="htsCausePage.js" location="/js/htsCausePage.js" />
-		<resource type="download" name="htsControlPage.js" location="/js/htsControlPage.js" />
-		<resource type="download" name="htsVerificationPage.js" location="/js/htsVerificationPage.js"/>
-		<!-- <context>hts</context> -->
-	</web-resource>
-
-	<!-- The shared resource package -->
 	<web-resource name="HTSResources" key="HTSResources">
 		<dependency>com.atlassian.auiplugin:ajs</dependency>
 		<dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
@@ -53,27 +22,29 @@
 		<resource name="history.js" type="download" location="/js/history.js" />
 		<resource name="jquery.multiselect2side.css" type="download" location="/css/jquery.multiselect2side.css" />
 		<resource name="jquery.multiselect2side.js" type="download" location="/js/jquery.multiselect2side.js" />
-		<resource name="formValidation.js" type="download" location="/js/formValidation.js" />
 
-		<resource name="shared.css" type="download" location="/css-new/shared.css" />
-		<resource name="shared-router.js" type="download" location="/js-new/shared-router.js" />
-		<resource name="shared-general.js" type="download" location="/js-new/shared-general.js" />
-		<resource name="shared-rest.js" type="download" location="/js-new/shared-rest.js" />
-		<resource name="shared-cookies.js" type="download" location="/js-new/shared-cookies.js" />
+		<resource name="shared.css" type="download" location="/css/shared.css" />
+		<resource name="shared-router.js" type="download" location="/js/shared-router.js" />
+		<resource name="shared-general.js" type="download" location="/js/shared-general.js" />
+		<resource name="shared-rest.js" type="download" location="/js/shared-rest.js" />
+		<resource name="shared-cookies.js" type="download" location="/js/shared-cookies.js" />
 
-		<resource name="error-page.css" type="download" location="/css-new/error-page.css" />
+		<resource name="error-page.css" type="download" location="/css/error-page.css" />
 
-		<resource name="mission-page.css" type="download" location="/css-new/mission-page.css" />
-		<resource name="mission-page.js" type="download" location="/js-new/mission-page.js" />
+		<resource name="mission-page.css" type="download" location="/css/mission-page.css" />
+		<resource name="mission-page.js" type="download" location="/js/mission-page.js" />
 
-		<resource name="hazard-page.css" type="download" location="/css-new/hazard-page.css" />
-		<resource name="hazard-page.js" type="download" location="/js-new/hazard-page.js" />
+		<resource name="hazard-page.css" type="download" location="/css/hazard-page.css" />
+		<resource name="hazard-page.js" type="download" location="/js/hazard-page.js" />
 
-		<resource name="cause-page.css" type="download" location="/css-new/cause-page.css" />
-		<resource name="cause-page.js" type="download" location="/js-new/cause-page.js" />
+		<resource name="cause-page.css" type="download" location="/css/cause-page.css" />
+		<resource name="cause-page.js" type="download" location="/js/cause-page.js" />
 
-		<resource name="control-page.css" type="download" location="/css-new/control-page.css" />
-		<resource name="control-page.js" type="download" location="/js-new/control-page.js" />
+		<resource name="control-page.css" type="download" location="/css/control-page.css" />
+		<resource name="control-page.js" type="download" location="/js/control-page.js" />
+
+		<resource name="verification-page.css" type="download" location="/css/verification-page.css" />
+		<resource name="verification-page.js" type="download" location="/js/verification-page.js" />
 
 		<context>HTSContext</context>
 	</web-resource>
@@ -183,18 +154,6 @@
 		<description key="verifications-servlet.description">Verifications Servlet</description>
 		<url-pattern>/verifications</url-pattern>
 	</servlet>
-
-
-
-
-
-
-
-
-<!-- 	<rest name="Hazard Resource" i18n-name-key="hazard-resource.name"
-		key="hazard-resource" path="/htsrest" version="1.0">
-		<description key="hazard-resource.description">The Hazard Resource Plugin</description>
-	</rest> -->
 
 	<rest name="Mission REST Service" i18n-name-key="mission-rest.name"
 		key="mission-rest" path="/hts" version="1.0">

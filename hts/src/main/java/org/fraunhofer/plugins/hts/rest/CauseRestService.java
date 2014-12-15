@@ -10,12 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Transfers;
-import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
@@ -27,14 +25,11 @@ import com.atlassian.jira.util.json.JSONObject;
 //String respStr = "{ \"success\" : \"true\" }";
 @Path("/cause")
 public class CauseRestService {
-	private HazardCauseService hazardCauseService;
 	private HazardControlService hazardControlService;
 	private TransferService transferService;
 	
-	public CauseRestService(HazardControlService hazardControlService, HazardCauseService hazardCauseService, 
-			TransferService transferService) {
+	public CauseRestService(HazardControlService hazardControlService, TransferService transferService) {
 		this.hazardControlService = hazardControlService;
-		this.hazardCauseService = hazardCauseService;
 		this.transferService = transferService;
 	}
 	
@@ -43,7 +38,7 @@ public class CauseRestService {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllControlsBelongingToCause(@PathParam("causeID") int causeID) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			return Response.ok(hazardCauseService.getAllNonDeletedControlsWithinCauseMinimalJson(causeID)).build();
+			return Response.ok(hazardControlService.getAllNonDeletedControlsWithinCauseMinimalJson(causeID)).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();
 		}

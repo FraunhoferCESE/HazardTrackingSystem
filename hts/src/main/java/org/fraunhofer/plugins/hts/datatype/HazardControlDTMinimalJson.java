@@ -10,14 +10,16 @@ public class HazardControlDTMinimalJson {
 	private int controlID;
 	private int controlNumber;
 	private String text;
+	private Boolean transfer;
 	private Boolean active;
 	private String type;
 	
-	public HazardControlDTMinimalJson(int controlID, int controlNumber,
-			String text, Boolean active, String type) {
+	public HazardControlDTMinimalJson(int controlID, int controlNumber, String text,
+			boolean transfer, boolean active, String type) {
 		this.controlID = controlID;
 		this.controlNumber = controlNumber;
 		this.text = text;
+		this.transfer = transfer;
 		this.active = active;
 		this.type = type;
 	}
@@ -32,6 +34,10 @@ public class HazardControlDTMinimalJson {
 
 	public String getText() {
 		return text;
+	}
+	
+	public Boolean getTransfer() {
+		return transfer;
 	}
 
 	public Boolean getActive() {

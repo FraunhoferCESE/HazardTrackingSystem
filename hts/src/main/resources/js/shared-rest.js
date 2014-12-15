@@ -41,7 +41,7 @@ function getAllCausesWithinHazard(hazardID) {
 	var result = [];
 	AJS.$.ajax({
 		type: "GET",
-		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/causes/" + hazardID,
+		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/cause/" + hazardID,
 		async: false,
 		success: function(data) {
 			console.log("SUCCESS");

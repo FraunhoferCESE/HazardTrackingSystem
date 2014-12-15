@@ -4,25 +4,24 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Causes;
-
 @XmlRootElement(name = "HazardCauseDTMinimalJson")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HazardCauseDTMinimalJson {
 	private int causeID;
 	private int causeNumber;
-	private String title;
+	private String text;
 	private boolean transfer;
+	private boolean active;
+	private String type;
 	
-	public HazardCauseDTMinimalJson(Hazard_Causes cause) {
-		this.causeID = cause.getID();
-		this.causeNumber = cause.getCauseNumber();
-		this.title = cause.getTitle();
-		if (cause.getTransfer() == 0) {
-			this.transfer = false;
-		} else {
-			this.transfer = true;
-		}
+	public HazardCauseDTMinimalJson(int causeID, int causeNumber, String text,
+			boolean transfer, boolean active, String type) {
+		this.causeID = causeID;
+		this.causeNumber = causeNumber;
+		this.text = text;
+		this.transfer = transfer;
+		this.active = active;
+		this.type = type;
 	}
 	
 	public int getCauseID() {
@@ -33,11 +32,20 @@ public class HazardCauseDTMinimalJson {
 		return causeNumber;
 	}
 	
-	public String getTitle() {
-		return title;
+	public String getText() {
+		return text;
 	}
 
-	public boolean isTransfer() {
+	public boolean getTransfer() {
 		return transfer;
 	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+
+	public String getType() {
+		return type;
+	}
+
 }

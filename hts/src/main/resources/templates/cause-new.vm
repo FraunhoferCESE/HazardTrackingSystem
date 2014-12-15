@@ -10,10 +10,10 @@
 		<span class="HTSRequired">This field is required.</span>
 	</div>
 	<div class="field-group">
-		<label for="cause-title">Owner</label>
+		<label for="causeOwner">Owner</label>
 		<input class="text long-field" type="text" id="causeOwner" name="causeOwner">
 	</div>
-		<div class="field-group">
+	<div class="field-group">
 		<label for="causeRisk">Risk Category</label>
 		<select class="select" id="causeRisk" name="causeRisk">
 			<option value="" selected>-Select-</option>

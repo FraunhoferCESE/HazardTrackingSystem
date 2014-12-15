@@ -2,7 +2,7 @@
 	<input type="hidden" name="regular" id="regular" value="true">
 	<input type="hidden" name="existing" id="existing" value="false">
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
-	<div class="field-group">
+	<div class="field-group" style="padding-bottom: 0">
 		<label for="controlDescription"><span class="HTSRequired">* </span>Description</label>
 		<textarea class="textarea long-field" name="controlDescription" id="controlDescription"></textarea>
 	</div>
@@ -18,7 +18,6 @@
 			#end
 		</select>
 	</div>
-	<!-- id here was id="addNewControlMultiSelect"  -->
 	<div class="field-group" id="ControlPageFormAddNewMultiSelect">
 		<label for="controlCauses">Causes</label>
 		<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
@@ -27,6 +26,7 @@
 					<option value="$cause.getID()">
 						#if ($cause.getTransfer() != 0)
 							$!cause.getCauseNumber()-T: $!cause.getTitle()
+							<!-- PERFORM LOOKUP IN TRANSFERRED CAUSES -->
 						#else
 							$!cause.getCauseNumber(): $!cause.getTitle()
 						#end

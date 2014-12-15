@@ -18,18 +18,11 @@ import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
-import org.fraunhofer.plugins.hts.db.service.TransferService;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.security.PermissionManager;
-import com.atlassian.jira.security.Permissions;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -40,23 +33,18 @@ public class CauseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
-	private final MissionPayloadService missionPayloadService;
 	private final TemplateRenderer templateRenderer;
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodService;
-	private final TransferService transferService;
 
 	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer, 
-			HazardService hazardService, MissionPayloadService missionPayloadService, 
-			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodService, 
-			TransferService transferService) {
+			HazardService hazardService, RiskCategoryService riskCategoryService, 
+			RiskLikelihoodsService riskLikelihoodService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
-		this.missionPayloadService = checkNotNull(missionPayloadService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
-		this.transferService = checkNotNull(transferService);
 	}
 
 	@Override
@@ -92,7 +80,6 @@ public class CauseServlet extends HttpServlet {
 								jiraAuthenticationContext.getUser().getUsername() + 
 								") do not have permission to view/edit it.";
 					}
-					
 				} catch (NumberFormatException e) {
 					error = true;
 					errorMessage = "ID parameter in the URL is not a valid a number.";
@@ -107,7 +94,7 @@ public class CauseServlet extends HttpServlet {
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
 			}
 			
-			// Decide which page to render for the user, error-page or hazard-page
+			// Decide which page to render for the user, error-page or cause-page
 			if (error == true) {
 				context.put("errorMessage", errorMessage);
 				context.put("errorList", errorList);
@@ -119,7 +106,6 @@ public class CauseServlet extends HttpServlet {
 				context.put("riskCategories", riskCategoryService.all());
 				context.put("riskLikelihoods", riskLikelihoodService.all());
 				context.put("allHazardsBelongingToMission", hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
-				resp.setContentType("text/html;charset=utf-8");
 				templateRenderer.render("templates/cause-page.vm", context, resp.getWriter());
 			}			
 		} else {
@@ -167,7 +153,7 @@ public class CauseServlet extends HttpServlet {
 					hazardCauseService.add(hazardID, title, owner, risk, likelihood, description, effects, safetyFeatures);
 				}
 			} else {
-				boolean existing = Boolean.parseBoolean(req.getParameter("regular"));
+				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 				if (existing == true) {
 					// Cause transfer update
 					String causeIDStr = req.getParameter("causeID");

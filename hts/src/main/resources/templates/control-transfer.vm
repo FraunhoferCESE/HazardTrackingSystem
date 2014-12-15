@@ -29,10 +29,10 @@
 				#end
 			</select>
 		</div>
-		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlHazardList">
-			<span class="HTSRequired">Please select a Hazard Report.</span>
-		</div>
 		<div class="field-group" id="ControlPageCauseTransferContainer">
+		</div>
+		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
+			<span class="HTSRequired">Please select a Cause.</span>
 		</div>
 		<div class="field-group" id="ControlPageControlTransferContainer">
 		</div>

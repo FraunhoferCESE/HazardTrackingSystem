@@ -30,7 +30,6 @@ import org.fraunhofer.plugins.hts.db.Verifications;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
 import org.ofbiz.core.entity.GenericEntityException;
-import org.ofbiz.core.entity.GenericValue;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -43,7 +42,6 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
-import com.google.common.collect.Lists;
 
 public class HazardServiceImpl implements HazardService {
 	private final ActiveObjects ao;
@@ -104,6 +102,7 @@ public class HazardServiceImpl implements HazardService {
 		
 		hazard.setReviewPhase(reviewPhase);
 		
+		removeMissionPhase(hazard.getID());
 		if (missionPhases != null) {
 			for (Mission_Phase phase : missionPhases) {
 				try {
@@ -114,6 +113,7 @@ public class HazardServiceImpl implements HazardService {
 			}
 		}
 		
+		removeHazardGroups(hazard.getID());
 		if (hazardGroups != null) {
 			for (Hazard_Group group : hazardGroups) {
 				try {
@@ -157,7 +157,6 @@ public class HazardServiceImpl implements HazardService {
 	
 	@Override
 	public List<HazardDTMinimal> getUserHazardsMinimal(List<JIRAProject> projects) {
-		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		List<HazardDTMinimal> hazardsMinimal = new ArrayList<HazardDTMinimal>();
 		for (JIRAProject project : projects) {
 			for (Hazards hazard : getHazardsByMissionPayload(project.getID())) {
@@ -184,7 +183,6 @@ public class HazardServiceImpl implements HazardService {
 	public List<HazardDTMinimalJson> getUserHazardsMinimalJson(ApplicationUser user) {
 		List<Hazards> allHazards = getAllNonDeletedHazards();
 		List<HazardDTMinimalJson> allHazardsMinimal = new ArrayList<HazardDTMinimalJson>();
-		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		for (Hazards hazard : allHazards) {
 			if (hasHazardPermission(hazard.getProjectID(), user)) {
 				Project jiraProject = getHazardProject(hazard);

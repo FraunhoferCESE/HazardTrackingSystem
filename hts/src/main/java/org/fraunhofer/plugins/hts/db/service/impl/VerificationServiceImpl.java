@@ -17,22 +17,29 @@ import org.fraunhofer.plugins.hts.db.VerifcToHazard;
 import org.fraunhofer.plugins.hts.db.VerificationStatus;
 import org.fraunhofer.plugins.hts.db.VerificationType;
 import org.fraunhofer.plugins.hts.db.Verifications;
+import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.VerificationService;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 
 public class VerificationServiceImpl implements VerificationService {
-	
 	private final ActiveObjects ao;
+	private final HazardService hazardService;
 	
-	public VerificationServiceImpl(ActiveObjects ao) {
+	public VerificationServiceImpl(ActiveObjects ao, HazardService hazardService) {
 		this.ao = checkNotNull(ao);
+		this.hazardService = checkNotNull(hazardService);
 	}
 	
 	@Override
-	public Verifications getVerificationByID(String id) {
-		final Verifications[] control = ao.find(Verifications.class, Query.select().where("ID=?", id));
-		return control.length > 0 ? control[0] : null;
+	public Verifications getVerificationByID(int verificationID) {
+		final Verifications[] verification = ao.find(Verifications.class, Query.select().where("ID=?", verificationID));
+		return verification.length > 0 ? verification[0] : null;
+	}
+	
+	@Override
+	public Verifications getVerificationByID(String verificationID) {
+		return getVerificationByID(Integer.parseInt(verificationID));
 	}
 	
 	@Override
@@ -58,62 +65,85 @@ public class VerificationServiceImpl implements VerificationService {
 	}
 	
 	@Override
-	public Verifications add(Hazards hazard, String description, VerificationType verificationType, 
-			String responsibleParty, Date estCompletionDate, VerificationStatus verificationStatus, 
-			Hazard_Controls[] controls) {
-		final Verifications verification = ao.create(Verifications.class, new DBParam("VERIFICATION_DESC", description));
-		verification.setVerificationType(verificationType);
+	public Verifications add(int hazardID, String description, VerificationStatus status, VerificationType type,
+			String responsibleParty, Date estimatedCompletionDate, Hazard_Controls[] controls) {
+		Verifications verification = ao.create(Verifications.class, new DBParam("VERIFICATION_DESC", description));
+		Hazards hazard = hazardService.getHazardByID(hazardID);
+		verification.setVerificationNumber(hazard.getVerifications().length + 1);
+		verification.setVerificationStatus(status);
+		verification.setVerificationType(type);
 		verification.setResponsibleParty(responsibleParty);
-		verification.setEstCompletionDate(estCompletionDate);
-		verification.setVerificationStatus(verificationStatus);
-		verification.setVerificationNumber(getVerificationNumber(hazard));
-		verification.setLastUpdated(new Date());
+		verification.setEstCompletionDate(estimatedCompletionDate);
+		
 		if (controls != null) {
-			for (Hazard_Controls hc : controls) {
-				associateVerificationToControl(hc, verification);
+			for (Hazard_Controls control : controls) {
+				associateVerificationToControl(control, verification);
 			}
 		}
+		
+		verification.setLastUpdated(new Date());
 		verification.save();
 		associateVerificationToHazard(hazard, verification);
-		
 		return verification;
 	}
 	
 	@Override
-	public Verifications update(Verifications verificationToEdit, String description, VerificationType verificationType, String responsibleParty,
-			Date estCompletionDate, VerificationStatus verificationStatus, Hazard_Controls[] controls) {
-		if (!description.equals(verificationToEdit.getVerificationDesc())) {
-			verificationToEdit.setVerificationDesc(description);
-		}
-		if (verificationType != null && verificationToEdit.getVerificationType() != null) {
-			if (verificationType.getID() != verificationToEdit.getVerificationType().getID()) {
-				verificationToEdit.setVerificationType(verificationType);
+	public Verifications update(int verificationID, String description, VerificationStatus status, VerificationType type,
+			String responsibleParty, Date estimatedCompletionDate, Hazard_Controls[] controls) {
+		Verifications verification = getVerificationByID(verificationID);
+		verification.setVerificationDesc(description);
+		verification.setVerificationStatus(status);
+		verification.setVerificationType(type);
+		verification.setResponsibleParty(responsibleParty);
+		verification.setEstCompletionDate(estimatedCompletionDate);
+		
+		if (verification.getControls() != null) {
+			for (Hazard_Controls control :  verification.getControls()) {
+				removeAssociationsVerifcationToControl(control.getID());
 			}
-		}
-		else {
-			verificationToEdit.setVerificationType(verificationType);
-		}
-		if (!responsibleParty.equals(verificationToEdit.getResponsibleParty())) {
-			verificationToEdit.setResponsibleParty(responsibleParty);
-		}
-		if (estCompletionDate != verificationToEdit.getEstCompletionDate()) {
-			verificationToEdit.setEstCompletionDate(estCompletionDate);
-		}
-		if (verificationStatus.getID() != verificationToEdit.getVerificationStatus().getID()) {
-			verificationToEdit.setVerificationStatus(verificationStatus);
 		}
 		if (controls != null) {
-			removeAssociationsVerifcationToControl(verificationToEdit.getID());
-			for (Hazard_Controls hc : controls) {
-				associateVerificationToControl(hc, verificationToEdit);
+			for (Hazard_Controls control : controls) {
+				associateVerificationToControl(control, verification);
 			}
 		}
-		else {
-			removeAssociationsVerifcationToControl(verificationToEdit.getID());
-		}
-		verificationToEdit.setLastUpdated(new Date());
-		verificationToEdit.save();
-		return verificationToEdit;
+		
+		verification.setLastUpdated(new Date());
+		verification.save();
+		return verification;
+		
+//		if (!description.equals(verificationToEdit.getVerificationDesc())) {
+//			verificationToEdit.setVerificationDesc(description);
+//		}
+//		if (verificationType != null && verificationToEdit.getVerificationType() != null) {
+//			if (verificationType.getID() != verificationToEdit.getVerificationType().getID()) {
+//				verificationToEdit.setVerificationType(verificationType);
+//			}
+//		}
+//		else {
+//			verificationToEdit.setVerificationType(verificationType);
+//		}
+//		if (!responsibleParty.equals(verificationToEdit.getResponsibleParty())) {
+//			verificationToEdit.setResponsibleParty(responsibleParty);
+//		}
+//		if (estCompletionDate != verificationToEdit.getEstCompletionDate()) {
+//			verificationToEdit.setEstCompletionDate(estCompletionDate);
+//		}
+//		if (verificationStatus.getID() != verificationToEdit.getVerificationStatus().getID()) {
+//			verificationToEdit.setVerificationStatus(verificationStatus);
+//		}
+//		if (controls != null) {
+//			removeAssociationsVerifcationToControl(verificationToEdit.getID());
+//			for (Hazard_Controls hc : controls) {
+//				associateVerificationToControl(hc, verificationToEdit);
+//			}
+//		}
+//		else {
+//			removeAssociationsVerifcationToControl(verificationToEdit.getID());
+//		}
+//		verificationToEdit.setLastUpdated(new Date());
+//		verificationToEdit.save();
+//		return verificationToEdit;
 	}
 	
 	@Override

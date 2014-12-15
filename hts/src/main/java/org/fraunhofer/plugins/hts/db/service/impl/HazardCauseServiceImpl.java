@@ -10,17 +10,15 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
+import org.fraunhofer.plugins.hts.datatype.HazardCauseDTMinimalJson;
 import org.fraunhofer.plugins.hts.datatype.HazardCauseTransferDT;
-import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
 import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 
@@ -31,14 +29,11 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	private final ActiveObjects ao;
 	private final TransferService transferService;
 	private final HazardService hazardService;
-	private final HazardControlService hazardControlService;
 
-	public HazardCauseServiceImpl(ActiveObjects ao, TransferService transferService, HazardService hazardService,
-			HazardControlService hazardControlService) {
+	public HazardCauseServiceImpl(ActiveObjects ao, TransferService transferService, HazardService hazardService) {
 		this.ao = checkNotNull(ao);
 		this.transferService = checkNotNull(transferService);
 		this.hazardService = checkNotNull(hazardService);
-		this.hazardControlService = checkNotNull(hazardControlService);
 	}
 	
 	@Override
@@ -111,6 +106,50 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
+	public List<Hazard_Causes> getAllNonDeletedCausesWithinHazard(Hazards hazard) {
+		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
+		for (Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
+			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
+				allRemaining.add(current);
+			}
+		}
+		return allRemaining;
+	}
+	
+	@Override
+	public List<HazardCauseDTMinimalJson> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID) {
+		Hazards hazard = hazardService.getHazardByID(hazardID);
+		List<HazardCauseDTMinimalJson> causes = new ArrayList<HazardCauseDTMinimalJson>();
+		if (hazard != null) {
+			for (Hazard_Causes cause : hazard.getHazardCauses()) {
+				if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
+					if (cause.getTransfer() == 0) {
+						// Regular Cause
+						causes.add(new HazardCauseDTMinimalJson(
+									cause.getID(), cause.getCauseNumber(), cause.getTitle(), false, true, "CAUSE"
+								));
+					} else {
+						// Transferred Cause
+						Transfers transfer = transferService.getTransferByID(cause.getTransfer());
+						if (transfer.getTargetType().equals("CAUSE")) {
+							Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
+							causes.add(new HazardCauseDTMinimalJson(
+									cause.getID(), cause.getCauseNumber(), targetCause.getTitle(), true, true, "CAUSE"
+								));
+						} else if (transfer.getTargetType().equals("HAZARD")) {
+							Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+							causes.add(new HazardCauseDTMinimalJson(
+									cause.getID(), cause.getCauseNumber(), targetHazard.getHazardTitle(), true, true, "CAUSE"
+								));
+						}
+					}
+				}
+			}
+		}
+		return causes;
+	}
+	
+	@Override
 	public List<HazardCauseTransferDT> getAllTransferredCauses(Hazards hazard) {
 		List<HazardCauseTransferDT> transferredCauses = new ArrayList<HazardCauseTransferDT>();
 		List<Hazard_Causes> allCausesWithinHazard = getAllCausesWithinAHazard(hazard);
@@ -156,39 +195,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
-	public List<HazardControlDTMinimalJson> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
-		Hazard_Causes cause = getHazardCauseByID(causeID);
-		List<HazardControlDTMinimalJson> controls = new ArrayList<HazardControlDTMinimalJson>();
-		if (cause != null) {
-			for (Hazard_Controls control : cause.getControls()) {
-				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
-					if (control.getTransfer() == 0) {
-						// Regular Control
-						controls.add(new HazardControlDTMinimalJson(
-									control.getID(), control.getControlNumber(), control.getDescription(), true, "CONTROL"
-								));
-					} else {
-						// Transferred Control
-						Transfers transfer = transferService.getTransferByID(control.getTransfer());
-						if (transfer.getTargetType().equals("CONTROL")) { 
-							Hazard_Controls targetControl = hazardControlService.getHazardControlByID(transfer.getTargetID());
-							controls.add(new HazardControlDTMinimalJson(
-									control.getID(), control.getControlNumber(), targetControl.getDescription(), true, "CONTROL"
-								));
-						} else if (transfer.getTargetType().equals("CAUSE")) {
-							Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
-							controls.add(new HazardControlDTMinimalJson(
-									control.getID(), control.getControlNumber(), targetCause.getTitle(), true, "CONTROL"
-								));
-						}
-					}
-				}
-			}
-		}
-		return controls;
-	}
-	
-	@Override
 	public Hazard_Causes addHazardTransfer(int originHazardID, int targetHazardID, String transferReason) {
 		Hazard_Causes cause = add(originHazardID, "transfer", null, null, null, transferReason, null, null);
 		int transferID = createTransfer(cause.getID(), "CAUSE", targetHazardID, "HAZARD");
@@ -220,37 +226,6 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 			cause.save();
 		}
 		return cause;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-
-	
-
-	
-	
-
-	
-	
-	
-
-	@Override
-	public List<Hazard_Causes> getAllNonDeletedCausesWithinHazard(Hazards hazard) {
-		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
-		for (Hazard_Causes current : getAllCausesWithinAHazard(hazard)) {
-			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
-				allRemaining.add(current);
-			}
-		}
-		return allRemaining;
 	}
 
 	private void associateCauseToHazard(Hazards hazard, Hazard_Causes hazardCause) {

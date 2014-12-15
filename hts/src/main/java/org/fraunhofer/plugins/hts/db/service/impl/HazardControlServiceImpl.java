@@ -9,12 +9,13 @@ import java.util.List;
 
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.datatype.HazardControlTransfers;
+import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
+import org.fraunhofer.plugins.hts.datatype.HazardControlTransferDT;
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.ControlToCause;
 import org.fraunhofer.plugins.hts.db.ControlToHazard;
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -80,6 +81,15 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 	
 	@Override
+	public Hazard_Controls updateTransferredControl(int controlID, String transferReason) {
+		Hazard_Controls control = getHazardControlByID(controlID);
+		control.setDescription(transferReason);
+		control.setLastUpdated(new Date());
+		control.save();
+		return control;
+	}
+	
+	@Override
 	public Hazard_Controls getHazardControlByID(int controlID) {
 		final Hazard_Controls[] control = ao.find(Hazard_Controls.class, Query.select().where("ID=?", controlID));
 		return control.length > 0 ? control[0] : null;
@@ -88,24 +98,6 @@ public class HazardControlServiceImpl implements HazardControlService {
 	@Override
 	public Hazard_Controls getHazardControlByID(String controlID) {
 		return getHazardControlByID(Integer.parseInt(controlID));
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	public Hazard_Controls updateTransferredControl(String controlID, String transferReason) {
-		Hazard_Controls controlToBeUpdated = getHazardControlByID(controlID);
-		if (!transferReason.equals(controlToBeUpdated.getDescription())) {
-			controlToBeUpdated.setDescription(transferReason);
-		}
-		controlToBeUpdated.setLastUpdated(new Date());
-		controlToBeUpdated.save();
-		return controlToBeUpdated;
 	}
 
 	@Override
@@ -125,127 +117,101 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 	
 	@Override
-	public List<HazardControlTransfers> getAllTransferredControls(Hazards hazard) {
-		List<Hazard_Controls> allControls = getAllControlsWithinAHazard(hazard);
-		List<Transfers> allTransfers = new ArrayList<Transfers>();
-		for (Hazard_Controls control : allControls) {
-			if (control.getTransfer() != 0) {
-				allTransfers.add(transferService.getTransferByID(control.getTransfer()));
+	public List<HazardControlDTMinimalJson> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
+		Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
+		List<HazardControlDTMinimalJson> controls = new ArrayList<HazardControlDTMinimalJson>();
+		if (cause != null) {
+			for (Hazard_Controls control : cause.getControls()) {
+				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
+					if (control.getTransfer() == 0) {
+						// Regular Control
+						controls.add(new HazardControlDTMinimalJson(
+									control.getID(), control.getControlNumber(), control.getDescription(), false, true, "CONTROL"
+								));
+					} else {
+						// Transferred Control
+						Transfers transfer = transferService.getTransferByID(control.getTransfer());
+						if (transfer.getTargetType().equals("CONTROL")) { 
+							Hazard_Controls targetControl = getHazardControlByID(transfer.getTargetID());
+							controls.add(new HazardControlDTMinimalJson(
+									control.getID(), control.getControlNumber(), targetControl.getDescription(), true, true, "CONTROL"
+								));
+						} else if (transfer.getTargetType().equals("CAUSE")) {
+							Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
+							controls.add(new HazardControlDTMinimalJson(
+									control.getID(), control.getControlNumber(), targetCause.getTitle(), true, true, "CONTROL"
+								));
+						}
+					}
+				}
 			}
 		}
-		
-		List<HazardControlTransfers> transferInfo = new ArrayList<HazardControlTransfers>();
-		for (Transfers transfer : allTransfers) {
-			int transferID = transfer.getID();
-			int targetID = transfer.getTargetID();
-			String targetType = transfer.getTargetType();			
-			Hazard_Controls originControl = getHazardControlByID(String.valueOf(transfer.getOriginID()));
-			int originID = originControl.getID();
-			String transferReason = originControl.getDescription();
-			
-			if (transfer.getTargetType().equals("CONTROL")) {
-				Hazard_Controls targetControl = getHazardControlByID(String.valueOf(transfer.getTargetID()));
-				Hazards targetHazard = targetControl.getHazard()[0];
-				int targetHazardID = targetHazard.getID();
-				String targetHazardNo = targetHazard.getHazardNumber();
-				String targetHazardTitle = targetHazard.getHazardTitle();
-				
-				int targetHazardControlNo = targetControl.getControlNumber();
-				String targetHazardControlDescription = targetControl.getDescription();
-				
-				Boolean deleted = false;
-				if (!Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
-					deleted = true;
+		return controls;
+	}
+	
+	@Override
+	public List<HazardControlTransferDT> getAllTransferredControls(Hazards hazard) {
+		List<HazardControlTransferDT> transferredControls = new ArrayList<HazardControlTransferDT>();
+		List<Hazard_Controls> allControlsWithinHazard = getAllControlsWithinAHazard(hazard);
+		for (Hazard_Controls originControl : allControlsWithinHazard) {
+			if (originControl.getTransfer() != 0) {
+				Transfers transfer = transferService.getTransferByID(originControl.getTransfer());
+				if (transfer.getTargetType().equals("CONTROL")) {
+					// ControlToControl transfer
+					Hazard_Controls targetControl = getHazardControlByID(transfer.getTargetID());
+					transferredControls.add(HazardControlTransferDT.createControlToControl(transfer, originControl, targetControl));
+				} else {
+					// ControlToCause
+					Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
+					transferredControls.add(HazardControlTransferDT.createControlToCause(transfer, originControl, targetCause));
 				}
-				
-				HazardControlTransfers controlTransfer = new HazardControlTransfers();
-				controlTransfer.setTransferID(transferID);
-				controlTransfer.setTargetID(targetID);
-				controlTransfer.setTargetType(targetType);
-				controlTransfer.setOriginHazardControlTransferReason(transferReason);
-				controlTransfer.setOriginID(originID);
-				controlTransfer.setTargetHazardID(targetHazardID);
-				controlTransfer.setTargetHazardNo(targetHazardNo);
-				controlTransfer.setTargetHazardTitle(targetHazardTitle);
-				controlTransfer.setTargetHazardControlNo(targetHazardControlNo);
-				controlTransfer.setTargetHazardControlDescription(targetHazardControlDescription);
-				controlTransfer.setTargetDeleted(deleted);
-				transferInfo.add(controlTransfer);
-			}
-			
-			if (transfer.getTargetType().equals("CAUSE")) {
-				Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-				Hazards targetHazard = targetCause.getHazards()[0];
-				int targetHazardID = targetHazard.getID();
-				String targetHazardNo = targetHazard.getHazardNumber();
-				String targetHazardTitle = targetHazard.getHazardTitle();
-				
-				int targetHazardCauseNo = targetCause.getCauseNumber();
-				String targetHazardCauseTitle = targetCause.getTitle();
-				
-				Boolean deleted = false;
-				if ( !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
-					deleted = true;
-				}
-				
-				HazardControlTransfers causeTransfer = new HazardControlTransfers();
-				causeTransfer.setTransferID(transferID);
-				causeTransfer.setTargetID(targetID);
-				causeTransfer.setTargetType(targetType);
-				causeTransfer.setOriginHazardControlTransferReason(transferReason);
-				causeTransfer.setOriginID(originID);
-				causeTransfer.setTargetHazardID(targetHazardID);
-				causeTransfer.setTargetHazardNo(targetHazardNo);
-				causeTransfer.setTargetHazardTitle(targetHazardTitle);
-				causeTransfer.setTargetHazardCauseNo(targetHazardCauseNo);
-				causeTransfer.setTargetHazardCauseTitle(targetHazardCauseTitle);
-				causeTransfer.setTargetDeleted(deleted);
-				transferInfo.add(causeTransfer);
 			}
 		}
-		
-		return transferInfo;
+		return transferredControls;
 	}
 
 	@Override
-	public Hazard_Controls deleteControl(Hazard_Controls controlToBeDeleted, String reason) {
-		controlToBeDeleted.setDeleteReason(reason);
-		if (controlToBeDeleted.getTransfer() != 0) {
-			Transfers transfer = transferService.getTransferByID(controlToBeDeleted.getTransfer());
-			removeTransfer(transfer.getID());
-			transfer.save();
-			controlToBeDeleted.setTransfer(0);
+	public Hazard_Controls deleteControl(int controlID, String deleteReason) {
+		Hazard_Controls control = getHazardControlByID(controlID);
+		if (control != null) {
+			control.setDeleteReason(deleteReason);
+			if (control.getTransfer() != 0) {
+				Transfers transfer = transferService.getTransferByID(control.getTransfer());
+				removeTransfer(transfer.getID());
+				transfer.save();
+				control.setTransfer(0);
+			}
+			control.save();
 		}
-		controlToBeDeleted.save();
-		return controlToBeDeleted;
+		return control;
 	}
 	
 	@Override
-	public Hazard_Controls addControlTransfer(String transferComment, int targetID, Hazards hazard) {
-//		Hazard_Controls control = add(hazard, transferComment, null, null);
-//		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
-//		//if (transferID == 0) {
-//			int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
-//		//}
-//		
-//		control.setTransfer(transferID);
-//		control.save();
-//		return control;
-		return null;
+	public Hazard_Controls addControlTransfer(int originHazardID, int targetControlID, String transferReason) {
+		Hazard_Controls control = add(originHazardID, transferReason, null, null);
+		int transferID = createTransfer(control.getID(), "CONTROL", targetControlID, "CONTROL");
+		control.setTransfer(transferID);
+		control.save();
+		return control;
+		
+		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
+		//if (transferID == 0) {
+			//int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CONTROL");
+		//}
 	}
 	
 	@Override
-	public Hazard_Controls addCauseTransfer(String transferComment, int targetID, Hazards hazard) {
-//		Hazard_Controls control = add(hazard, transferComment, null, null);
-//		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
-//		//if (transferID == 0) {
-//			int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
-//		//}
-//
-//		control.setTransfer(transferID);
-//		control.save();
-//		return control;
-		return null;
+	public Hazard_Controls addCauseTransfer(int originHazardID, int targetCauseID, String transferReason) {
+		Hazard_Controls control = add(originHazardID, transferReason, null, null);
+		int transferID = createTransfer(control.getID(), "CONTROL", targetCauseID, "CAUSE");
+		control.setTransfer(transferID);
+		control.save();
+		return control;
+		
+		//int transferID = checkForInactiveTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
+		//if (transferID == 0) {
+			//int transferID = createTransfer(control.getID(), "CONTROL", targetID, "CAUSE");
+		//}
 	}
 	
 	@Override
