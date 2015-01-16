@@ -17,60 +17,82 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
 
 public class PluginCustomization {
-    private final CustomField hazardNumberField;
-    private final CustomField hazardTitleField;
-    private final CustomField hazardURLField;
-    private final IssueType hazardIssueSubType;
-    
-    private static PluginCustomization instance = null;
-    
-    @SuppressWarnings("rawtypes")
+	private final CustomField hazardNumberField;
+	private final CustomField hazardTitleField;
+	private final CustomField hazardURLField;
+	private final IssueType hazardIssueSubType;
+
+	private static PluginCustomization instance = null;
+
+	@SuppressWarnings("rawtypes")
 	private PluginCustomization() throws GenericEntityException {
-    	CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
-    	
-        List<JiraContextNode> contexts = new ArrayList<JiraContextNode>();
-        contexts.add(GlobalIssueContext.getInstance());
-        
-        IssueTypeManager issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
-        // TODO: check if this issue type already exists
-        this.hazardIssueSubType = issueTypeManager.createSubTaskIssueType("Hazard", "A Hazard sub-task issue type for the HTS plugin.", "/images/icons/issuetypes/subtask_alternate.png");
-        
-        List<GenericValue> issueTypes = new ArrayList<GenericValue>();
-    	issueTypes.add(hazardIssueSubType.getGenericValue());
-    	
-    	CustomFieldType textFieldType = customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:textfield");
-    	CustomFieldType urlFieldType = customFieldManager.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:url");
-    	CustomFieldSearcher fieldSearcher = customFieldManager.getCustomFieldSearcher("com.atlassian.jira.plugin.system.customfieldtypes:textsearcher");
-    	
-		this.hazardNumberField = customFieldManager.createCustomField("Hazard Number", null, 
-				textFieldType, fieldSearcher, contexts, issueTypes);
-		this.hazardTitleField = customFieldManager.createCustomField("Hazard Title", null, 
-				textFieldType, fieldSearcher, contexts, issueTypes);
-		this.hazardURLField = customFieldManager.createCustomField("Hazard URL", null, 
-				urlFieldType, fieldSearcher, contexts, issueTypes);
-    }
-    
-    public static synchronized PluginCustomization getInstance() throws GenericEntityException {
-    	if (instance == null) {
-    		instance = new PluginCustomization();
-    	}
-    	return instance;
-    }
-    
-    public CustomField getHazardNumberField() {
-    	return this.hazardNumberField;
-    }
-    
-    public CustomField getHazardTitleField() {
-    	return this.hazardTitleField;
-    }
-    
-    public CustomField getHazardURLField() {
-    	return this.hazardURLField;
-    }
-    
-    public IssueType getHazardIssueSubType() {
-    	return this.hazardIssueSubType;
-    }
-	
+		CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+
+		List<JiraContextNode> contexts = new ArrayList<JiraContextNode>();
+		contexts.add(GlobalIssueContext.getInstance());
+
+		IssueTypeManager issueTypeManager = ComponentAccessor.getComponent(IssueTypeManager.class);
+		// XXX: check if this issue type already exists
+		IssueType found = null;
+		for (IssueType issueType : issueTypeManager.getIssueTypes()) {
+			if (issueType.getName().equals("Hazard")) {
+				found = issueType;
+				break;
+			}
+		}
+
+		if (found == null) {
+			this.hazardIssueSubType = issueTypeManager.createSubTaskIssueType("Hazard",
+					"A Hazard sub-task issue type for the HTS plugin.",
+					"/images/icons/issuetypes/subtask_alternate.png");
+
+			List<GenericValue> issueTypes = new ArrayList<GenericValue>();
+			issueTypes.add(hazardIssueSubType.getGenericValue());
+
+			CustomFieldType textFieldType = customFieldManager
+					.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:textfield");
+			CustomFieldType urlFieldType = customFieldManager
+					.getCustomFieldType("com.atlassian.jira.plugin.system.customfieldtypes:url");
+			CustomFieldSearcher fieldSearcher = customFieldManager
+					.getCustomFieldSearcher("com.atlassian.jira.plugin.system.customfieldtypes:textsearcher");
+
+			this.hazardNumberField = customFieldManager.createCustomField("Hazard Number", null, textFieldType,
+					fieldSearcher, contexts, issueTypes);
+			this.hazardTitleField = customFieldManager.createCustomField("Hazard Title", null, textFieldType,
+					fieldSearcher, contexts, issueTypes);
+			this.hazardURLField = customFieldManager.createCustomField("Hazard URL", null, urlFieldType, fieldSearcher,
+					contexts, issueTypes);
+		}
+		else {
+			this.hazardIssueSubType = found;
+			this.hazardNumberField = customFieldManager.getCustomFieldObjectByName("Hazard Number");
+			this.hazardTitleField = customFieldManager.getCustomFieldObjectByName("Hazard Title");
+			this.hazardURLField = customFieldManager.getCustomFieldObjectByName("Hazard URL");
+		}
+
+	}
+
+	public static synchronized PluginCustomization getInstance() throws GenericEntityException {
+		if (instance == null) {
+			instance = new PluginCustomization();
+		}
+		return instance;
+	}
+
+	public CustomField getHazardNumberField() {
+		return this.hazardNumberField;
+	}
+
+	public CustomField getHazardTitleField() {
+		return this.hazardTitleField;
+	}
+
+	public CustomField getHazardURLField() {
+		return this.hazardURLField;
+	}
+
+	public IssueType getHazardIssueSubType() {
+		return this.hazardIssueSubType;
+	}
+
 }
