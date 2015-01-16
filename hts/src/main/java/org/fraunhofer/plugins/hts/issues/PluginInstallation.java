@@ -5,6 +5,8 @@ import java.util.List;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 
+import com.atlassian.extras.common.log.Logger;
+import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.screen.FieldScreen;
@@ -26,6 +28,8 @@ import com.atlassian.jira.issue.operation.IssueOperations;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 public class PluginInstallation implements LifecycleAware {
+	private Log logger = Logger.getInstance(PluginInstallation.class);
+	
 	private final FieldScreenManager fieldScreenManager;
 	private final FieldScreenSchemeManager fieldScreenSchemeManager;
 	private final IssueTypeScreenSchemeManager issueTypeScreenSchemeManager;
@@ -41,7 +45,7 @@ public class PluginInstallation implements LifecycleAware {
 	
 	@Override
     public void onStart() {
-		System.out.println("========= ON START BEGINS =========");
+		logger.info("========= HTS Plugin Installation ends =========");
 		
 		PluginCustomization pluginCustomization;
 		try {
@@ -123,10 +127,10 @@ public class PluginInstallation implements LifecycleAware {
 			defaultIssueTypeScreenScheme.addEntity(htsScreenSchemeEntity);
 		}
 		catch (GenericEntityException e) {
+			logger.error(e);
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
-        System.out.println("========= ON START ENDS =========");
+        logger.info("========= HTS Plugin Installation ends =========");
     }
 }
