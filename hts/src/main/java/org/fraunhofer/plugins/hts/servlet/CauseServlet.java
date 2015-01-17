@@ -21,6 +21,8 @@ import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
 
+import com.atlassian.extras.common.log.Logger;
+import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
@@ -30,6 +32,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class CauseServlet extends HttpServlet {
+	final Log logger = Logger.getInstance(CauseServlet.class);
+	
 	private static final long serialVersionUID = 1L;
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
@@ -194,18 +198,22 @@ public class CauseServlet extends HttpServlet {
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		logger.debug("Delete request for Cause received");
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			int causeID = Integer.parseInt(req.getParameter("id"));
 			String deleteReason = req.getParameter("reason");
+			logger.info("Delete request for Cause id: " + causeID + ", reason: " + deleteReason);
 			Hazard_Causes cause = hazardCauseService.deleteCause(causeID, deleteReason);
 			
 			JSONObject jsonResponse = new JSONObject();
 			if (cause != null) {
 				createJson(jsonResponse, "updateSuccess", true);
 				createJson(jsonResponse, "errorMessage", "none");
+				logger.info("Cause id " + causeID + " deleted successfully.");
 			} else {
 				createJson(jsonResponse, "updateSuccess", false);
-				createJson(jsonResponse, "errorMessage", "Could not find Cause.");	
+				createJson(jsonResponse, "errorMessage", "Could not find Cause.");
+				logger.warn("Cause id " + causeID + " could not be deleted: could not find Cause.");
 			}
 			resp.setContentType("application/json");
 			resp.getWriter().println(jsonResponse);			

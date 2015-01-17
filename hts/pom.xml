@@ -196,7 +196,7 @@
 					<productVersion>${jira.version}</productVersion>
 					<productDataVersion>${jira.version}</productDataVersion>
 					<!-- <output>${build.directory}\atlassian-confluence.log</output> -->
-					<log4jProperties>src/main/resources/log4j.properties</log4jProperties>
+					<!--  <log4jProperties>src/main/resources/log4j.properties</log4jProperties> -->
 					<!-- Uncomment to install TestKit backdoor in JIRA. -->
 					<!-- <pluginArtifacts> <pluginArtifact> <groupId>com.atlassian.jira.tests</groupId>
 						<artifactId>jira-testkit-plugin</artifactId> <version>${testkit.version}</version>
@@ -216,6 +216,9 @@
 				<artifactId>maven-amps-plugin</artifactId>
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<useFastdevCli>false</useFastdevCli>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

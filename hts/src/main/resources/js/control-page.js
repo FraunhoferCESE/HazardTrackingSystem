@@ -50,7 +50,7 @@ function initControlPageClickEvents() {
 		toggleOpenCloseIcon(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
 	});
 
-	// Open/close on existing cause
+	// Open/close on existing control
 	AJS.$(".ControlTableToggle").live("click", function() {
 		var elementID = AJS.$(this).parent().parent().attr("id");
 		var controlID = elementID.split("ControlTableEntryID")[1];
@@ -61,7 +61,7 @@ function initControlPageClickEvents() {
 		modifyHTSCookieOpenControls(operation, controlID, existingControlCount);
 	});
 
-	// Expand All/Close All causes
+	// Expand All/Close All controls
 	AJS.$("#ControlPageExpandAllButton").live("click", function() {
 		var operation = AJS.$(this).val();
 		var buttonElements = AJS.$(".ControlTableToggle");
@@ -239,7 +239,7 @@ function initControlPageClickEvents() {
 				if (reasonToDuplicate === "") {
 					var controlID = AJS.$(this).attr("id").replace( /^\D+/g, '');
 					var errorElement = AJS.$("#ConfirmDialogErrorTextForControlID" + controlID);
-					AJS.$(errorElement).text("For the Cause above, please provide a short delete reason.");
+					AJS.$(errorElement).text("For the Control above, please provide a short delete reason.");
 					AJS.$(errorElement).show();
 					return false;
 				}
@@ -478,7 +478,7 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 		var validated = deleteControlFormValidation(controlIDsToDelete);
 		if (validated === true) {
 			for (var i = 0; i < controlIDsToDelete.length; i++) {
-				postDeleteToControlServlet(controlIDsToDelete[i]);
+				postDeleteToControlServlet(controlIDsToDelete[i], AJS.$("#ReasonTextForControlID" + controlIDsToDelete[i]).val());
 			}
 			dialog.hide();
 			dialog.remove();
@@ -489,11 +489,11 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 	dialog.show();
 }
 
-function postDeleteToControlServlet(controlIDToDelete) {
+function postDeleteToControlServlet(controlIDToDelete, reason) {
 	AJS.$.ajax({
 		type: "DELETE",
 		async: false,
-		url: "controls?id=" + controlIDToDelete + "&reason=" + "FOOBAR",
+		url: "controls?id=" + controlIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
 		},

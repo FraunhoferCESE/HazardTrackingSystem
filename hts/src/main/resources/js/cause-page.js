@@ -434,7 +434,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 		var validated = deleteCauseFormValidation(causeIDsToDelete);
 		if (validated === true) {
 			for (var i = 0; i < causeIDsToDelete.length; i++) {
-				postDeleteToCauseServlet(causeIDsToDelete[i]);
+				postDeleteToCauseServlet(causeIDsToDelete[i], AJS.$("#ReasonTextForCauseID" + causeIDsToDelete[i]).val());
 			}
 			dialog.hide();
 			dialog.remove();
@@ -445,11 +445,11 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 	dialog.show();
 }
 
-function postDeleteToCauseServlet(causeIDToDelete) {
+function postDeleteToCauseServlet(causeIDToDelete, reason) {
 	AJS.$.ajax({
 		type: "DELETE",
 		async: false,
-		url: "causes?id=" + causeIDToDelete + "&reason=" + "FOOBAR",
+		url: "causes?id=" + causeIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
 		},

@@ -80,3 +80,13 @@ function displayAppropriateMessage(result, property) {
 		JIRA.Messages.showErrorMsg(errorMessage, {closeable: true});
 	}
 }
+
+function assert(condition, message) {
+    if (!condition) {
+        message = message || "Assertion failed";
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
+}

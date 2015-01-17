@@ -11,10 +11,9 @@ function initializeVerificationPage() {
 	initVerificationPageDateModification();
 	EXISTING_VERIFICATIONS_SERIALIZED = serializeExistingVerifications();
 
-	/* TODO:
-		Need to check the Verifications cookie here: open Verifications that are suppose to be open, rename Expand button if needed.
-		Check out the Causes/Controls to see how to do this.
-	*/
+	var existingVerificationsCount = AJS.$(".VerificationTableToggle").length;
+	openHTSCookieOpenVerifications(existingVerificationsCount);
+	renameVerificationPageExpandButton(existingVerificationsCount);
 }
 
 function initVerificationPageClickEvents() {
@@ -43,19 +42,47 @@ function initVerificationPageClickEvents() {
 		var verificationID = elementID.split("VerificationTableEntryID")[1];
 		var displayElement = AJS.$("#VerificationTableEntryContentID" + verificationID);
 		var operation = toggleOpenCloseIcon(AJS.$(this), displayElement);
-		//var existingVerificationCount = AJS.$(".VerificationTableToggle").length;
+		var existingVerificationCount = AJS.$(".VerificationTableToggle").length;
 		// Calling function in shared-cookies.js file
-		//modifyHTSCookieOpenCauses(operation, verificationID, existingCausesCount);
+		modifyHTSCookieOpenVerifications(operation, verificationID, existingVerificationCount);
 	});
 
-	// Expand All/Close All Verifcations
-	/* TODO:
-		Add the click event here. It will be pretty much exactly the same as the Causes/Controls version.
-		Need to keep in mind that cookies come into play here. When the user opens a particular Verifications, that gets put into an array in a cookie
-		Take a look at the shared-cookie.js file - need to add functions there.
-	*/
+	// Expand All/Close All verifications
+	AJS.$("#VerificationPageExpandAllButton").live("click", function() {
+		var operation = AJS.$(this).val();
+		var buttonElements = AJS.$(".VerificationTableToggle");
+		var existingVerificationsCount = AJS.$(".VerificationTableToggle").length;
 
-	// Save new cause
+		if (operation === "Expand All") {
+			buttonElements.each(function () {
+				if (AJS.$(this).hasClass("aui-iconfont-add")) {
+					AJS.$(this).removeClass("aui-iconfont-add");
+					AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
+					var elementID = AJS.$(this).parent().parent().attr("id");
+					var verificationID = elementID.split("VerificationTableEntryID")[1];
+					AJS.$("#VerificationTableEntryContentID" + verificationID).show();
+					// Calling function in shared-cookies.js file
+					modifyHTSCookieOpenVerifications("open", verificationID, null);
+				}
+			});
+		} else {
+			buttonElements.each(function () {
+				if (AJS.$(this).hasClass("aui-iconfont-devtools-task-disabled")) {
+					AJS.$(this).removeClass("aui-iconfont-devtools-task-disabled");
+					AJS.$(this).addClass("aui-iconfont-add");
+					var elementID = AJS.$(this).parent().parent().attr("id");
+					var verificationID = elementID.split("VerificationTableEntryID")[1];
+					AJS.$("#VerificationTableEntryContentID" + verificationID).hide();
+					// Calling function in shared-cookies.js file
+					modifyHTSCookieOpenVerifications("close", verificationID, null);
+				}
+			});
+		}
+		// Calling function in shared-cookies.js file
+		renameVerificationPageExpandButton(existingVerificationsCount);
+	});
+
+	// Save new verification
 	AJS.$(".VerificationPageSaveAllChanges").live("click", function() {
 		var result = {
 			existingPost: false,
@@ -109,12 +136,33 @@ function initVerificationPageClickEvents() {
 				Create the "openDeleteVerificationDialog" function.
 				This function will be 95% the same as the Cause/Controls version. So its a good starting point to just c/p it and then modify columm headers, data and such.
 			*/
-			//openDeleteVerificationDialog(existingResult.deleteExistingCausesIDs, result);
+			openDeleteVerificationDialog(existingResult.deleteExistingVerificationsIDs, result);
 		} else {
 			// Display appropriate message and load the template again to see the changes
 			displayAppropriateMessage(result, "Verification");
 		}
 
+	});
+	
+		// Duplicate delete reason in delete dialog
+	AJS.$("#ConfirmDialogDuplBtnVerifications").live("click", function() {
+		var reasonTextFields = AJS.$(".ConfirmDialogReasonTextInput");
+		var reasonToDuplicate;
+		reasonTextFields.each(function (index) {
+			if (index === 0) {
+				reasonToDuplicate = AJS.$(this).val();
+				if (reasonToDuplicate === "") {
+					var verificationID = AJS.$(this).attr("id").replace( /^\D+/g, '');
+					var errorElement = AJS.$("#ConfirmDialogErrorTextForVerifificationID" + verificationID);
+					AJS.$(errorElement).text("For the Verification above, please provide a short delete reason.");
+					AJS.$(errorElement).show();
+					return false;
+				}
+			}
+			else {
+				AJS.$(this)[0].value = reasonToDuplicate;
+			}
+		});
 	});
 }
 
@@ -128,7 +176,6 @@ function initVerificationPageDateModification() {
 	var estimatedCompletionDates = AJS.$(".VerificationDate");
 	estimatedCompletionDates.each(function () {
 		var defaultDateArr = (AJS.$(this).data("date")).split(" ");
-		console.log(defaultDateArr);
 		var defaultDateStr = defaultDateArr[0];
 		AJS.$(this).val(defaultDateStr);
 	});
@@ -239,5 +286,145 @@ function postFormToVerificationServlet(formElement) {
 			// Display similar message as in success, but of the error kind
 			console.log("ERROR");
 		}
+	});
+}
+
+// The following functions have to do with deleting Verifications
+function openDeleteVerificationDialog(verificationIDsToDelete, result) {
+	var html1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardTitle").text() + "</span></span>" +
+				"<span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardNumber").text() + "</span></span>";
+	var html2;
+	if (verificationIDsToDelete.length === 1) {
+		html2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>" +
+					"The following Verification will be deleted from the above Hazard Report. In order to complete the deletion, you will need to provide a short delete reason." +
+				"</span></div>";
+	} else {
+		html2 = "<div class='ConfirmDialogContentTwo'><span class='ConfirmDialogHeadingTwo'>" +
+					"The following Verifications will be deleted from the above Hazard Report. In order to complete the deletion, you will need to provide a short delete reason for each of the Verifications." +
+				"</span></div>";
+	}
+	var html3 = "<table>" +
+					"<thead>" +
+						"<tr>" +
+							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellOne'>#</th>" +
+							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwo'>Description</th>" +
+							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellThree'>Status</th>" +
+						"</tr>" +
+					"</thead>" +
+					"<tbody>";
+	for (var i = 0; i < verificationIDsToDelete.length; i++) {
+		var verificationFirstRow = AJS.$("#VerificationTableEntryID" + verificationIDsToDelete[i]);
+		html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr>";
+		html3 += "<tr><td class='ConfirmDialogTableNoBorder'>" + verificationFirstRow.children(":nth-child(2)").text().replace("Verification ", "") + "</td>";
+		html3 += "<td class='ConfirmDialogTableNoBorder'><div class='ConfirmDialogDescriptionText'>" + verificationFirstRow.children(":nth-child(3)").text() + "</div></td>";
+		html3 += "<td class='ConfirmDialogTableNoBorder'>" + verificationFirstRow.children(":nth-child(4)").text() + "</td>";
+		html3 += "</tr>";
+
+		if (i === 0 && verificationIDsToDelete.length > 1) {
+			html3 += "<tr>" +
+						"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+							"<div class='ConfirmDialogLabelContainer'>" +
+								"<label for='ReasonTextForControl'><span class='HTSRequired'>* </span>Reason</label>" +
+							"</div>" +
+							"<div class='ConfirmDialogReasonTextContainer'>" +
+								"<input type='text' class='ConfirmDialogReasonTextInput' name='ReasonTextForVerification' id='ReasonTextForVerificationID" + verificationIDsToDelete[i] + "'>" +
+							"</div>" +
+							"<div class='ConfirmDialogDuplButtonContainer'>" +
+								"<button class='aui-button ConfirmDialogDuplButton' id='ConfirmDialogDuplBtnVerifications'>Apply to all</button>" +
+							"</div>" +
+						"</td>" +
+					"</tr>";
+		} else {
+			html3 += "<tr>" +
+						"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+							"<div class='ConfirmDialogLabelContainer'>" +
+								"<label for='ReasonTextForVerification'><span class='HTSRequired'>* </span>Reason</label>" +
+							"</div>" +
+							"<div class='ConfirmDialogReasonTextContainerNoButton'>" +
+								"<input type='text' class='ConfirmDialogReasonTextInput' name='ReasonTextForVerification' id='ReasonTextForVerificationID" + verificationIDsToDelete[i] + "'>" +
+							"</div>" +
+						"</td>" +
+					"</tr>";
+		}
+		html3 += "<tr>" +
+					"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+						"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForVerificationID" + verificationIDsToDelete[i] +"'></p>" +
+					"</td>" +
+				"</tr>";
+	}
+	html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr></tbody></table>";
+
+	var dialog = new AJS.Dialog({
+		width: 600,
+		height: 475,
+		id: "deleteDialog",
+	});
+
+	dialog.addHeader("Confirm");
+	dialog.addPanel("Panel 1",
+		"<div class='panelBody'>" + html1 + html2 + html3 + "</div>",
+		"panel-body");
+	dialog.get("panel:0").setPadding(10);
+
+	dialog.addButton("Cancel", function(dialog) {
+		dialog.hide();
+		dialog.remove();
+		deselectAllVerifications();
+		result.existingDelete = false;
+		displayAppropriateMessage(result, "Verification");
+	});
+
+	dialog.addButton("Continue", function(dialog) {
+		var validated = deleteVerificationFormValidation(verificationIDsToDelete);
+		if (validated === true) {
+			for (var i = 0; i < verificationIDsToDelete.length; i++) {
+				postDeleteToVerificationServlet(verificationIDsToDelete[i], AJS.$("#ReasonTextForVerificationID" + verificationIDsToDelete[i]).val());
+			}
+			dialog.hide();
+			dialog.remove();
+			displayAppropriateMessage(result, "Verification");
+		}
+	});
+
+	dialog.show();
+}
+
+function postDeleteToVerificationServlet(verificationIDToDelete, reason) {
+	AJS.$.ajax({
+		type: "DELETE",
+		async: false,
+		url: "verifications?id=" + verificationIDToDelete + "&reason=" + reason,
+		success: function(data) {
+			console.log("SUCCESS");
+		},
+		error: function(data) {
+			console.log("ERROR");
+		}
+	});
+}
+
+function deleteVerificationFormValidation(verificationIDsToDelete) {
+	var validated = true;
+	for (var i = 0; i < verificationIDsToDelete.length; i++) {
+		var deleteReason = AJS.$("#ReasonTextForVerificationID" + verificationIDsToDelete[i]).val();
+		var errorElement = AJS.$("#ConfirmDialogErrorTextForVerificationID" + verificationIDsToDelete[i]);
+		if (deleteReason === "") {
+			AJS.$(errorElement).text("For the Verification above, please provide a short delete reason.");
+			AJS.$(errorElement).show();
+			validated = false;
+		} else {
+			if (AJS.$(errorElement).is(":visible")) {
+				AJS.$(errorElement).text("");
+				AJS.$(errorElement).hide();
+			}
+		}
+	}
+	return validated;
+}
+
+function deselectAllVerifications() {
+	var checkboxes = AJS.$(".VerificationPageDeleteBox:checked");
+	checkboxes.each(function () {
+		AJS.$(this).attr("checked", false);
 	});
 }
