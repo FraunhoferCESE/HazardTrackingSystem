@@ -71,3 +71,44 @@ function getAllControlsWithinCause(causeID) {
 	});
 	return result;
 }
+
+function getTransferOrigins(hazardElement, elementType) {
+	var result = [];
+ 	AJS.$.ajax({
+		type: "GET",
+		url: AJS.params.baseURL + "/rest/hts/1.0/transfer/findOrigins?type=" + elementType + "&elementId=" + hazardElement,
+		async: false,
+		success: function(data) {
+			console.log("SUCCESS");
+			result = data;
+		},
+		error: function() {
+			console.log("ERROR");
+		}
+	}); 
+	return result;
+}
+
+function getTransferTargetDeleteWarning(transferOrigins) {
+	
+	
+}
+
+
+/*
+"<p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p>" +
+
+									"<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+										"<a href='hazardlist?edit=y&key=" + associatedCause.hazardID + "'>Hazard " + associatedCause.hazardNumber + "</a>" +
+										" (owned by " + associatedCause.hazardOwner + "): ";
+										
+										
+										
+										
+										"<a href='causeform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedCause' data-causeid='" + associatedCause.originCauses[k].originCauseID + "'>" +
+											"Cause " + associatedCause.originCauses[k].originCauseNumber +
+										
+										"<a href='controlform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedControl' data-controlid='" + associatedCause.originControls[l].originControlID + "'>" +
+										"Control " + associatedCause.originControls[l].originControlNumber +
+
+										*/

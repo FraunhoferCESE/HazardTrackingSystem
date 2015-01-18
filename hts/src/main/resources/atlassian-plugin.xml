@@ -170,4 +170,9 @@
 		<description key="cause-rest.description">Cause REST Service</description>
 	</rest>
 
+	<rest name="Transfer REST Service" i18n-name-key="transfer-rest.name"
+		key="transfer-rest" path="/hts" version="1.0">
+		<description key="transfer-rest.description">Transfer REST Service</description>
+	</rest>
+
 </atlassian-plugin>

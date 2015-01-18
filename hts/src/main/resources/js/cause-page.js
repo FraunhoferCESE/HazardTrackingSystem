@@ -347,7 +347,7 @@ function removeAnyVisibleErrorsFromForm(formElement) {
 }
 
 // The following functions have to do with deleting Causes
-function openDeleteCauseDialog(causeIDsToDelete, result) {
+function openDeleteCauseDialog(causeIDsToDelete, result) {		
 	var html1 = "<span class='ConfirmDialogHeadingOne'>Hazard Title: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardTitle").text() + "</span></span>" +
 				"<span class='ConfirmDialogHeadingOne'>Hazard #: <span class='ConfirmDialogHeadingOneContent'>" + AJS.$("#MissionHazardNavHazardNumber").text() + "</span></span>";
 	var html2;
@@ -402,6 +402,15 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
+		var transferOrigins = getTransferOrigin(causeIDsToDelete[i], "cause");
+		if(transferOrigins.length > 0) {
+			html3 += "<tr>" +
+						"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+							"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForCauseID" + causeIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins)+"</p>" +
+						"</td>" +
+					"</tr>";			
+		}
+		
 		html3 += "<tr>" +
 					"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
 						"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForCauseID" + causeIDsToDelete[i] +"'></p>" +
