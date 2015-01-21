@@ -2,12 +2,12 @@ package org.fraunhofer.plugins.hts.db.service;
 
 import java.util.List;
 
-import org.fraunhofer.plugins.hts.datatype.HazardCauseDTMinimalJson;
 import org.fraunhofer.plugins.hts.datatype.HazardCauseTransferDT;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.rest.datatype.CauseJSON;
 
 public interface HazardCauseService {
 	Hazard_Causes add(int hazardID, String title, String owner, Risk_Categories risk, 
@@ -24,7 +24,7 @@ public interface HazardCauseService {
 	
 	List<Hazard_Causes> getAllNonDeletedCausesWithinHazard(Hazards hazard);
 	
-	List<HazardCauseDTMinimalJson> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID);
+	List<CauseJSON> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID);
 	
 	List<HazardCauseTransferDT> getAllTransferredCauses(Hazards hazard);
 	

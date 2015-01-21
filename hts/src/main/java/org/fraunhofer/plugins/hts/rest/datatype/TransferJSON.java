@@ -1,5 +1,7 @@
 package org.fraunhofer.plugins.hts.rest.datatype;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,33 +19,21 @@ import org.fraunhofer.plugins.hts.db.Transfers;
 @XmlRootElement(name = "transfer")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class TransferJSON {
-	private final int originId;
-	private final String originType;
-	private final int targetId;
-	private final String targetType;
+	private final List<CauseJSON> causes;
+	private final List<ControlJSON> controls;
 
-	public TransferJSON(Transfers transfer) {
+	public TransferJSON(List<CauseJSON> causes, List<ControlJSON> controls) {
 		super();
-		this.originId = transfer.getOriginID();
-		this.originType = transfer.getOriginType();
-		this.targetId = transfer.getTargetID();
-		this.targetType = transfer.getTargetType();
+		this.causes = causes;
+		this.controls = controls;
 	}
 
-	public int getOriginId() {
-		return originId;
+	public List<CauseJSON> getCauses() {
+		return causes;
 	}
 
-	public String getOriginType() {
-		return originType;
-	}
-
-	public int getTargetId() {
-		return targetId;
-	}
-
-	public String getTargetType() {
-		return targetType;
+	public List<ControlJSON> getControls() {
+		return controls;
 	}
 
 }

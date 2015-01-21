@@ -9,7 +9,6 @@ import java.util.List;
 
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
 import org.fraunhofer.plugins.hts.datatype.HazardControlTransferDT;
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.ControlToCause;
@@ -22,6 +21,7 @@ import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
+import org.fraunhofer.plugins.hts.rest.datatype.ControlJSON;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.base.Strings;
@@ -117,15 +117,15 @@ public class HazardControlServiceImpl implements HazardControlService {
 	}
 	
 	@Override
-	public List<HazardControlDTMinimalJson> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
+	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
 		Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
-		List<HazardControlDTMinimalJson> controls = new ArrayList<HazardControlDTMinimalJson>();
+		List<ControlJSON> controls = new ArrayList<ControlJSON>();
 		if (cause != null) {
 			for (Hazard_Controls control : cause.getControls()) {
 				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
 					if (control.getTransfer() == 0) {
 						// Regular Control
-						controls.add(new HazardControlDTMinimalJson(
+						controls.add(new ControlJSON(
 									control.getID(), control.getControlNumber(), control.getDescription(), false, true, "CONTROL"
 								));
 					} else {
@@ -133,12 +133,12 @@ public class HazardControlServiceImpl implements HazardControlService {
 						Transfers transfer = transferService.getTransferByID(control.getTransfer());
 						if (transfer.getTargetType().equals("CONTROL")) { 
 							Hazard_Controls targetControl = getHazardControlByID(transfer.getTargetID());
-							controls.add(new HazardControlDTMinimalJson(
+							controls.add(new ControlJSON(
 									control.getID(), control.getControlNumber(), targetControl.getDescription(), true, true, "CONTROL"
 								));
 						} else if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
-							controls.add(new HazardControlDTMinimalJson(
+							controls.add(new ControlJSON(
 									control.getID(), control.getControlNumber(), targetCause.getTitle(), true, true, "CONTROL"
 								));
 						}

@@ -168,7 +168,7 @@ public class CauseRestService {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			checkArgument(id > 0);
 
-//			hazardCauseService.getHazardCauseByID(id);
+			hazardCauseService.getHazardCauseByID(id);
 //			List<TransferJSON> values = Lists.transform(transferService.getOriginsForId(type.toUpperCase(), elementId),
 //					new Function<Transfers, TransferJSON>() {
 //						public TransferJSON apply(Transfers t) {

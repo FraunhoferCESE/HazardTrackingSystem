@@ -79,6 +79,8 @@ function displayAppropriateMessage(result, property) {
 		}
 		JIRA.Messages.showErrorMsg(errorMessage, {closeable: true});
 	}
+	
+	
 }
 
 function assert(condition, message) {
@@ -90,3 +92,36 @@ function assert(condition, message) {
         throw message; // Fallback
     }
 }
+
+function getTransferTargetDeleteWarning(targetElement, elementType) {
+	AJS.log(targetElement);
+	var html = "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+				"<a href='hazardlist?edit=y&key=" + targetElement.hazardID + "'>Hazard " + targetElement.hazardNumber + "</a>" +
+				" (owned by " + targetElement.hazardOwner + "): ";
+	
+	if(elementType == "cause") {
+		html += "<a href='causeform?edit=y&key=" + targetElement.causeID + "' class='openAssociatedCause' data-causeid='" + targetElement.causeID + "'>" +
+		"Cause " + targetElement.causeNumber + "</a>";
+	}
+	else if (elementType == "control") {
+		html += "<a href='controlform?edit=y&key=" + targetElement.controlID + "' class='openAssociatedControl' data-controlid='" + targetElement.controlID + "'>" +
+		"Control " + targetElement.controlNumber + "</a>";
+	}
+	
+	html += "</p>";
+}	
+/*
+"<p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p>" +
+
+									
+										
+										
+										
+										
+										"<a href='causeform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedCause' data-causeid='" + associatedCause.originCauses[k].originCauseID + "'>" +
+											"Cause " + associatedCause.originCauses[k].originCauseNumber +
+										
+										"<a href='controlform?edit=y&key=" + associatedCause.hazardID + "' class='openAssociatedControl' data-controlid='" + associatedCause.originControls[l].originControlID + "'>" +
+										"Control " + associatedCause.originControls[l].originControlNumber +
+
+										*/

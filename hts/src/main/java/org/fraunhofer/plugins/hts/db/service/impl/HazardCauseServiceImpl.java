@@ -10,7 +10,6 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.datatype.HazardCauseDTMinimalJson;
 import org.fraunhofer.plugins.hts.datatype.HazardCauseTransferDT;
 import org.fraunhofer.plugins.hts.db.CausesToHazards;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
@@ -21,6 +20,7 @@ import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
+import org.fraunhofer.plugins.hts.rest.datatype.CauseJSON;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.base.Strings;
@@ -117,15 +117,15 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 	}
 	
 	@Override
-	public List<HazardCauseDTMinimalJson> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID) {
+	public List<CauseJSON> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID) {
 		Hazards hazard = hazardService.getHazardByID(hazardID);
-		List<HazardCauseDTMinimalJson> causes = new ArrayList<HazardCauseDTMinimalJson>();
+		List<CauseJSON> causes = new ArrayList<CauseJSON>();
 		if (hazard != null) {
 			for (Hazard_Causes cause : hazard.getHazardCauses()) {
 				if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
 					if (cause.getTransfer() == 0) {
 						// Regular Cause
-						causes.add(new HazardCauseDTMinimalJson(
+						causes.add(new CauseJSON(
 									cause.getID(), cause.getCauseNumber(), cause.getTitle(), false, true, "CAUSE"
 								));
 					} else {
@@ -133,12 +133,12 @@ public class HazardCauseServiceImpl implements HazardCauseService {
 						Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 						if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
-							causes.add(new HazardCauseDTMinimalJson(
+							causes.add(new CauseJSON(
 									cause.getID(), cause.getCauseNumber(), targetCause.getTitle(), true, true, "CAUSE"
 								));
 						} else if (transfer.getTargetType().equals("HAZARD")) {
 							Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
-							causes.add(new HazardCauseDTMinimalJson(
+							causes.add(new CauseJSON(
 									cause.getID(), cause.getCauseNumber(), targetHazard.getHazardTitle(), true, true, "CAUSE"
 								));
 						}

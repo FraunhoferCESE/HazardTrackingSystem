@@ -2,12 +2,12 @@ package org.fraunhofer.plugins.hts.db.service;
 
 import java.util.List;
 
-import org.fraunhofer.plugins.hts.datatype.HazardControlDTMinimalJson;
 import org.fraunhofer.plugins.hts.datatype.HazardControlTransferDT;
 import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazards;
+import org.fraunhofer.plugins.hts.rest.datatype.ControlJSON;
 
 public interface HazardControlService {
 	
@@ -21,7 +21,7 @@ public interface HazardControlService {
 	
 	Hazard_Controls getHazardControlByID(String controlID);
 	
-	List<HazardControlDTMinimalJson> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID);
+	List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID);
 
 	List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard);
 	

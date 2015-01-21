@@ -402,19 +402,32 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
-		var transferOrigins = getTransferOrigin(causeIDsToDelete[i], "cause");
-		if(transferOrigins.length > 0) {
+		var transferOrigins = getTransferOrigins(causeIDsToDelete[i], "cause");
+		
+		if(transferOrigins.causes.length > 0 || transferOrigins.controls.length > 0) {
+			html3 += "<p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p>";
+		}
+		
+		for(var j = 0; j < transferOrigins.causes.length; j++) {
+		html3 += "<tr>" +
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForCauseID" + causeIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.causes[j], "cause")+"</p>" +
+				"</td>" +
+				"</tr>";
+		}
+		
+		for(var j = 0; j < transferOrigins.controls.length; j++) {
 			html3 += "<tr>" +
-						"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
-							"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForCauseID" + causeIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins)+"</p>" +
-						"</td>" +
-					"</tr>";			
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForCauseID" + causeIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.controls[j], "control")+"</p>" +
+				"</td>" +
+				"</tr>";
 		}
 		
 		html3 += "<tr>" +
-					"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
-						"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForCauseID" + causeIDsToDelete[i] +"'></p>" +
-					"</td>" +
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForCauseID" + causeIDsToDelete[i] +"'></p>" +
+				"</td>" +
 				"</tr>";
 	}
 	html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr></tbody></table>";
