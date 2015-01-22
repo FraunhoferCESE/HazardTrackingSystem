@@ -1,4 +1,4 @@
 hts/.classpath
 target/
 bin/
-test_out/
+test_out/*
