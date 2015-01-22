@@ -29,8 +29,8 @@ public class CauseJSON {
 		this.transfer = cause.getTransfer() == 0 ? false : true;
 		this.active = Strings.isNullOrEmpty(cause.getDeleteReason());
 		this.hazardId = hazard.getID();
-		this.hazardOwner = hazard.getEmail();
-		this.hazardNumber = hazard.getHazardNumber();
+		this.hazardOwner = hazard.getPreparer() == null ? "N/A" : hazard.getPreparer();
+		this.hazardNumber = hazard.getHazardNumber() == null ? "N/A" : hazard.getHazardNumber();
 	}
 
 	public CauseJSON(int causeID, int causeNumber, String text, boolean transfer, boolean active, String type) {

@@ -405,11 +405,11 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 		var transferOrigins = getTransferOrigins(causeIDsToDelete[i], "cause");
 		
 		if(transferOrigins.causes.length > 0 || transferOrigins.controls.length > 0) {
-			html3 += "<p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p>";
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This cause is the target of a transfer:</p></td></tr>";
 		}
 		
 		for(var j = 0; j < transferOrigins.causes.length; j++) {
-		html3 += "<tr>" +
+			html3 += "<tr>" +
 				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
 				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForCauseID" + causeIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.causes[j], "cause")+"</p>" +
 				"</td>" +

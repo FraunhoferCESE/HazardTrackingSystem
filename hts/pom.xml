@@ -68,6 +68,7 @@
 			<version>1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- To be able to write a servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
