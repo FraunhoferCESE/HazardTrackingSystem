@@ -81,9 +81,11 @@
 					<label for="causeAdditSafetyFeatures">Additional Safety Features</label>
 					<textarea class="textarea long-field" rows="4" cols="10" name="causeAdditSafetyFeatures" id="causeAdditSafetyFeatures">$!cause.getAdditionalSafetyFeatures()</textarea>
 				</div>
+				#*
 				<div class="field-group">
 					<input class="button" type="button" value="Add Control" id="CausePageAddControl">
 				</div>
+				*#
 			</form>
 		</div>
 	</td>
