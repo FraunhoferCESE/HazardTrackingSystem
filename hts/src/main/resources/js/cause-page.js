@@ -435,7 +435,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 	var dialog = new AJS.Dialog({
 		width: 600,
 		height: 475,
-		id: "deleteDialog",
+		id: "deleteDialog"
 	});
 
 	dialog.addHeader("Confirm");

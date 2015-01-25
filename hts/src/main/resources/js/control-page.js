@@ -446,10 +446,26 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
+		var transferOrigins = getTransferOrigins(controlIDsToDelete[i], "control");
+		
+		if(transferOrigins.controls.length > 0) {
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This control is the target of a transfer:</p></td></tr>";
+		}
+		
+		for(var j = 0; j < transferOrigins.controls.length; j++) {
+			html3 += "<tr>" +
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.controls[j], "control")+"</p>" +
+				"</td>" +
+				"</tr>";
+		}		
+		
+
+
 		html3 += "<tr>" +
-					"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
-						"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + controlIDsToDelete[i] +"'></p>" +
-					"</td>" +
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForControlID" + controlIDsToDelete[i] +"'></p>" +
+				"</td>" +
 				"</tr>";
 	}
 	html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr></tbody></table>";
@@ -457,7 +473,7 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 	var dialog = new AJS.Dialog({
 		width: 600,
 		height: 475,
-		id: "deleteDialog",
+		id: "deleteDialog"
 	});
 
 	dialog.addHeader("Confirm");

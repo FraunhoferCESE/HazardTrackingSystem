@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="src/test/java"/>
+	<buildpathentry kind="src" path="src/test/resources"/>
+	<buildpathentry kind="src" path="src/main/java"/>
+	<buildpathentry kind="src" path="src/main/resources"/>
+	<buildpathentry kind="con" path="org.eclipse.dltk.mod.launching.INTERPRETER_CONTAINER"/>
+	<buildpathentry kind="con" path="org.eclipse.vjet.eclipse.core.JSNATIVE_CONTAINER/JS Native Types"/>
+	<buildpathentry kind="con" path="org.eclipse.vjet.eclipse.core.BROWSER_CONTAINER/Browser SDK"/>
+	<buildpathentry external="true" kind="lib" path="C:/Users/Lucas/.m2/repository/com/atlassian/jira/jira-core/6.1.7/jira-core-6.1.7.jar"/>
+	<buildpathentry external="true" kind="lib" path="C:/Users/Lucas/.m2/repository/glue/glue/5.0b2/glue-5.0b2.jar"/>
+	<buildpathentry external="true" kind="lib" path="C:/Users/Lucas/.m2/repository/commons-validator/commons-validator/1.4.0/commons-validator-1.4.0.jar"/>
+	<buildpathentry external="true" kind="lib" path="C:/Users/Lucas/.m2/repository/com/atlassian/activeobjects/activeobjects-plugin/0.22.1/activeobjects-plugin-0.22.1.jar"/>
+</buildpath>
