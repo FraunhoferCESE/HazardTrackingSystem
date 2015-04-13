@@ -37,8 +37,8 @@ public class HazardCauseTransferDT {
 		instance.setTargetHazardTitle(targetCause.getHazards()[0].getHazardTitle());
 		instance.setTargetHazardNumber(targetCause.getHazards()[0].getHazardNumber());
 		instance.setTransferReason(originCause.getDescription());
-		instance.setTargetID(transfer.getTargetID());
-		instance.setOriginID(transfer.getOriginID());
+		instance.setTargetID(transfer.getTargetID()); //
+		instance.setOriginID(transfer.getOriginID()); //
 		instance.setTargetCauseTitle(targetCause.getTitle());
 		instance.setTargetCauseNumber(targetCause.getCauseNumber());
 		instance.setTargetCauseOwner(targetCause.getOwner());

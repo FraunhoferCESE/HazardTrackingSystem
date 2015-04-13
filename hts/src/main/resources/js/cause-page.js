@@ -17,10 +17,30 @@ function initializeCausePage() {
 }
 
 function initCausePageClickEvents() {
+	
+	AJS.$(".transferLink").click(function(event) {
+	    // Get the link that fired the click event
+		var firedLink = $(this).attr("href");
+		
+	    var transferTarget = event.target.transferTarget;
+	    document.write("alert" + firedLink);
+	    var arr = firedLink.split('&');
+	    // Split the <HazardNumber>+<Cause Number>
+
+	    firedLink=firedLink.split("transferTarget=")[1];
+
+//	    var targetIdrogh= firedLink.split("&");
+//	    email=emailrogh[0];// show priya@gmail.com
+//
+//	    var idrough=emailrogh[1].split("=");
+//
+//	    var id=idrough[1];//show 68
+	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
+	});
+	
 	// Clear new Cause form
 	AJS.$("#CausePageClearNew").live("click", function() {
 		var formElement = AJS.$("#CausePageFormAddNew");
-		AJS.$(formElement).find("#causeTitle").val("");
 		AJS.$(formElement).find("#causeOwner").val("");
 		AJS.$(formElement).find("#causeRisk").val("").trigger('chosen:updated');
 		AJS.$(formElement).find("#causeLikelihood").val("").trigger('chosen:updated');
@@ -214,6 +234,7 @@ function initCausePageClickEvents() {
 			}
 		});
 	});
+	
 }
 
 function initCausePageDateModification() {
@@ -506,3 +527,4 @@ function deselectAllCauses() {
 		AJS.$(this).attr("checked", false);
 	});
 }
+

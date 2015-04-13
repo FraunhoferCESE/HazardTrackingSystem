@@ -14,10 +14,12 @@
 	<td class="HazardPropertyTableTd">
 		#if ($theCause.getTransferTargetType() == "CAUSE")
 			#if ($theCause.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()</div>
-			#else
-				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()">
+				<div class="HTSTransferDeletedOrigin">
 					$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
+				</div>
+			#else
+				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()&transferTarget=$!theCause.getTargetID()&$!theCause.getOriginID()" class="transferLink" >
+					$!theCause.getTargetHazardNumber():CAUSE $!theCause.getTargetCauseNumber() - $!theCause.getTargetCauseTitle()
 				</a>
 			#end
 		#else
