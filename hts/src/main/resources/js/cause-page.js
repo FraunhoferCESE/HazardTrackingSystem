@@ -20,21 +20,15 @@ function initCausePageClickEvents() {
 	
 	AJS.$(".transferLink").click(function(event) {
 	    // Get the link that fired the click event
-		var firedLink = $(this).attr("href");
+		var originID = AJS.$(this).attr("originID");
+		var targetID = AJS.$(this).attr("targetID");
 		
-	    var transferTarget = event.target.transferTarget;
-	    document.write("alert" + firedLink);
-	    var arr = firedLink.split('&');
-	    // Split the <HazardNumber>+<Cause Number>
+	    //var transferTarget = event.target;
+	    //alert("transferTarget " + transferTarget);
+	    alert("originID " + originID + " targetID " + targetID);
 
-	    firedLink=firedLink.split("transferTarget=")[1];
-
-//	    var targetIdrogh= firedLink.split("&");
-//	    email=emailrogh[0];// show priya@gmail.com
-//
-//	    var idrough=emailrogh[1].split("=");
-//
-//	    var id=idrough[1];//show 68
+	    initHTSCookie();
+	    modifyHTSCookieOpenControls("open", targetID, null);
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
 	});
 	

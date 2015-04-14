@@ -18,7 +18,7 @@
 					$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
 				</div>
 			#else
-				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()&transferTarget=$!theCause.getTargetID()&$!theCause.getOriginID()" class="transferLink" >
+				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 					$!theCause.getTargetHazardNumber():CAUSE $!theCause.getTargetCauseNumber() - $!theCause.getTargetCauseTitle()
 				</a>
 			#end
