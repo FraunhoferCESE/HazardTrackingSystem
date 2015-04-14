@@ -18,17 +18,15 @@ function initializeCausePage() {
 
 function initCausePageClickEvents() {
 	
+	//when doing a cause transfer, automatically expand the targetcause on the cause page
 	AJS.$(".transferLink").click(function(event) {
 	    // Get the link that fired the click event
-		var originID = AJS.$(this).attr("originID");
 		var targetID = AJS.$(this).attr("targetID");
-		
-	    //var transferTarget = event.target;
-	    //alert("transferTarget " + transferTarget);
-	    alert("originID " + originID + " targetID " + targetID);
+	
+	    //alert(" targetID " + targetID);
 
 	    initHTSCookie();
-	    modifyHTSCookieOpenControls("open", targetID, null);
+	    modifyHTSCookieOpenCauses("open", targetID, null);
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
 	});
 	

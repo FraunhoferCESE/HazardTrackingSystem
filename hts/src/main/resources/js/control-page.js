@@ -18,6 +18,27 @@ function initializeControlPage() {
 }
 
 function initControlPageClickEvents() {
+	
+	//when doing a control transfer, automatically expand the targetcause on the cause page
+	AJS.$(".controlTransferLink").click(function(event) {
+	    // Get the link that fired the click event
+		var targetID = AJS.$(this).attr("targetID");
+		var targetType = AJS.$(this).attr("targetType");
+		
+
+	   // alert(" Control targetID " + targetID + " targetType: " + targetType);
+
+	    initHTSCookie();
+	    if(targetType === "CAUSE"){
+	    	modifyHTSCookieOpenCauses("open", targetID, null);
+	    }
+	    else{
+	    	modifyHTSCookieOpenControls("open", targetID, null);
+	    }
+	    
+	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
+	});
+	
 	// Clear new Control form
 	AJS.$("#ControlPageClearNew").live("click", function() {
 		var formElement = AJS.$("#ControlPageFormAddNew");

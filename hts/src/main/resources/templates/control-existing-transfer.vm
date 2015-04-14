@@ -14,18 +14,18 @@
 	<td class="HazardPropertyTableTd">
 		#if ($theControl.getTransferTargetType() == "CONTROL")
 			#if ($theControl.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()</div>
+				<div class="HTSTransferDeletedOrigin">$!theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()</div>
 			#else
-				<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()">
-					$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+				<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+					$!theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
 				</a>
 			#end
 		#else
 			#if ($theControl.isDeleted() == true)
 				<div class="HTSTransferDeletedOrigin">$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()</div>
 			#else
-				<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()">
-					$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+				<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+					$!theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
 				</a>
 			#end
 		#end
