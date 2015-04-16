@@ -14,7 +14,23 @@
 	<td class="HazardPropertyTableTd">
 		#if ($theControl.getTransferTargetType() == "CONTROL")
 			#if ($theControl.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$!theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()</div>
+				<div class="HTSTransferDeletedOrigin">
+					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+						&lt;To Be Determined&gt; :CONTROL 
+					#else
+						$theControl.getTargetHazardNumber():CONTROL
+					#end
+					#if(!$theControl.getTargetControlNumber() || $theControl.getTargetControlNumber() == "")
+						&lt;To Be Determined&gt; -
+					#else
+						$theControl.getTargetControlNumber() - 
+					#end 
+					#if(!$theControl.getTargetControlDescription() || $theControl.getTargetControlDescription() == "")
+						&lt;To Be Determined&gt;
+					#else
+						$theControl.getTargetControlDescription()
+					#end
+				</div>
 			#else
 				<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
@@ -36,10 +52,25 @@
 			#end
 		#else
 			#if ($theControl.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()</div>
+				<div class="HTSTransferDeletedOrigin">
+					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+						&lt;To Be Determined&gt; :CAUSE
+					#else
+						$theControl.getTargetHazardNumber():CAUSE
+					#end
+					#if(!$theControl.getTargetCauseNumber() || $theControl.getTargetCauseNumber() == "")
+						&lt;To Be Determined&gt; -
+					#else
+						$theControl.getTargetCauseNumber() - 
+					#end 
+					#if(!$theControl.getTargetCauseTitle() || $theControl.getTargetCauseTitle() == "")
+						&lt;To Be Determined&gt;
+					#else
+						$theControl.getTargetCauseTitle()
+					#end
+				</div>
 			#else
 				<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-					
 					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
 							&lt;To Be Determined&gt; :CAUSE  
 					#else
@@ -55,9 +86,6 @@
 					#else
 					  	$theControl.getTargetCauseTitle()
 					#end
-					
-					
-					 $theControl.getTargetCauseTitle()
 				</a>
 			#end
 		#end

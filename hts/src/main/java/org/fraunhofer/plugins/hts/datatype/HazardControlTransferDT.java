@@ -48,6 +48,7 @@ public class HazardControlTransferDT {
 		}
 		
 		if (Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
+			System.out.println("HCTDT ");
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);
@@ -68,7 +69,13 @@ public class HazardControlTransferDT {
 		instance.setTargetID(transfer.getTargetID());
 		instance.setOriginID(transfer.getOriginID());
 		instance.setTargetCauseTitle(targetCause.getTitle());
-		instance.setTargetCauseNumber(targetCause.getCauseNumber());		
+		instance.setTargetCauseNumber(targetCause.getCauseNumber());	
+		
+		if (Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+			instance.setDeleted(false);
+		} else {
+			instance.setDeleted(true);
+		}
 		
 		return instance;
 	}
