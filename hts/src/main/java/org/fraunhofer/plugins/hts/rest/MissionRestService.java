@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.datatype.HazardDTMinimalJson;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 
@@ -18,9 +19,11 @@ import com.atlassian.jira.component.ComponentAccessor;
 @Path("/mission")
 public class MissionRestService {
 	private HazardService hazardService;
+	private MissionPayloadService missionService;
 	
-	public MissionRestService(HazardService hazardService) {
+	public MissionRestService(HazardService hazardService, MissionPayloadService payloadService) {
 		this.hazardService = hazardService;
+		this.missionService = payloadService;
 	}
 	
 	@GET

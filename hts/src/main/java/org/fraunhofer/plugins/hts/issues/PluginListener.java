@@ -98,6 +98,7 @@ public class PluginListener implements InitializingBean, DisposableBean {
 			   if (issue.getIssueTypeObject().getName().equals("Hazard")) {
 				   Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
 				   if (hazard != null) {
+					   // Issue ID=???? deleted from JIRA by username (email)
 					   hazardService.deleteHazard(hazard);
 				   }
 			   }
@@ -120,9 +121,11 @@ public class PluginListener implements InitializingBean, DisposableBean {
 	public void onProjectEvent(ProjectDeletedEvent projectEvent) {
 		// get the ID of the project
 		Long projectID = projectEvent.getProject().getId();
+		
 		// get all hazards that contain the projectID
 		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
 		for (Hazards hazard : hazards) {
+			// Project ID=????? was deleted by projectEvent.getUser().getDisplayName() ( projectEvent.getUser().getEmailaddress();. 
 			hazardService.deleteHazard(hazard);
 		}
 	}
