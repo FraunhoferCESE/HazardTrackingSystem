@@ -48,7 +48,6 @@ public class HazardControlTransferDT {
 		}
 		
 		if (Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
-			System.out.println("HCTDT ");
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);
