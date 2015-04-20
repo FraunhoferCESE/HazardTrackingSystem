@@ -52,7 +52,7 @@ public interface HazardService {
 	
 	String getHazardPreparerInformation(Hazards hazard);
 	
-	void deleteHazard(Hazards hazard);
+	void deleteHazard(Hazards hazard, String reason);
 	
 	List<Long> getProjectsWithHazards();
 	

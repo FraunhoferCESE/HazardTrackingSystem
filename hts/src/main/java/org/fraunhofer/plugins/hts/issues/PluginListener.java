@@ -98,8 +98,8 @@ public class PluginListener implements InitializingBean, DisposableBean {
 			   if (issue.getIssueTypeObject().getName().equals("Hazard")) {
 				   Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
 				   if (hazard != null) {
-					   // Issue ID=???? deleted from JIRA by username (email)
-					   hazardService.deleteHazard(hazard);
+					   String reason = "Hazard with ID = " + hazard.getID() + "was deleted from JIRA by " + issueEvent.getUser() + ". Date: " + issueEvent.getTime() ;
+					   hazardService.deleteHazard(hazard, reason);
 				   }
 			   }
 		   } else {
@@ -109,7 +109,8 @@ public class PluginListener implements InitializingBean, DisposableBean {
 				   if (subtask.getIssueTypeObject().getName().equals("Hazard")) {
 					   Hazards hazard = hazardService.getHazardByIssueID(subtask.getId());
 					   if (hazard != null) {
-						   hazardService.deleteHazard(hazard);
+						   String reason = "Hazard with ID = " + hazard.getHazardTitle() + " was deleted by " + issueEvent.getUser() + ". Date: " + issueEvent.getTime();
+						   hazardService.deleteHazard(hazard, reason);
 					   }
 				   }
 			   }
@@ -121,12 +122,11 @@ public class PluginListener implements InitializingBean, DisposableBean {
 	public void onProjectEvent(ProjectDeletedEvent projectEvent) {
 		// get the ID of the project
 		Long projectID = projectEvent.getProject().getId();
-		
 		// get all hazards that contain the projectID
 		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
 		for (Hazards hazard : hazards) {
-			// Project ID=????? was deleted by projectEvent.getUser().getDisplayName() ( projectEvent.getUser().getEmailaddress();. 
-			hazardService.deleteHazard(hazard);
+			 String reason = "Hazard with ID = " + projectEvent.getId() + " was deleted by " + projectEvent.getUser().getDisplayName() + ". Email: " + projectEvent.getUser().getEmailAddress();
+			hazardService.deleteHazard(hazard, reason);
 		}
 	}
 
