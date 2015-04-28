@@ -6,6 +6,15 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 
+/**
+ * Helper class which for generating and formatting the Paragraph elements of a
+ * .docx document.
+ * 
+ * This class follows the Builder pattern - {@link http://www.javaworld.com/article/2074938/core-java/too-many-parameters-in-java-methods-part-3-builder-pattern.html}
+ * 
+ * @author llayman
+ *
+ */
 public class ParagraphBuilder {
 
 	private ParagraphAlignment alignment = ParagraphAlignment.LEFT;

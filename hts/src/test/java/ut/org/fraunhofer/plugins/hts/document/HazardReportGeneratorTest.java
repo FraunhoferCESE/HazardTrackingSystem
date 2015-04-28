@@ -273,7 +273,7 @@ public class HazardReportGeneratorTest {
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
 				+ System.getProperty("file.separator") + "Template.docx");
 
-		List<byte[]> results = test.createWordDocuments(hazardList, validReviewPhases, validRiskCategories,
+		List<byte[]> results = test.createWordDocument(hazardList, validReviewPhases, validRiskCategories,
 				validRiskLikelihoods, template.toURI().toURL().openStream());
 
 		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator")
@@ -323,7 +323,7 @@ public class HazardReportGeneratorTest {
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
 				+ System.getProperty("file.separator") + "Template.docx");
 
-		List<byte[]> results = test.createWordDocuments(hazardList, validReviewPhases, validRiskCategories,
+		List<byte[]> results = test.createWordDocument(hazardList, validReviewPhases, validRiskCategories,
 				validRiskLikelihoods, template.toURI().toURL().openStream());
 
 		File outputDirectory = new File(System.getProperty("user.dir") + System.getProperty("file.separator")

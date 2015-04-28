@@ -64,7 +64,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 
 		ServletOutputStream stream = null;
 		try {
-			List<byte[]> results = reportGenerator.createWordDocuments(hazardList, reviewPhasesList,
+			List<byte[]> results = reportGenerator.createWordDocument(hazardList, reviewPhasesList,
 					riskCategoriesList, riskLikelihoodsList, getClass().getResourceAsStream("/Template.docx"));
 
 			stream = response.getOutputStream();

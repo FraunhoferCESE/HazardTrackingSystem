@@ -3,7 +3,6 @@ package org.fraunhofer.plugins.hts.document;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -36,10 +35,12 @@ import org.slf4j.LoggerFactory;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 
 /**
- * This class generates .docx files containing hazard reports.
+ * This class generates .docx files containing hazard reports. The format is
+ * based on NASA ELV Payload Safety Hazard Report Instructions - NF 1825
+ * {@link https
+ * ://github.com/FraunhoferCESE/HazardTrackingSystem/wiki/HazardReportForm}
  * 
  * @author llayman
  * 
@@ -75,13 +76,8 @@ public class HazardReportGenerator {
 	}
 
 	/**
-	 * Primary method for creating Word .docx files from hazard report data.
-	 * 
-	 * Each hazard is written to a separate file.
-	 * 
-	 * Files are stored in a directory specified by the caller. The files are
-	 * not deleted, so it is recommended that the files be stored in a temporary
-	 * directory that is cleaned periodically..
+	 * Creates byte arrays containing Word .docx files representing hazards in a
+	 * list.
 	 * 
 	 * @param hazardList
 	 *            the list of {@link Hazards} objects for which the files will
@@ -96,53 +92,50 @@ public class HazardReportGenerator {
 	 *            a list of all unique {@link Risk_Likelihoods} in the order in
 	 *            which they will be displayed.
 	 * @param inputStream
-	 *            - Word document containing desired header and footer. Cannot
-	 *            create a footer from scratch per
+	 *            - Word document template containing desired header and footer.
+	 *            Cannot create a footer from scratch per
 	 *            https://issues.apache.org/bugzilla/show_bug.cgi?id=53009.
-	 * @param outputDirectory
-	 *            File location in which to temporarily store output files, such
-	 *            as {@link Files#createTempDir()}. Must not be
-	 *            <code>null</code>.
-	 * @return a list of {@link File} pointing to the created documents, or
-	 *         <code>null</code> if the hazardList is empty or <code>null</code>
+	 * @return a List of byte[]. Each entry in the list is the byte[]
+	 *         representation of a Word .docx file. One byte[] is generated per
+	 *         hazard report. <code>null</code> is returned if the hazardList or
+	 *         inputStream is empty or <code>null</code>
 	 * @throws IOException
 	 * @throws XmlException
 	 */
-	public List<byte[]> createWordDocuments(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
+	public List<byte[]> createWordDocument(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
 			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
 			throws XmlException, IOException {
 
-		checkNotNull(inputStream, "InputStream for generating hazard documents cannot be null.");
-
+		checkNotNull(inputStream, "InputStream containing hazard template cannot be null.");
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
 
 		List<byte[]> results = Lists.newArrayList();
-
-		for (Hazards h : hazardList) {
-			try {
+		try {
+			for (Hazards hazard : hazardList) {
+				// Create a new Word docx using Apache POI. The inputStream is a
+				// .dot file that serves as a template. All hazard data is
+				// subsequently added to this template in order to create the
+				// full document.
+				//
+				// Given how POI works, any changes to the doc (e.g., adding
+				// text) modify the existing object in memory. Thus, you do not
+				// need to return the doc object, but merely make changes to it.
 				XWPFDocument doc = new XWPFDocument(inputStream);
-
-				createContentForHazard(doc, h, reviewPhases, riskCategories, riskLikelihoods);
+				createHeader(doc, hazard, reviewPhases);
+				createHazardDescription(doc, hazard, riskCategories, riskLikelihoods);
 
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				doc.write(out);
 				results.add(out.toByteArray());
-				log.info("Writing byte array for " + h.getHazardNumber());
-			} finally {
-				if (inputStream != null)
-					inputStream.close();
+				log.info("Writing byte array for " + hazard.getHazardNumber());
 			}
+		} finally {
+			if (inputStream != null)
+				inputStream.close();
 		}
 
 		return results;
-	}
-
-	private void createContentForHazard(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases,
-			List<Risk_Categories> testRiskCategories, List<Risk_Likelihoods> testRiskLikelihoods) throws IOException,
-			XmlException {
-		createHeader(doc, h, reviewPhases);
-		createHazardDescription(doc, h, testRiskCategories, testRiskLikelihoods);
 	}
 
 	// private void createFooter(XWPFDocument doc, Hazards h) throws
@@ -160,6 +153,18 @@ public class HazardReportGenerator {
 	// doc.createNumbering();
 	// }
 
+	/**
+	 * Adds the header section of NF1825 to the document. The header section
+	 * contains hazard number, phases affected, author, etc.
+	 * 
+	 * @param doc
+	 *            the template document that hazard data is being added to
+	 * @param h
+	 *            the hazard that is currently being written to the document
+	 * @param reviewPhases
+	 *            a list of ALL possible Review Phases in the system. This is
+	 *            NOT the review phase for the hazard.
+	 */
 	private void createHeader(XWPFDocument doc, Hazards h, List<Review_Phases> reviewPhases) {
 		// Remove the default paragraph in Template.docx
 		doc.removeBodyElement(0);
@@ -172,15 +177,15 @@ public class HazardReportGenerator {
 		// "Payload Hazard Report"
 		cell = row.getCell(0);
 		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
-		setGridSpan(cell, 3);
+		setColSpan(cell, 3);
 		new ParagraphBuilder().text("NASA Expendable Launch Vehicle (ELV)").bold(true).fontSize(14)
 				.createCellText(cell);
 		new ParagraphBuilder().text("Payload Safety Hazard Report").bold(true).fontSize(14).createCellText(cell);
 		new ParagraphBuilder().text("(NPR 8715.7 and NASA-STD 8719.24)").fontSize(8).createCellText(cell);
 
 		// Hazard report number and initiation date.
-		// XXX: Can't do row spans, so these "two" cells are actually one cell
-		// with a paragraph border.
+		// XXX: Can't do row spans, so these "two" cells in the Payload Form are
+		// actually one cell with a paragraph border.
 		cell = row.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getHazardNumber()).bold(true).fontSize(10).leftMargin(0)
@@ -197,12 +202,12 @@ public class HazardReportGenerator {
 		// Payload and Payload Safety Engineer
 		cell = row.getCell(0);
 		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(5000));
-		setGridSpan(cell, 3);
+		setColSpan(cell, 3);
 
 		new CellHeaderBuilder().text("3. Project Name:").createCellHeader(cell);
 		Project projectObj = projectManager.getProjectObj(h.getProjectID());
 		String hProjectName = projectObj == null ? "" : projectObj.getName();
-		
+
 		new ParagraphBuilder().text(hProjectName).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("Payload System Safety Engineer:").createCellHeader(cell);
@@ -226,7 +231,7 @@ public class HazardReportGenerator {
 
 		// Subsystems
 		cell = row.getCell(0);
-		setGridSpan(cell, 2);
+		setColSpan(cell, 2);
 		new CellHeaderBuilder().text("5. System/Subsystem: ").createCellHeader(cell);
 		for (Subsystems s : h.getSubsystems()) {
 			new ParagraphBuilder().text(s.getLabel()).createCellText(cell);
@@ -250,14 +255,26 @@ public class HazardReportGenerator {
 
 		// TODO: Applicable Safety Requirements
 		cell = row.getCell(0);
-		setGridSpan(cell, 4);
+		setColSpan(cell, 4);
 
 		new CellHeaderBuilder().text("8. Applicable Safety Requirements: ").createCellHeader(cell);
 		new ParagraphBuilder().text("N/A").createCellText(cell);
 	}
 
-	private void createHazardDescription(XWPFDocument doc, Hazards h, List<Risk_Categories> testRiskCategories,
-			List<Risk_Likelihoods> testRiskLikelihoods) {
+	/**
+	 * Adds the "HAZARD" section of NF1825 to the document.
+	 * 
+	 * @param doc
+	 *            the template document that hazard data is being added to
+	 * @param h
+	 *            the hazard that is currently being written to the document
+	 * @param riskCategories
+	 *            a list of ALL possible Risk Categories in the system.
+	 * @param riskLikelihoods
+	 *            a list of ALL possible Risk Likelihoods in the system.
+	 */
+	private void createHazardDescription(XWPFDocument doc, Hazards h, List<Risk_Categories> riskCategories,
+			List<Risk_Likelihoods> riskLikelihoods) {
 
 		XWPFTableRow row;
 		XWPFTableCell cell;
@@ -267,8 +284,9 @@ public class HazardReportGenerator {
 		cell = row.getCell(0);
 		cell.setColor("BBBBBB");
 		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
-		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150)); // This sets the width of the table to the page
-		setGridSpan(cell, 4);
+		// Set table width to page width
+		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
+		setColSpan(cell, 4);
 		new CellHeaderBuilder().text("Hazard").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50)
 				.createCellHeader(cell);
 
@@ -277,44 +295,51 @@ public class HazardReportGenerator {
 		// Headers for Hazard Title and Risk Categories/Likelihoods
 		row = new TableBuilder().size(1, 2).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
 		cell = row.getCell(0);
-		setGridSpan(cell, 2);
+		setColSpan(cell, 2);
 		new CellHeaderBuilder().text("9. Hazard title:").createCellHeader(cell);
 
 		cell = row.getCell(1);
-		setGridSpan(cell, 2);
+		setColSpan(cell, 2);
 		new CellHeaderBuilder().text("10. Hazard Category and risk Likelihood:").createCellHeader(cell);
 
 		row = new TableBuilder().size(1, 3).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
 		// HAzard Title
 		cell = row.getCell(0);
-		setGridSpan(cell, 2);
+		setColSpan(cell, 2);
 		new ParagraphBuilder().text(h.getHazardTitle()).createCellText(cell);
 
+		// TODO: There should be a risk matrix here with Causes and their info.
+		// The commented code below is incorrectn, but may be useful later on
+		// when drawing individual causes.
 		// Hazard category and risk likelihood
-//		cell = row.getCell(1);
-//		for (Risk_Categories category : testRiskCategories) {
-//			if (category.getID() == h.getRiskCategory().getID())
-//				new ParagraphBuilder().text("\u2612  " + category.getValue()).fontSize(6).createCellText(cell);
-//			else
-//				new ParagraphBuilder().text("\u2610  " + category.getValue()).fontSize(6).createCellText(cell);
-//		}
-//
-//		cell = row.getCell(2);
-//		for (Risk_Likelihoods likelihood : testRiskLikelihoods) {
-//			if (likelihood.getID() == h.getRiskLikelihood().getID())
-//				new ParagraphBuilder().text("\u2612  " + likelihood.getValue()).leftMargin(100).fontSize(6)
-//						.createCellText(cell);
-//			else
-//				new ParagraphBuilder().text("\u2610  " + likelihood.getValue()).leftMargin(100).fontSize(6)
-//						.createCellText(cell);
-//
-//		}
+		// cell = row.getCell(1);
+		// for (Risk_Categories category : testRiskCategories) {
+		// if (category.getID() == h.getRiskCategory().getID())
+		// new ParagraphBuilder().text("\u2612  " +
+		// category.getValue()).fontSize(6).createCellText(cell);
+		// else
+		// new ParagraphBuilder().text("\u2610  " +
+		// category.getValue()).fontSize(6).createCellText(cell);
+		// }
+		//
+		// cell = row.getCell(2);
+		// for (Risk_Likelihoods likelihood : testRiskLikelihoods) {
+		// if (likelihood.getID() == h.getRiskLikelihood().getID())
+		// new ParagraphBuilder().text("\u2612  " +
+		// likelihood.getValue()).leftMargin(100).fontSize(6)
+		// .createCellText(cell);
+		// else
+		// new ParagraphBuilder().text("\u2610  " +
+		// likelihood.getValue()).leftMargin(100).fontSize(6)
+		// .createCellText(cell);
+		//
+		// }
 		// --------------------------------------
 
 		// Hazard description
 		row = new TableBuilder().size(1, 1).createTable(doc).getRow(0);
 		cell = row.getCell(0);
-		setGridSpan(cell, 4);
+		setColSpan(cell, 4);
 		new CellHeaderBuilder().text("11. Description of hazard:").createCellHeader(cell);
 		new ParagraphBuilder().text(h.getHazardDescription()).createCellText(cell);
 
@@ -322,7 +347,7 @@ public class HazardReportGenerator {
 		// Cause summary
 		row = new TableBuilder().size(1, 1).createTable(doc).getRow(0);
 		cell = row.getCell(0);
-		setGridSpan(cell, 4);
+		setColSpan(cell, 4);
 		new CellHeaderBuilder().text("12. Hazard causes:").createCellHeader(cell);
 
 		for (Hazard_Causes cause : h.getHazardCauses()) {
@@ -335,6 +360,15 @@ public class HazardReportGenerator {
 
 	}
 
+	/**
+	 * Helper method that writes out text for a transferred CAUSE title based on
+	 * the target of the transfer.
+	 * 
+	 * @param cell
+	 *            the cell which will contain the Cause title
+	 * @param cause
+	 *            the cause which is the transfer origin
+	 */
 	private void printCauseTransfer(XWPFTableCell cell, Hazard_Causes cause) {
 		Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 
@@ -354,12 +388,21 @@ public class HazardReportGenerator {
 
 	}
 
-	private void setGridSpan(XWPFTableCell cell, int val) {
+	/**
+	 * Helper method to set the number of columns spanned by a table cell. This
+	 * is similar to the colspan in HTML table TD element.
+	 * 
+	 * @param cell
+	 *            the cell whose column span should be set
+	 * @param numCols
+	 *            the number of columns which the cell should span.
+	 */
+	private void setColSpan(XWPFTableCell cell, int numCols) {
 		if (cell.getCTTc().getTcPr() == null)
 			cell.getCTTc().addNewTcPr();
 		if (cell.getCTTc().getTcPr().getGridSpan() == null)
 			cell.getCTTc().getTcPr().addNewGridSpan();
-		cell.getCTTc().getTcPr().getGridSpan().setVal(BigInteger.valueOf(val));
+		cell.getCTTc().getTcPr().getGridSpan().setVal(BigInteger.valueOf(numCols));
 	}
 
 }
