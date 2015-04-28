@@ -31,9 +31,12 @@
 #set( $notSpecified = [] )
 #set( $causeTransfers = [] )
 
+
+
 #foreach ($cause in $hazard.getHazardCauses())
 	#if (!$cause.getDeleteReason())
 		#if ($cause.getTransfer() != 0)
+
 			#set($result = $causeTransfers.add($cause))
 		#else
 			#if ($cause.getRiskLikelihood().getValue() == "A - Frequent")
@@ -76,8 +79,12 @@
 				#set($result = $notSpecified.add($cause))
 			#end
 		#end
+		
 		<tr data-row="$likelihoodNamesMap.get($keyOne)">
 			<td>$likelihoodNamesMap.get($keyOne)</td>
+			
+			##coloring the cells
+			
 			#foreach ($keyTwo in $categoryMap.keySet())
 				#set( $className = "" )
 				#if ($likelihoodNamesMap.get($keyOne) == "Frequent")
@@ -127,8 +134,10 @@
 						#end
 					</div>
 				</td>
+				
 			#end
 		</tr>
+	
 		#set ($categoryMap = {
 			1: [],
 			2: [],
@@ -136,6 +145,7 @@
 			4: []
 		})
 	#end
+	
 </table>
 
 <div id="HazardPageRiskMatrixHazards">

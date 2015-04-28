@@ -36,7 +36,7 @@ public class TransferServiceImpl implements TransferService {
 	}
 
 	@Override
-	public Transfers getTransferByID(int id) {
+	public Transfers getTransferByID(int id) { //nota þessa
 		final Transfers[] transfer = ao.find(Transfers.class, Query.select().where("ID=?", id));
 		return transfer.length > 0 ? transfer[0] : null;
 	}

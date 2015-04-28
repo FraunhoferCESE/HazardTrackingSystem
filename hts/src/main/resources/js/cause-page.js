@@ -25,7 +25,7 @@ function initCausePageClickEvents() {
 	
 	    alert(" targetID " + targetID);
 
-	    initHTSCookie();
+	    //initHTSCookie();
 	    modifyHTSCookieOpenCauses("open", targetID, null);
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
 	});

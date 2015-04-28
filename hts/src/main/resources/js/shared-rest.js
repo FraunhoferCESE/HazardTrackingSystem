@@ -90,3 +90,23 @@ function getTransferOrigins(hazardElement, elementType) {
 	return transferOrigins;
 }
 
+//function getTransferTarget(transferId) {
+//	var result = [];
+//	
+// 	AJS.$.ajax({
+//		type: "GET",
+//		url: AJS.params.baseURL + "/rest/hts/1.0/transfer/findTransferValues?transferId=" + transferId,
+//		async: false,
+//		success: function(data) {
+//			console.log("SUCCESS");
+//			
+//			result = data;
+//		},
+//		error: function() {
+//			console.log("ERROR");
+//		}
+//	}); 
+// 	alert("yoyo1" + result);
+//	return result;
+//}
+
