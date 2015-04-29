@@ -153,6 +153,7 @@
 	<div class="HazardPageRiskMatrixText">Causes whose transfers lead to another cause: 
 		#foreach ($riskValue in $transferredToACause)
 			<p>
+				Cause Number: $riskValue.getCauseNumber(), Cause id: $riskValue.getCauseId()
 				Cause $riskValue.getCauseNumber() -> Hazard $riskValue.getParentHazard(),Cause $riskValue.getTransferTargetId(). Likelihood: $riskValue.getRiskLikeliHood(), Category: $riskValue.getRiskCategory()
 			</p>			
 		#end

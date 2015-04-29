@@ -7,10 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,13 +43,13 @@ import com.google.common.collect.Maps;
 
 public final class HazardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
 	private final HazardGroupService hazardGroupService;
 	private final SubsystemService subsystemService;
 	private final ReviewPhaseService reviewPhaseService;
 	private final MissionPhaseService missionPhaseService;
 	private final TemplateRenderer templateRenderer;
 	private TransferService transferService;
-	private HazardControlService controlService;
 	private HazardCauseService causeService;
 	private HazardService hazardService;
 	HazardCauseService hazardCauseService;
@@ -68,7 +66,6 @@ public final class HazardServlet extends HttpServlet {
 		this.missionPhaseService = checkNotNull(missionPhaseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.transferService = checkNotNull(transferService);
-		this.controlService = checkNotNull(controlService);
 		this.causeService = checkNotNull(causeService);
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
@@ -148,32 +145,16 @@ public final class HazardServlet extends HttpServlet {
 				for (int i = 0; i < hazard.getHazardCauses().length; i++) {
 
 					if (cause[i].getTransfer() != 0) {
-						TransferRiskValue transferResult = doGetTransfer(cause[i].getTransfer(), cause[i]);
-						System.out.println("transferResult " + transferResult);
-						if(transferResult.isDeleted())
+						TransferRiskValue transferResult = doGetTransfer(cause[i], cause[i].getTransfer());
+						if (transferResult.isDeleted())
 							transferIsDeletedList.add(transferResult);
-						if (transferResult.isHazard()) {
+						if (transferResult.getTransferTargetType().equals("HAZARD")) {
 							transferredToHazard.add(transferResult);
 						} else {
 							transferredToACause.add(transferResult);
 						}
-
 					}
-
 				}
-
-				// just to see if something works
-//				System.out.println("test" + transferredInACircle.size());
-//				System.out.println("transferTest1 " + String.valueOf(transferredInACircle));
-				// System.out.println("transferTest2 " +
-				// String.valueOf(transferredInACircle.get(0).getRiskCategory()));
-				// System.out.println("transferTest3 " +
-				// transferredInACircle.get(1).getCauseNumber());
-				// System.out.println("transferTest4 " +
-				// transferredInACircle.get(1).getTransferTargetId());
-				System.out.println("transferredToHazard " + transferredToHazard);
-				System.out.println("transferredToACause " + transferredToACause.toString());
-//				System.out.println("transferredInACircle " + transferredInACircle.toString());
 
 				context.put("hazard", hazard);
 				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
@@ -233,61 +214,42 @@ public final class HazardServlet extends HttpServlet {
 		}
 	}
 
-	private TransferRiskValue doGetTransfer(int transferId, Hazard_Causes originCause) {
-		int transferToLookup = transferId;
-//		Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
+	private TransferRiskValue doGetTransfer(Hazard_Causes originCause, int transferId) {
+		Transfers transfer = transferService.getTransferByID(transferId);
 
-		while (true) {
-//			previouslyVisitedTransfers.add(transferToLookup);
-			Transfers transfer = transferService.getTransferByID(transferToLookup);
-			// System.out.println("transfer " + transfer);
-			// want original causeId
+		switch (transfer.getTargetType()) {
+		case "CAUSE":
+			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 
-			switch (transfer.getTargetType()) {
-			case "CAUSE":
-				Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
+			if (targetCause.getTransfer() == 0) {
+				// Transfer target is a non-transferred cause.
+				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE",
+						originCause.getCauseNumber(), originCause.getID());
 
-				if (targetCause.getTransfer() == 0) {
-					// We have found a transfer target that is a non-transferred
-					// cause.
-					String targetCauseId = String.valueOf(targetCause.getID());
-					String riskCategory = targetCause.getRiskCategory().getValue();
-					String riskLikelihood = targetCause.getRiskLikelihood().getValue();
-					boolean isDeleted = !Strings.isNullOrEmpty(targetCause.getDeleteReason());
-					int hazardId = targetCause.getHazards()[0].getID();
-					
-					
-					return new TransferRiskValue(targetCauseId, "CAUSE", false, false, originCause.getID(),
-							originCause.getCauseNumber(), riskCategory, riskLikelihood, isDeleted, hazardId);
-				} else {
-//					if (previouslyVisitedTransfers.contains(targetCause.getTransfer())) {
-//						// We have already seen this transferred cause. Thus,
-//						// there is a circular reference. We need to return a
-//						// value that indicates the transfers are circular.
-//						String targetCauseId = String.valueOf(targetCause.getID());
-//
-//						return new TransferRiskValue(targetCauseId, "CAUSE", true, false, originCause.getID(),
-//								originCause.getCauseNumber(), null, null);
-//					} else {
-						// We need to loop around again to follow the
-						// transfer chain.
-						transferToLookup = targetCause.getTransfer();
-//					}
-				}
-				break;
-			case "HAZARD":
-				// The cause transfers to a hazard, so we need to return
-				// something which indicates this. In the template, causes which
-				// link to hazards go into a separate list.
-				Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
-				String targetHazardId = String.valueOf(targetHazard.getID());
-				
-				return new TransferRiskValue(targetHazardId, "HAZARD", false, true, originCause.getID(),
-						originCause.getCauseNumber(), null, null, !targetHazard.getActive(), null);
+				value.setRiskCategory(targetCause.getRiskCategory() == null ? null : targetCause.getRiskCategory()
+						.getValue());
+				value.setRiskLikeliHood(targetCause.getRiskLikelihood() == null ? null : targetCause
+						.getRiskLikelihood().getValue());
+				value.setDeleted(!Strings.isNullOrEmpty(targetCause.getDeleteReason()));
 
-			default:
-				throw new IllegalArgumentException("Could not get transfer type.");
+				return value;
+			} else {
+				// Recursively follow the transfer chain.
+				return doGetTransfer(originCause, targetCause.getTransfer());
 			}
+		case "HAZARD":
+			// The cause transfers to a hazard.
+			Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+
+			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD",
+					originCause.getCauseNumber(), originCause.getID());
+			value.setDeleted(!targetHazard.getActive());
+
+			return value;
+
+		default:
+			throw new IllegalArgumentException("Unhandled transfer target type. TransferId: " + transferId
+					+ ", transferTargetType: " + transfer.getTargetType());
 		}
 
 	}
