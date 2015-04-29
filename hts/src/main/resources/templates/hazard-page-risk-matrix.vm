@@ -148,9 +148,30 @@
 	
 </table>
 
-<div id="HazardPageRiskMatrixHazards">
-	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: </div>
-</div>
+
+#if($transferredToHazard.size() != 0)
+	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: 
+		#foreach ($riskValue in $transferredToHazard)
+			<p>
+				Cause $riskValue.getCauseNumber() -> Hazard id: $riskValue.getTransferTargetId() 
+			</p>			
+		#end
+	</div>
+#end
+
+
+#if($transferredInACircle.size() != 0)
+	<div class="HazardPageRiskMatrixText">Causes whose transfers lead to a circular reference: 
+		#foreach ($riskValue in $transferredInACircle)
+			<p>
+				$riskValue.getCauseNumber()
+			</p>			
+		#end
+	</div>
+#end
+
+
+
 
 #if ($notSpecified.size() != 0)
 	<div>

@@ -5,18 +5,18 @@ public class TransferRiskValue {
 	private String transferTargetId;
 	private String transferTargetType;
 	private boolean isCircular;
-	private boolean isTransferred;
+	private boolean isHazard;
 	private int causeNumber;
 	private int causeId;
 	private String riskLikeliHood;
 	private String riskCategory;
 
 	public TransferRiskValue(String transferTargetId, String transferTargetType,
-			boolean isCircular, boolean isTransferred, int causeNumber, int causeId, String riskCategory, String riskLikeliHood) {
+			boolean isCircular, boolean isHazard, int causeNumber, int causeId, String riskCategory, String riskLikeliHood) {
 		this.transferTargetId = transferTargetId;
 		this.transferTargetType = transferTargetType;
 		this.isCircular = isCircular;
-		this.isTransferred = isTransferred;
+		this.isHazard = isHazard;
 		this.causeNumber = causeNumber;
 		this.causeId = causeId;
 		this.riskCategory = riskCategory;
@@ -49,12 +49,12 @@ public class TransferRiskValue {
 		this.isCircular = isCircular;
 	}
 
-	public boolean isTransferred() {
-		return isTransferred;
+	public boolean isHazard() {
+		return isHazard;
 	}
 
-	public void setTransferred(boolean isTransferred) {
-		this.isTransferred = isTransferred;
+	public void setHazard(boolean isTransferred) {
+		this.isHazard = isTransferred;
 	}
 
 

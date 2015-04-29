@@ -29,14 +29,6 @@
     width: 85px;
 }
 
-#HazardPageRiskMatrixHazards {
-    display: none;
-}
-
-#HazardPageRiskMatrixTransfersDeletedContainer {
-    display: none;
-}
-
 .HazardPageRiskMatrixLink {
     color: #333333;
 }
