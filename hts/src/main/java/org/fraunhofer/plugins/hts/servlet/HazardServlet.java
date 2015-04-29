@@ -56,10 +56,14 @@ public final class HazardServlet extends HttpServlet {
 	private HazardService hazardService;
 	HazardCauseService hazardCauseService;
 
-	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
-			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
-			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
-			TransferService transferService, HazardControlService controlService, HazardCauseService causeService,
+	public HazardServlet(HazardService hazardService,
+			HazardGroupService hazardGroupService,
+			SubsystemService subsystemService,
+			ReviewPhaseService reviewPhaseService,
+			MissionPhaseService missionPhaseService,
+			TemplateRenderer templateRenderer, TransferService transferService,
+			HazardControlService controlService,
+			HazardCauseService causeService,
 			HazardCauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
@@ -75,11 +79,13 @@ public final class HazardServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		// TODO: Look into re-factoring permissions/generating error messages is
 		// done - see issue on the Huboard.
 
-		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
+		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor
+				.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
@@ -98,17 +104,20 @@ public final class HazardServlet extends HttpServlet {
 					hazard = hazardService.getHazardByID(hazardID);
 					if (hazard != null) {
 						// Check user permission
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(),
+						if (!hazardService.hasHazardPermission(
+								hazard.getProjectID(),
 								jiraAuthenticationContext.getUser())) {
 							error = true;
 							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-									+ jiraAuthenticationContext.getUser().getUsername()
+									+ jiraAuthenticationContext.getUser()
+											.getUsername()
 									+ ") do not have permission to view/edit it.";
 						}
 					} else {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-								+ jiraAuthenticationContext.getUser().getUsername()
+								+ jiraAuthenticationContext.getUser()
+										.getUsername()
 								+ ") do not have permission to view/edit it.";
 					}
 				} catch (NumberFormatException e) {
@@ -122,7 +131,8 @@ public final class HazardServlet extends HttpServlet {
 				errorList.add(".../causes?id=[number]");
 				errorList.add(".../controls?id=[number]");
 				errorList.add(".../verifications?id=[number]");
-				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+				errorList
+						.add("where [number] is the unique identifier of the Hazard Report.");
 			}
 
 			// Decide which page to render for the user, error-page or
@@ -130,15 +140,19 @@ public final class HazardServlet extends HttpServlet {
 			if (error == true) {
 				context.put("errorMessage", errorMessage);
 				context.put("errorList", errorList);
-				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
+				templateRenderer.render("templates/error-page.vm", context,
+						resp.getWriter());
 			} else {
 				Project jiraProject = hazardService.getHazardProject(hazard);
 				Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
-				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+				String baseURL = ComponentAccessor.getApplicationProperties()
+						.getString("jira.baseurl");
 				String jiraSubTaskSummary = jiraSubtask.getSummary();
-				String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber();
+				String jiraSubtaskURL = baseURL + "/browse/"
+						+ jiraProject.getKey() + "-" + jiraSubtask.getNumber();
 				String jiraProjectName = jiraProject.getName();
-				String jiraProjectURL = baseURL + "/browse/" + jiraProject.getKey();
+				String jiraProjectURL = baseURL + "/browse/"
+						+ jiraProject.getKey();
 
 				Hazard_Causes[] cause = hazard.getHazardCauses();
 				List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
@@ -150,8 +164,10 @@ public final class HazardServlet extends HttpServlet {
 					if (cause[i].getTransfer() != 0) {
 						TransferRiskValue transferResult = doGetTransfer(cause[i].getTransfer(), cause[i]);
 						System.out.println("transferResult " + transferResult);
-						if(transferResult.isDeleted())
+						if (transferResult.isDeleted()){
 							transferIsDeletedList.add(transferResult);
+							System.out.println("transferIsDeletedList"+ transferIsDeletedList);
+						}
 						if (transferResult.isHazard()) {
 							transferredToHazard.add(transferResult);
 						} else {
@@ -159,39 +175,52 @@ public final class HazardServlet extends HttpServlet {
 						}
 
 					}
+					System.out.println("transferIsDeletedList"
+							+ transferIsDeletedList);
 
 				}
 
 				// just to see if something works
-//				System.out.println("test" + transferredInACircle.size());
-//				System.out.println("transferTest1 " + String.valueOf(transferredInACircle));
+				// System.out.println("test" + transferredInACircle.size());
+				// System.out.println("transferTest1 " +
+				// String.valueOf(transferredInACircle));
 				// System.out.println("transferTest2 " +
 				// String.valueOf(transferredInACircle.get(0).getRiskCategory()));
 				// System.out.println("transferTest3 " +
 				// transferredInACircle.get(1).getCauseNumber());
 				// System.out.println("transferTest4 " +
 				// transferredInACircle.get(1).getTransferTargetId());
-				System.out.println("transferredToHazard " + transferredToHazard);
-				System.out.println("transferredToACause " + transferredToACause.toString());
-//				System.out.println("transferredInACircle " + transferredInACircle.toString());
+				System.out
+						.println("transferredToHazard " + transferredToHazard);
+				System.out.println("transferredToACause "
+						+ transferredToACause.toString());
+				// System.out.println("transferredInACircle " +
+				// transferredInACircle.toString());
 
 				context.put("hazard", hazard);
 				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
 				context.put("jiraSubtaskURL", jiraSubtaskURL);
 				context.put("jiraProjectName", jiraProjectName);
 				context.put("jiraProjectURL", jiraProjectURL);
-				context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
-				context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
+				context.put("nonAssociatedSubsystems",
+						subsystemService.getRemaining(hazard.getSubsystems()));
+				context.put("hazardPreparer",
+						hazardService.getHazardPreparerInformation(hazard));
 				context.put("reviewPhases", reviewPhaseService.all());
-				context.put("nonAssociatedMissionPhases", missionPhaseService.getRemaining(hazard.getMissionPhases()));
-				context.put("nonAssociatedHazardGroups", hazardGroupService.getRemaining(hazard.getHazardGroups()));
-				context.put("initiationDate", removeTimeFromDate(hazard.getInitiationDate()));
-				context.put("completionDate", removeTimeFromDate(hazard.getCompletionDate()));
+				context.put("nonAssociatedMissionPhases", missionPhaseService
+						.getRemaining(hazard.getMissionPhases()));
+				context.put("nonAssociatedHazardGroups", hazardGroupService
+						.getRemaining(hazard.getHazardGroups()));
+				context.put("initiationDate",
+						removeTimeFromDate(hazard.getInitiationDate()));
+				context.put("completionDate",
+						removeTimeFromDate(hazard.getCompletionDate()));
 				context.put("transferredToHazard", transferredToHazard);
 				context.put("transferredToACause", transferredToACause);
 				context.put("transferIsDeletedList", transferIsDeletedList);
 				// context.put("cause", cause);
-				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
+				templateRenderer.render("templates/hazard-page.vm", context,
+						resp.getWriter());
 			}
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
@@ -199,29 +228,37 @@ public final class HazardServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			String hazardIDStr = req.getParameter("hazardID");
 			int hazardID = Integer.parseInt(hazardIDStr);
 			String hazardNumber = req.getParameter("hazardNumber");
 			String version = req.getParameter("hazardVersionNumber");
 			String hazardTitle = req.getParameter("hazardTitle");
-			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req
-					.getParameterValues("hazardSubsystem")));
-			Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
-			Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req
-					.getParameterValues("hazardPhase")));
-			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req
-					.getParameterValues("hazardGroup")));
-			String safetyRequirements = req.getParameter("hazardSafetyRequirements");
+			Subsystems[] subsystems = subsystemService
+					.getSubsystemsByID(changeStringArray(req
+							.getParameterValues("hazardSubsystem")));
+			Review_Phases reviewPhase = reviewPhaseService
+					.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
+			Mission_Phase[] missionPhases = missionPhaseService
+					.getMissionPhasesByID(changeStringArray(req
+							.getParameterValues("hazardPhase")));
+			Hazard_Group[] hazardGroups = hazardGroupService
+					.getHazardGroupsByID(changeStringArray(req
+							.getParameterValues("hazardGroup")));
+			String safetyRequirements = req
+					.getParameter("hazardSafetyRequirements");
 			String description = req.getParameter("hazardDescription");
 			String justification = req.getParameter("hazardJustification");
 			String openWork = req.getParameter("hazardOpenWork");
 			Date initiation = changeToDate(req.getParameter("hazardInitation"));
 			Date completion = changeToDate(req.getParameter("hazardCompletion"));
 
-			hazardService.update(hazardID, hazardNumber, version, hazardTitle, subsystems, reviewPhase, missionPhases,
-					hazardGroups, safetyRequirements, description, justification, openWork, initiation, completion);
+			hazardService.update(hazardID, hazardNumber, version, hazardTitle,
+					subsystems, reviewPhase, missionPhases, hazardGroups,
+					safetyRequirements, description, justification, openWork,
+					initiation, completion);
 
 			JSONObject json = new JSONObject();
 			createJson(json, "updateSuccess", true);
@@ -233,60 +270,78 @@ public final class HazardServlet extends HttpServlet {
 		}
 	}
 
-	private TransferRiskValue doGetTransfer(int transferId, Hazard_Causes originCause) {
+	private TransferRiskValue doGetTransfer(int transferId,
+			Hazard_Causes originCause) {
 		int transferToLookup = transferId;
-//		Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
+		// Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
 
 		while (true) {
-//			previouslyVisitedTransfers.add(transferToLookup);
-			Transfers transfer = transferService.getTransferByID(transferToLookup);
+			// previouslyVisitedTransfers.add(transferToLookup);
+			Transfers transfer = transferService
+					.getTransferByID(transferToLookup);
 			// System.out.println("transfer " + transfer);
 			// want original causeId
 
 			switch (transfer.getTargetType()) {
 			case "CAUSE":
-				Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
+				Hazard_Causes targetCause = causeService
+						.getHazardCauseByID(transfer.getTargetID());
 
 				if (targetCause.getTransfer() == 0) {
 					// We have found a transfer target that is a non-transferred
 					// cause.
 					String targetCauseId = String.valueOf(targetCause.getID());
-					String riskCategory = targetCause.getRiskCategory().getValue();
-					String riskLikelihood = targetCause.getRiskLikelihood().getValue();
-					boolean isDeleted = !Strings.isNullOrEmpty(targetCause.getDeleteReason());
+
+					String riskCategory = targetCause.getRiskCategory() == null ? null
+							: targetCause.getRiskCategory().getValue();
+					String riskLikelihood = targetCause.getRiskLikelihood() == null ? null
+							: targetCause.getRiskLikelihood().getValue();
+					boolean isDeleted = !Strings.isNullOrEmpty(targetCause
+							.getDeleteReason());
 					int hazardId = targetCause.getHazards()[0].getID();
 					
-					
-					return new TransferRiskValue(targetCauseId, "CAUSE", false, false, originCause.getID(),
-							originCause.getCauseNumber(), riskCategory, riskLikelihood, isDeleted, hazardId);
+					System.out.println("Cause Number " + originCause.getCauseNumber());
+
+					return new TransferRiskValue(targetCauseId, "CAUSE", false,
+							false, originCause.getID(),
+							originCause.getCauseNumber(), riskCategory,
+							riskLikelihood, isDeleted, hazardId);
 				} else {
-//					if (previouslyVisitedTransfers.contains(targetCause.getTransfer())) {
-//						// We have already seen this transferred cause. Thus,
-//						// there is a circular reference. We need to return a
-//						// value that indicates the transfers are circular.
-//						String targetCauseId = String.valueOf(targetCause.getID());
-//
-//						return new TransferRiskValue(targetCauseId, "CAUSE", true, false, originCause.getID(),
-//								originCause.getCauseNumber(), null, null);
-//					} else {
-						// We need to loop around again to follow the
-						// transfer chain.
-						transferToLookup = targetCause.getTransfer();
-//					}
+					// if
+					// (previouslyVisitedTransfers.contains(targetCause.getTransfer()))
+					// {
+					// // We have already seen this transferred cause. Thus,
+					// // there is a circular reference. We need to return a
+					// // value that indicates the transfers are circular.
+					// String targetCauseId =
+					// String.valueOf(targetCause.getID());
+					//
+					// return new TransferRiskValue(targetCauseId, "CAUSE",
+					// true, false, originCause.getID(),
+					// originCause.getCauseNumber(), null, null);
+					// } else {
+					// We need to loop around again to follow the
+					// transfer chain.
+					transferToLookup = targetCause.getTransfer();
+					// }
 				}
 				break;
 			case "HAZARD":
 				// The cause transfers to a hazard, so we need to return
 				// something which indicates this. In the template, causes which
 				// link to hazards go into a separate list.
-				Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+				Hazards targetHazard = hazardService.getHazardByID(transfer
+						.getTargetID());
 				String targetHazardId = String.valueOf(targetHazard.getID());
-				
-				return new TransferRiskValue(targetHazardId, "HAZARD", false, true, originCause.getID(),
-						originCause.getCauseNumber(), null, null, !targetHazard.getActive(), null);
+
+				return new TransferRiskValue(targetHazardId, "HAZARD", false,
+						true, originCause.getID(),
+						originCause.getCauseNumber(), null, null,
+						!targetHazard.getActive(), null);
 
 			default:
-				throw new IllegalArgumentException("Could not get transfer type.");
+				throw new IllegalArgumentException(
+						"Could not get transfer type.");
 			}
 		}
 
