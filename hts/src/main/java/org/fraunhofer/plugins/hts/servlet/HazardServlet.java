@@ -141,6 +141,7 @@ public final class HazardServlet extends HttpServlet {
 				List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
 				List<TransferRiskValue> transferredToACause = new ArrayList<TransferRiskValue>();
 				List<TransferRiskValue> transferIsDeletedList = new ArrayList<TransferRiskValue>();
+				List<TransferRiskValue> transferMissingRiskValue = new ArrayList<TransferRiskValue>();
 
 				for (int i = 0; i < hazard.getHazardCauses().length; i++) {
 
@@ -151,7 +152,10 @@ public final class HazardServlet extends HttpServlet {
 						if (transferResult.getTransferTargetType().equals("HAZARD")) {
 							transferredToHazard.add(transferResult);
 						} else {
-							transferredToACause.add(transferResult);
+							if (transferResult.getRiskCategory() == null || transferResult.getRiskLikelihood() == null)
+								transferMissingRiskValue.add(transferResult);
+							else
+								transferredToACause.add(transferResult);
 						}
 					}
 				}
@@ -171,6 +175,7 @@ public final class HazardServlet extends HttpServlet {
 				context.put("transferredToHazard", transferredToHazard);
 				context.put("transferredToACause", transferredToACause);
 				context.put("transferIsDeletedList", transferIsDeletedList);
+				context.put("transferMissingRiskValue", transferMissingRiskValue);
 				// context.put("cause", cause);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
@@ -226,10 +231,8 @@ public final class HazardServlet extends HttpServlet {
 				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE",
 						originCause.getCauseNumber(), originCause.getID());
 
-				value.setRiskCategory(targetCause.getRiskCategory() == null ? null : targetCause.getRiskCategory()
-						.getValue());
-				value.setRiskLikeliHood(targetCause.getRiskLikelihood() == null ? null : targetCause
-						.getRiskLikelihood().getValue());
+				value.setRiskCategory(targetCause.getRiskCategory());
+				value.setRiskLikelihood(targetCause.getRiskLikelihood());
 				value.setDeleted(!Strings.isNullOrEmpty(targetCause.getDeleteReason()));
 
 				return value;

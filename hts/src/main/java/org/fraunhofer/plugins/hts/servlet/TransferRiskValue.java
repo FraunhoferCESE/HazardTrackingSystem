@@ -1,5 +1,8 @@
 package org.fraunhofer.plugins.hts.servlet;
 
+import org.fraunhofer.plugins.hts.db.Risk_Categories;
+import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+
 public class TransferRiskValue {
 	private final int transferTargetId;
 	private final String transferTargetType;
@@ -8,8 +11,24 @@ public class TransferRiskValue {
 
 	private boolean isDeleted = false;
 
-	private String riskLikeliHood = null;
-	private String riskCategory = null;
+	private Risk_Likelihoods riskLikelihood ;
+	private Risk_Categories riskCategory;
+
+	public Risk_Likelihoods getRiskLikelihood() {
+		return riskLikelihood;
+	}
+
+	public void setRiskLikelihood(Risk_Likelihoods riskLikelihood) {
+		this.riskLikelihood = riskLikelihood;
+	}
+
+	public Risk_Categories getRiskCategory() {
+		return riskCategory;
+	}
+
+	public void setRiskCategory(Risk_Categories riskCategory) {
+		this.riskCategory = riskCategory;
+	}
 
 	public TransferRiskValue(int transferTargetId, String transferTargetType, int causeNumber, int causeId) {
 		this.transferTargetId = transferTargetId;
@@ -40,21 +59,5 @@ public class TransferRiskValue {
 
 	public int getCauseId() {
 		return causeId;
-	}
-
-	public String getRiskLikeliHood() {
-		return riskLikeliHood;
-	}
-
-	public void setRiskLikeliHood(String riskLikeliHood) {
-		this.riskLikeliHood = riskLikeliHood;
-	}
-
-	public String getRiskCategory() {
-		return riskCategory;
-	}
-
-	public void setRiskCategory(String riskCategory) {
-		this.riskCategory = riskCategory;
 	}
 }
