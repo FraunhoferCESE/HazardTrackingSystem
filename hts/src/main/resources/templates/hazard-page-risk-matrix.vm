@@ -149,6 +149,18 @@
 </table>
 
 
+#if($transferredToACause.size() != 0)
+	<div class="HazardPageRiskMatrixText">Causes whose transfers lead to another cause: 
+		#foreach ($riskValue in $transferredToACause)
+			<p>
+				Cause $riskValue.getCauseNumber() -> Hazard $riskValue.getParentHazard(),Cause $riskValue.getTransferTargetId(). Likelihood: $riskValue.getRiskLikeliHood(), Category: $riskValue.getRiskCategory()
+			</p>			
+		#end
+	</div>
+#end
+
+<br/>
+
 #if($transferredToHazard.size() != 0)
 	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: 
 		#foreach ($riskValue in $transferredToHazard)
@@ -159,40 +171,14 @@
 	</div>
 #end
 
+<br/>
 
-#if($transferredInACircle.size() != 0)
-	<div class="HazardPageRiskMatrixText">Causes whose transfers lead to a circular reference: 
-		#foreach ($riskValue in $transferredInACircle)
+#if($transferredToHazard.size() != 0)
+	<div class="HazardPageRiskMatrixText">Causes whose transfer targets are deleted: 
+		#foreach ($riskValue in $transferIsDeletedList)
 			<p>
-				$riskValue.getCauseNumber()
+				Cause $riskValue.getCauseNumber() 
 			</p>			
 		#end
 	</div>
 #end
-
-
-
-
-#if ($notSpecified.size() != 0)
-	<div>
-		<div class="HazardPageRiskMatrixText">Causes with unspecified category and/or likelihood: </div>
-		#foreach ($cause in $notSpecified)
-			<a href="#" class="HazardPageRiskMatrixLink" data-causeid="$cause.getID()">
-				$cause.getCauseNumber()
-			</a>
-		#end
-	</div>
-#end
-
-<div id="HazardPageRiskMatrixTransfersDeletedContainer">
-	<div class="HazardPageRiskMatrixText">Causes whose transfers are deleted: </div>
-</div>
-
-<div id="HazardRiskMatrixTransfersContainer">
-	#if ($causeTransfers.size() != 0)
-		<!-- CauseNumber-CauseID-CauseTransferID -->
-		#foreach ($cause in $causeTransfers)
-			<input type="hidden" class="HazardRiskMatrixTransfer" value="$!cause.getCauseNumber()-$!cause.getID()-$!cause.getTransfer()" />
-		#end
-	#end
-</div>

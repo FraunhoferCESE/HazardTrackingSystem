@@ -40,6 +40,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public final class HazardServlet extends HttpServlet {
@@ -142,16 +143,16 @@ public final class HazardServlet extends HttpServlet {
 				Hazard_Causes[] cause = hazard.getHazardCauses();
 				List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
 				List<TransferRiskValue> transferredToACause = new ArrayList<TransferRiskValue>();
-				List<TransferRiskValue> transferredInACircle = new ArrayList<TransferRiskValue>();
+				List<TransferRiskValue> transferIsDeletedList = new ArrayList<TransferRiskValue>();
 
 				for (int i = 0; i < hazard.getHazardCauses().length; i++) {
 
 					if (cause[i].getTransfer() != 0) {
 						TransferRiskValue transferResult = doGetTransfer(cause[i].getTransfer(), cause[i]);
 						System.out.println("transferResult " + transferResult);
-						if (transferResult.isCircular()) {
-							transferredInACircle.add(transferResult);
-						} else if (transferResult.isHazard()) {
+						if(transferResult.isDeleted())
+							transferIsDeletedList.add(transferResult);
+						if (transferResult.isHazard()) {
 							transferredToHazard.add(transferResult);
 						} else {
 							transferredToACause.add(transferResult);
@@ -162,8 +163,8 @@ public final class HazardServlet extends HttpServlet {
 				}
 
 				// just to see if something works
-				System.out.println("test" + transferredInACircle.size());
-				System.out.println("transferTest1 " + String.valueOf(transferredInACircle));
+//				System.out.println("test" + transferredInACircle.size());
+//				System.out.println("transferTest1 " + String.valueOf(transferredInACircle));
 				// System.out.println("transferTest2 " +
 				// String.valueOf(transferredInACircle.get(0).getRiskCategory()));
 				// System.out.println("transferTest3 " +
@@ -172,7 +173,7 @@ public final class HazardServlet extends HttpServlet {
 				// transferredInACircle.get(1).getTransferTargetId());
 				System.out.println("transferredToHazard " + transferredToHazard);
 				System.out.println("transferredToACause " + transferredToACause.toString());
-				System.out.println("transferredInACircle " + transferredInACircle.toString());
+//				System.out.println("transferredInACircle " + transferredInACircle.toString());
 
 				context.put("hazard", hazard);
 				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
@@ -188,7 +189,7 @@ public final class HazardServlet extends HttpServlet {
 				context.put("completionDate", removeTimeFromDate(hazard.getCompletionDate()));
 				context.put("transferredToHazard", transferredToHazard);
 				context.put("transferredToACause", transferredToACause);
-				context.put("transferredInACircle", transferredInACircle);
+				context.put("transferIsDeletedList", transferIsDeletedList);
 				// context.put("cause", cause);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
@@ -234,10 +235,10 @@ public final class HazardServlet extends HttpServlet {
 
 	private TransferRiskValue doGetTransfer(int transferId, Hazard_Causes originCause) {
 		int transferToLookup = transferId;
-		Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
+//		Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
 
 		while (true) {
-			previouslyVisitedTransfers.add(transferToLookup);
+//			previouslyVisitedTransfers.add(transferToLookup);
 			Transfers transfer = transferService.getTransferByID(transferToLookup);
 			// System.out.println("transfer " + transfer);
 			// want original causeId
@@ -252,33 +253,37 @@ public final class HazardServlet extends HttpServlet {
 					String targetCauseId = String.valueOf(targetCause.getID());
 					String riskCategory = targetCause.getRiskCategory().getValue();
 					String riskLikelihood = targetCause.getRiskLikelihood().getValue();
+					boolean isDeleted = !Strings.isNullOrEmpty(targetCause.getDeleteReason());
+					int hazardId = targetCause.getHazards()[0].getID();
+					
+					
 					return new TransferRiskValue(targetCauseId, "CAUSE", false, false, originCause.getID(),
-							originCause.getCauseNumber(), riskCategory, riskLikelihood);
+							originCause.getCauseNumber(), riskCategory, riskLikelihood, isDeleted, hazardId);
 				} else {
-					if (previouslyVisitedTransfers.contains(targetCause.getTransfer())) {
-						// We have already seen this transferred cause. Thus,
-						// there is a circular reference. We need to return a
-						// value that indicates the transfers are circular.
-						String targetCauseId = String.valueOf(targetCause.getID());
-
-						return new TransferRiskValue(targetCauseId, "CAUSE", true, false, originCause.getID(),
-								originCause.getCauseNumber(), null, null);
-					} else {
+//					if (previouslyVisitedTransfers.contains(targetCause.getTransfer())) {
+//						// We have already seen this transferred cause. Thus,
+//						// there is a circular reference. We need to return a
+//						// value that indicates the transfers are circular.
+//						String targetCauseId = String.valueOf(targetCause.getID());
+//
+//						return new TransferRiskValue(targetCauseId, "CAUSE", true, false, originCause.getID(),
+//								originCause.getCauseNumber(), null, null);
+//					} else {
 						// We need to loop around again to follow the
 						// transfer chain.
 						transferToLookup = targetCause.getTransfer();
-					}
+//					}
 				}
 				break;
 			case "HAZARD":
 				// The cause transfers to a hazard, so we need to return
 				// something which indicates this. In the template, causes which
 				// link to hazards go into a separate list.
-				Hazards hazard = hazardService.getHazardByID(transfer.getTargetID());
-				String targetHazardId = String.valueOf(hazard.getID());
-
+				Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+				String targetHazardId = String.valueOf(targetHazard.getID());
+				
 				return new TransferRiskValue(targetHazardId, "HAZARD", false, true, originCause.getID(),
-						originCause.getCauseNumber(), null, null);
+						originCause.getCauseNumber(), null, null, !targetHazard.getActive(), null);
 
 			default:
 				throw new IllegalArgumentException("Could not get transfer type.");
