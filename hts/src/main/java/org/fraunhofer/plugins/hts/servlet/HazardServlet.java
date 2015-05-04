@@ -54,9 +54,8 @@ public final class HazardServlet extends HttpServlet {
 	private HazardService hazardService;
 	HazardCauseService hazardCauseService;
 
-	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
-			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
-			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
+	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService, SubsystemService subsystemService,
+			ReviewPhaseService reviewPhaseService, MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
 			TransferService transferService, HazardControlService controlService, HazardCauseService causeService,
 			HazardCauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
@@ -73,8 +72,6 @@ public final class HazardServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO: Look into re-factoring permissions/generating error messages is
-		// done - see issue on the Huboard.
 
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
@@ -95,18 +92,15 @@ public final class HazardServlet extends HttpServlet {
 					hazard = hazardService.getHazardByID(hazardID);
 					if (hazard != null) {
 						// Check user permission
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(),
-								jiraAuthenticationContext.getUser())) {
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
 							error = true;
 							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-									+ jiraAuthenticationContext.getUser().getUsername()
-									+ ") do not have permission to view/edit it.";
+									+ jiraAuthenticationContext.getUser().getUsername() + ") do not have permission to view/edit it.";
 						}
 					} else {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-								+ jiraAuthenticationContext.getUser().getUsername()
-								+ ") do not have permission to view/edit it.";
+								+ jiraAuthenticationContext.getUser().getUsername() + ") do not have permission to view/edit it.";
 					}
 				} catch (NumberFormatException e) {
 					error = true;
@@ -176,7 +170,6 @@ public final class HazardServlet extends HttpServlet {
 				context.put("transferredToACause", transferredToACause);
 				context.put("transferIsDeletedList", transferIsDeletedList);
 				context.put("transferMissingRiskValue", transferMissingRiskValue);
-				// context.put("cause", cause);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
 		} else {
@@ -192,13 +185,11 @@ public final class HazardServlet extends HttpServlet {
 			String hazardNumber = req.getParameter("hazardNumber");
 			String version = req.getParameter("hazardVersionNumber");
 			String hazardTitle = req.getParameter("hazardTitle");
-			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req
-					.getParameterValues("hazardSubsystem")));
+			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
 			Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 			Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req
 					.getParameterValues("hazardPhase")));
-			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req
-					.getParameterValues("hazardGroup")));
+			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req.getParameterValues("hazardGroup")));
 			String safetyRequirements = req.getParameter("hazardSafetyRequirements");
 			String description = req.getParameter("hazardDescription");
 			String justification = req.getParameter("hazardJustification");
@@ -206,8 +197,8 @@ public final class HazardServlet extends HttpServlet {
 			Date initiation = changeToDate(req.getParameter("hazardInitation"));
 			Date completion = changeToDate(req.getParameter("hazardCompletion"));
 
-			hazardService.update(hazardID, hazardNumber, version, hazardTitle, subsystems, reviewPhase, missionPhases,
-					hazardGroups, safetyRequirements, description, justification, openWork, initiation, completion);
+			hazardService.update(hazardID, hazardNumber, version, hazardTitle, subsystems, reviewPhase, missionPhases, hazardGroups,
+					safetyRequirements, description, justification, openWork, initiation, completion);
 
 			JSONObject json = new JSONObject();
 			createJson(json, "updateSuccess", true);
@@ -228,8 +219,8 @@ public final class HazardServlet extends HttpServlet {
 
 			if (targetCause.getTransfer() == 0) {
 				// Transfer target is a non-transferred cause.
-				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE",
-						originCause.getCauseNumber(), originCause.getID());
+				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE", originCause.getCauseNumber(),
+						originCause.getID());
 
 				value.setRiskCategory(targetCause.getRiskCategory());
 				value.setRiskLikelihood(targetCause.getRiskLikelihood());
@@ -244,17 +235,16 @@ public final class HazardServlet extends HttpServlet {
 			// The cause transfers to a hazard.
 			Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
 
-			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD",
-					originCause.getCauseNumber(), originCause.getID());
+			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD", originCause.getCauseNumber(),
+					originCause.getID());
 			value.setDeleted(!targetHazard.getActive());
 
 			return value;
 
 		default:
-			throw new IllegalArgumentException("Unhandled transfer target type. TransferId: " + transferId
-					+ ", transferTargetType: " + transfer.getTargetType());
+			throw new IllegalArgumentException("Unhandled transfer target type. TransferId: " + transferId + ", transferTargetType: "
+					+ transfer.getTargetType());
 		}
-
 	}
 
 	private String removeTimeFromDate(Date date) {
