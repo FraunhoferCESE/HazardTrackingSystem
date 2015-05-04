@@ -49,28 +49,28 @@
 
 #set( $notSpecified = [] )
 
-#macro (putInNotSpecified $cause)
-	#set($result = $notSpecified.add($cause))
+#macro(drawLink $cause)
+	<a href="causes?id=$!hazard.getID()">$cause.getCauseNumber()</a>
 #end
 
 #macro( putInCategoryMap $cause )
+	$cause.getRiskCategory().getValue() - $cause.getRiskLikelihood().getValue()<br/>
+
 	#if(!$cause.getRiskCategory() || !$cause.getRiskLikelihood())
 		#set($result = $notSpecified.add($cause))
 	#elseif ($cause.getRiskCategory().getValue() == "IV - Negligible")
-		#set($result = $negligibleMap.get($likelihoodValueMap.get($cause.getRiskLikelihood())).add($cause))
+		#set($result = $negligibleMap.get($likelihoodValueMap.get($cause.getRiskLikelihood().getValue())).add($cause))
 	#elseif ($cause.getRiskCategory().getValue() == "III - Marginal")
-		#set($result = $marginalMap.get($likelihoodValueMap.get($cause.getRiskLikelihood())).add($cause))
+		#set($result = $marginalMap.get($likelihoodValueMap.get($cause.getRiskLikelihood().getValue())).add($cause))
 	#elseif ($cause.getRiskCategory().getValue() == "II - Critical")
-		#set($result = $criticalMap.get($likelihoodValueMap.get($cause.getRiskLikelihood())).add($cause))
+		#set($result = $criticalMap.get($likelihoodValueMap.get($cause.getRiskLikelihood().getValue())).add($cause))
 	#elseif ($cause.getRiskCategory().getValue() == "I - Catastrophic")
-		#set($result = $catastrophicMap.get($likelihoodValueMap.get($cause.getRiskLikelihood())).add($cause))
+		#set($result = $catastrophicMap.get($likelihoodValueMap.get($cause.getRiskLikelihood().getValue())).add($cause))
 	#end
 #end
 
-
 #foreach ($cause in $hazard.getHazardCauses())
-	#putInNotSpecified($cause)
-	#if ($cause.getTransfer() == 0)
+	#if ($cause.getTransfer() == 0 && !$cause.getDeleteReason())
 		#putInCategoryMap($cause)
 	#end
 #end
@@ -81,7 +81,7 @@
 
 #macro (listCausesForLikelihood $categoryMap $likelihoodValue) 
 	#foreach($cause in $categoryMap.get($likelihoodValue))
-		Cause $cause.getCauseNumber()
+		#drawLink($cause)
 	#end
 #end
 
@@ -138,51 +138,30 @@
 
 </table>
 
-notSpecified: $notSpecified.size()
-
 #if($notSpecified.size() != 0)
 	<div class="HazardPageRiskMatrixText">Causes missing a risk likelihood or category: 
 		#foreach ($cause in $notSpecified)
-			<p>
-				Cause $cause.getCauseNumber()
-			</p>			
+			#drawLink($cause) 
 		#end
 	</div>
 #end
-
-#if($transferredToACause.size() != 0)
-	<div class="HazardPageRiskMatrixText">Causes whose transfers lead to another cause: 
-		#foreach ($riskValue in $transferredToACause)
-			<p>
-				Cause Number: $riskValue.getCauseNumber(), Cause id: $riskValue.getCauseId()
-				Cause $riskValue.getCauseNumber() -> Cause $riskValue.getTransferTargetId(). Likelihood: $riskValue.getRiskLikelihood().getValue(), Category: $riskValue.getRiskCategory().getValue()
-			</p>			
-		#end
-	</div>
-#end
-
-<br/>
 
 #if($transferIsDeletedList.size() != 0)
 	<div class="HazardPageRiskMatrixText">Causes whose transfers are deleted: 
 		#foreach ($riskValue in $transferIsDeletedList)
-			<p>
-				Cause $riskValue.getCauseNumber() -> Hazard $riskValue.getParentHazard(),Cause $riskValue.getTransferTargetId(). Likelihood: $riskValue.getRiskLikeliHood(), Category: $riskValue.getRiskCategory()
-			</p>			
+			#drawLink($riskValue)	
 		#end
 	</div>
+	<br/>
 #end
 
-<br/>
+
 
 #if($transferredToHazard.size() != 0)
 	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: 
 		#foreach ($riskValue in $transferredToHazard)
-			<p>
-				Cause $riskValue.getCauseNumber() -> Hazard id: $riskValue.getTransferTargetId() 
-			</p>			
+			#drawLink($riskValue) 						
 		#end
 	</div>
+	<br/>
 #end
-
-<br/>

@@ -3,9 +3,7 @@ package org.fraunhofer.plugins.hts.rest;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -16,8 +14,6 @@ import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
 import org.fraunhofer.plugins.hts.db.Hazard_Controls;
-import org.fraunhofer.plugins.hts.db.Hazard_Group;
-import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.Transfers.TransferType;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
@@ -32,7 +28,6 @@ import org.fraunhofer.plugins.hts.rest.datatype.TransferJSON;
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.template.Template;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 

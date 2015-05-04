@@ -54,8 +54,9 @@ public final class HazardServlet extends HttpServlet {
 	private HazardService hazardService;
 	HazardCauseService hazardCauseService;
 
-	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService, SubsystemService subsystemService,
-			ReviewPhaseService reviewPhaseService, MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
+	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
+			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
+			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
 			TransferService transferService, HazardControlService controlService, HazardCauseService causeService,
 			HazardCauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
@@ -92,15 +93,18 @@ public final class HazardServlet extends HttpServlet {
 					hazard = hazardService.getHazardByID(hazardID);
 					if (hazard != null) {
 						// Check user permission
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
+						if (!hazardService.hasHazardPermission(hazard.getProjectID(),
+								jiraAuthenticationContext.getUser())) {
 							error = true;
 							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-									+ jiraAuthenticationContext.getUser().getUsername() + ") do not have permission to view/edit it.";
+									+ jiraAuthenticationContext.getUser().getUsername()
+									+ ") do not have permission to view/edit it.";
 						}
 					} else {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-								+ jiraAuthenticationContext.getUser().getUsername() + ") do not have permission to view/edit it.";
+								+ jiraAuthenticationContext.getUser().getUsername()
+								+ ") do not have permission to view/edit it.";
 					}
 				} catch (NumberFormatException e) {
 					error = true;
@@ -135,21 +139,17 @@ public final class HazardServlet extends HttpServlet {
 				List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
 				List<TransferRiskValue> transferredToACause = new ArrayList<TransferRiskValue>();
 				List<TransferRiskValue> transferIsDeletedList = new ArrayList<TransferRiskValue>();
-				List<TransferRiskValue> transferMissingRiskValue = new ArrayList<TransferRiskValue>();
 
 				for (int i = 0; i < hazard.getHazardCauses().length; i++) {
 
 					if (cause[i].getTransfer() != 0) {
-						TransferRiskValue transferResult = doGetTransfer(cause[i], cause[i].getTransfer());
+						TransferRiskValue transferResult = getTransfers(cause[i], cause[i].getTransfer());
 						if (transferResult.isDeleted())
 							transferIsDeletedList.add(transferResult);
 						if (transferResult.getTransferTargetType().equals("HAZARD")) {
 							transferredToHazard.add(transferResult);
 						} else {
-							if (transferResult.getRiskCategory() == null || transferResult.getRiskLikelihood() == null)
-								transferMissingRiskValue.add(transferResult);
-							else
-								transferredToACause.add(transferResult);
+							transferredToACause.add(transferResult);
 						}
 					}
 				}
@@ -169,7 +169,6 @@ public final class HazardServlet extends HttpServlet {
 				context.put("transferredToHazard", transferredToHazard);
 				context.put("transferredToACause", transferredToACause);
 				context.put("transferIsDeletedList", transferIsDeletedList);
-				context.put("transferMissingRiskValue", transferMissingRiskValue);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
 		} else {
@@ -185,11 +184,13 @@ public final class HazardServlet extends HttpServlet {
 			String hazardNumber = req.getParameter("hazardNumber");
 			String version = req.getParameter("hazardVersionNumber");
 			String hazardTitle = req.getParameter("hazardTitle");
-			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
+			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req
+					.getParameterValues("hazardSubsystem")));
 			Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
 			Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req
 					.getParameterValues("hazardPhase")));
-			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req.getParameterValues("hazardGroup")));
+			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req
+					.getParameterValues("hazardGroup")));
 			String safetyRequirements = req.getParameter("hazardSafetyRequirements");
 			String description = req.getParameter("hazardDescription");
 			String justification = req.getParameter("hazardJustification");
@@ -197,8 +198,8 @@ public final class HazardServlet extends HttpServlet {
 			Date initiation = changeToDate(req.getParameter("hazardInitation"));
 			Date completion = changeToDate(req.getParameter("hazardCompletion"));
 
-			hazardService.update(hazardID, hazardNumber, version, hazardTitle, subsystems, reviewPhase, missionPhases, hazardGroups,
-					safetyRequirements, description, justification, openWork, initiation, completion);
+			hazardService.update(hazardID, hazardNumber, version, hazardTitle, subsystems, reviewPhase, missionPhases,
+					hazardGroups, safetyRequirements, description, justification, openWork, initiation, completion);
 
 			JSONObject json = new JSONObject();
 			createJson(json, "updateSuccess", true);
@@ -210,7 +211,7 @@ public final class HazardServlet extends HttpServlet {
 		}
 	}
 
-	private TransferRiskValue doGetTransfer(Hazard_Causes originCause, int transferId) {
+	private TransferRiskValue getTransfers(Hazard_Causes originCause, int transferId) {
 		Transfers transfer = transferService.getTransferByID(transferId);
 
 		switch (transfer.getTargetType()) {
@@ -219,8 +220,8 @@ public final class HazardServlet extends HttpServlet {
 
 			if (targetCause.getTransfer() == 0) {
 				// Transfer target is a non-transferred cause.
-				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE", originCause.getCauseNumber(),
-						originCause.getID());
+				TransferRiskValue value = new TransferRiskValue(targetCause.getID(), "CAUSE",
+						originCause.getCauseNumber(), originCause.getID());
 
 				value.setRiskCategory(targetCause.getRiskCategory());
 				value.setRiskLikelihood(targetCause.getRiskLikelihood());
@@ -229,21 +230,21 @@ public final class HazardServlet extends HttpServlet {
 				return value;
 			} else {
 				// Recursively follow the transfer chain.
-				return doGetTransfer(originCause, targetCause.getTransfer());
+				return getTransfers(originCause, targetCause.getTransfer());
 			}
 		case "HAZARD":
 			// The cause transfers to a hazard.
 			Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
 
-			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD", originCause.getCauseNumber(),
-					originCause.getID());
+			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD",
+					originCause.getCauseNumber(), originCause.getID());
 			value.setDeleted(!targetHazard.getActive());
 
 			return value;
 
 		default:
-			throw new IllegalArgumentException("Unhandled transfer target type. TransferId: " + transferId + ", transferTargetType: "
-					+ transfer.getTargetType());
+			throw new IllegalArgumentException("Unhandled transfer target type. TransferId: " + transferId
+					+ ", transferTargetType: " + transfer.getTargetType());
 		}
 	}
 
