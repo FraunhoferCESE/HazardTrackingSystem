@@ -122,9 +122,14 @@ public class HazardReportGenerator {
 				// text) modify the existing object in memory. Thus, you do not
 				// need to return the doc object, but merely make changes to it.
 				XWPFDocument doc = new XWPFDocument(inputStream);
+				
+				// Add content to the document
 				createHeader(doc, hazard, reviewPhases);
 				createHazardDescription(doc, hazard, riskCategories, riskLikelihoods);
-
+				createCauses(doc, hazard);
+				
+				
+				// Create the return object
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				doc.write(out);
 				results.add(out.toByteArray());
@@ -136,6 +141,17 @@ public class HazardReportGenerator {
 		}
 
 		return results;
+	}
+
+	/**
+	 * This method adds all of the causes for a hazard to the hazard report.
+	 * 
+	 * @param doc the document to which the causes will be added
+	 * @param hazard the hazard we are printing
+	 */
+	private void createCauses(XWPFDocument doc, Hazards hazard) {
+		// TODO Loop through all causes from the hazard and add each one to the doc
+		
 	}
 
 	// private void createFooter(XWPFDocument doc, Hazards h) throws
