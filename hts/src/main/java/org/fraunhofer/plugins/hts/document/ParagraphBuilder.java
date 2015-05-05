@@ -24,6 +24,7 @@ public class ParagraphBuilder {
 	private String text = "";
 	private boolean bottomBorder = false;
 	private int leftMargin = 50;
+	private int topMargin = 0;
 	private int hangingIndent = 0;
 
 	public ParagraphBuilder() {
@@ -44,6 +45,7 @@ public class ParagraphBuilder {
 		run.setFontSize(fontSize);
 		paragraph.setAlignment(alignment);
 		paragraph.setSpacingAfter(10);
+		paragraph.setSpacingBefore(topMargin);
 		paragraph.setIndentationLeft(leftMargin);
 		paragraph.setIndentationRight(50);
 		paragraph.setIndentationHanging(hangingIndent);
@@ -83,6 +85,11 @@ public class ParagraphBuilder {
 
 	public ParagraphBuilder hangingIndent(int hangingIndent) {
 		this.hangingIndent = hangingIndent;
+		return this;
+	}
+	
+	public ParagraphBuilder topMargin(int topMargin) {
+		this.topMargin = topMargin;
 		return this;
 	}
 
