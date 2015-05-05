@@ -27,6 +27,7 @@ import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.Transfers;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ public class HazardReportGenerator {
 	// dependent on the service implementations
 	private final HazardService hazardService;
 	private final HazardCauseService causeService;
+	private final HazardControlService controlService;
 	private final TransferService transferService;
 	private final ProjectManager projectManager;
 
@@ -67,12 +69,13 @@ public class HazardReportGenerator {
 	 * @param causeService
 	 * @param transferService
 	 */
-	public HazardReportGenerator(HazardService hazardService, HazardCauseService causeService, TransferService transferService,
-			ProjectManager projectManager) {
+	public HazardReportGenerator(HazardService hazardService, HazardCauseService causeService,
+			TransferService transferService, ProjectManager projectManager, HazardControlService controlService) {
 		this.hazardService = hazardService;
 		this.causeService = causeService;
 		this.transferService = transferService;
 		this.projectManager = projectManager;
+		this.controlService = controlService;
 	}
 
 	/**
@@ -103,8 +106,8 @@ public class HazardReportGenerator {
 	 * @throws XmlException
 	 */
 	public List<byte[]> createWordDocument(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
-			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream) throws XmlException,
-			IOException {
+			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
+			throws XmlException, IOException {
 
 		checkNotNull(inputStream, "InputStream containing hazard template cannot be null.");
 		if (hazardList == null || hazardList.isEmpty())
@@ -182,7 +185,8 @@ public class HazardReportGenerator {
 		cell = row.getCell(0);
 		cell.setVerticalAlignment(XWPFVertAlign.CENTER);
 		setColSpan(cell, 3);
-		new ParagraphBuilder().text("NASA Expendable Launch Vehicle (ELV)").bold(true).fontSize(14).createCellText(cell);
+		new ParagraphBuilder().text("NASA Expendable Launch Vehicle (ELV)").bold(true).fontSize(14)
+				.createCellText(cell);
 		new ParagraphBuilder().text("Payload Safety Hazard Report").bold(true).fontSize(14).createCellText(cell);
 		new ParagraphBuilder().text("(NPR 8715.7 and NASA-STD 8719.24)").fontSize(8).createCellText(cell);
 
@@ -191,8 +195,8 @@ public class HazardReportGenerator {
 		// actually one cell with a paragraph border.
 		cell = row.getCell(1);
 		new CellHeaderBuilder().text("1. Hazard Report #:").createCellHeader(cell);
-		new ParagraphBuilder().text(h.getHazardNumber()).bold(true).fontSize(10).leftMargin(0).alignment(ParagraphAlignment.CENTER)
-				.bottomBorder().createCellText(cell);
+		new ParagraphBuilder().text(h.getHazardNumber()).bold(true).fontSize(10).leftMargin(0)
+				.alignment(ParagraphAlignment.CENTER).bottomBorder().createCellText(cell);
 
 		new CellHeaderBuilder().text("2. Initiation Date: ").createCellHeader(cell);
 
@@ -290,7 +294,8 @@ public class HazardReportGenerator {
 		// Set table width to page width
 		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
 		setColSpan(cell, 4);
-		new CellHeaderBuilder().text("Hazard").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50).createCellHeader(cell);
+		new CellHeaderBuilder().text("Hazard").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50)
+				.createCellHeader(cell);
 
 		// --------------------------------------
 
@@ -354,8 +359,8 @@ public class HazardReportGenerator {
 
 		for (Hazard_Causes cause : h.getHazardCauses()) {
 			if (cause.getTransfer() == 0)
-				new ParagraphBuilder().text("Cause " + cause.getCauseNumber() + " \u2013 " + cause.getTitle()).leftMargin(350)
-						.hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Cause " + cause.getCauseNumber() + " \u2013 " + cause.getTitle())
+						.leftMargin(350).hangingIndent(300).createCellText(cell);
 			else
 				printCauseTransfer(cell, cause, false);
 		}
@@ -385,18 +390,18 @@ public class HazardReportGenerator {
 		// Set table width to page width
 		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
 		setColSpan(cell, 4);
-		new CellHeaderBuilder().text("Causes").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50).createCellHeader(cell);
+		new CellHeaderBuilder().text("Causes").bold().alignment(ParagraphAlignment.CENTER).beforeSpacing(50)
+				.createCellHeader(cell);
 
 		// ----------------------------------
 
 		Hazard_Causes[] causes = hazard.getHazardCauses();
 		for (Hazard_Causes cause : causes) {
 
-			// if(cause.getDeleteReason().isEmpty()){
-			// continue;
-			//
-			// }
-			// else
+			if (cause.getDeleteReason() != null && !cause.getDeleteReason().isEmpty()) {
+				continue;
+
+			}
 
 			if (cause.getTransfer() == 0) {
 				// Headers for Cause Number Risk Categories/likelihoods,
@@ -405,27 +410,28 @@ public class HazardReportGenerator {
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
 				setColSpan(cell, 4);
-				new ParagraphBuilder().text("Cause " + cause.getCauseNumber() + " - " + cause.getTitle()).topMargin(50).bold(true)
-						.leftMargin(350).hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Cause " + cause.getCauseNumber() + " - " + cause.getTitle()).topMargin(50)
+						.bold(true).leftMargin(350).hangingIndent(300).createCellText(cell);
 
 				// Risk severities and likelihood
 				row = new TableBuilder().size(1, 2).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
 				setColSpan(cell, 1);
-				new ParagraphBuilder().text("Risk Severity: " + cause.getRiskCategory().getValue()).topMargin(50).leftMargin(350)
-						.hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Risk Severity: " + cause.getRiskCategory().getValue()).topMargin(50)
+						.leftMargin(350).hangingIndent(300).createCellText(cell);
 
 				cell = row.getCell(1);
 				setColSpan(cell, 3);
-				new ParagraphBuilder().text("Risk Likelihood: " + cause.getRiskLikelihood().getValue()).topMargin(50).leftMargin(350)
-						.hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Risk Likelihood: " + cause.getRiskLikelihood().getValue()).topMargin(50)
+						.leftMargin(350).hangingIndent(300).createCellText(cell);
 				// Cause description
 
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
 				setColSpan(cell, 4);
 				new CellHeaderBuilder().text("Cause Description: ").bold().createCellHeader(cell);
-				new ParagraphBuilder().text(cause.getDescription()).leftMargin(350).hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text(cause.getDescription()).leftMargin(350).hangingIndent(300)
+						.createCellText(cell);
 
 				// cause effects
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
@@ -439,7 +445,8 @@ public class HazardReportGenerator {
 				cell = row.getCell(0);
 				setColSpan(cell, 4);
 				new CellHeaderBuilder().text("Additional Safety Features:").bold().createCellHeader(cell);
-				new ParagraphBuilder().text(cause.getAdditionalSafetyFeatures()).leftMargin(350).hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text(cause.getAdditionalSafetyFeatures()).leftMargin(350).hangingIndent(300)
+						.createCellText(cell);
 
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
@@ -456,18 +463,21 @@ public class HazardReportGenerator {
 				row = new TableBuilder().size(1, 2).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
 				setColSpan(cell, 1);
-				new ParagraphBuilder().text("Risk Severity: N/A").topMargin(50).leftMargin(350).hangingIndent(30).createCellText(cell);
+				new ParagraphBuilder().text("Risk Severity: N/A").topMargin(50).leftMargin(350).hangingIndent(30)
+						.createCellText(cell);
 
 				cell = row.getCell(1);
 				setColSpan(cell, 3);
-				new ParagraphBuilder().text("Risk Likelihood: N/A").topMargin(50).leftMargin(350).hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text("Risk Likelihood: N/A").topMargin(50).leftMargin(350).hangingIndent(300)
+						.createCellText(cell);
 				// Cause description
 
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
 				setColSpan(cell, 4);
 				new CellHeaderBuilder().text("Transfer Reason: ").bold().createCellHeader(cell);
-				new ParagraphBuilder().text(cause.getDescription()).leftMargin(450).hangingIndent(300).createCellText(cell);
+				new ParagraphBuilder().text(cause.getDescription()).leftMargin(450).hangingIndent(300)
+						.createCellText(cell);
 
 				row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc).getRow(0);
 				cell = row.getCell(0);
@@ -489,33 +499,19 @@ public class HazardReportGenerator {
 	private void printCauseTransfer(XWPFTableCell cell, Hazard_Causes cause, boolean inSpecificCause) {
 		Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 
-		if (!inSpecificCause) {
-			if (transfer.getTargetType().equals("HAZARD")) {
-				Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
-				new ParagraphBuilder()
-						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
-								+ hazard.getHazardTitle()).topMargin(50).leftMargin(350).hangingIndent(300).createCellText(cell);
-			} else if (transfer.getTargetType().equals("CAUSE")) {
-				Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
-				Hazards hazard = targetCause.getHazards()[0];
-				new ParagraphBuilder()
-						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
-								+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).topMargin(50).leftMargin(350).hangingIndent(300).createCellText(cell);
-			}
-		}else{
-			if (transfer.getTargetType().equals("HAZARD")) {
-				Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
-				new ParagraphBuilder()
-						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
-								+ hazard.getHazardTitle()).topMargin(50).bold(true).leftMargin(350).hangingIndent(300).createCellText(cell);
-			} else if (transfer.getTargetType().equals("CAUSE")) {
-				Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
-				Hazards hazard = targetCause.getHazards()[0];
-				new ParagraphBuilder()
-						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
-								+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).topMargin(50).bold(true)
-						.leftMargin(350).hangingIndent(300).createCellText(cell);
-			}
+		if (transfer.getTargetType().equals("HAZARD")) {
+			Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
+			new ParagraphBuilder()
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
+							+ hazard.getHazardTitle()).topMargin(50).bold(inSpecificCause).leftMargin(350)
+					.hangingIndent(300).createCellText(cell);
+		} else if (transfer.getTargetType().equals("CAUSE")) {
+			Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
+			Hazards hazard = targetCause.getHazards()[0];
+			new ParagraphBuilder()
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
+							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).topMargin(50)
+					.bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
 		}
 
 	}

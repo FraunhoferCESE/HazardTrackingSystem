@@ -16,6 +16,7 @@ import org.fraunhofer.plugins.hts.db.Review_Phases;
 import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
 import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
@@ -35,19 +36,21 @@ public final class ReportGenerationServlet extends HttpServlet {
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodsService;
 	private final HazardCauseService causeService;
+	private final HazardControlService controlService;
 	private final TransferService transferService;
 
 	Logger log = LoggerFactory.getLogger(ReportGenerationServlet.class);
 
 	public ReportGenerationServlet(HazardService hazardService, ReviewPhaseService reviewPhaseService,
 			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodsService,
-			HazardCauseService causeService, TransferService transferService) {
+			HazardCauseService causeService, TransferService transferService, HazardControlService controlService) {
 		this.hazardService = hazardService;
 		this.reviewPhaseService = reviewPhaseService;
 		this.riskCategoryService = riskCategoryService;
 		this.riskLikelihoodsService = riskLikelihoodsService;
 		this.causeService = causeService;
 		this.transferService = transferService;
+		this.controlService = controlService;
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 		List<Risk_Categories> riskCategoriesList = new ArrayList<Risk_Categories>(riskCategoryService.all());
 		List<Risk_Likelihoods> riskLikelihoodsList = new ArrayList<Risk_Likelihoods>(riskLikelihoodsService.all());
 
-		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService, ComponentAccessor.getProjectManager());
+		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService, ComponentAccessor.getProjectManager(), controlService);
 
 		ServletOutputStream stream = null;
 		try {
