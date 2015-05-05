@@ -30,15 +30,6 @@
 	5: []
 })
 
-
-#set ($catastrophicMap = {
-	1: [],
-	2: [],
-	3: [],
-	4: [],
-	5: []
-})
-
 #set ($likelihoodValueMap = {
 	"A - Frequent" : 5,
 	"B - Reasonably probable": 4,
@@ -50,7 +41,7 @@
 #set( $notSpecified = [] )
 
 #macro(drawLink $cause)
-	<a href="causes?id=$!hazard.getID()">$cause.getCauseNumber()</a>
+	<a href="causes?id=$!hazard.getID()" class="causeLink" targetID="$cause.getID()">$cause.getCauseNumber()</a>
 #end
 
 #macro( putInCategoryMap $cause )

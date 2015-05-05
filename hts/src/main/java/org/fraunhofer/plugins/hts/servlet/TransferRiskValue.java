@@ -57,7 +57,7 @@ public class TransferRiskValue {
 		return causeNumber;
 	}
 
-	public int getCauseId() {
+	public int getID() {
 		return causeId;
 	}
 }

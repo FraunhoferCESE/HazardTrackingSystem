@@ -23,8 +23,6 @@ function initCausePageClickEvents() {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 	
-	    alert(" targetID " + targetID);
-
 	    //initHTSCookie();
 	    modifyHTSCookieOpenCauses("open", targetID, null);
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 

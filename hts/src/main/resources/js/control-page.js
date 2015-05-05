@@ -26,8 +26,6 @@ function initControlPageClickEvents() {
 		var targetType = AJS.$(this).attr("targetType");
 		
 
-	   // alert(" Control targetID " + targetID + " targetType: " + targetType);
-
 	    initHTSCookie();
 	    if(targetType === "CAUSE"){
 	    	modifyHTSCookieOpenCauses("open", targetID, null);

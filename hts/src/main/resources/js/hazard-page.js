@@ -9,6 +9,15 @@ function initializeHazardPage() {
 }
 
 function initHazardPageClickEvents() {
+	//when doing a cause transfer, automatically expand the targetcause on the cause page
+	AJS.$(".causeLink").click(function(event) {
+	    // Get the link that fired the click event
+		var targetID = AJS.$(this).attr("targetID");
+	
+	    modifyHTSCookieOpenCauses("open", targetID, null);
+	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
+	});
+	
 	AJS.$("#HazardPageSave").live("click", function() {
 		AJS.$("#HazardPageForm").ajaxSubmit({
 			async: false,
