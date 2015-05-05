@@ -72,6 +72,7 @@ public class HazardReportGeneratorTest {
 		when(mockCause1.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCause1.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCause1.getTransfer()).thenReturn(0);
+		
 
 		mockCause2 = mock(Hazard_Causes.class);
 		when(mockCause2.getCauseNumber()).thenReturn(2);
@@ -84,6 +85,8 @@ public class HazardReportGeneratorTest {
 		when(mockCause2.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCause2.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCause2.getTransfer()).thenReturn(0);
+		
+		
 
 		mockCause3 = mock(Hazard_Causes.class);
 		when(mockCause3.getCauseNumber()).thenReturn(3);
@@ -97,6 +100,7 @@ public class HazardReportGeneratorTest {
 		when(mockCause3.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCause3.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCause3.getTransfer()).thenReturn(0);
+		when(mockCause3.getControls()).thenReturn(new Hazard_Controls[0]);
 
 		mockCauseToHazard = mock(Hazard_Causes.class);
 		when(mockCauseToHazard.getCauseNumber()).thenReturn(4);
@@ -107,6 +111,7 @@ public class HazardReportGeneratorTest {
 		when(mockCauseToHazard.getAdditionalSafetyFeatures()).thenReturn("gold Bond Medical powder helps.");
 		when(mockCauseToHazard.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCauseToHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
+		when(mockCauseToHazard.getControls()).thenReturn(new Hazard_Controls[0]);
 
 		mockCauseToCause = mock(Hazard_Causes.class);
 		when(mockCauseToCause.getCauseNumber()).thenReturn(5);
@@ -129,6 +134,7 @@ public class HazardReportGeneratorTest {
 		when(deletedCause.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(deletedCause.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(deletedCause.getDeleteReason()).thenReturn("This cause is no longer valid. It is handled elsewhere.");
+		when(deletedCause.getControls()).thenReturn(new Hazard_Controls[0]);
 
 	}
 
@@ -147,6 +153,7 @@ public class HazardReportGeneratorTest {
 
 		deletedControl = mock(Hazard_Controls.class);
 		when(deletedControl.getControlNumber()).thenReturn(2);
+		when(deletedControl.getDeleteReason()).thenReturn("This control is superceded by other controls and should be REMOVED.");
 		when(deletedControl.getDescription()).thenReturn(
 				"This control has been deleted and shouldn't be displayed in the hazard report");
 		when(deletedControl.getControlGroup()).thenReturn(null);
@@ -169,6 +176,10 @@ public class HazardReportGeneratorTest {
 		when(mockControlToControl.getDescription()).thenReturn(null);
 		when(mockControlToControl.getID()).thenReturn(44444);
 		when(mockControlToControl.getTransfer()).thenReturn(44447777);
+		
+		when(mockCause1.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause});
+		when(mockCause2.getControls()).thenReturn(new Hazard_Controls[] {mockControlToControl, deletedControl});
+		when(mockCauseToCause.getControls()).thenReturn(new Hazard_Controls[] {mockControlToControl});
 
 	}
 
