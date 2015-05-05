@@ -18,7 +18,9 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.XmlException;
+import org.fraunhofer.plugins.hts.db.ControlGroups;
 import org.fraunhofer.plugins.hts.db.Hazard_Causes;
+import org.fraunhofer.plugins.hts.db.Hazard_Controls;
 import org.fraunhofer.plugins.hts.db.Hazard_Group;
 import org.fraunhofer.plugins.hts.db.Hazards;
 import org.fraunhofer.plugins.hts.db.Review_Phases;
@@ -483,7 +485,18 @@ public class HazardReportGenerator {
 				cell = row.getCell(0);
 				setColSpan(cell, 4);
 			}
+			// Print out the controls for this cause
+			printControlsForCause(doc, cause.getControls());
 
+		}
+	}
+
+	private void printControlsForCause(XWPFDocument doc, Hazard_Controls[] controls) {
+		// TODO Auto-generated method stub
+		for (Hazard_Controls control : controls) {
+			ControlGroups controlGroup = control.getControlGroup();
+			if (controlGroup != null)
+				controlGroup.getLabel();
 		}
 	}
 
