@@ -12,7 +12,7 @@
 			<div class="GeneralNavContent2">
 				<ul class="aui-nav">
 					<li>
-						<a href="https://github.com/FraunhoferCESE/HazardTrackingSystem">Report Bug</a>
+						<a href="https://github.com/FraunhoferCESE/HazardTrackingSystem/issues/new">Report Bug</a>
 					</li>
 				</ul>
 			</div>

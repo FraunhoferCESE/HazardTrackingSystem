@@ -1,3 +1,8 @@
+#*
+	Causes are added to these maps according to their risk category and likelihood. The risk category
+	determine which map the cause is added to, and the risk likelihood determined which map value.
+	Risk Category = Critical, Risk Likelihood = Frequent goes to criticalMap,5.
+*#
 #set ($negligibleMap = {
 	1: [],
 	2: [],
@@ -30,6 +35,7 @@
 	5: []
 })
 
+## Map used to look up the riskCategory map index according to a cause's risk likelihood
 #set ($likelihoodValueMap = {
 	"A - Frequent" : 5,
 	"B - Reasonably probable": 4,
@@ -38,15 +44,22 @@
 	"E - Extremely improbable": 1
 })
 
-#set( $notSpecified = [] )
 
+#*
+	Renders a link to the Causes
+*#
 #macro(drawLink $cause)
-	<a href="causes?id=$!hazard.getID()" class="causeLink" targetID="$cause.getID()">$cause.getCauseNumber()</a>
+	#if(!$cause.getTransferTargetId())
+		<a href="causes?id=$!hazard.getID()" class="causeLink" targetID="$cause.getID()">$cause.getCauseNumber()</a>
+	#else
+		<a href="causes?id=$!hazard.getID()" class="causeLink" targetID="$cause.getID()">$cause.getCauseNumber()-T</a>
+	#end
 #end
 
+#*
+	Given a Hazard_Causes or TransferRiskValue, will add it to the appropriate index with in a risk category map. 
+*#
 #macro( putInCategoryMap $cause )
-	$cause.getRiskCategory().getValue() - $cause.getRiskLikelihood().getValue()<br/>
-
 	#if(!$cause.getRiskCategory() || !$cause.getRiskLikelihood())
 		#set($result = $notSpecified.add($cause))
 	#elseif ($cause.getRiskCategory().getValue() == "IV - Negligible")
@@ -60,6 +73,19 @@
 	#end
 #end
 
+#*
+	For use within the matrix itself. Draws all of the causes for a risk category + likelihood. 
+*#
+#macro (listCausesForLikelihood $categoryMap $likelihoodValue) 
+	#foreach($cause in $categoryMap.get($likelihoodValue))
+		#drawLink($cause)
+	#end
+#end
+
+## *******************************************
+
+#set( $notSpecified = [] )
+
 #foreach ($cause in $hazard.getHazardCauses())
 	#if ($cause.getTransfer() == 0 && !$cause.getDeleteReason())
 		#putInCategoryMap($cause)
@@ -70,11 +96,6 @@
 	#putInCategoryMap($cause)
 #end
 
-#macro (listCausesForLikelihood $categoryMap $likelihoodValue) 
-	#foreach($cause in $categoryMap.get($likelihoodValue))
-		#drawLink($cause)
-	#end
-#end
 
 <table id="HazardPageRiskMatrixTable" class="HazardPageRiskMatrixText">
 	
@@ -143,10 +164,7 @@
 			#drawLink($riskValue)	
 		#end
 	</div>
-	<br/>
 #end
-
-
 
 #if($transferredToHazard.size() != 0)
 	<div class="HazardPageRiskMatrixText">Causes associated with entire hazards: 
@@ -154,5 +172,4 @@
 			#drawLink($riskValue) 						
 		#end
 	</div>
-	<br/>
 #end
