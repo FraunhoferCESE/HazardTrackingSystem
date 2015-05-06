@@ -8,6 +8,7 @@
     font-weight: lighter;
     font-size: 14px;
     color: #707070;
+    margin-bottom: 1em;
 }
 
 #HazardPageRiskMatrixTable table {
@@ -29,14 +30,6 @@
     width: 85px;
 }
 
-#HazardPageRiskMatrixHazards {
-    display: none;
-}
-
-#HazardPageRiskMatrixTransfersDeletedContainer {
-    display: none;
-}
-
 .HazardPageRiskMatrixLink {
     color: #333333;
 }
@@ -54,18 +47,25 @@
 }
 
 .HazardPageRiskMatrixTableRedCell {
-    background-color: #FF3030;
+    background-color: #ff5757;
 }
 
 .HazardPageRiskMatrixTableYellowCell {
-    background-color: #E5E500;
+    background-color: #ffff48;
 }
 
 .HazardPageRiskMatrixTableOrangeCell {
-    background-color: #FFA500;
+    background-color: #ffc862;
 }
 
 .HazardPageRiskMatrixTableGreenCell {
-    background-color: #7FC424;
+    background-color: #aee367;
 }
+
+a.causeLink {
+	color: #551a8b;
+	text-decoration: underline;
+}
+
+
 /* RISK MATRIX CSS ENDS */

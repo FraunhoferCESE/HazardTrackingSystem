@@ -19,4 +19,5 @@ public interface TransferService {
 	 * @return a list of Transfer objects for which <code>id</code> is the target.
 	 */
 	List<Transfers> getOriginsForId(String type, int ids);
+
 }

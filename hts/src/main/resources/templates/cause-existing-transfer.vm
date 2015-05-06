@@ -14,10 +14,42 @@
 	<td class="HazardPropertyTableTd">
 		#if ($theCause.getTransferTargetType() == "CAUSE")
 			#if ($theCause.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()</div>
+				<div class="HTSTransferDeletedOrigin">
+					#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+							&lt;To Be Determined&gt; :CAUSE 
+					#else
+							$theCause.getTargetHazardNumber():CAUSE
+					#end
+					#if (!$theCause.getTargetCauseNumber() || !$theCause.getTargetCauseNumber() == "")
+							&lt;To Be Determined&gt; -
+					#else 
+							$theCause.getTargetCauseNumber()-
+					#end
+					#if(!$theCause.getTargetCauseTitle() || !$theCause.getTargetCauseTitle() == "")
+							&lt;To Be Determined&gt;
+					#else
+					  $theCause.getTargetCauseTitle()
+					#end
+					 
+				</div>
 			#else
-				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()">
-					$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
+				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
+					#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+							&lt;To Be Determined&gt; :CAUSE 
+					#else
+							$theCause.getTargetHazardNumber():CAUSE 
+					#end
+					#if (!$theCause.getTargetCauseNumber() || !$theCause.getTargetCauseNumber() == "")
+							&lt;To Be Determined&gt; -
+					#else
+							$theCause.getTargetCauseNumber()-
+					#end
+					#if(!$theCause.getTargetCauseTitle() || !$theCause.getTargetCauseTitle() == "")
+							&lt;To Be Determined&gt;
+					#else
+					  $theCause.getTargetCauseTitle()
+					#end
+					
 				</a>
 			#end
 		#else

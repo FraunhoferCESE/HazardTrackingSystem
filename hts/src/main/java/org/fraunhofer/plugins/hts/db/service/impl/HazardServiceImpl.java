@@ -269,7 +269,7 @@ public class HazardServiceImpl implements HazardService {
 	}
 	
 	@Override
-	public void deleteHazard(Hazards hazard) {
+	public void deleteHazard(Hazards hazard, String reason) {
 		// Mark hazard as inactive
 		hazard.setActive(false);
 		Date deleteDate = new Date();
@@ -279,19 +279,19 @@ public class HazardServiceImpl implements HazardService {
 		
 		// Mark all non-deleted causes as deleted
 		for (Hazard_Causes current : hazard.getHazardCauses()) {
-			current.setDeleteReason("HAZARD_DELETED");
+			current.setDeleteReason(reason);
 			current.save();
 		}
 
 		// Mark all non-deleted controls as deleted
 		for (Hazard_Controls current : hazard.getHazardControls()) {
-			current.setDeleteReason("HAZARD_DELETED");
+			current.setDeleteReason(reason);
 			current.save();
 		}
 		
 		// Mark all non-deleted verifications as delete
 		for (Verifications current : hazard.getVerifications()) {
-			current.setDeleteReason("HAZARD_DELETED");
+			current.setDeleteReason(reason);
 			current.save();
 		}
 	}

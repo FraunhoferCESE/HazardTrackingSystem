@@ -189,7 +189,7 @@
 }
 
 .HTSTransferDeletedOrigin {
-    text-decoration: line-through
+    text-decoration: line-through;
 }
 
 /* JOINT STYLES FOR THE DELETE DIALOG */

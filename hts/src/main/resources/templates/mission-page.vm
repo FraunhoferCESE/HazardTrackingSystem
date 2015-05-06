@@ -67,6 +67,7 @@
 												#else
 													<td>$hazard.getHazardTitle()</td>
 												#end
+											
 												<td>
 													<a href="$hazard.getJiraProjectURL()">$hazard.getMissionTitle()</a>
 												</td>
