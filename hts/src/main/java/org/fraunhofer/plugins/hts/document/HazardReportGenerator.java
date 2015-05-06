@@ -1,7 +1,5 @@
 package org.fraunhofer.plugins.hts.document;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,7 +104,6 @@ public class HazardReportGenerator {
 			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
 			throws XmlException, IOException {
 
-		checkNotNull(inputStream, "InputStream containing hazard template cannot be null.");
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
 

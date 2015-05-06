@@ -26,17 +26,13 @@ public class MissionRestService {
 	@GET
 	@Path("hazards/{missionID}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAllHazardsByMissionID(
-			@PathParam("missionID") Long missionID) {
+	public Response getAllHazardsByMissionID(@PathParam("missionID") Long missionID) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			List<HazardDTMinimalJson> hazards = hazardService
-					.getAllHazardsByMissionIDMinimalJson(missionID);
+			List<HazardDTMinimalJson> hazards = hazardService.getAllHazardsByMissionIDMinimalJson(missionID);
 			return Response.ok(hazards).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN)
-					.entity(new HazardResourceModel("User is not logged in"))
+			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
 		}
 	}
-
 }

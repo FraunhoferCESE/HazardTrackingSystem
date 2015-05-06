@@ -128,7 +128,7 @@ public class CauseServlet extends HttpServlet {
 				String owner = req.getParameter("causeOwner");
 				
 				Risk_Categories risk;
-				if (req.getParameter("causeRisk") != "") {
+				if (!req.getParameter("causeRisk").isEmpty()) {
 					risk = riskCategoryService.getRiskByID(req.getParameter("causeRisk"));
 				} else {
 					risk = null;

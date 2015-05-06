@@ -30,7 +30,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-//String respStr = "{ \"success\" : \"true\" }";
 @Path("/transfer")
 public class TransferRestService {
 	private static Log logger = Logger.getInstance(TransferRestService.class);
@@ -99,91 +98,4 @@ public class TransferRestService {
 					.build();
 		}
 	}
-
-	// @GET
-	// @Path("findTransferValues")
-	// @Produces({ MediaType.APPLICATION_JSON })
-	// public Response getTransferTargetRiskValues(@QueryParam("transferId")
-	// String transferId) {
-	// if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-	// // checkArgument(type != null &&
-	//
-	// // Object getTransferRiskRatings(int transferId) {
-	// int transferIdInt = Integer.parseInt(transferId);
-	// int transferToLookup = transferIdInt;
-	//
-	// String targetCauseRiskCategory = null;
-	// String targetCauseRiskLikelihood = null;
-	// String targetType = null;
-	//
-	//
-	// boolean done = false;
-	// while (!done) {
-	// Set<Integer> previouslyVisitedTransfers = new HashSet<Integer>();
-	// previouslyVisitedTransfers.add(transferIdInt);
-	// // Lookup the cause transfer
-	// Transfers transfer = transferService.getTransferByID(transferToLookup);
-	// System.out.println("transfer " + transfer);
-	// if (transfer.getTargetType().equals("CAUSE")) {
-	//
-	// Hazard_Causes targetCause =
-	// causeService.getHazardCauseByID(transfer.getTargetID());
-	//
-	// if (targetCause.getTransfer() != 0) {
-	// // The cause transfers to a cause which is ALSO
-	// // transferred.
-	//
-	//
-	// if (previouslyVisitedTransfers.contains(targetCause
-	// .getTransfer())) {
-	// // We have already seen this transfer. Thus, thereis a
-	// // circular reference to transfers. This is bad. Weneed to return a value
-	// that the transfers are
-	// // circular.
-	// // Hazard_Causes cause =
-	// hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-	//
-	// targetCauseRiskCategory = targetCause.getRiskCategory().getValue();
-	// targetCauseRiskLikelihood = targetCause.getRiskLikelihood().getValue();
-	// targetType = transfer.getTargetType();
-	//
-	// return Response.ok(new transferRiskValueJSON(targetCauseRiskCategory,
-	// targetCauseRiskLikelihood, targetType, transferId, true, true)).build();
-	//
-	// } else {
-	// // We need to loop around again to follow the
-	// // transfer chain.
-	//
-	// transferToLookup = targetCause.getTransfer();
-	// }
-	// } else {
-	// Hazard_Causes cause =
-	// hazardCauseService.getHazardCauseByID(String.valueOf(transfer.getTargetID()));
-	// String causeId = String.valueOf(cause.getID());
-	// targetCauseRiskCategory = targetCause.getRiskCategory().getValue();
-	// targetCauseRiskLikelihood = targetCause.getRiskLikelihood().getValue();
-	// targetType = transfer.getTargetType();
-	//
-	//
-	// return Response.ok(new transferRiskValueJSON(targetCauseRiskCategory,
-	// targetCauseRiskLikelihood, causeId, targetType, false, true)).build();
-	// // Get this cause's risk values and return them
-	// }
-	//
-	// } else if (transfer.getTargetType().equals("HAZARD")) {
-	// // The cause transfers to a hazard, so we need to return something
-	// // which indicates this. In the template, causes which link to
-	// // hazards go into a separate list.
-	// Hazards hazard =
-	// hazardService.getHazardByID(String.valueOf(transfer.getTargetID()));
-	// String hazardId = String.valueOf(hazard.getID());
-	//
-	// return Response.ok(new transferRiskValueJSON(null, null, hazardId,
-	// "HAZARD", false, true)).build();
-	// }
-	// }
-	// }
-	// return Response.status(Response.Status.FORBIDDEN).entity(new
-	// HazardResourceModel("User is not logged in")).build();
-	// }
 }

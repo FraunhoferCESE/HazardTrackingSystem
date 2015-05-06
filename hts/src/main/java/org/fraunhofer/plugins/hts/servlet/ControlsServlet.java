@@ -129,7 +129,7 @@ public class ControlsServlet extends HttpServlet {
 			if (regular == true) {
 				String description = req.getParameter("controlDescription");
 				ControlGroups controlGroup;
-				if (req.getParameter("controlGroup") != "") {
+				if (!req.getParameter("controlGroup").isEmpty()) {
 					controlGroup = controlGroupsService.getControlGroupByID(req.getParameter("controlGroup"));
 				} else {
 					controlGroup = null;

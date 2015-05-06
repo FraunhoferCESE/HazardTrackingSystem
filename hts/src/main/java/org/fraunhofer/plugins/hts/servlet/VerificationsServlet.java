@@ -137,14 +137,14 @@ public class VerificationsServlet extends HttpServlet {
 
 			String description = req.getParameter("verificationDescription");
 			VerificationStatus status;
-			if (req.getParameter("verificationStatus") != "") {
+			if (!req.getParameter("verificationStatus").isEmpty()) {
 				status = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatus"));
 			} else {
 				status = null;
 			}
 
 			VerificationType type;
-			if (req.getParameter("verificationType") != "") {
+			if (!req.getParameter("verificationType").isEmpty()) {
 				type = verificationTypeService.getVerificationTypeByID(req.getParameter("verificationType"));
 			} else {
 				type = null;
