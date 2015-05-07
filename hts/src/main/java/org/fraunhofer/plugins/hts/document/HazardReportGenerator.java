@@ -479,27 +479,31 @@ public class HazardReportGenerator {
 			}
 			// Print out the controls for this cause
 			printControlsForCause(doc, cause.getControls(), cell);
-			System.out.println("test " + cause.getControls());
+			// printVerificationsForCause(doc, cause.get, cell)
 		}
 	}
 
 	private void printControlsForCause(XWPFDocument doc, Hazard_Controls[] controls, XWPFTableCell cell) {
 		// TODO Auto-generated method stub
 
+		new CellHeaderBuilder().text("Controls: ").bold().createCellHeader(cell);
 		for (Hazard_Controls control : controls) {
 			// if()
 			if (control.getDeleteReason() != null && !control.getDeleteReason().isEmpty()) {
 				continue;
 			}
+			
+			
 			if (control.getTransfer() != 0) {
 				printControlTransfer(cell, control);
 			} else {
 				ControlGroups controlGroup = control.getControlGroup();
 				if (controlGroup != null) {
 					controlGroup.getLabel();
+					
 					new ParagraphBuilder()
-							.text("Control " + control.getControlNumber() + "(" + controlGroup.getLabel() + ")" + " - "
-									+ control.getDescription()).leftMargin(450).hangingIndent(300).createCellText(cell);
+							.text("Control " + control.getControlNumber() + " (" + controlGroup.getLabel() + ")" + " - "
+									+ control.getDescription()).leftMargin(450).hangingIndent(400).createCellText(cell);
 				} else {
 					new ParagraphBuilder().text("Control " + control.getControlNumber() + " - " + control.getDescription()).leftMargin(450)
 							.hangingIndent(300).createCellText(cell);
@@ -507,9 +511,35 @@ public class HazardReportGenerator {
 			}
 		}
 	}
+
+//	private void printVerificationsForCause(XWPFDocument doc, Hazard_Controls[] controls, XWPFTableCell cell) {
+//		// TODO Auto-generated method stub
+//
+//		for (Hazard_Controls control : controls) {
+//			// if()
+//			if (control.getDeleteReason() != null && !control.getDeleteReason().isEmpty()) {
+//				continue;
+//			}
+//			if (control.getTransfer() != 0) {
+//				printControlTransfer(cell, control);
+//			} else {
+//				ControlGroups controlGroup = control.getControlGroup();
+//				if (controlGroup != null) {
+//					controlGroup.getLabel();
+//					new ParagraphBuilder()
+//							.text("Control " + control.getControlNumber() + "(" + controlGroup.getLabel() + ")" + " - "
+//									+ control.getDescription()).leftMargin(450).hangingIndent(300).createCellText(cell);
+//				} else {
+//					new ParagraphBuilder().text("Control " + control.getControlNumber() + " - " + control.getDescription()).leftMargin(450)
+//							.hangingIndent(300).createCellText(cell);
+//				}
+//			}
+//		}
+//	}
+
 	/**
-	 * Helper method that writes out text for a transferred Control title based on
-	 * the target of the transfer.
+	 * Helper method that writes out text for a transferred Control title based
+	 * on the target of the transfer.
 	 * 
 	 * @param cell
 	 *            the cell which will contain the Control title
@@ -518,20 +548,28 @@ public class HazardReportGenerator {
 	 */
 	private void printControlTransfer(XWPFTableCell cell, Hazard_Controls control) {
 		Transfers transfer = transferService.getTransferByID(control.getTransfer());
+		
+		//new CellHeaderBuilder().text("Controls: ").bold().createCellHeader(cell);
 
 		if (transfer.getTargetType().equals("CONTROL")) {
-			Hazard_Controls targetControl = controlService.getHazardControlByID(Integer.toString(transfer.getTargetID()));
+			Hazard_Controls targetControl = controlService.getHazardControlByID(transfer.getTargetID());
 			Hazards hazard = targetControl.getHazard()[0];
+
+			String hazardTitle = hazard.getHazardTitle() == null ? "<TBD> " : hazard.getHazardTitle();
+			String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> " : hazard.getHazardNumber();
+			
 			new ParagraphBuilder()
-					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
-							+ hazard.getHazardTitle()).topMargin(50).leftMargin(350).hangingIndent(300).createCellText(cell);
+					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazardNumber + " \u2013 "
+							+ hazardTitle + ", Control " + targetControl.getControlNumber()).leftMargin(350)
+					.hangingIndent(300).createCellText(cell);
 
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
 			Hazards hazard = targetCause.getHazards()[0];
+			String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> " : hazard.getHazardNumber();
 			new ParagraphBuilder()
-					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
-							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).topMargin(50).leftMargin(350)
+					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazardNumber + ", Cause "
+							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).leftMargin(350)
 					.hangingIndent(300).createCellText(cell);
 		}
 
