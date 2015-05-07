@@ -375,7 +375,7 @@ public class HazardReportGenerator {
 					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
 							+ hazard.getHazardTitle()).leftMargin(350).hangingIndent(300).createCellText(cell);
 		} else if (transfer.getTargetType().equals("CAUSE")) {
-			Hazard_Causes targetCause = causeService.getHazardCauseByID(Integer.toString(transfer.getTargetID()));
+			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 			Hazards hazard = targetCause.getHazards()[0];
 			new ParagraphBuilder()
 					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "

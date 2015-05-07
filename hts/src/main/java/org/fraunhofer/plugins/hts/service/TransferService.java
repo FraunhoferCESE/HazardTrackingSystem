@@ -28,10 +28,6 @@ public class TransferService {
 		return transfer;
 	}
 
-	public List<Transfers> all() {
-		return newArrayList(ao.find(Transfers.class));
-	}
-
 	public Transfers getTransferByID(int id) {
 		final Transfers[] transfer = ao.find(Transfers.class, Query.select().where("ID=?", id));
 		return transfer.length > 0 ? transfer[0] : null;

@@ -23,7 +23,7 @@ public class RiskCategoryService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public Risk_Categories add(String value, String riskDesc) {
+	private Risk_Categories add(String value, String riskDesc) {
 		final Risk_Categories risk = ao.create(Risk_Categories.class);
 		risk.setValue(value);
 		risk.setRiskDesc(riskDesc);
@@ -43,7 +43,7 @@ public class RiskCategoryService {
 		return risk.length > 0 ? risk[0] : null;
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Risk_Categories.class).length == 0) {
@@ -60,17 +60,4 @@ public class RiskCategoryService {
 			}
 		}
 	}
-
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
 }

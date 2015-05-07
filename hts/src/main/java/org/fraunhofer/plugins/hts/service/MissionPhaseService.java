@@ -5,8 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.Mission_Phase;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -23,22 +21,11 @@ public class MissionPhaseService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public Mission_Phase add(String label) {
+	private Mission_Phase add(String label) {
 		final Mission_Phase phase = ao.create(Mission_Phase.class);
 		phase.setLabel(label);
 		phase.save();
 		return phase;
-	}
-
-	public List<Mission_Phase> all() {
-		initializeTable();
-		return newArrayList(ao.find(Mission_Phase.class));
-	}
-
-	public Mission_Phase getMissionPhaseByID(String id) {
-		initializeTable();
-		final Mission_Phase[] phase = ao.find(Mission_Phase.class, Query.select().where("ID=?", id));
-		return phase.length > 0 ? phase[0] : null;
 	}
 
 	public Mission_Phase[] getMissionPhasesByID(Integer[] id) {
@@ -55,7 +42,8 @@ public class MissionPhaseService {
 	}
 
 	public List<Mission_Phase> getRemaining(Mission_Phase[] currentList) {
-		List<Mission_Phase> listAll = all();
+		initializeTable();
+		List<Mission_Phase> listAll = newArrayList(ao.find(Mission_Phase.class));
 
 		if (!listAll.isEmpty()) {
 			for (Mission_Phase currRegistered : currentList) {
@@ -66,7 +54,7 @@ public class MissionPhaseService {
 		return listAll;
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Mission_Phase.class).length == 0) {
@@ -82,17 +70,4 @@ public class MissionPhaseService {
 		}
 
 	}
-
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
 }

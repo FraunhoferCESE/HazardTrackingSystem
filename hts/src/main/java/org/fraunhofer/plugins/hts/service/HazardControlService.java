@@ -87,10 +87,6 @@ public class HazardControlService {
 		return control.length > 0 ? control[0] : null;
 	}
 
-	public Hazard_Controls getHazardControlByID(String controlID) {
-		return getHazardControlByID(Integer.parseInt(controlID));
-	}
-
 	public List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardControls());
 	}

@@ -5,8 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.Hazard_Group;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -23,25 +21,12 @@ public class HazardGroupService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public Hazard_Group add(String label) {
+	private Hazard_Group add(String label) {
 		final Hazard_Group group = ao.create(Hazard_Group.class);
 		group.setLabel(label);
 		group.save();
 		return group;
 	}
-
-	public List<Hazard_Group> all() {
-		initializeTable();
-		return newArrayList(ao.find(Hazard_Group.class));
-	}
-
-	public Hazard_Group getHazardGroupByID(String id) {
-		initializeTable();
-		final Hazard_Group[] group = ao.find(Hazard_Group.class, Query.select().where("ID=?", id));
-		return group.length > 0 ? group[0] : null;
-	}
-
-	// TODO see if a better way is possible
 
 	public Hazard_Group[] getHazardGroupsByID(Integer[] id) {
 		initializeTable();
@@ -57,7 +42,8 @@ public class HazardGroupService {
 	}
 
 	public List<Hazard_Group> getRemaining(Hazard_Group[] currentList) {
-		List<Hazard_Group> listAll = all();
+		initializeTable();
+		List<Hazard_Group> listAll = newArrayList(ao.find(Hazard_Group.class));
 
 		if (!listAll.isEmpty()) {
 			for (Hazard_Group currRegistered : currentList) {
@@ -68,7 +54,7 @@ public class HazardGroupService {
 		return listAll;
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Hazard_Group.class).length == 0) {
@@ -92,17 +78,4 @@ public class HazardGroupService {
 		}
 
 	}
-
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
 }

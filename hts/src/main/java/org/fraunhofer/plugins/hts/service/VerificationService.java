@@ -1,7 +1,6 @@
 package org.fraunhofer.plugins.hts.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +28,7 @@ public class VerificationService {
 		this.hazardService = checkNotNull(hazardService);
 	}
 
-	public Verifications getVerificationByID(int verificationID) {
+	private Verifications getVerificationByID(int verificationID) {
 		final Verifications[] verification = ao.find(Verifications.class, Query.select().where("ID=?", verificationID));
 		return verification.length > 0 ? verification[0] : null;
 	}
@@ -39,18 +38,9 @@ public class VerificationService {
 		return getVerificationByID(Integer.parseInt(verificationID));
 	}
 
-	public List<Verifications> all() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<Verifications> getAllVerificationsWithinAHazard(Hazards hazard) {
-		return newArrayList(hazard.getVerifications());
-	}
-
 	public List<Verifications> getAllNonDeletedVerificationsWithinAHazard(Hazards hazard) {
 		List<Verifications> allRemaining = new ArrayList<Verifications>();
-		for (Verifications current : getAllVerificationsWithinAHazard(hazard)) {
+		for (Verifications current : hazard.getVerifications()) {
 			if (current.getDeleteReason() == null) {
 				allRemaining.add(current);
 			}
@@ -76,7 +66,11 @@ public class VerificationService {
 
 		verification.setLastUpdated(new Date());
 		verification.save();
-		associateVerificationToHazard(hazard, verification);
+
+		final VerifcToHazard verifcToHazard = ao.create(VerifcToHazard.class);
+		verifcToHazard.setHazard(hazard);
+		verifcToHazard.setVerification(verification);
+		verifcToHazard.save();
 		return verification;
 	}
 
@@ -91,7 +85,7 @@ public class VerificationService {
 
 		if (verification.getControls() != null) {
 			for (Hazard_Controls control : verification.getControls()) {
-				removeAssociationsVerifcationToControl(control.getID());
+				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", control.getID())));
 			}
 		}
 		if (controls != null) {
@@ -103,44 +97,6 @@ public class VerificationService {
 		verification.setLastUpdated(new Date());
 		verification.save();
 		return verification;
-
-		// if (!description.equals(verificationToEdit.getVerificationDesc())) {
-		// verificationToEdit.setVerificationDesc(description);
-		// }
-		// if (verificationType != null &&
-		// verificationToEdit.getVerificationType() != null) {
-		// if (verificationType.getID() !=
-		// verificationToEdit.getVerificationType().getID()) {
-		// verificationToEdit.setVerificationType(verificationType);
-		// }
-		// }
-		// else {
-		// verificationToEdit.setVerificationType(verificationType);
-		// }
-		// if
-		// (!responsibleParty.equals(verificationToEdit.getResponsibleParty()))
-		// {
-		// verificationToEdit.setResponsibleParty(responsibleParty);
-		// }
-		// if (estCompletionDate != verificationToEdit.getEstCompletionDate()) {
-		// verificationToEdit.setEstCompletionDate(estCompletionDate);
-		// }
-		// if (verificationStatus.getID() !=
-		// verificationToEdit.getVerificationStatus().getID()) {
-		// verificationToEdit.setVerificationStatus(verificationStatus);
-		// }
-		// if (controls != null) {
-		// removeAssociationsVerifcationToControl(verificationToEdit.getID());
-		// for (Hazard_Controls hc : controls) {
-		// associateVerificationToControl(hc, verificationToEdit);
-		// }
-		// }
-		// else {
-		// removeAssociationsVerifcationToControl(verificationToEdit.getID());
-		// }
-		// verificationToEdit.setLastUpdated(new Date());
-		// verificationToEdit.save();
-		// return verificationToEdit;
 	}
 
 	public Verifications deleteVerification(Verifications verificationToDelete, String reason) {
@@ -149,22 +105,10 @@ public class VerificationService {
 		return verificationToDelete;
 	}
 
-	private void associateVerificationToHazard(Hazards hazard, Verifications verification) {
-		final VerifcToHazard verifcToHazard = ao.create(VerifcToHazard.class);
-		verifcToHazard.setHazard(hazard);
-		verifcToHazard.setVerification(verification);
-		verifcToHazard.save();
-	}
-
 	private void associateVerificationToControl(Hazard_Controls control, Verifications verification) {
 		final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
 		verifcToControl.setControl(control);
 		verifcToControl.setVerification(verification);
 		verifcToControl.save();
 	}
-
-	private void removeAssociationsVerifcationToControl(int id) {
-		ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", id)));
-	}
-
 }

@@ -22,7 +22,7 @@ public class ReviewPhaseService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Review_Phases.class).length == 0) {
@@ -36,19 +36,7 @@ public class ReviewPhaseService {
 
 	}
 
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
-	public Review_Phases add(String label, String reviewPhaseDesc) {
+	private Review_Phases add(String label, String reviewPhaseDesc) {
 		final Review_Phases reviewPhase = ao.create(Review_Phases.class);
 		reviewPhase.setLabel(label);
 		reviewPhase.setDescription(reviewPhaseDesc);
@@ -67,5 +55,4 @@ public class ReviewPhaseService {
 		initializeTable();
 		return newArrayList(ao.find(Review_Phases.class));
 	}
-
 }

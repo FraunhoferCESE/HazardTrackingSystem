@@ -21,17 +21,6 @@ public class JIRAProjectService {
 		this.hazardService = checkNotNull(hazardService);
 	}
 
-	public List<JIRAProject> all() {
-		List<Long> projectsWithHazards = hazardService.getProjectsWithHazards();
-		ProjectManager projectManager = ComponentAccessor.getProjectManager();
-
-		List<JIRAProject> jiraProjectList = new ArrayList<JIRAProject>();
-		for (Long projectID : projectsWithHazards) {
-			jiraProjectList.add(new JIRAProject(projectID, projectManager.getProjectObj(projectID).getName()));
-		}
-		return jiraProjectList;
-	}
-
 	public List<JIRAProject> getUserProjects(ApplicationUser user) {
 		List<Long> projectsWithHazards = hazardService.getProjectsWithHazards();
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();

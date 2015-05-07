@@ -21,7 +21,7 @@ public class ControlGroupsService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(ControlGroups.class).length == 0) {
@@ -36,19 +36,7 @@ public class ControlGroupsService {
 		}
 	}
 
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
-	public ControlGroups add(String label) {
+	private ControlGroups add(String label) {
 		final ControlGroups cg = ao.create(ControlGroups.class);
 		cg.setLabel(label);
 		cg.save();

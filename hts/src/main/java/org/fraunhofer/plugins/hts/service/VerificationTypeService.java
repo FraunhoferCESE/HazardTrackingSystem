@@ -21,7 +21,7 @@ public class VerificationTypeService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(VerificationType.class).length == 0) {
@@ -35,19 +35,7 @@ public class VerificationTypeService {
 		}
 	}
 
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
-	public VerificationType add(String label) {
+	private VerificationType add(String label) {
 		final VerificationType verificationType = ao.create(VerificationType.class);
 		verificationType.setLabel(label);
 		verificationType.save();

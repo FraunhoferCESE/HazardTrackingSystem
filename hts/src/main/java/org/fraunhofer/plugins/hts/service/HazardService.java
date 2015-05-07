@@ -3,10 +3,8 @@ package org.fraunhofer.plugins.hts.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -91,39 +89,35 @@ public class HazardService {
 		hazard.setHazardTitle(hazardTitle);
 		hazard.setRevisionDate(new Date());
 
-		removeSubsystems(hazard.getID());
+		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
 		if (subsystems != null) {
 			for (Subsystems subsystem : subsystems) {
-				try {
-					associateSubsystemToHazard(subsystem, hazard);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
+				subsystemToHazard.setSubsystem(subsystem);
+				subsystemToHazard.setHazard(hazard);
+				subsystemToHazard.save();
 			}
 		}
 
 		hazard.setReviewPhase(reviewPhase);
 
-		removeMissionPhase(hazard.getID());
+		ao.delete(ao.find(PhaseToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
 		if (missionPhases != null) {
 			for (Mission_Phase phase : missionPhases) {
-				try {
-					associateMissionPhaseToHazard(phase, hazard);
-				} catch (SQLException e) {
-					// TODO: handle exception
-				}
+				final PhaseToHazard phaseToHazard = ao.create(PhaseToHazard.class);
+				phaseToHazard.setMissionPhase(phase);
+				phaseToHazard.setHazard(hazard);
+				phaseToHazard.save();
 			}
 		}
 
-		removeHazardGroups(hazard.getID());
+		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
 		if (hazardGroups != null) {
 			for (Hazard_Group group : hazardGroups) {
-				try {
-					associateHazardGroupToHazard(group, hazard);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				final GroupToHazard hazardGroupToHazard = ao.create(GroupToHazard.class);
+				hazardGroupToHazard.setHazardGroup(group);
+				hazardGroupToHazard.setHazard(hazard);
+				hazardGroupToHazard.save();
 			}
 		}
 
@@ -145,16 +139,6 @@ public class HazardService {
 		return hazard;
 	}
 
-	public List<Hazards> getAllHazards() {
-		List<Hazards> hazards = newArrayList(ao.find(Hazards.class));
-		return hazards;
-	}
-
-	public List<Hazards> getAllNonDeletedHazards() {
-		List<Hazards> hazards = newArrayList(ao.find(Hazards.class, Query.select().where("ACTIVE=?", true)));
-		return hazards;
-	}
-
 	public List<HazardMinimal> getUserHazardsMinimal(List<JIRAProject> projects) {
 		List<HazardMinimal> hazardsMinimal = new ArrayList<HazardMinimal>();
 		for (JIRAProject project : projects) {
@@ -173,7 +157,7 @@ public class HazardService {
 	}
 
 	public List<HazardMinimalJSON> getUserHazardsMinimalJson(ApplicationUser user) {
-		List<Hazards> allHazards = getAllNonDeletedHazards();
+		List<Hazards> allHazards = newArrayList(ao.find(Hazards.class, Query.select().where("ACTIVE=?", true)));
 		List<HazardMinimalJSON> allHazardsMinimal = new ArrayList<HazardMinimalJSON>();
 		for (Hazards hazard : allHazards) {
 			if (hasHazardPermission(hazard.getProjectID(), user)) {
@@ -229,10 +213,6 @@ public class HazardService {
 		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", id, true)));
 	}
 
-	public List<Hazards> getHazardsByMissionPayload(String id) {
-		return getHazardsByMissionPayload(Long.parseLong(id));
-	}
-
 	public String getHazardPreparerInformation(Hazards hazard) {
 		IssueManager issueManager = ComponentAccessor.getIssueManager();
 		MutableIssue mutableIssue = issueManager.getIssueObject(hazard.getIssueID());
@@ -280,21 +260,6 @@ public class HazardService {
 		return ids;
 	}
 
-	public List<Long> getProjectsWithHazards(Collection<Project> userProjects) {
-		List<Long> ids = new ArrayList<Long>();
-		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").where("ACTIVE=?", true).distinct());
-		if (hazards != null) {
-			for (Hazards hazard : hazards) {
-				for (Project project : userProjects) {
-					if (hazard.getProjectID().equals(project.getId())) {
-						ids.add(new Long(hazard.getID()));
-					}
-				}
-			}
-		}
-		return ids;
-	}
-
 	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
 		boolean hasPermission;
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
@@ -316,38 +281,4 @@ public class HazardService {
 	public Issue getHazardSubTask(Hazards hazard) {
 		return ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 	}
-
-	private void associateSubsystemToHazard(Subsystems subsystems, Hazards hazard) throws SQLException {
-		final SubsystemToHazard subsystemToHazard = ao.create(SubsystemToHazard.class);
-		subsystemToHazard.setSubsystem(subsystems);
-		subsystemToHazard.setHazard(hazard);
-		subsystemToHazard.save();
-	}
-
-	private void associateHazardGroupToHazard(Hazard_Group hazardGroup, Hazards hazard) throws SQLException {
-		final GroupToHazard hazardGroupToHazard = ao.create(GroupToHazard.class);
-		hazardGroupToHazard.setHazardGroup(hazardGroup);
-		hazardGroupToHazard.setHazard(hazard);
-		hazardGroupToHazard.save();
-	}
-
-	private void associateMissionPhaseToHazard(Mission_Phase phase, Hazards hazard) throws SQLException {
-		final PhaseToHazard phaseToHazard = ao.create(PhaseToHazard.class);
-		phaseToHazard.setMissionPhase(phase);
-		phaseToHazard.setHazard(hazard);
-		phaseToHazard.save();
-	}
-
-	private void removeMissionPhase(int id) {
-		ao.delete(ao.find(PhaseToHazard.class, Query.select().where("HAZARD_ID=?", id)));
-	}
-
-	private void removeSubsystems(int id) {
-		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", id)));
-	}
-
-	private void removeHazardGroups(int id) {
-		ao.delete(ao.find(GroupToHazard.class, Query.select().where("HAZARD_ID=?", id)));
-	}
-
 }

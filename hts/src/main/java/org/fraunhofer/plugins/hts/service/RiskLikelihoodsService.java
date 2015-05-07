@@ -24,7 +24,7 @@ public class RiskLikelihoodsService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public Risk_Likelihoods add(String value, String likeliHoodDesc) {
+	private Risk_Likelihoods add(String value, String likeliHoodDesc) {
 		final Risk_Likelihoods likelihood = ao.create(Risk_Likelihoods.class);
 		likelihood.setValue(value);
 		likelihood.setLikelihoodDesc(likeliHoodDesc);
@@ -43,7 +43,7 @@ public class RiskLikelihoodsService {
 		return likelihood.length > 0 ? likelihood[0] : null;
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Risk_Likelihoods.class).length == 0) {
@@ -58,17 +58,4 @@ public class RiskLikelihoodsService {
 		}
 
 	}
-
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
 }

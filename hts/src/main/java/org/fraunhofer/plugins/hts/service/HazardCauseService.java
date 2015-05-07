@@ -90,10 +90,6 @@ public class HazardCauseService {
 		return cause;
 	}
 
-	public List<Hazard_Causes> getAllCauses() {
-		return newArrayList(ao.find(Hazard_Causes.class));
-	}
-
 	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
 		return newArrayList(hazard.getHazardCauses());
 	}
@@ -160,10 +156,6 @@ public class HazardCauseService {
 	public Hazard_Causes getHazardCauseByID(int causeID) {
 		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?", causeID));
 		return hazardCause.length > 0 ? hazardCause[0] : null;
-	}
-
-	public Hazard_Causes getHazardCauseByID(String causeID) {
-		return getHazardCauseByID(Integer.parseInt(causeID));
 	}
 
 	public Hazard_Causes[] getHazardCausesByID(Integer[] id) {

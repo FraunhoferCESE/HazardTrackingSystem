@@ -21,7 +21,7 @@ public class VerificationStatusService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(VerificationStatus.class).length == 0) {
@@ -34,19 +34,7 @@ public class VerificationStatusService {
 		}
 	}
 
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
-	public VerificationStatus add(String label) {
+	private VerificationStatus add(String label) {
 		final VerificationStatus verificationStatus = ao.create(VerificationStatus.class);
 		verificationStatus.setLabel(label);
 		verificationStatus.save();

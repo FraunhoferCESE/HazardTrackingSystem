@@ -5,8 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.Subsystems;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -21,29 +19,12 @@ public class SubsystemService {
 		this.ao = checkNotNull(ao);
 	}
 
-	public Subsystems add(String label, String subsysDesc) {
+	private Subsystems add(String label, String subsysDesc) {
 		final Subsystems subsys = ao.create(Subsystems.class);
 		subsys.setLabel(label);
 		subsys.setDescription(subsysDesc);
 		subsys.save();
 		return subsys;
-	}
-
-	public Subsystems getSubsystemByID(String id) {
-		initializeTable();
-		final Subsystems[] subsystem = ao.find(Subsystems.class, Query.select().where("ID=?", id));
-		return subsystem.length > 0 ? subsystem[0] : null;
-	}
-
-	public List<Subsystems> all() {
-		initializeTable();
-		return newArrayList(ao.find(Subsystems.class));
-	}
-
-	public Subsystems update(Subsystems subsystemToUpdate, String label) {
-		subsystemToUpdate.setLabel(label);
-		subsystemToUpdate.save();
-		return null;
 	}
 
 	public Subsystems[] getSubsystemsByID(Integer[] id) {
@@ -60,7 +41,8 @@ public class SubsystemService {
 	}
 
 	public List<Subsystems> getRemaining(Subsystems[] currentList) {
-		List<Subsystems> listAll = all();
+		initializeTable();
+		List<Subsystems> listAll = newArrayList(ao.find(Subsystems.class));
 
 		for (Subsystems currRegistered : currentList) {
 			listAll.remove(currRegistered);
@@ -69,7 +51,7 @@ public class SubsystemService {
 		return listAll;
 	}
 
-	public void initializeTable() {
+	private void initializeTable() {
 		synchronized (_lock) {
 			if (!initialized) {
 				if (ao.find(Subsystems.class).length == 0) {
@@ -96,17 +78,4 @@ public class SubsystemService {
 		}
 
 	}
-
-	public static boolean isInitialized() {
-		synchronized (_lock) {
-			return initialized;
-		}
-	}
-
-	public static void reset() {
-		synchronized (_lock) {
-			initialized = false;
-		}
-	}
-
 }

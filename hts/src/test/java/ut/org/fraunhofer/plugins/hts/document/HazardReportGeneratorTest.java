@@ -136,10 +136,9 @@ public class HazardReportGeneratorTest {
 		when(mockHazardService.getHazardByID("99999")).thenReturn(transferDestinationHazard);
 
 		mockHazardCauseService = mock(HazardCauseService.class);
-		when(mockHazardCauseService.getHazardCauseByID(Integer.toString(transferDestinationCause.getID()))).thenReturn(
+		when(mockHazardCauseService.getHazardCauseByID(transferDestinationCause.getID())).thenReturn(
 				transferDestinationCause);
 
-		
 		Project mockProject1 = mock(Project.class);
 		when(mockProject1.getName()).thenReturn("Project named AAAAA");
 		Project mockProject2 = mock(Project.class);
@@ -267,7 +266,8 @@ public class HazardReportGeneratorTest {
 				new Hazard_Causes[] { mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause });
 
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
-		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService, mockTransferService, mockProjectManager);
+		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
+				mockTransferService, mockProjectManager);
 
 		final File template = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "src"
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
