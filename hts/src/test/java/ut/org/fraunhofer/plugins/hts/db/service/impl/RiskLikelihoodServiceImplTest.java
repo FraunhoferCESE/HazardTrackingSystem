@@ -17,9 +17,8 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
-import org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl;
+import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.service.RiskLikelihoodsService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +32,7 @@ public class RiskLikelihoodServiceImplTest {
 
 	@Before
 	public void setUp() {
-		RiskLikelihoodsServiceImpl.reset();
+		RiskLikelihoodsService.reset();
 
 		mockLikelihood = mock(Risk_Likelihoods.class);
 		mockLikelihoods = new Risk_Likelihoods[] { mockLikelihood };
@@ -45,7 +44,7 @@ public class RiskLikelihoodServiceImplTest {
 
 	@Test
 	public void testAdd() {
-		RiskLikelihoodsService test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		Risk_Likelihoods result = test.add("blah", "desc");
 
 		assertEquals(mockLikelihood, result);
@@ -62,10 +61,10 @@ public class RiskLikelihoodServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class), any(Query.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsService test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		Risk_Likelihoods result = test.getLikelihoodByID("blah");
 
-		assertTrue(RiskLikelihoodsServiceImpl.isInitialized());
+		assertTrue(RiskLikelihoodsService.isInitialized());
 		verify(mockActiveObjects).find(eq(Risk_Likelihoods.class), any(Query.class));
 		assertEquals(result, mockLikelihood);
 
@@ -77,10 +76,10 @@ public class RiskLikelihoodServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class), any(Query.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsService test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		Risk_Likelihoods result = test.getLikelihoodByID("blah");
 
-		assertTrue(RiskLikelihoodsServiceImpl.isInitialized());
+		assertTrue(RiskLikelihoodsService.isInitialized());
 		verify(mockActiveObjects).find(eq(Risk_Likelihoods.class), any(Query.class));
 		assertNull(result);
 
@@ -92,10 +91,10 @@ public class RiskLikelihoodServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsService test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		List<Risk_Likelihoods> result = test.all();
 
-		assertTrue(RiskLikelihoodsServiceImpl.isInitialized());
+		assertTrue(RiskLikelihoodsService.isInitialized());
 		assertTrue(result.isEmpty());
 	}
 
@@ -105,10 +104,10 @@ public class RiskLikelihoodServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsService test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		List<Risk_Likelihoods> result = test.all();
 
-		assertTrue(RiskLikelihoodsServiceImpl.isInitialized());
+		assertTrue(RiskLikelihoodsService.isInitialized());
 		assertEquals(result.size(), 2);
 	}
 
@@ -117,7 +116,7 @@ public class RiskLikelihoodServiceImplTest {
 		Risk_Likelihoods[] mockLikelihoods = {};
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsServiceImpl test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		test.initializeTable();
 
 		verify(mockActiveObjects, times(5)).create(eq(Risk_Likelihoods.class), (DBParam[]) anyVararg());
@@ -139,7 +138,7 @@ public class RiskLikelihoodServiceImplTest {
 		Risk_Likelihoods[] mockLikelihoods = {};
 		when(mockActiveObjects.find(eq(Risk_Likelihoods.class))).thenReturn(mockLikelihoods);
 
-		RiskLikelihoodsServiceImpl test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();
 
@@ -159,16 +158,16 @@ public class RiskLikelihoodServiceImplTest {
 
 	@Test
 	public void testIsInitialized() {
-		assertFalse(RiskLikelihoodsServiceImpl.isInitialized());
+		assertFalse(RiskLikelihoodsService.isInitialized());
 	}
 
 	@Test
 	public void testReset() {
-		RiskLikelihoodsServiceImpl test = new RiskLikelihoodsServiceImpl(mockActiveObjects);
+		RiskLikelihoodsService test = new RiskLikelihoodsService(mockActiveObjects);
 		test.initializeTable();
 
-		assertTrue(RiskLikelihoodsServiceImpl.isInitialized());
-		RiskLikelihoodsServiceImpl.reset();
-		assertFalse(RiskLikelihoodsServiceImpl.isInitialized());
+		assertTrue(RiskLikelihoodsService.isInitialized());
+		RiskLikelihoodsService.reset();
+		assertFalse(RiskLikelihoodsService.isInitialized());
 	}
 }

@@ -15,16 +15,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
-import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.VerificationStatus;
-import org.fraunhofer.plugins.hts.db.VerificationType;
-import org.fraunhofer.plugins.hts.db.Verifications;
-import org.fraunhofer.plugins.hts.db.service.HazardControlService;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.VerificationService;
-import org.fraunhofer.plugins.hts.db.service.VerificationStatusService;
-import org.fraunhofer.plugins.hts.db.service.VerificationTypeService;
+import org.fraunhofer.plugins.hts.model.Hazard_Controls;
+import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.model.VerificationStatus;
+import org.fraunhofer.plugins.hts.model.VerificationType;
+import org.fraunhofer.plugins.hts.model.Verifications;
+import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.service.VerificationService;
+import org.fraunhofer.plugins.hts.service.VerificationStatusService;
+import org.fraunhofer.plugins.hts.service.VerificationTypeService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;

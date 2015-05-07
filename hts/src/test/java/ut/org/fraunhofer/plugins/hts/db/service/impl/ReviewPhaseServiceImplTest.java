@@ -17,9 +17,8 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Review_Phases;
-import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
-import org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl;
+import org.fraunhofer.plugins.hts.model.Review_Phases;
+import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +32,7 @@ public class ReviewPhaseServiceImplTest {
 
 	@Before
 	public void setUp() {
-		ReviewPhaseServiceImpl.reset();
+		ReviewPhaseService.reset();
 
 		mockPhase = mock(Review_Phases.class);
 		mockPhases = new Review_Phases[] { mockPhase };
@@ -49,7 +48,7 @@ public class ReviewPhaseServiceImplTest {
 	@Test
 	public void testAdd() {
 		// Create the test object and run the add() method
-		ReviewPhaseService test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		Review_Phases result = test.add("blah", "desc");
 
 		// 4. Verify that the return value is what we expect
@@ -78,10 +77,10 @@ public class ReviewPhaseServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Review_Phases.class), any(Query.class))).thenReturn(mockPhases);
 
-		ReviewPhaseService test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		Review_Phases result = test.getReviewPhaseByID("blah");
 
-		assertTrue(ReviewPhaseServiceImpl.isInitialized());
+		assertTrue(ReviewPhaseService.isInitialized());
 		verify(mockActiveObjects).find(eq(Review_Phases.class), any(Query.class));
 		assertEquals(result, mockPhase);
 
@@ -93,10 +92,10 @@ public class ReviewPhaseServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Review_Phases.class), any(Query.class))).thenReturn(mockPhases);
 
-		ReviewPhaseService test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		Review_Phases result = test.getReviewPhaseByID("blah");
 
-		assertTrue(ReviewPhaseServiceImpl.isInitialized());
+		assertTrue(ReviewPhaseService.isInitialized());
 		verify(mockActiveObjects).find(eq(Review_Phases.class), any(Query.class));
 		assertNull(result);
 
@@ -108,10 +107,10 @@ public class ReviewPhaseServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Review_Phases.class))).thenReturn(mockPhases);
 
-		ReviewPhaseService test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		List<Review_Phases> result = test.all();
 
-		assertTrue(ReviewPhaseServiceImpl.isInitialized());
+		assertTrue(ReviewPhaseService.isInitialized());
 		assertTrue(result.isEmpty());
 	}
 
@@ -122,10 +121,10 @@ public class ReviewPhaseServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Review_Phases.class))).thenReturn(mockPhases);
 
-		ReviewPhaseService test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		List<Review_Phases> result = test.all();
 
-		assertTrue(ReviewPhaseServiceImpl.isInitialized());
+		assertTrue(ReviewPhaseService.isInitialized());
 		assertEquals(result.size(), 3);
 	}
 
@@ -134,7 +133,7 @@ public class ReviewPhaseServiceImplTest {
 		Review_Phases[] mockPhases = {};
 		when(mockActiveObjects.find(eq(Review_Phases.class))).thenReturn(mockPhases);
 
-		ReviewPhaseServiceImpl test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		test.initializeTable();
 
 		verify(mockActiveObjects, times(3)).create(eq(Review_Phases.class), (DBParam[]) anyVararg());
@@ -153,7 +152,7 @@ public class ReviewPhaseServiceImplTest {
 		Review_Phases[] mockPhases = {};
 		when(mockActiveObjects.find(eq(Review_Phases.class))).thenReturn(mockPhases);
 
-		ReviewPhaseServiceImpl test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();
 
@@ -170,16 +169,16 @@ public class ReviewPhaseServiceImplTest {
 
 	@Test
 	public void testIsInitialized() {
-		assertFalse(ReviewPhaseServiceImpl.isInitialized());
+		assertFalse(ReviewPhaseService.isInitialized());
 	}
 
 	@Test
 	public void testReset() {
-		ReviewPhaseServiceImpl test = new ReviewPhaseServiceImpl(mockActiveObjects);
+		ReviewPhaseService test = new ReviewPhaseService(mockActiveObjects);
 		test.initializeTable();
 
-		assertTrue(ReviewPhaseServiceImpl.isInitialized());
-		ReviewPhaseServiceImpl.reset();
-		assertFalse(ReviewPhaseServiceImpl.isInitialized());
+		assertTrue(ReviewPhaseService.isInitialized());
+		ReviewPhaseService.reset();
+		assertFalse(ReviewPhaseService.isInitialized());
 	}
 }

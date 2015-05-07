@@ -17,9 +17,8 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
-import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
-import org.fraunhofer.plugins.hts.db.service.impl.RiskCategoryServiceImpl;
+import org.fraunhofer.plugins.hts.model.Risk_Categories;
+import org.fraunhofer.plugins.hts.service.RiskCategoryService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +32,7 @@ public class RiskCategoryServiceImplTest {
 
 	@Before
 	public void setUp() {
-		RiskCategoryServiceImpl.reset();
+		RiskCategoryService.reset();
 
 		mockActiveObjects = mock(ActiveObjects.class);
 		mockCategory = mock(Risk_Categories.class);
@@ -45,7 +44,7 @@ public class RiskCategoryServiceImplTest {
 
 	@Test
 	public void testAdd() {
-		RiskCategoryService test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		Risk_Categories result = test.add("blah", "desc");
 
 		assertEquals(mockCategory, result);
@@ -62,11 +61,11 @@ public class RiskCategoryServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Categories.class), any(Query.class))).thenReturn(mockLikelihoods);
 
-		RiskCategoryService test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 
 		Risk_Categories result = test.getRiskByID("blah");
 
-		assertTrue(RiskCategoryServiceImpl.isInitialized());
+		assertTrue(RiskCategoryService.isInitialized());
 		verify(mockActiveObjects).find(eq(Risk_Categories.class), any(Query.class));
 		assertEquals(result, mockCategory);
 
@@ -78,11 +77,11 @@ public class RiskCategoryServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Categories.class), any(Query.class))).thenReturn(mockLikelihoods);
 
-		RiskCategoryService test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 
 		Risk_Categories result = test.getRiskByID("blah");
 
-		assertTrue(RiskCategoryServiceImpl.isInitialized());
+		assertTrue(RiskCategoryService.isInitialized());
 		assertNull(result);
 
 	}
@@ -93,10 +92,10 @@ public class RiskCategoryServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Categories.class))).thenReturn(mockLikelihoods);
 
-		RiskCategoryService test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		List<Risk_Categories> result = test.all();
 
-		assertTrue(RiskCategoryServiceImpl.isInitialized());
+		assertTrue(RiskCategoryService.isInitialized());
 		assertTrue(result.isEmpty());
 
 	}
@@ -109,10 +108,10 @@ public class RiskCategoryServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Risk_Categories.class))).thenReturn(mockLikelihoods);
 
-		RiskCategoryService test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		List<Risk_Categories> result = test.all();
 
-		assertTrue(RiskCategoryServiceImpl.isInitialized());
+		assertTrue(RiskCategoryService.isInitialized());
 		assertEquals(result.size(), 2);
 	}
 
@@ -121,7 +120,7 @@ public class RiskCategoryServiceImplTest {
 		Risk_Categories[] mockCategories = {};
 		when(mockActiveObjects.find(eq(Risk_Categories.class))).thenReturn(mockCategories);
 
-		RiskCategoryServiceImpl test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		test.initializeTable();
 
 		verify(mockActiveObjects, times(4)).create(eq(Risk_Categories.class), (DBParam[]) anyVararg());
@@ -150,7 +149,7 @@ public class RiskCategoryServiceImplTest {
 		Risk_Categories[] mockCategories = {};
 		when(mockActiveObjects.find(eq(Risk_Categories.class))).thenReturn(mockCategories);
 
-		RiskCategoryServiceImpl test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();
 
@@ -176,16 +175,16 @@ public class RiskCategoryServiceImplTest {
 
 	@Test
 	public void testIsInitialized() {
-		assertFalse(RiskCategoryServiceImpl.isInitialized());
+		assertFalse(RiskCategoryService.isInitialized());
 	}
 
 	@Test
 	public void testReset() {
-		RiskCategoryServiceImpl test = new RiskCategoryServiceImpl(mockActiveObjects);
+		RiskCategoryService test = new RiskCategoryService(mockActiveObjects);
 		test.initializeTable();
 
-		assertTrue(RiskCategoryServiceImpl.isInitialized());
-		RiskCategoryServiceImpl.reset();
-		assertFalse(RiskCategoryServiceImpl.isInitialized());
+		assertTrue(RiskCategoryService.isInitialized());
+		RiskCategoryService.reset();
+		assertFalse(RiskCategoryService.isInitialized());
 	}
 }

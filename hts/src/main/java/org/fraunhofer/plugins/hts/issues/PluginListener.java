@@ -3,8 +3,8 @@ package org.fraunhofer.plugins.hts.issues;
 import java.util.Collection;
 import java.util.List;
 
-import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.service.HazardService;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;

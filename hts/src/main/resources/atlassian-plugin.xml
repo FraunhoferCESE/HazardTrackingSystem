@@ -56,29 +56,29 @@
 	<ao key="ao-module">
 		<description>The module configuring active objects service
 		</description>
-		<entity>org.fraunhofer.plugins.hts.db.Hazards</entity>
-		<entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
-		<entity>org.fraunhofer.plugins.hts.db.ControlToHazard</entity>
-		<entity>org.fraunhofer.plugins.hts.db.CausesToHazards</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Hazard_Causes</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Hazard_Controls</entity>
-		<entity>org.fraunhofer.plugins.hts.db.ControlToCause</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Hazard_Group</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Risk_Categories</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Risk_Likelihoods</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Verifications</entity>
-		<entity>org.fraunhofer.plugins.hts.db.VerificationType</entity>
-		<entity>org.fraunhofer.plugins.hts.db.VerificationStatus</entity>
-		<entity>org.fraunhofer.plugins.hts.db.VerifcToHazard</entity>
-		<entity>org.fraunhofer.plugins.hts.db.VerifcToControl</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Subsystems</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Review_Phases</entity>
-		<entity>org.fraunhofer.plugins.hts.db.SubsystemToHazard</entity>
-		<entity>org.fraunhofer.plugins.hts.db.GroupToHazard</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Mission_Phase</entity>
-		<entity>org.fraunhofer.plugins.hts.db.PhaseToHazard</entity>
-		<entity>org.fraunhofer.plugins.hts.db.ControlGroups</entity>
-		<entity>org.fraunhofer.plugins.hts.db.Transfers</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Hazards</entity>
+		<entity>org.fraunhofer.plugins.hts.model.CausesToHazards</entity>
+		<entity>org.fraunhofer.plugins.hts.model.ControlToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.model.CausesToHazards</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Hazard_Causes</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Hazard_Controls</entity>
+		<entity>org.fraunhofer.plugins.hts.model.ControlToCause</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Hazard_Group</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Risk_Categories</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Risk_Likelihoods</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Verifications</entity>
+		<entity>org.fraunhofer.plugins.hts.model.VerificationType</entity>
+		<entity>org.fraunhofer.plugins.hts.model.VerificationStatus</entity>
+		<entity>org.fraunhofer.plugins.hts.model.VerifcToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.model.VerifcToControl</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Subsystems</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Review_Phases</entity>
+		<entity>org.fraunhofer.plugins.hts.model.SubsystemToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.model.GroupToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Mission_Phase</entity>
+		<entity>org.fraunhofer.plugins.hts.model.PhaseToHazard</entity>
+		<entity>org.fraunhofer.plugins.hts.model.ControlGroups</entity>
+		<entity>org.fraunhofer.plugins.hts.model.Transfers</entity>
 	</ao>
 	<component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" filter="" />
 	<component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
@@ -91,21 +91,21 @@
 	<component key="PluginInstallation" class="org.fraunhofer.plugins.hts.issues.PluginInstallation" public="true">
 		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
 	</component>
-	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardServiceImpl" />
-	<component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardGroupServiceImpl" />
-	<component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.db.service.impl.RiskCategoryServiceImpl" />
-	<component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.db.service.impl.RiskLikelihoodsServiceImpl" />
-	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl" />
-	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.ReviewPhaseServiceImpl" />
-	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.db.service.impl.JIRAProjectServiceImpl" />
-	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.db.service.impl.MissionPhaseServiceImpl" />
-	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardControlServiceImpl" />
-	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.db.service.impl.ControlGroupsServiceImpl" />
-	<component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.db.service.impl.HazardCauseServiceImpl" />
-	<component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.db.service.impl.TransferServiceImpl" />
-	<component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationServiceImpl"/>
-	<component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationTypeServiceImpl"/>
-	<component key="VerificationStatus-service" name="VerificationStatus service" class="org.fraunhofer.plugins.hts.db.service.impl.VerificationStatusServiceImpl"/>
+	<component key="Hazard-service" name="Hazard Service" class="org.fraunhofer.plugins.hts.service.HazardService" />
+	<component key="HazardGroup-service" name="Hazard Group Service" class="org.fraunhofer.plugins.hts.service.HazardGroupService" />
+	<component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.service.RiskCategoryService" />
+	<component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.service.RiskLikelihoodsService" />
+	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.service.SubsystemService" />
+	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.service.ReviewPhaseService" />
+	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.service.JIRAProjectService" />
+	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.service.MissionPhaseService" />
+	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.service.HazardControlService" />
+	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.service.ControlGroupsService" />
+	<component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.service.HazardCauseService" />
+	<component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.service.TransferService" />
+	<component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.service.VerificationService"/>
+	<component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.service.VerificationTypeService"/>
+	<component key="VerificationStatus-service" name="VerificationStatus service" class="org.fraunhofer.plugins.hts.service.VerificationStatusService"/>
 	<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter="" />
 
 	<web-item name="HTS Plugin" i18n-name-key="hts-plugin.name"

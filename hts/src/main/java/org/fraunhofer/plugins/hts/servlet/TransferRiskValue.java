@@ -1,7 +1,7 @@
 package org.fraunhofer.plugins.hts.servlet;
 
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
-import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.model.Risk_Categories;
+import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
 
 public class TransferRiskValue {
 	private final int transferTargetId;

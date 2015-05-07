@@ -18,9 +18,8 @@ import java.util.List;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-import org.fraunhofer.plugins.hts.db.Subsystems;
-import org.fraunhofer.plugins.hts.db.service.SubsystemService;
-import org.fraunhofer.plugins.hts.db.service.impl.SubsystemServiceImpl;
+import org.fraunhofer.plugins.hts.model.Subsystems;
+import org.fraunhofer.plugins.hts.service.SubsystemService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +33,7 @@ public class SubsystemServiceImplTest {
 
 	@Before
 	public void setUp() {
-		SubsystemServiceImpl.reset();
+		SubsystemService.reset();
 
 		mockSubsystem = mock(Subsystems.class);
 		mockSubsystems = new Subsystems[] { mockSubsystem };
@@ -46,7 +45,7 @@ public class SubsystemServiceImplTest {
 
 	@Test
 	public void testAdd() {
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		Subsystems result = test.add("blah", "blah");
 
 		assertEquals(mockSubsystem, result);
@@ -63,10 +62,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		Subsystems result = test.getSubsystemByID("blah");
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		verify(mockActiveObjects).find(eq(Subsystems.class), any(Query.class));
 		assertEquals(result, mockSubsystem);
 
@@ -78,10 +77,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		Subsystems result = test.getSubsystemByID("blah");
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		verify(mockActiveObjects).find(eq(Subsystems.class), any(Query.class));
 		assertNull(result);
 
@@ -94,10 +93,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		Subsystems[] result = test.getSubsystemsByID(ids);
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertNull(result);
 	}
 
@@ -110,10 +109,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		Subsystems[] result = test.getSubsystemsByID(ids);
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		verify(mockActiveObjects, times(2)).get(eq(Subsystems.class), anyInt());
 		assertEquals(2, result.length);
 	}
@@ -126,10 +125,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		List<Subsystems> result = test.getRemaining(mockList);
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertEquals(1, result.size());
 	}
 
@@ -139,10 +138,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class), any(Query.class))).thenReturn(mockSubsystems);
 
-		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		List<Subsystems> result = test.getRemaining(mockSubsystems);
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertEquals(0, result.size());
 	}
 
@@ -153,10 +152,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
 
-		SubsystemService test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		List<Subsystems> result = test.getRemaining(mockList);
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertTrue(result.isEmpty());
 	}
 
@@ -166,10 +165,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		List<Subsystems> result = test.all();
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertTrue(result.isEmpty());
 	}
 
@@ -179,10 +178,10 @@ public class SubsystemServiceImplTest {
 
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		List<Subsystems> result = test.all();
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
 		assertEquals(result.size(), 3);
 	}
 
@@ -191,7 +190,7 @@ public class SubsystemServiceImplTest {
 		Subsystems[] mockSubsystems = {};
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		test.initializeTable();
 
 		verify(mockActiveObjects, times(17)).create(eq(Subsystems.class), (DBParam[]) anyVararg());
@@ -220,7 +219,7 @@ public class SubsystemServiceImplTest {
 		Subsystems[] mockSubsystems = {};
 		when(mockActiveObjects.find(eq(Subsystems.class))).thenReturn(mockSubsystems);
 
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		test.initializeTable();
 		test.initializeTable();
 
@@ -247,16 +246,16 @@ public class SubsystemServiceImplTest {
 
 	@Test
 	public void testIsInitialized() {
-		assertFalse(SubsystemServiceImpl.isInitialized());
+		assertFalse(SubsystemService.isInitialized());
 	}
 
 	@Test
 	public void testReset() {
-		SubsystemServiceImpl test = new SubsystemServiceImpl(mockActiveObjects);
+		SubsystemService test = new SubsystemService(mockActiveObjects);
 		test.initializeTable();
 
-		assertTrue(SubsystemServiceImpl.isInitialized());
-		SubsystemServiceImpl.reset();
-		assertFalse(SubsystemServiceImpl.isInitialized());
+		assertTrue(SubsystemService.isInitialized());
+		SubsystemService.reset();
+		assertFalse(SubsystemService.isInitialized());
 	}
 }

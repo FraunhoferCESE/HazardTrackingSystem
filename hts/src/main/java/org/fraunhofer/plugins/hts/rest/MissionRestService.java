@@ -9,8 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.datatype.HazardDTMinimalJson;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
 
 import com.atlassian.jira.component.ComponentAccessor;
 
@@ -28,7 +28,7 @@ public class MissionRestService {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazardsByMissionID(@PathParam("missionID") Long missionID) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			List<HazardDTMinimalJson> hazards = hazardService.getAllHazardsByMissionIDMinimalJson(missionID);
+			List<HazardMinimalJSON> hazards = hazardService.getAllHazardsByMissionIDMinimalJson(missionID);
 			return Response.ok(hazards).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))

@@ -11,17 +11,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
-import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.Review_Phases;
-import org.fraunhofer.plugins.hts.db.Risk_Categories;
-import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.ReviewPhaseService;
-import org.fraunhofer.plugins.hts.db.service.RiskCategoryService;
-import org.fraunhofer.plugins.hts.db.service.RiskLikelihoodsService;
-import org.fraunhofer.plugins.hts.db.service.TransferService;
 import org.fraunhofer.plugins.hts.document.HazardReportGenerator;
+import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.model.Review_Phases;
+import org.fraunhofer.plugins.hts.model.Risk_Categories;
+import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
+import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
+import org.fraunhofer.plugins.hts.service.RiskCategoryService;
+import org.fraunhofer.plugins.hts.service.RiskLikelihoodsService;
+import org.fraunhofer.plugins.hts.service.TransferService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

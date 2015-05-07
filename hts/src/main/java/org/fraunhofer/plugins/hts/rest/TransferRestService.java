@@ -12,17 +12,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.db.Hazard_Causes;
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
-import org.fraunhofer.plugins.hts.db.Transfers;
-import org.fraunhofer.plugins.hts.db.Transfers.TransferType;
-import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.db.service.HazardControlService;
-import org.fraunhofer.plugins.hts.db.service.TransferService;
-import org.fraunhofer.plugins.hts.rest.datatype.CauseJSON;
-import org.fraunhofer.plugins.hts.rest.datatype.ControlJSON;
-import org.fraunhofer.plugins.hts.rest.datatype.TransferJSON;
 //import org.fraunhofer.plugins.hts.rest.datatype.transferRiskValueJSON;
+
+import org.fraunhofer.plugins.hts.model.Hazard_Causes;
+import org.fraunhofer.plugins.hts.model.Hazard_Controls;
+import org.fraunhofer.plugins.hts.model.Transfers;
+import org.fraunhofer.plugins.hts.model.Transfers.TransferType;
+import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
+import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
+import org.fraunhofer.plugins.hts.rest.model.TransferJSON;
+import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.TransferService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;

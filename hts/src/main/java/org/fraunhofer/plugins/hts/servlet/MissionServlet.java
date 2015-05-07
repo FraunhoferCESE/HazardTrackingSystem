@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.fraunhofer.plugins.hts.datatype.JIRAProject;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
-import org.fraunhofer.plugins.hts.db.service.MissionPayloadService;
+import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.service.JIRAProjectService;
+import org.fraunhofer.plugins.hts.view.model.JIRAProject;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -22,11 +22,11 @@ import com.google.common.collect.Maps;
 
 public class MissionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private final MissionPayloadService missionService;
+	private final JIRAProjectService missionService;
 	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer;
 
-	public MissionServlet(MissionPayloadService missionService, HazardService hazardService, 
+	public MissionServlet(JIRAProjectService missionService, HazardService hazardService, 
 			TemplateRenderer templateRenderer) {
 		this.missionService = missionService;
 		this.hazardService = hazardService;

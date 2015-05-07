@@ -9,9 +9,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.datatype.HazardDTMinimalJson;
-import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -33,7 +33,7 @@ public class HazardRestService {
 	public Response getAllHazards() {
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		if (jiraAuthenticationContext.isLoggedInUser()) {
-			List<HazardDTMinimalJson> hazards = hazardService.getUserHazardsMinimalJson(jiraAuthenticationContext.getUser());
+			List<HazardMinimalJSON> hazards = hazardService.getUserHazardsMinimalJson(jiraAuthenticationContext.getUser());
 			return Response.ok(hazards).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in")).build();

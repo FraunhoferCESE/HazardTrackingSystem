@@ -12,14 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.fraunhofer.plugins.hts.db.ControlGroups;
-import org.fraunhofer.plugins.hts.db.Hazard_Causes;
-import org.fraunhofer.plugins.hts.db.Hazard_Controls;
-import org.fraunhofer.plugins.hts.db.Hazards;
-import org.fraunhofer.plugins.hts.db.service.ControlGroupsService;
-import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.db.service.HazardControlService;
-import org.fraunhofer.plugins.hts.db.service.HazardService;
+import org.fraunhofer.plugins.hts.model.ControlGroups;
+import org.fraunhofer.plugins.hts.model.Hazard_Causes;
+import org.fraunhofer.plugins.hts.model.Hazard_Controls;
+import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.service.ControlGroupsService;
+import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.HazardService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
