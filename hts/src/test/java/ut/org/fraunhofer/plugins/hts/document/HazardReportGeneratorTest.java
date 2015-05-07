@@ -22,6 +22,9 @@ import org.fraunhofer.plugins.hts.db.Risk_Categories;
 import org.fraunhofer.plugins.hts.db.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.db.Subsystems;
 import org.fraunhofer.plugins.hts.db.Transfers;
+import org.fraunhofer.plugins.hts.db.VerificationStatus;
+import org.fraunhofer.plugins.hts.db.VerificationType;
+import org.fraunhofer.plugins.hts.db.Verifications;
 import org.fraunhofer.plugins.hts.db.service.HazardCauseService;
 import org.fraunhofer.plugins.hts.db.service.HazardControlService;
 import org.fraunhofer.plugins.hts.db.service.HazardService;
@@ -51,6 +54,8 @@ public class HazardReportGeneratorTest {
 
 	private Hazard_Controls mockControl1, mockControlToCause, mockControlToControl, deletedControl;
 
+	private Verifications mockVerification1, mockVerification2, deletedVerification;
+
 	private void initializeMockCauses() {
 		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
 		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
@@ -72,7 +77,6 @@ public class HazardReportGeneratorTest {
 		when(mockCause1.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCause1.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCause1.getTransfer()).thenReturn(0);
-		
 
 		mockCause2 = mock(Hazard_Causes.class);
 		when(mockCause2.getCauseNumber()).thenReturn(2);
@@ -85,8 +89,6 @@ public class HazardReportGeneratorTest {
 		when(mockCause2.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCause2.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCause2.getTransfer()).thenReturn(0);
-		
-		
 
 		mockCause3 = mock(Hazard_Causes.class);
 		when(mockCause3.getCauseNumber()).thenReturn(3);
@@ -153,7 +155,8 @@ public class HazardReportGeneratorTest {
 
 		deletedControl = mock(Hazard_Controls.class);
 		when(deletedControl.getControlNumber()).thenReturn(2);
-		when(deletedControl.getDeleteReason()).thenReturn("This control is superceded by other controls and should be REMOVED.");
+		when(deletedControl.getDeleteReason()).thenReturn(
+				"This control is superceded by other controls and should be REMOVED.");
 		when(deletedControl.getDescription()).thenReturn(
 				"This control has been deleted and shouldn't be displayed in the hazard report");
 		when(deletedControl.getControlGroup()).thenReturn(null);
@@ -176,11 +179,49 @@ public class HazardReportGeneratorTest {
 		when(mockControlToControl.getDescription()).thenReturn(null);
 		when(mockControlToControl.getID()).thenReturn(44444);
 		when(mockControlToControl.getTransfer()).thenReturn(44447777);
-		
-		when(mockCause1.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause});
-		when(mockCause2.getControls()).thenReturn(new Hazard_Controls[] {mockControlToControl, deletedControl});
-		when(mockCauseToCause.getControls()).thenReturn(new Hazard_Controls[] {mockControlToControl});
 
+		when(mockCause1.getControls()).thenReturn(new Hazard_Controls[] { mockControl1, mockControlToCause });
+		when(mockCause2.getControls()).thenReturn(new Hazard_Controls[] { mockControlToControl, deletedControl });
+		when(mockCauseToCause.getControls()).thenReturn(new Hazard_Controls[] { mockControlToControl });
+
+	}
+
+	private void initializeMockVerifications() {
+		VerificationStatus mockVStatus = mock(VerificationStatus.class);
+		when(mockVStatus.getLabel()).thenReturn("Open to Safety Tracking List");
+		VerificationType mockVType = mock(VerificationType.class);
+		when(mockVType.getLabel()).thenReturn("Simulation");
+		
+		mockVerification1 = mock(Verifications.class);
+		when(mockVerification1.getVerificationDesc()).thenReturn("Expansive Monte Carlo simulation of pressure distributions around rings 1, 2, and 5.");
+		when(mockVerification1.getVerificationStatus()).thenReturn(mockVStatus);
+		when(mockVerification1.getVerificationType()).thenReturn(mockVType);
+		when(mockVerification1.getResponsibleParty()).thenReturn("George Washington (george.washington@nasa.gov)");
+		when(mockVerification1.getEstCompletionDate()).thenReturn(new Date(System.currentTimeMillis()));
+		when(mockVerification1.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause, mockControlToControl});
+		when(mockVerification1.getDeleteReason()).thenReturn(null);
+		
+		mockVerification2 = mock(Verifications.class);
+		when(mockVerification2.getVerificationDesc()).thenReturn("This second verification contains no verification data other than the description. It is associated with all the controls in the hazard though.");
+		when(mockVerification2.getVerificationStatus()).thenReturn(null);
+		when(mockVerification2.getVerificationType()).thenReturn(null);
+		when(mockVerification2.getResponsibleParty()).thenReturn(null);
+		when(mockVerification2.getEstCompletionDate()).thenReturn(null);
+		when(mockVerification2.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause, mockControlToControl});
+		when(mockVerification1.getDeleteReason()).thenReturn(null);
+		
+		deletedVerification = mock(Verifications.class);
+		when(deletedVerification.getVerificationDesc()).thenReturn("This verification has been deleted and should not appear.");
+		when(deletedVerification.getVerificationStatus()).thenReturn(mockVStatus);
+		when(deletedVerification.getVerificationType()).thenReturn(mockVType);
+		when(deletedVerification.getResponsibleParty()).thenReturn("George Washington (george.washington@nasa.gov)");
+		when(deletedVerification.getEstCompletionDate()).thenReturn(new Date(System.currentTimeMillis()));
+		when(deletedVerification.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause, mockControlToControl});
+		when(deletedVerification.getDeleteReason()).thenReturn("Remove because it no longer applies.");
+		
+		when(mockControl1.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
+		when(mockControlToCause.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
+		when(mockControlToControl.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
 	}
 
 	private void initializeTransfers() {
@@ -192,12 +233,10 @@ public class HazardReportGeneratorTest {
 		when(transferDestinationHazard.getHazardNumber()).thenReturn("MERV-PRESS-02");
 		when(transferDestinationHazard.getHazardTitle()).thenReturn(
 				"Failure to Maintain Liquid Hydrogen Propellant Tank Pressure leads to USE operational failure");
-		
+
 		Transfers mockCauseToHazardTransfer = mock(Transfers.class);
 		when(mockCauseToHazardTransfer.getTargetID()).thenReturn(99999);
 		when(mockCauseToHazardTransfer.getTargetType()).thenReturn("HAZARD");
-
-
 
 		when(mockTransferService.getTransferByID(mockCauseToHazard.getTransfer()))
 				.thenReturn(mockCauseToHazardTransfer);
@@ -206,7 +245,7 @@ public class HazardReportGeneratorTest {
 		// Cause to Cause
 		Hazards transferCauseHazard = mock(Hazards.class);
 		when(transferCauseHazard.getHazardNumber()).thenReturn("MERV-PROP-04");
-		
+
 		Hazard_Causes transferDestinationCause = mock(Hazard_Causes.class);
 		when(transferDestinationCause.getID()).thenReturn(88888);
 		when(transferDestinationCause.getCauseNumber()).thenReturn(1);
@@ -218,32 +257,33 @@ public class HazardReportGeneratorTest {
 		when(mockCausetoCauseTransfer.getTargetID()).thenReturn(88888);
 		when(mockCausetoCauseTransfer.getTargetType()).thenReturn("CAUSE");
 
-
 		when(mockTransferService.getTransferByID(mockCauseToCause.getTransfer())).thenReturn(mockCausetoCauseTransfer);
 		when(mockHazardCauseService.getHazardCauseByID(Integer.toString(transferDestinationCause.getID()))).thenReturn(
 				transferDestinationCause);
-		
+
 		// Control to Cause
 		Transfers mockControltoCauseTransfer = mock(Transfers.class);
 		when(mockControltoCauseTransfer.getTargetID()).thenReturn(88888);
 		when(mockControltoCauseTransfer.getTargetType()).thenReturn("CAUSE");
-		when(mockTransferService.getTransferByID(mockControlToCause.getTransfer())).thenReturn(mockControltoCauseTransfer);
-		
+		when(mockTransferService.getTransferByID(mockControlToCause.getTransfer())).thenReturn(
+				mockControltoCauseTransfer);
+
 		// Control to Control
 		Hazard_Controls transferDestinationControl = mock(Hazard_Controls.class);
 		when(transferDestinationControl.getID()).thenReturn(78435514);
-		when(transferDestinationControl.getHazard()).thenReturn(new Hazards[] {transferCauseHazard});
+		when(transferDestinationControl.getHazard()).thenReturn(new Hazards[] { transferCauseHazard });
 		when(transferDestinationControl.getControlGroup()).thenReturn(null);
 		when(transferDestinationControl.getControlNumber()).thenReturn(42);
-		when(transferDestinationControl.getDescription()).thenReturn("There are many things that are involved in this control");
+		when(transferDestinationControl.getDescription()).thenReturn(
+				"There are many things that are involved in this control");
 		when(transferDestinationControl.getDeleteReason()).thenReturn(null);
 		when(transferDestinationControl.getTransfer()).thenReturn(0);
-		
-		
+
 		Transfers mockControlToControlTransfer = mock(Transfers.class);
 		when(mockControlToControlTransfer.getTargetID()).thenReturn(78435514);
 		when(mockControlToControlTransfer.getTargetType()).thenReturn("CONTROL");
-		when(mockTransferService.getTransferByID(mockControlToControl.getTransfer())).thenReturn(mockControlToControlTransfer);
+		when(mockTransferService.getTransferByID(mockControlToControl.getTransfer())).thenReturn(
+				mockControlToControlTransfer);
 		when(mockHazardControlService.getHazardControlByID(78435514)).thenReturn(transferDestinationControl);
 
 	}
@@ -256,6 +296,7 @@ public class HazardReportGeneratorTest {
 
 		initializeMockCauses();
 		initializeMockControls();
+		initializeMockVerifications();
 		initializeTransfers();
 
 		Project mockProject1 = mock(Project.class);
@@ -313,7 +354,8 @@ public class HazardReportGeneratorTest {
 		when(testHazard.getHazardCauses()).thenReturn(
 				new Hazard_Causes[] { mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause,
 						deletedCause });
-		when(testHazard.getHazardControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause, mockControlToControl, deletedControl});
+		when(testHazard.getHazardControls()).thenReturn(
+				new Hazard_Controls[] { mockControl1, mockControlToCause, mockControlToControl, deletedControl });
 
 		List<Hazards> hazardList = Lists.newArrayList(testHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
