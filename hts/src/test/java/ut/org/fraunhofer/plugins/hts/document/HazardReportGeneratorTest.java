@@ -193,6 +193,7 @@ public class HazardReportGeneratorTest {
 		when(mockVType.getLabel()).thenReturn("Simulation");
 		
 		mockVerification1 = mock(Verifications.class);
+		when(mockVerification1.getVerificationNumber()).thenReturn(1);
 		when(mockVerification1.getVerificationDesc()).thenReturn("Expansive Monte Carlo simulation of pressure distributions around rings 1, 2, and 5.");
 		when(mockVerification1.getVerificationStatus()).thenReturn(mockVStatus);
 		when(mockVerification1.getVerificationType()).thenReturn(mockVType);
@@ -202,6 +203,7 @@ public class HazardReportGeneratorTest {
 		when(mockVerification1.getDeleteReason()).thenReturn(null);
 		
 		mockVerification2 = mock(Verifications.class);
+		when(mockVerification2.getVerificationNumber()).thenReturn(2);
 		when(mockVerification2.getVerificationDesc()).thenReturn("This second verification contains no verification data other than the description. It is associated with all the controls in the hazard though.");
 		when(mockVerification2.getVerificationStatus()).thenReturn(null);
 		when(mockVerification2.getVerificationType()).thenReturn(null);
@@ -211,6 +213,7 @@ public class HazardReportGeneratorTest {
 		when(mockVerification1.getDeleteReason()).thenReturn(null);
 		
 		deletedVerification = mock(Verifications.class);
+		when(deletedVerification.getVerificationNumber()).thenReturn(3);
 		when(deletedVerification.getVerificationDesc()).thenReturn("This verification has been deleted and should not appear.");
 		when(deletedVerification.getVerificationStatus()).thenReturn(mockVStatus);
 		when(deletedVerification.getVerificationType()).thenReturn(mockVType);
