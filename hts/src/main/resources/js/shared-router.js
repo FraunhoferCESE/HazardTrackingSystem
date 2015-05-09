@@ -101,4 +101,5 @@ function updateUI(route) {
 		AJS.$("#HazardPagePropertiesNavigation [id='VerificationsNavItem']").addClass("aui-nav-selected");
 		initializeVerificationPage();
 	}
+	initializeHazardNavigation();
 }

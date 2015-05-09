@@ -45,6 +45,7 @@
 
 		<resource name="verification-page.css" type="download" location="/css/verification-page.css" />
 		<resource name="verification-page.js" type="download" location="/js/verification-page.js" />
+		<resource name="hazard-navigation.js" type="download" location="/js/hazard-navigation.js" />
 
 		<context>HTSContext</context>
 	</web-resource>
