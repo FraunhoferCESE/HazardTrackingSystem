@@ -22,28 +22,30 @@
 						<span id="MissionHazardNavHazardNumber">$hazard.getHazardNumber()</span>
 					#end
 				</div>
+				<hazard currentId="$hazard.getID()" projectId="$hazard.getProjectID()"/>
 			</div>
 			<div class="MissionHazardNavDynamic">
 				<div class="MissionHazardNavContentHeader">Quick navigation:</div>
 				<div class="MissionHazardNavDynamicContainer">
-					<form class="aui">
+					<form class="aui" id="hazardNavForm" method="get" action="hazards" >
 						<div class="field-group" style="padding: 0">
 							<div class="MissionHazardNavDynamicSelectContainer">
 								<div class="MissionHazardNavDynamicHeader">JIRA Project:</div>
-								<select size='1' class='select' name='payloadNavigationList' id='missionNavigation'>
+								<select size='1' class='select' id='missionNavigation'>
 								</select>
 							</div>
 							<div class="MissionHazardNavDynamicSelectContainer">
 								<div class="MissionHazardNavDynamicHeader">Hazard Report:</div>
-								<select size='1' class='select' name='hazardNavigationList' id='hazardNavigation'>
+								<select size='1' class='select' id='hazardNavigation'>
 								</select>
 							</div>
-							<input type="button" class="aui-button" id="gotoSelectedHazardReport" value="Go"/>
+							<input type="hidden" id="selectedHazard" name="id"  value="$hazard.getID()" />
+							<input type="submit" class="aui-button" id="gotoSelectedHazardReport" value="Go"/>
 						</div>
 					</form>
 				</div>
 			</div>
-		</div>
+		</div>		
 	</div>
 </header>
 
