@@ -46,10 +46,8 @@ public class MissionRestService {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getProjectsForUser() {
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
-		System.err.println("isLoggedInUser: " + jiraAuthenticationContext.isLoggedInUser());
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			List<JIRAProject> userProjects = missionService.getUserProjects(jiraAuthenticationContext.getUser());
-			System.err.println("userProjects: "+ userProjects + " "+userProjects.size());
 			return Response.ok(missionService.getUserProjects(jiraAuthenticationContext.getUser())).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
