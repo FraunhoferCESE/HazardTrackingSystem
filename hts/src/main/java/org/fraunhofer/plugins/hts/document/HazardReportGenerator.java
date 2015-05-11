@@ -420,12 +420,15 @@ public class HazardReportGenerator {
 							.getRow(0);
 					cell = row.getCell(0);
 					setColSpan(cell, 1);
-					new ParagraphBuilder().text("Risk Severity: " + cause.getRiskCategory().getValue()).topMargin(50)
+					
+					String riskSeverity = cause.getRiskCategory() == null ? "<TBD>" : cause.getRiskCategory().getValue();
+					new ParagraphBuilder().text("Risk Severity: " + riskSeverity).topMargin(50)
 							.leftMargin(350).hangingIndent(300).createCellText(cell);
 
 					cell = row.getCell(1);
 					setColSpan(cell, 3);
-					new ParagraphBuilder().text("Risk Likelihood: " + cause.getRiskLikelihood().getValue())
+					String riskLikelihood = cause.getRiskLikelihood() == null ? "<TBD>" : cause.getRiskLikelihood().getValue();
+					new ParagraphBuilder().text("Risk Likelihood: " + riskLikelihood)
 							.topMargin(50).leftMargin(350).hangingIndent(300).createCellText(cell);
 					// Cause description
 
@@ -513,6 +516,7 @@ public class HazardReportGenerator {
 		Set<Verifications> verificationSet = new HashSet<Verifications>();
 		for (Hazard_Controls control : controls) {
 			if (control.getVerifications() != null) {
+				System.err.println("# verifications for control: "+control.getVerifications().length);
 				verificationSet.addAll(Arrays.asList(control.getVerifications()));
 			}
 		}
@@ -527,19 +531,19 @@ public class HazardReportGenerator {
 			new ParagraphBuilder().text("None").topMargin(50).leftMargin(450).hangingIndent(400).createCellText(cell);
 		} else {
 			for (Verifications verification : verifications) {
+				System.err.println(verification);
 				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
-
 					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
 							: verification.getVerificationStatus().getLabel();
-					String verificationType = verification.getVerificationType() == null ? "" : verification
-							.getVerificationType().getLabel();
+					String verificationType = verification.getVerificationType() == null ? "" : " ("+verification
+							.getVerificationType().getLabel()+")";
 					String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
 							: verification.getResponsibleParty();
 					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> " : sdf
 							.format(verification.getEstCompletionDate());
 					new ParagraphBuilder()
-							.text("Verification " + verification.getVerificationNumber() + " (" + verificationType
-									+ ")" + " - " + verificationStatus).bold(true).topMargin(150).leftMargin(450)
+							.text("Verification " + verification.getVerificationNumber() + verificationType
+									+ " - " + verificationStatus).bold(true).topMargin(150).leftMargin(450)
 							.hangingIndent(400).createCellText(cell);
 					new ParagraphBuilder()
 							.text("Responsible party: " + verificationRespParty + ", Estimated Completion Date: "
