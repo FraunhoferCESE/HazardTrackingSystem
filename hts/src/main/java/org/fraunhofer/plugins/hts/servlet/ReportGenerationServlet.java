@@ -17,6 +17,7 @@ import org.fraunhofer.plugins.hts.model.Review_Phases;
 import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.HazardControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.service.RiskCategoryService;
@@ -35,19 +36,21 @@ public final class ReportGenerationServlet extends HttpServlet {
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodsService;
 	private final HazardCauseService causeService;
+	private final HazardControlService controlService;
 	private final TransferService transferService;
 
 	Logger log = LoggerFactory.getLogger(ReportGenerationServlet.class);
 
 	public ReportGenerationServlet(HazardService hazardService, ReviewPhaseService reviewPhaseService,
 			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodsService,
-			HazardCauseService causeService, TransferService transferService) {
+			HazardCauseService causeService, TransferService transferService, HazardControlService controlService) {
 		this.hazardService = hazardService;
 		this.reviewPhaseService = reviewPhaseService;
 		this.riskCategoryService = riskCategoryService;
 		this.riskLikelihoodsService = riskLikelihoodsService;
 		this.causeService = causeService;
 		this.transferService = transferService;
+		this.controlService = controlService;
 	}
 
 	@Override
@@ -60,16 +63,18 @@ public final class ReportGenerationServlet extends HttpServlet {
 		List<Risk_Categories> riskCategoriesList = new ArrayList<Risk_Categories>(riskCategoryService.all());
 		List<Risk_Likelihoods> riskLikelihoodsList = new ArrayList<Risk_Likelihoods>(riskLikelihoodsService.all());
 
-		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService, ComponentAccessor.getProjectManager());
+		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService,
+				ComponentAccessor.getProjectManager(), controlService);
 
 		ServletOutputStream stream = null;
 		try {
-			List<byte[]> results = reportGenerator.createWordDocument(hazardList, reviewPhasesList,
-					riskCategoriesList, riskLikelihoodsList, getClass().getResourceAsStream("/Template.docx"));
+			List<byte[]> results = reportGenerator.createWordDocument(hazardList, reviewPhasesList, riskCategoriesList,
+					riskLikelihoodsList, getClass().getResourceAsStream("/Template.docx"));
 
 			stream = response.getOutputStream();
 			response.setContentType("application/msword");
-			response.addHeader("Content-Disposition", "attachment; filename=" + currentHazard.getHazardNumber() + ".docx");
+			String fileName = currentHazard.getHazardNumber() == null ? "Unnamed_Hazard" : currentHazard.getHazardNumber();
+			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".docx");
 			stream.write(results.get(0));
 		} catch (IOException | XmlException ioe) {
 			throw new ServletException(ioe.getMessage());
@@ -78,44 +83,6 @@ public final class ReportGenerationServlet extends HttpServlet {
 				stream.close();
 			}
 		}
-
-		// //get the 'file' parameter
-		// String fileName = (String) request.getParameter("file");
-		// if (fileName == null || fileName.equals(""))
-		// throw new ServletException(
-		// "Invalid or non-existent file parameter in SendWord servlet.");
-		//
-		// // add the .doc suffix if it doesn't already exist
-		// if (fileName.indexOf(".doc") == -1)
-		// fileName = fileName + ".doc";
-		//
-		// String wordDir = getServletContext().getInitParameter("word-dir");
-		// if (wordDir == null || wordDir.equals(""))
-		// throw new ServletException(
-		// "Invalid or non-existent wordDir context-param.");
-		// ServletOutputStream stream = null;
-		// BufferedInputStream buf = null;
-		// try {
-		// stream = response.getOutputStream();
-		// File doc = new File(wordDir + "/" + fileName);
-		// response.setContentType("application/msword");
-		// response.addHeader("Content-Disposition", "attachment; filename="
-		// + fileName);
-		// response.setContentLength((int) doc.length());
-		//
-		// FileInputStream input = new FileInputStream(doc);
-		// buf = new BufferedInputStream(input);
-		// int readBytes = 0;
-		// while ((readBytes = buf.read()) != -1)
-		// stream.write(readBytes);
-		// } catch (IOException ioe) {
-		// throw new ServletException(ioe.getMessage());
-		// } finally {
-		// if (stream != null)
-		// stream.close();
-		// if (buf != null)
-		// buf.close();
-		// }
 	}
 
 	@Override
