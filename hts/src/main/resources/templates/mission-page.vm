@@ -59,26 +59,26 @@
 											<tr>
 												#if (!$hazard.getHazardNumber() || $hazard.getHazardNumber() == "")
 													<td>
-														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+														<a href="hazards?id=$!hazard.getHazardID()" class="RouteLink">
 															&lt;To Be Determined&gt;
 														</a>
 													</td>
 												#else
 													<td>
-														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+														<a href="hazards?id=$!hazard.getHazardID()" class="RouteLink">
 															$hazard.getHazardNumber()
 														</a>
 													</td>
 												#end
 												#if (!$hazard.getHazardTitle() || $hazard.getHazardTitle() == "")
 													<td>
-														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+														<a href="hazards?id=$!hazard.getHazardID()" class="RouteLink">
 															&lt;To Be Determined&gt;
 														</a>
 													</td>
 												#else
 													<td>
-														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+														<a href="hazards?id=$!hazard.getHazardID()" class="RouteLink">
 															$hazard.getHazardTitle()
 														</a>
 													</td>												
