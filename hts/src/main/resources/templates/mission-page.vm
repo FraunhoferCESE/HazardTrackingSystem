@@ -58,14 +58,30 @@
 										#foreach ($hazard in $hazards)
 											<tr>
 												#if (!$hazard.getHazardNumber() || $hazard.getHazardNumber() == "")
-													<td>&lt;To Be Determined&gt;</td>
+													<td>
+														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+															&lt;To Be Determined&gt;
+														</a>
+													</td>
 												#else
-													<td>$hazard.getHazardNumber()</td>
+													<td>
+														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+															$hazard.getHazardNumber()
+														</a>
+													</td>
 												#end
 												#if (!$hazard.getHazardTitle() || $hazard.getHazardTitle() == "")
-													<td>&lt;To Be Determined&gt;</td>
+													<td>
+														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+															&lt;To Be Determined&gt;
+														</a>
+													</td>
 												#else
-													<td>$hazard.getHazardTitle()</td>
+													<td>
+														<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+															$hazard.getHazardTitle()
+														</a>
+													</td>												
 												#end
 											
 												<td>
