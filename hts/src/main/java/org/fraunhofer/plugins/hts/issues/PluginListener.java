@@ -117,12 +117,6 @@ public class PluginListener implements InitializingBean, DisposableBean {
 					// Sub-Task:
 					hazardService.add(hazardTitle, hazardNumber, issue.getProjectId(), issue.getId());
 
-					// Save the HTS URL in the Sub-Task:
-//					String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-//					String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
-//					CustomField hazardURL = pluginCustomization.getHazardURLField();
-//					hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
-					System.out.println("creating new");
 				}
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_DELETED_ID)) {
