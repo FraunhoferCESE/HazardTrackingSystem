@@ -34,6 +34,7 @@ public class PluginListener implements InitializingBean, DisposableBean {
 		Long eventTypeId = issueEvent.getEventTypeId();
 		Issue issue = issueEvent.getIssue();
 		PluginCustomization pluginCustomization = PluginCustomization.getInstance();
+		System.out.println("5");
 
 		if (eventTypeId.equals(EventType.ISSUE_CREATED_ID)) {
 			if (issue.getIssueTypeObject().getName().equals("Hazard")) {
@@ -66,10 +67,12 @@ public class PluginListener implements InitializingBean, DisposableBean {
 				String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
 				CustomField hazardURL = pluginCustomization.getHazardURLField();
 				hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
+
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_UPDATED_ID)) {
 			if (issue.getIssueTypeObject().getName().equals("Hazard")) {
 				Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
+				System.out.println("4");
 				if (hazard != null) {
 					String hazardTitle;
 					String hazardNumber;
@@ -88,11 +91,43 @@ public class PluginListener implements InitializingBean, DisposableBean {
 						hazardNumber = null;
 					}
 					hazardService.update(hazard, hazardTitle, hazardNumber);
+
+				} else {					
+					Object hazardTitleObj = issue.getCustomFieldValue(pluginCustomization.getHazardTitleField());
+					Object hazardNumberObj = issue.getCustomFieldValue(pluginCustomization.getHazardNumberField());
+					String hazardTitle;
+					String hazardNumber;
+
+					if (hazardTitleObj != null) {
+						hazardTitle = hazardTitleObj.toString();
+					} else {
+						hazardTitle = null;
+						CustomField hazardTitleField = pluginCustomization.getHazardTitleField();
+						hazardTitleField.getCustomFieldType().updateValue(hazardTitleField, issue, hazardTitle);
+					}
+
+					if (hazardNumberObj != null) {
+						hazardNumber = hazardNumberObj.toString();
+					} else {
+						hazardNumber = null;
+						CustomField hazardNumberField = pluginCustomization.getHazardNumberField();
+						hazardNumberField.getCustomFieldType().updateValue(hazardNumberField, issue, hazardNumber);
+					}
+					// Create a new Hazard in the HTS representing the newly created
+					// Sub-Task:
+					hazardService.add(hazardTitle, hazardNumber, issue.getProjectId(), issue.getId());
+
+					// Save the HTS URL in the Sub-Task:
+//					String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+//					String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
+//					CustomField hazardURL = pluginCustomization.getHazardURLField();
+//					hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
+					System.out.println("creating new");
 				}
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_DELETED_ID)) {
 			System.out.println("=== ISSUE DELETED EVENT ===");
-
+			System.out.println("3");
 			// Two scenarios; 1) issue is issue, 2) issue is sub-task
 			if (issue.isSubTask() == true) {
 				// Sub-task scenario
@@ -102,6 +137,7 @@ public class PluginListener implements InitializingBean, DisposableBean {
 						String reason = "Hazard with ID = " + hazard.getID() + "was deleted from JIRA by " + issueEvent.getUser()
 								+ ". Date: " + issueEvent.getTime();
 						hazardService.deleteHazard(hazard, reason);
+
 					}
 				}
 			} else {
@@ -120,12 +156,14 @@ public class PluginListener implements InitializingBean, DisposableBean {
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_MOVED_ID)) {
 			System.out.println("=== ISSUE MOVED EVENT ===");
+			System.out.println("1");
 
 			if (issue.isSubTask()) {
 				if (issue.getIssueTypeObject().getName().equals("Hazard")) {
 					Hazards hazard = hazardService.getHazardByIssueID(issue.getId());
 					hazard.setProjectID(issue.getProjectId());
 					hazardService.update(hazard, hazard.getHazardTitle(), hazard.getHazardNumber());
+
 				}
 			}
 		}
@@ -133,6 +171,17 @@ public class PluginListener implements InitializingBean, DisposableBean {
 
 	@EventListener
 	public void onProjectEvent(ProjectDeletedEvent projectEvent) {
+		Long projectID = projectEvent.getProject().getId();
+		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
+		for (Hazards hazard : hazards) {
+			String reason = "Hazard with ID = " + projectEvent.getId() + " was deleted by " + projectEvent.getUser().getDisplayName()
+					+ ". Email: " + projectEvent.getUser().getEmailAddress();
+			hazardService.deleteHazard(hazard, reason);
+		}
+	}
+
+	@EventListener
+	public void onHazardEvent(ProjectDeletedEvent projectEvent) {
 		Long projectID = projectEvent.getProject().getId();
 		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
 		for (Hazards hazard : hazards) {
