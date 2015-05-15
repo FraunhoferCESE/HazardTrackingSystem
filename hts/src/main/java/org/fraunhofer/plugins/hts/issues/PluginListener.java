@@ -92,7 +92,13 @@ public class PluginListener implements InitializingBean, DisposableBean {
 					}
 					hazardService.update(hazard, hazardTitle, hazardNumber);
 
-				} else {					
+					// Save the HTS URL in the Sub-Task:
+					String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+					String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + hazard.getID();
+					CustomField hazardURL = pluginCustomization.getHazardURLField();
+					hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
+
+				} else {
 					Object hazardTitleObj = issue.getCustomFieldValue(pluginCustomization.getHazardTitleField());
 					Object hazardNumberObj = issue.getCustomFieldValue(pluginCustomization.getHazardNumberField());
 					String hazardTitle;
@@ -113,10 +119,16 @@ public class PluginListener implements InitializingBean, DisposableBean {
 						CustomField hazardNumberField = pluginCustomization.getHazardNumberField();
 						hazardNumberField.getCustomFieldType().updateValue(hazardNumberField, issue, hazardNumber);
 					}
-					// Create a new Hazard in the HTS representing the newly created
+					// Create a new Hazard in the HTS representing the newly
+					// created
 					// Sub-Task:
-					hazardService.add(hazardTitle, hazardNumber, issue.getProjectId(), issue.getId());
+					Hazards newHazard = hazardService.add(hazardTitle, hazardNumber, issue.getProjectId(), issue.getId());
 
+					// Save the HTS URL in the Sub-Task:
+					String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+					String htsCompleteURL = baseURL + "/plugins/servlet/hazards?id=" + newHazard.getID();
+					CustomField hazardURL = pluginCustomization.getHazardURLField();
+					hazardURL.getCustomFieldType().updateValue(hazardURL, issue, htsCompleteURL);
 				}
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_DELETED_ID)) {
@@ -138,14 +150,21 @@ public class PluginListener implements InitializingBean, DisposableBean {
 				// Issue scenario
 				Collection<Issue> subtasks = issue.getSubTaskObjects();
 				for (Issue subtask : subtasks) {
-					if (subtask.getIssueTypeObject().getName().equals("Hazard")) {
-						Hazards hazard = hazardService.getHazardByIssueID(subtask.getId());
-						if (hazard != null) {
-							String reason = "Hazard with ID = " + hazard.getHazardTitle() + " was deleted by " + issueEvent.getUser()
-									+ ". Date: " + issueEvent.getTime();
-							hazardService.deleteHazard(hazard, reason);
+					if (subtask != null) {
+						if (subtask.getIssueTypeObject().getName().equals("Hazard")) {
+							Hazards hazard = hazardService.getHazardByIssueID(subtask.getId());
+							if (hazard != null) {
+								String reason = "Hazard with ID = " + hazard.getHazardTitle() + " was deleted by " + issueEvent.getUser()
+										+ ". Date: " + issueEvent.getTime();
+								hazardService.deleteHazard(hazard, reason);
+							}
 						}
 					}
+				}
+				Hazards hazardByIssueID = hazardService.getHazardByIssueID(issue.getId());
+				if (hazardByIssueID != null && hazardByIssueID.getActive()) {
+					hazardService.deleteHazard(hazardByIssueID, "Hazard with ID = " + hazardByIssueID.getHazardTitle() + " was deleted by "
+							+ issueEvent.getUser() + ". Date: " + issueEvent.getTime());
 				}
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_MOVED_ID)) {

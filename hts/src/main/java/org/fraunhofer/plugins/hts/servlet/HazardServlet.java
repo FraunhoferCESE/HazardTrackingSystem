@@ -30,6 +30,7 @@ import org.fraunhofer.plugins.hts.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.service.SubsystemService;
 import org.fraunhofer.plugins.hts.service.TransferService;
+import org.ofbiz.core.entity.GenericValue;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
@@ -129,6 +130,7 @@ public final class HazardServlet extends HttpServlet {
 			} else {
 				Project jiraProject = hazardService.getHazardProject(hazard);
 				Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+
 				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 				String jiraSubTaskSummary = jiraSubtask.getSummary();
 				String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber();
@@ -153,6 +155,12 @@ public final class HazardServlet extends HttpServlet {
 						}
 					}
 				}
+				boolean issueTypechangedFromHazard = false;
+				if(!jiraSubtask.getIssueTypeObject().getName().equals("Hazard")){
+					issueTypechangedFromHazard = true;
+					System.out.println("no hazard");
+				}
+				System.out.println("still hazard");
 
 				context.put("hazard", hazard);
 				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
@@ -169,6 +177,7 @@ public final class HazardServlet extends HttpServlet {
 				context.put("transferredToHazard", transferredToHazard);
 				context.put("transferredToACause", transferredToACause);
 				context.put("transferIsDeletedList", transferIsDeletedList);
+				context.put("issueTypechangedFromHazard", issueTypechangedFromHazard);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
 		} else {
