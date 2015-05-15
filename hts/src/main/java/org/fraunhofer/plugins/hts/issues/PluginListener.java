@@ -133,7 +133,6 @@ public class PluginListener implements InitializingBean, DisposableBean {
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_DELETED_ID)) {
 			System.out.println("=== ISSUE DELETED EVENT ===");
-			System.out.println("3");
 			// Two scenarios; 1) issue is issue, 2) issue is sub-task
 			if (issue.isSubTask() == true) {
 				// Sub-task scenario
@@ -169,7 +168,6 @@ public class PluginListener implements InitializingBean, DisposableBean {
 			}
 		} else if (eventTypeId.equals(EventType.ISSUE_MOVED_ID)) {
 			System.out.println("=== ISSUE MOVED EVENT ===");
-			System.out.println("1");
 
 			if (issue.isSubTask()) {
 				if (issue.getIssueTypeObject().getName().equals("Hazard")) {
