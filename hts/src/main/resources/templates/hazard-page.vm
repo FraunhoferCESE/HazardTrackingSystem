@@ -41,6 +41,7 @@
 									<div class="field-group-static">
 										<a href="$jiraSubtaskURL">$jiraSubTaskSummary</a>
 									</div>
+									<span class></span>
 								</div>
 								<div class="field-group">
 									<label for="hazardSubsystem">System/Subsystems</label>
