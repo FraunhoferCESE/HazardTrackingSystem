@@ -146,8 +146,6 @@ public class HazardService {
 				Project jiraProject = getHazardProject(hazard);
 				Issue jiraSubtask = getHazardSubTask(hazard);
 				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-				System.out.println("jiraSubtask " + jiraSubtask.getSummary());
-				System.out.println("jiraProject " + jiraProject.getKey());
 
 				hazardsMinimal.add(new HazardMinimal(hazard.getID(), hazard.getHazardTitle(), hazard.getHazardNumber(),
 						jiraSubtask.getSummary(), baseURL + "/browse/" + jiraProject.getKey() + "-"

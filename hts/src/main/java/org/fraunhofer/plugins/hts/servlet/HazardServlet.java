@@ -77,7 +77,7 @@ public final class HazardServlet extends HttpServlet {
 
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
-
+		System.out.println("hhhh");	
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
 			boolean error = false;
@@ -126,6 +126,7 @@ public final class HazardServlet extends HttpServlet {
 			if (error == true) {
 				context.put("errorMessage", errorMessage);
 				context.put("errorList", errorList);
+				System.out.println("still hazard2");	
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
 				Project jiraProject = hazardService.getHazardProject(hazard);
@@ -155,12 +156,16 @@ public final class HazardServlet extends HttpServlet {
 						}
 					}
 				}
+				
+				
 				boolean issueTypechangedFromHazard = false;
 				if(!jiraSubtask.getIssueTypeObject().getName().equals("Hazard")){
 					issueTypechangedFromHazard = true;
 					System.out.println("no hazard");
+				}else{
+					System.out.println("still a hazard");	
 				}
-				System.out.println("still hazard");
+				
 
 				context.put("hazard", hazard);
 				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
