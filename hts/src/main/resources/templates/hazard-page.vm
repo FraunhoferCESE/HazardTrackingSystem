@@ -39,7 +39,12 @@
 								<div class="field-group">
 									<label for="hazardPayload">JIRA Sub-Task</label>
 									<div class="field-group-static">
-										<a href="$jiraSubtaskURL">$jiraSubTaskSummary</a>
+										#if($issueTypechangedFromHazard)
+										<!--span class="icon icon-page">Test Page</span-->
+											<img src="images/warning.png" alt="Warning">
+										#else
+											<a href="$jiraSubtaskURL">$jiraSubTaskSummary</a>
+										#end
 									</div>
 									<span class></span>
 								</div>

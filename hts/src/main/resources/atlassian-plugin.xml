@@ -15,6 +15,7 @@
 	<web-resource name="HTSResources" key="HTSResources">
 		<dependency>com.atlassian.auiplugin:ajs</dependency>
 		<dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+		<dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
 
 		<resource type="download" name="images/" location="/images" />
 

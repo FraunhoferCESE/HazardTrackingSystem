@@ -161,9 +161,6 @@ public final class HazardServlet extends HttpServlet {
 				boolean issueTypechangedFromHazard = false;
 				if(!jiraSubtask.getIssueTypeObject().getName().equals("Hazard")){
 					issueTypechangedFromHazard = true;
-					System.out.println("no hazard");
-				}else{
-					System.out.println("still a hazard");	
 				}
 				
 
