@@ -35,10 +35,10 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
-import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 
 @Transactional
@@ -265,8 +265,9 @@ public class HazardService {
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		Project jiraProject = projectManager.getProjectObj(projectID);
 		PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
-		if (permissionManager.hasPermission(Permissions.CREATE_ISSUE, jiraProject, user)
-				|| permissionManager.hasPermission(Permissions.EDIT_ISSUE, jiraProject, user)) {
+
+		if (permissionManager.hasPermission(ProjectPermissions.CREATE_ISSUES, jiraProject, user)
+				|| permissionManager.hasPermission(ProjectPermissions.EDIT_ISSUES, jiraProject, user)) {
 			hasPermission = true;
 		} else {
 			hasPermission = false;

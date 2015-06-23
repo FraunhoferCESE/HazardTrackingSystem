@@ -13,7 +13,7 @@
 				<div class="aui-page-panel">
 					<div class="aui-page-panel-inner">
 						<section class="aui-page-panel-content">
-							<div id="ErrorPageHeader">Ops! An error came up...</div>
+							<div id="ErrorPageHeader">Oops! An error occurred...</div>
 							<div id="ErrorPageMessageContainer">
 								$errorMessage
 								#foreach ($error in $errorList)

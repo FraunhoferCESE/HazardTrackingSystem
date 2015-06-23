@@ -65,33 +65,9 @@ public class ControlsServlet extends HttpServlet {
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
 
-			boolean contains = req.getParameterMap().containsKey("id");
+			String hazardId = req.getParameter("id");
 			Hazards hazard = null;
-			if (contains == true) {
-				String hazardIDStr = req.getParameter("id");
-				try {
-					int hazardID = Integer.parseInt(hazardIDStr);
-					hazard = hazardService.getHazardByID(hazardID);
-					if (hazard != null) {
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(),
-								jiraAuthenticationContext.getUser())) {
-							error = true;
-							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-									+ jiraAuthenticationContext.getUser().getUsername()
-									+ ") do not have permission to view/edit it.";
-						}
-
-					} else {
-						error = true;
-						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-								+ jiraAuthenticationContext.getUser().getUsername()
-								+ ") do not have permission to view/edit it.";
-					}
-				} catch (NumberFormatException e) {
-					error = true;
-					errorMessage = "ID parameter in the URL is not a valid a number.";
-				}
-			} else {
+			if (Strings.isNullOrEmpty(hazardId)) {
 				error = true;
 				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
 				errorList.add(".../hazards?id=[number]");
@@ -99,6 +75,29 @@ public class ControlsServlet extends HttpServlet {
 				errorList.add(".../controls?id=[number]");
 				errorList.add(".../verifications?id=[number]");
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			} else {
+				try {
+					hazard = hazardService.getHazardByID(hazardId);
+					if (hazard == null
+							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
+									jiraAuthenticationContext.getUser())) {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
+								+ jiraAuthenticationContext.getUser().getUsername()
+								+ ") do not have permission to view/edit it.";
+					} else {
+						context.put("hazard", hazard);
+						context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
+						context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
+						context.put("controlGroups", controlGroupsService.all());
+						context.put("causes", hazardCauseService.getAllCausesWithinAHazard(hazard));
+						context.put("allHazardsBelongingToMission",
+								hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
+					}
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
 			}
 
 			// Decide which page to render for the user, error-page or
@@ -108,13 +107,6 @@ public class ControlsServlet extends HttpServlet {
 				context.put("errorList", errorList);
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
-				context.put("hazard", hazard);
-				context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
-				context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
-				context.put("controlGroups", controlGroupsService.all());
-				context.put("causes", hazardCauseService.getAllCausesWithinAHazard(hazard));
-				context.put("allHazardsBelongingToMission",
-						hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
 				templateRenderer.render("templates/control-page.vm", context, resp.getWriter());
 			}
 		} else {

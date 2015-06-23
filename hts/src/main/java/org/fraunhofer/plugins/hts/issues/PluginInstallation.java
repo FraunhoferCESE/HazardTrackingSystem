@@ -94,7 +94,7 @@ public class PluginInstallation implements LifecycleAware {
 			htsEditScreenTab.store();
 			
 			// Create screen scheme
-			FieldScreenScheme htsScreenScheme = new FieldScreenSchemeImpl(fieldScreenSchemeManager);
+			FieldScreenScheme htsScreenScheme = new FieldScreenSchemeImpl(fieldScreenSchemeManager, (GenericValue) null);
 			htsScreenScheme.setName("HTS Screen Scheme");
 			htsScreenScheme.setDescription("This screen scheme is specific to the Hazard Issue Type.");
 			htsScreenScheme.store();

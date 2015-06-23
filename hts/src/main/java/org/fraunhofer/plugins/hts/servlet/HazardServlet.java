@@ -30,7 +30,6 @@ import org.fraunhofer.plugins.hts.service.MissionPhaseService;
 import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.service.SubsystemService;
 import org.fraunhofer.plugins.hts.service.TransferService;
-import org.ofbiz.core.entity.GenericValue;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
@@ -77,41 +76,15 @@ public final class HazardServlet extends HttpServlet {
 
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
-		System.out.println("hhhh");	
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
 
-			boolean contains = req.getParameterMap().containsKey("id");
+			String hazardId = req.getParameter("id");
 			Hazards hazard = null;
-			if (contains == true) {
-				String hazardIDStr = req.getParameter("id");
-				// Parsing from String to Integer could fail
-				try {
-					int hazardID = Integer.parseInt(hazardIDStr);
-					hazard = hazardService.getHazardByID(hazardID);
-					if (hazard != null) {
-						// Check user permission
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(),
-								jiraAuthenticationContext.getUser())) {
-							error = true;
-							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-									+ jiraAuthenticationContext.getUser().getUsername()
-									+ ") do not have permission to view/edit it.";
-						}
-					} else {
-						error = true;
-						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
-								+ jiraAuthenticationContext.getUser().getUsername()
-								+ ") do not have permission to view/edit it.";
-					}
-				} catch (NumberFormatException e) {
-					error = true;
-					errorMessage = "ID parameter in the URL is not a valid a number.";
-				}
-			} else {
+			if (Strings.isNullOrEmpty(hazardId)) {
 				error = true;
 				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
 				errorList.add(".../hazards?id=[number]");
@@ -119,6 +92,75 @@ public final class HazardServlet extends HttpServlet {
 				errorList.add(".../controls?id=[number]");
 				errorList.add(".../verifications?id=[number]");
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			} else {
+				try {
+					hazard = hazardService.getHazardByID(hazardId);
+					if (hazard == null
+							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
+									jiraAuthenticationContext.getUser())) {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
+								+ jiraAuthenticationContext.getUser().getUsername()
+								+ ") do not have permission to view/edit it.";
+					} else {
+						Project jiraProject = hazardService.getHazardProject(hazard);
+						Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+
+						String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+						String jiraSubTaskSummary = jiraSubtask.getSummary();
+						String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-"
+								+ jiraSubtask.getNumber();
+						String jiraProjectName = jiraProject.getName();
+						String jiraProjectURL = baseURL + "/browse/" + jiraProject.getKey();
+
+						Hazard_Causes[] cause = hazard.getHazardCauses();
+						List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
+						List<TransferRiskValue> transferredToACause = new ArrayList<TransferRiskValue>();
+						List<TransferRiskValue> transferIsDeletedList = new ArrayList<TransferRiskValue>();
+
+						for (int i = 0; i < hazard.getHazardCauses().length; i++) {
+
+							if (cause[i].getTransfer() != 0) {
+								TransferRiskValue transferResult = getTransfers(cause[i], cause[i].getTransfer());
+								if (transferResult.isDeleted())
+									transferIsDeletedList.add(transferResult);
+								if (transferResult.getTransferTargetType().equals("HAZARD")) {
+									transferredToHazard.add(transferResult);
+								} else {
+									transferredToACause.add(transferResult);
+								}
+							}
+						}
+
+						boolean issueTypechangedFromHazard = false;
+						if (!jiraSubtask.getIssueTypeObject().getName().equals("Hazard")) {
+							issueTypechangedFromHazard = true;
+						}
+
+						context.put("hazard", hazard);
+						context.put("jiraSubTaskSummary", jiraSubTaskSummary);
+						context.put("jiraSubtaskURL", jiraSubtaskURL);
+						context.put("jiraProjectName", jiraProjectName);
+						context.put("jiraProjectURL", jiraProjectURL);
+						context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
+						context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
+						context.put("reviewPhases", reviewPhaseService.all());
+						context.put("nonAssociatedMissionPhases",
+								missionPhaseService.getRemaining(hazard.getMissionPhases()));
+						context.put("nonAssociatedHazardGroups",
+								hazardGroupService.getRemaining(hazard.getHazardGroups()));
+						context.put("initiationDate", removeTimeFromDate(hazard.getInitiationDate()));
+						context.put("completionDate", removeTimeFromDate(hazard.getCompletionDate()));
+						context.put("transferredToHazard", transferredToHazard);
+						context.put("transferredToACause", transferredToACause);
+						context.put("transferIsDeletedList", transferIsDeletedList);
+						context.put("issueTypechangedFromHazard", issueTypechangedFromHazard);
+
+					}
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
 			}
 
 			// Decide which page to render for the user, error-page or
@@ -126,60 +168,8 @@ public final class HazardServlet extends HttpServlet {
 			if (error == true) {
 				context.put("errorMessage", errorMessage);
 				context.put("errorList", errorList);
-				System.out.println("still hazard2");	
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
-				Project jiraProject = hazardService.getHazardProject(hazard);
-				Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
-
-				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-				String jiraSubTaskSummary = jiraSubtask.getSummary();
-				String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber();
-				String jiraProjectName = jiraProject.getName();
-				String jiraProjectURL = baseURL + "/browse/" + jiraProject.getKey();
-
-				Hazard_Causes[] cause = hazard.getHazardCauses();
-				List<TransferRiskValue> transferredToHazard = new ArrayList<TransferRiskValue>();
-				List<TransferRiskValue> transferredToACause = new ArrayList<TransferRiskValue>();
-				List<TransferRiskValue> transferIsDeletedList = new ArrayList<TransferRiskValue>();
-
-				for (int i = 0; i < hazard.getHazardCauses().length; i++) {
-
-					if (cause[i].getTransfer() != 0) {
-						TransferRiskValue transferResult = getTransfers(cause[i], cause[i].getTransfer());
-						if (transferResult.isDeleted())
-							transferIsDeletedList.add(transferResult);
-						if (transferResult.getTransferTargetType().equals("HAZARD")) {
-							transferredToHazard.add(transferResult);
-						} else {
-							transferredToACause.add(transferResult);
-						}
-					}
-				}
-				
-				
-				boolean issueTypechangedFromHazard = false;
-				if(!jiraSubtask.getIssueTypeObject().getName().equals("Hazard")){
-					issueTypechangedFromHazard = true;
-				}
-				
-
-				context.put("hazard", hazard);
-				context.put("jiraSubTaskSummary", jiraSubTaskSummary);
-				context.put("jiraSubtaskURL", jiraSubtaskURL);
-				context.put("jiraProjectName", jiraProjectName);
-				context.put("jiraProjectURL", jiraProjectURL);
-				context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
-				context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
-				context.put("reviewPhases", reviewPhaseService.all());
-				context.put("nonAssociatedMissionPhases", missionPhaseService.getRemaining(hazard.getMissionPhases()));
-				context.put("nonAssociatedHazardGroups", hazardGroupService.getRemaining(hazard.getHazardGroups()));
-				context.put("initiationDate", removeTimeFromDate(hazard.getInitiationDate()));
-				context.put("completionDate", removeTimeFromDate(hazard.getCompletionDate()));
-				context.put("transferredToHazard", transferredToHazard);
-				context.put("transferredToACause", transferredToACause);
-				context.put("transferIsDeletedList", transferIsDeletedList);
-				context.put("issueTypechangedFromHazard", issueTypechangedFromHazard);
 				templateRenderer.render("templates/hazard-page.vm", context, resp.getWriter());
 			}
 		} else {

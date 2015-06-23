@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
 
 public class CauseServlet extends HttpServlet {
 	final Log logger = Logger.getInstance(CauseServlet.class);
-	
+
 	private static final long serialVersionUID = 1L;
 	private final HazardCauseService hazardCauseService;
 	private final HazardService hazardService;
@@ -41,8 +41,8 @@ public class CauseServlet extends HttpServlet {
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodService;
 
-	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer, 
-			HazardService hazardService, RiskCategoryService riskCategoryService, 
+	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
+			HazardService hazardService, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService) {
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
@@ -53,8 +53,9 @@ public class CauseServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO: Look into re-factoring permissions/generating error messages is done - see issue on the Huboard.
-		
+		// TODO: Look into re-factoring permissions/generating error messages is
+		// done - see issue on the Huboard.
+
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
 
@@ -63,34 +64,10 @@ public class CauseServlet extends HttpServlet {
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
-			
-			boolean contains = req.getParameterMap().containsKey("id");
+
+			String hazardId = req.getParameter("id");
 			Hazards hazard = null;
-			if (contains == true) {
-				String hazardIDStr = req.getParameter("id");
-				// Parsing from String to Integer could fail
-				try {
-					int hazardID =  Integer.parseInt(hazardIDStr);
-					hazard = hazardService.getHazardByID(hazardID);
-					if (hazard != null) {
-						// Check user permission
-						if (!hazardService.hasHazardPermission(hazard.getProjectID(), jiraAuthenticationContext.getUser())) {
-							error = true;
-							errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
-									jiraAuthenticationContext.getUser().getUsername() + 
-									") do not have permission to view/edit it.";
-						}
-					} else {
-						error = true;
-						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you (" + 
-								jiraAuthenticationContext.getUser().getUsername() + 
-								") do not have permission to view/edit it.";
-					}
-				} catch (NumberFormatException e) {
-					error = true;
-					errorMessage = "ID parameter in the URL is not a valid a number.";
-				}
-			} else {
+			if (Strings.isNullOrEmpty(hazardId)) {
 				error = true;
 				errorMessage = "Missing ID parameter in the URL. Valid URLs are of the following type:";
 				errorList.add(".../hazards?id=[number]");
@@ -98,22 +75,40 @@ public class CauseServlet extends HttpServlet {
 				errorList.add(".../controls?id=[number]");
 				errorList.add(".../verifications?id=[number]");
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
+			} else {
+				try {
+					hazard = hazardService.getHazardByID(hazardId);
+					if (hazard == null
+							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
+									jiraAuthenticationContext.getUser())) {
+						error = true;
+						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
+								+ jiraAuthenticationContext.getUser().getUsername()
+								+ ") do not have permission to view/edit it.";
+					} else {
+						context.put("hazard", hazard);
+						context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinHazard(hazard));
+						context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(hazard));
+						context.put("riskCategories", riskCategoryService.all());
+						context.put("riskLikelihoods", riskLikelihoodService.all());
+						context.put("allHazardsBelongingToMission",
+								hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
+					}
+				} catch (NumberFormatException e) {
+					error = true;
+					errorMessage = "ID parameter in the URL is not a valid a number.";
+				}
 			}
-			
-			// Decide which page to render for the user, error-page or cause-page
+
+			// Decide which page to render for the user, error-page or
+			// cause-page
 			if (error == true) {
 				context.put("errorMessage", errorMessage);
 				context.put("errorList", errorList);
 				templateRenderer.render("templates/error-page.vm", context, resp.getWriter());
 			} else {
-				context.put("hazard", hazard);
-				context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinHazard(hazard));
-				context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(hazard));
-				context.put("riskCategories", riskCategoryService.all());
-				context.put("riskLikelihoods", riskLikelihoodService.all());
-				context.put("allHazardsBelongingToMission", hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
 				templateRenderer.render("templates/cause-page.vm", context, resp.getWriter());
-			}			
+			}
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
@@ -121,42 +116,44 @@ public class CauseServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {			
+		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
 			if (regular == true) {
 				String title = req.getParameter("causeTitle");
 				String owner = req.getParameter("causeOwner");
-				
+
 				Risk_Categories risk;
 				if (!req.getParameter("causeRisk").isEmpty()) {
 					risk = riskCategoryService.getRiskByID(req.getParameter("causeRisk"));
 				} else {
 					risk = null;
 				}
-				
+
 				Risk_Likelihoods likelihood;
-				if (!req.getParameter("causeLikelihood").isEmpty()) {
+				if (Strings.isNullOrEmpty(req.getParameter("causeLikelihood"))) {
 					likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("causeLikelihood"));
 				} else {
 					likelihood = null;
 				}
-				
+
 				String description = req.getParameter("causeDescription");
 				String effects = req.getParameter("causeEffects");
 				String safetyFeatures = req.getParameter("causeAdditSafetyFeatures");
-				
+
 				// Regular cause (not a transfer)
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 				if (existing == true) {
 					// Regular cause update
 					String causeIDStr = req.getParameter("causeID");
 					int causeID = Integer.parseInt(causeIDStr);
-					hazardCauseService.updateRegularCause(causeID, title, owner, risk, likelihood, description, effects, safetyFeatures);
+					hazardCauseService.updateRegularCause(causeID, title, owner, risk, likelihood, description,
+							effects, safetyFeatures);
 				} else {
 					// Regular cause creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					hazardCauseService.add(hazardID, title, owner, risk, likelihood, description, effects, safetyFeatures);
+					hazardCauseService.add(hazardID, title, owner, risk, likelihood, description, effects,
+							safetyFeatures);
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -167,17 +164,17 @@ public class CauseServlet extends HttpServlet {
 					String transferReason = req.getParameter("transferReason");
 					hazardCauseService.updateTransferredCause(causeID, transferReason);
 				} else {
-					// Cause transfer creation				
+					// Cause transfer creation
 					int targetHazardID = Integer.parseInt(req.getParameter("causeHazardList"));
 					int targetCauseID = 0;
-					
+
 					if (!Strings.isNullOrEmpty(req.getParameter("causeList"))) {
 						targetCauseID = Integer.parseInt(req.getParameter("causeList"));
 					}
-					
+
 					int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
 					String transferReason = req.getParameter("transferReason");
-					
+
 					if (targetCauseID == 0) {
 						hazardCauseService.addHazardTransfer(originHazardID, targetHazardID, transferReason);
 					} else {
@@ -185,7 +182,7 @@ public class CauseServlet extends HttpServlet {
 					}
 				}
 			}
-			
+
 			JSONObject jsonResponse = new JSONObject();
 			createJson(jsonResponse, "updateSuccess", true);
 			createJson(jsonResponse, "errorMessage", "none");
@@ -204,7 +201,7 @@ public class CauseServlet extends HttpServlet {
 			String deleteReason = req.getParameter("reason");
 			logger.info("Delete request for Cause id: " + causeID + ", reason: " + deleteReason);
 			Hazard_Causes cause = hazardCauseService.deleteCause(causeID, deleteReason);
-			
+
 			JSONObject jsonResponse = new JSONObject();
 			if (cause != null) {
 				createJson(jsonResponse, "updateSuccess", true);
@@ -216,12 +213,12 @@ public class CauseServlet extends HttpServlet {
 				logger.warn("Cause id " + causeID + " could not be deleted: could not find Cause.");
 			}
 			resp.setContentType("application/json");
-			resp.getWriter().println(jsonResponse);			
+			resp.getWriter().println(jsonResponse);
 		} else {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
-	
+
 	private JSONObject createJson(JSONObject json, String key, Object value) {
 		try {
 			json.put(key, value);
