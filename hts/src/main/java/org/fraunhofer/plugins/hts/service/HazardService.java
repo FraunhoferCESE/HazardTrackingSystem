@@ -6,7 +6,9 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
@@ -175,7 +177,7 @@ public class HazardService {
 	}
 
 	public List<Hazards> getAllHazardsByMissionID(Long missionID) {
-		List<Hazards> hazards = newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=?", missionID)));
+		List<Hazards> hazards = newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", missionID, true)));
 		return hazards;
 	}
 
@@ -250,14 +252,18 @@ public class HazardService {
 	}
 
 	public List<Long> getProjectsWithHazards() {
-		List<Long> ids = new ArrayList<Long>();
-		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").where("ACTIVE=?", true).distinct());
+		Set<Long> ids = new HashSet<Long>();
+		// The following query does not return distinct results for some reason. Tried debugging it to no avail.
+		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").distinct().where("ACTIVE=?", true));
 		if (hazards != null) {
 			for (Hazards hazard : hazards) {
-				ids.add(new Long(hazard.getID()));
+				ids.add(new Long(hazard.getProjectID()));
 			}
 		}
-		return ids;
+		
+		List<Long> toReturn = new ArrayList<Long>();
+		toReturn.addAll(ids);
+		return toReturn;
 	}
 
 	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
