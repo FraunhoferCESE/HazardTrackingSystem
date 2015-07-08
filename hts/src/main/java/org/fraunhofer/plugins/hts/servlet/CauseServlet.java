@@ -130,7 +130,7 @@ public class CauseServlet extends HttpServlet {
 				}
 
 				Risk_Likelihoods likelihood;
-				if (Strings.isNullOrEmpty(req.getParameter("causeLikelihood"))) {
+				if (!Strings.isNullOrEmpty(req.getParameter("causeLikelihood"))) {
 					likelihood = riskLikelihoodService.getLikelihoodByID(req.getParameter("causeLikelihood"));
 				} else {
 					likelihood = null;

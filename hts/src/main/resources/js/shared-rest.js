@@ -8,7 +8,6 @@ function getAllHazards() {
 		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/all",
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			result = data;
 		},
 		error: function() {
@@ -26,7 +25,6 @@ function getAllHazardsByMissionID(missionID) {
 		url: AJS.params.baseURL + "/rest/hts/1.0/mission/hazards/" + missionID,
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			result = data;
 		},
 		error: function() {
@@ -44,7 +42,6 @@ function getAllCausesWithinHazard(hazardID) {
 		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/cause/" + hazardID,
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			result = data;
 		},
 		error: function() {
@@ -62,7 +59,6 @@ function getAllControlsWithinCause(causeID) {
 		url: AJS.params.baseURL + "/rest/hts/1.0/cause/control/" + causeID,
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			result = data;
 		},
 		error: function() {
@@ -79,7 +75,6 @@ function getTransferOrigins(hazardElement, elementType) {
 		url: AJS.params.baseURL + "/rest/hts/1.0/transfer/findOrigins?type=" + elementType + "&elementId=" + hazardElement,
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			transferOrigins = data;
 		},
 		error: function() {

@@ -15,7 +15,7 @@
 					#if ($currentHazard.getID() != $hazard.getID())
 						#set ($optionText = "")
 						#if (!$currentHazard.getHazardNumber() || $currentHazard.getHazardNumber() == "")
-							#set ($optionText = "<Haz # TBD> - ")
+							#set ($optionText = "<Haz id=$currentHazard.getID()> - ")
 						#else
 							#set ($optionText = $currentHazard.getHazardNumber() + " - ")
 						#end

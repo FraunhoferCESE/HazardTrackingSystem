@@ -180,7 +180,6 @@ function initCausePageClickEvents() {
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
 			var causes = getAllCausesWithinHazard(hazardID);
-			console.log(causes);
 			var html = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causes.length !== 0) {
 				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
@@ -336,8 +335,6 @@ function postFormToCauseServlet(formElement) {
 	AJS.$(formElement).ajaxSubmit({
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
-			console.log(data);
 		},
 		error: function(error) {
 			// TODO:
@@ -484,7 +481,6 @@ function postDeleteToCauseServlet(causeIDToDelete, reason) {
 		async: false,
 		url: "causes?id=" + causeIDToDelete + "&reason=" + reason,
 		success: function(data) {
-			console.log("SUCCESS");
 		},
 		error: function(data) {
 			console.log("ERROR");

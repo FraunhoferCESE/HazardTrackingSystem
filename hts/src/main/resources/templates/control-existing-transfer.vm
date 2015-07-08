@@ -16,37 +16,17 @@
 			#if ($theControl.isDeleted() == true)
 				<div class="HTSTransferDeletedOrigin">
 					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						&lt;To Be Determined&gt; :CONTROL 
+						&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
 					#else
-						$theControl.getTargetHazardNumber():CONTROL
-					#end
-					#if(!$theControl.getTargetControlNumber() || $theControl.getTargetControlNumber() == "")
-						&lt;To Be Determined&gt; -
-					#else
-						$theControl.getTargetControlNumber() - 
-					#end 
-					#if(!$theControl.getTargetControlDescription() || $theControl.getTargetControlDescription() == "")
-						&lt;To Be Determined&gt;
-					#else
-						$theControl.getTargetControlDescription()
+						$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
 					#end
 				</div>
 			#else
 				<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							&lt;To Be Determined&gt; :CONTROL 
+							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
 					#else
-							$theControl.getTargetHazardNumber():CONTROL 
-					#end
-					#if (!$theControl.getTargetControlNumber() || $theControl.getTargetControlNumber() == "")
-							&lt;To Be Determined&gt; -
-					#else
-							$theControl.getTargetControlNumber()-
-					#end
-					#if(!$theControl.getTargetControlDescription() || $theControl.getTargetControlDescription() == "")
-							&lt;To Be Determined&gt;
-					#else
-					  $theControl.getTargetControlDescription()
+							$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
 					#end
 				</a>
 			#end
@@ -54,37 +34,17 @@
 			#if ($theControl.isDeleted() == true)
 				<div class="HTSTransferDeletedOrigin">
 					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						&lt;To Be Determined&gt; :CAUSE
+						&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
 					#else
-						$theControl.getTargetHazardNumber():CAUSE
-					#end
-					#if(!$theControl.getTargetCauseNumber() || $theControl.getTargetCauseNumber() == "")
-						&lt;To Be Determined&gt; -
-					#else
-						$theControl.getTargetCauseNumber() - 
-					#end 
-					#if(!$theControl.getTargetCauseTitle() || $theControl.getTargetCauseTitle() == "")
-						&lt;To Be Determined&gt;
-					#else
-						$theControl.getTargetCauseTitle()
+						$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
 					#end
 				</div>
 			#else
 				<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-							&lt;To Be Determined&gt; :CAUSE  
+							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
 					#else
-							$!theControl.getTargetHazardNumber():CAUSE 
-					#end
-					#if (!$theControl.getTargetCauseNumber() || $theControl.getTargetCauseNumber() == "")
-							&lt;To Be Determined&gt;  -
-					#else
-							$theControl.getTargetCauseNumber() - 
-					#end
-					#if(!$theControl.getTargetCauseTitle() || $theControl.getTargetCauseTitle() == "")
-							&lt;To Be Determined&gt;
-					#else
-					  	$theControl.getTargetCauseTitle()
+							$!theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
 					#end
 				</a>
 			#end

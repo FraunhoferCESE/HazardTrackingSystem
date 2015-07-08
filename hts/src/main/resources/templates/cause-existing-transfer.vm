@@ -16,48 +16,37 @@
 			#if ($theCause.isDeleted() == true)
 				<div class="HTSTransferDeletedOrigin">
 					#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-							&lt;To Be Determined&gt; :CAUSE 
+							&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  $theCause.getTargetCauseTitle()
 					#else
-							$theCause.getTargetHazardNumber():CAUSE
-					#end
-					#if (!$theCause.getTargetCauseNumber() || !$theCause.getTargetCauseNumber() == "")
-							&lt;To Be Determined&gt; -
-					#else 
-							$theCause.getTargetCauseNumber()-
-					#end
-					#if(!$theCause.getTargetCauseTitle() || !$theCause.getTargetCauseTitle() == "")
-							&lt;To Be Determined&gt;
-					#else
-					  $theCause.getTargetCauseTitle()
+							$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  $theCause.getTargetCauseTitle()
 					#end
 					 
 				</div>
 			#else
 				<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 					#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-							&lt;To Be Determined&gt; :CAUSE 
+							&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
 					#else
-							$theCause.getTargetHazardNumber():CAUSE 
+							$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
 					#end
-					#if (!$theCause.getTargetCauseNumber() || !$theCause.getTargetCauseNumber() == "")
-							&lt;To Be Determined&gt; -
-					#else
-							$theCause.getTargetCauseNumber()-
-					#end
-					#if(!$theCause.getTargetCauseTitle() || !$theCause.getTargetCauseTitle() == "")
-							&lt;To Be Determined&gt;
-					#else
-					  $theCause.getTargetCauseTitle()
-					#end
-					
 				</a>
 			#end
 		#else
 			#if ($theCause.isDeleted() == true)
-				<div class="HTSTransferDeletedOrigin">$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()</div>
+				<div class="HTSTransferDeletedOrigin">
 			#else
 				<a href="/jira/plugins/servlet/hazards?id=$!theCause.getTargetHazardID()">
-					$theCause.getTargetHazardNumber() - $theCause.getTargetHazardNumber()
+			#end
+				
+			#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+				&lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+			#else
+				$theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+			#end
+			
+			#if ($theCause.isDeleted() == true)
+				</div>
+			#else
 				</a>
 			#end
 		#end
