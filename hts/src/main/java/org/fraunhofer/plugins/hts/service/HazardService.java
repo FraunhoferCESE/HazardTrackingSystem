@@ -42,6 +42,7 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.google.common.base.Strings;
 
 @Transactional
 public class HazardService {
@@ -177,8 +178,7 @@ public class HazardService {
 	}
 
 	public List<Hazards> getAllHazardsByMissionID(Long missionID) {
-		List<Hazards> hazards = newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", missionID, true)));
-		return hazards;
+		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", missionID, true)));
 	}
 
 	public List<HazardMinimalJSON> getAllHazardsByMissionIDMinimalJson(Long missionID) {
@@ -228,7 +228,13 @@ public class HazardService {
 		hazard.setActive(false);
 		Date deleteDate = new Date();
 		SimpleDateFormat deletedTimestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-		hazard.setHazardNumber(hazard.getHazardNumber() + " (DELETED " + deletedTimestampFormat.format(deleteDate)
+		String hazardNum;
+		if(Strings.isNullOrEmpty(hazard.getHazardNumber()))
+			hazardNum = "Hazard id=" + hazard.getID();
+		else
+			hazardNum = "Hazard "+hazard.getHazardNumber();
+		
+		hazard.setHazardNumber(hazardNum + " (DELETED " + deletedTimestampFormat.format(deleteDate)
 				+ ")");
 		hazard.save();
 

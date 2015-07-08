@@ -178,7 +178,7 @@ public class PluginListener implements InitializingBean, DisposableBean {
 		Long projectID = projectEvent.getProject().getId();
 		List<Hazards> hazards = hazardService.getAllHazardsByMissionID(projectID);
 		for (Hazards hazard : hazards) {
-			String reason = "Hazard with ID = " + projectEvent.getId() + " was deleted by "
+			String reason = "Project containing Hazard with ID = " + hazard.getID() + " was deleted by "
 					+ projectEvent.getUser().getDisplayName() + ". Email: " + projectEvent.getUser().getEmailAddress();
 			hazardService.deleteHazard(hazard, reason);
 		}
