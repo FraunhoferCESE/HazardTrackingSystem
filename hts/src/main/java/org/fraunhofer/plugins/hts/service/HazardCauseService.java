@@ -110,14 +110,22 @@ public class HazardCauseService {
 				if (transfer.getTargetType().equals("CAUSE")) {
 					// CauseToCause transfer
 					Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
-					causeTransfer = CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause);
+					if (targetCause.getHazards()[0].getProjectID() == hazard.getProjectID()) {
+						causeTransfer = CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause);
+					} else {
+						causeTransfer = CauseTransfer.createMovedProjectTransfer(transfer);
+					}
 					transferredCauses.put(originCause.getID(), causeTransfer);
 
 				} else {
 					// CauseToHazard transfer
 					Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
-					transferredCauses.put(originCause.getID(),
-							CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));
+					if (targetHazard.getProjectID() == hazard.getProjectID()) {
+						transferredCauses.put(originCause.getID(),
+								CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));
+					} else {
+						causeTransfer = CauseTransfer.createMovedProjectTransfer(transfer);
+					}
 				}
 			}
 		}
@@ -138,6 +146,7 @@ public class HazardCauseService {
 						// Transferred Cause
 						Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 						if (transfer.getTargetType().equals("CAUSE")) {
+							// TODO This needs to check if the cause has been moved too.
 							Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
 							causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), targetCause.getTitle(),
 									true, true, "CAUSE"));

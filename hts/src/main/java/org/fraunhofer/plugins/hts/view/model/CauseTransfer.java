@@ -19,6 +19,14 @@ public class CauseTransfer {
 	private int targetID; // targetCauseID or targetHazardID
 	private int originID; // always originCauseID, might not need this?
 	private boolean deleted;
+	private boolean movedProject;
+	public boolean isMovedProject() {
+		return movedProject;
+	}
+
+	public void setMovedProject(boolean isMovedProject) {
+		this.movedProject = isMovedProject;
+	}
 
 	// For CauseToCause transfers
 	private String targetCauseTitle;
@@ -32,6 +40,7 @@ public class CauseTransfer {
 	public static CauseTransfer createCauseToCauseTransfer(Transfers transfer,
 			Hazard_Causes originCause, Hazard_Causes targetCause) {
 		CauseTransfer instance = new CauseTransfer();
+		instance.setMovedProject(false);
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
 		
@@ -69,9 +78,18 @@ public class CauseTransfer {
 		return instance;
 	}
 
+	public static CauseTransfer createMovedProjectTransfer(Transfers transfer) {
+		CauseTransfer instance = new CauseTransfer();
+		instance.setTransferID(transfer.getID());
+		instance.setTransferTargetType(transfer.getTargetType());
+		instance.setOriginID(transfer.getOriginID());
+		instance.setMovedProject(true);
+		return instance;
+	}
 	public static CauseTransfer createCauseToHazardTransfer(Transfers transfer,
 			Hazard_Causes originCause, Hazards targetHazard) {
 		CauseTransfer instance = new CauseTransfer();
+		instance.setMovedProject(false);
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
 		instance.setTargetHazardID(targetHazard.getID());
