@@ -239,6 +239,15 @@ public class HazardService {
 		}
 	}
 
+	/**
+	 * Returns a list of all active (non-deleted) hazards for which the user has
+	 * permission to see as defined by
+	 * {@link HazardService#hasHazardPermission(Long, ApplicationUser)}
+	 * 
+	 * @param user
+	 *            the application user
+	 * @return the list of active hazard objects the user has permission to see
+	 */
 	public List<Hazards> getUserHazards(ApplicationUser user) {
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ACTIVE=?", true));
 
@@ -252,11 +261,21 @@ public class HazardService {
 		return allHazards;
 	}
 
+	/**
+	 * Returns JIRA projects that contain active (non-deleted) hazards for which
+	 * the user has permission to see as defined by
+	 * {@link HazardService#hasHazardPermission(Long, ApplicationUser)}
+	 * 
+	 * @param user
+	 *            the application user
+	 * @return a list of JIRAProject objects representing the JIRA projects the
+	 *         user has access to
+	 */
 	public List<JIRAProject> getUserProjectsWithHazards(ApplicationUser user) {
 		// This set operation would be unnecessary if an AO query could be
 		// constructed that returns a distinct list of project ids, but AO
 		// doesn't seem to be doing this even with the distinct() method.
-		// Debugging it has yielded no infromation.
+		// Debugging it has yielded no information.
 		Set<Long> uniqueProjects = new HashSet<Long>();
 		for (Hazards hazard : getUserHazards(user)) {
 			uniqueProjects.add(hazard.getProjectID());
@@ -270,7 +289,19 @@ public class HazardService {
 		return jiraProjectList;
 	}
 
-	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
+	/**
+	 * Determine if a user has permission to access a specified JIRA project.
+	 * Permission is defined as having {@link ProjectPermissions#CREATE_ISSUES}
+	 * {@link ProjectPermission#EDIT_ISSUES}.
+	 * 
+	 * @param projectID
+	 *            the JIRA project id to be checked
+	 * @param user
+	 *            the ApplicationUser object whose permission is checked.
+	 * @return <code>true</code> if the user has create or edit permission on
+	 *         the project, <code>false</code> otherwise.
+	 */
+	public boolean hasHazardPermission(Long projectID, ApplicationUser user) {
 		boolean hasPermission;
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		Project jiraProject = projectManager.getProjectObj(projectID);
@@ -285,11 +316,11 @@ public class HazardService {
 		return hasPermission;
 	}
 
-	public static Project getHazardProject(Hazards hazard) {
+	public Project getHazardProject(Hazards hazard) {
 		return ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
 	}
 
-	public static Issue getHazardSubTask(Hazards hazard) {
+	public Issue getHazardSubTask(Hazards hazard) {
 		return ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 	}
 }

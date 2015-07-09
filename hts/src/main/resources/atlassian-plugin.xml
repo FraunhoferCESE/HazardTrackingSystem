@@ -98,8 +98,7 @@
 	<component key="RiskCategory-service" name="Risk Category" class="org.fraunhofer.plugins.hts.service.RiskCategoryService" />
 	<component key="RiskLikelihood-service" name="Risk Likelihood" class="org.fraunhofer.plugins.hts.service.RiskLikelihoodsService" />
 	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.service.SubsystemService" />
-	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.service.ReviewPhaseService" />
-	<component key="MissionPayload-service" name="MissionPayload service" class="org.fraunhofer.plugins.hts.service.JIRAProjectService" />
+	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.service.ReviewPhaseService" />	
 	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.service.MissionPhaseService" />
 	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.service.HazardControlService" />
 	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.service.ControlGroupsService" />
