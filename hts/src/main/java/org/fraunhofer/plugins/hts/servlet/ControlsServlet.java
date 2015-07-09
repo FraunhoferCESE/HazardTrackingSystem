@@ -90,7 +90,7 @@ public class ControlsServlet extends HttpServlet {
 						context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
-						context.put("causes", hazardCauseService.getAllCausesWithinAHazard(hazard));
+						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",
 								hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
 					}
