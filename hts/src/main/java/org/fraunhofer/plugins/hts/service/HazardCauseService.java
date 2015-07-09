@@ -8,20 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.java.ao.DBParam;
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.CausesToHazards;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.model.Transfers;
-import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
 import org.fraunhofer.plugins.hts.view.model.CauseTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.base.Strings;
+
+import net.java.ao.DBParam;
+import net.java.ao.Query;
 
 public class HazardCauseService {
 	private final ActiveObjects ao;
@@ -130,36 +129,6 @@ public class HazardCauseService {
 			}
 		}
 		return transferredCauses;
-	}
-
-	public List<CauseJSON> getAllNonDeletedCausesWithinHazardMinimalJson(int hazardID) {
-		Hazards hazard = hazardService.getHazardByID(hazardID);
-		List<CauseJSON> causes = new ArrayList<CauseJSON>();
-		if (hazard != null) {
-			for (Hazard_Causes cause : hazard.getHazardCauses()) {
-				if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
-					if (cause.getTransfer() == 0) {
-						// Regular Cause
-						causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), cause.getTitle(), false, true,
-								"CAUSE"));
-					} else {
-						// Transferred Cause
-						Transfers transfer = transferService.getTransferByID(cause.getTransfer());
-						if (transfer.getTargetType().equals("CAUSE")) {
-							// TODO This needs to check if the cause has been moved too.
-							Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
-							causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), targetCause.getTitle(),
-									true, true, "CAUSE"));
-						} else if (transfer.getTargetType().equals("HAZARD")) {
-							Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
-							causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), targetHazard
-									.getHazardTitle(), true, true, "CAUSE"));
-						}
-					}
-				}
-			}
-		}
-		return causes;
 	}
 
 	public Hazard_Causes getHazardCauseByID(int causeID) {

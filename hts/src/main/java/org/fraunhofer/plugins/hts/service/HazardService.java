@@ -53,8 +53,8 @@ public class HazardService {
 	}
 
 	public Hazards add(String title, String hazardNum, Long projectID, Long issueID) {
-		final Hazards hazard = ao.create(Hazards.class, new DBParam("PROJECT_ID", projectID), new DBParam("ISSUE_ID",
-				issueID));
+		final Hazards hazard = ao.create(Hazards.class, new DBParam("PROJECT_ID", projectID),
+				new DBParam("ISSUE_ID", issueID));
 		hazard.setHazardTitle(title);
 		hazard.setHazardNumber(hazardNum);
 		hazard.setRevisionDate(new Date());
@@ -151,30 +151,13 @@ public class HazardService {
 				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 
 				hazardsMinimal.add(new HazardMinimal(hazard.getID(), hazard.getHazardTitle(), hazard.getHazardNumber(),
-						jiraSubtask.getSummary(), baseURL + "/browse/" + jiraProject.getKey() + "-"
-								+ jiraSubtask.getNumber(), jiraProject.getName(), baseURL + "/browse/"
-								+ jiraProject.getKey(), hazard.getRevisionDate().toString()));
-			}
-		}
-		return hazardsMinimal;
-	}
-
-	public List<HazardMinimalJSON> getUserHazardsMinimalJson(ApplicationUser user) {
-		List<Hazards> allHazards = newArrayList(ao.find(Hazards.class, Query.select().where("ACTIVE=?", true)));
-		List<HazardMinimalJSON> allHazardsMinimal = new ArrayList<HazardMinimalJSON>();
-		for (Hazards hazard : allHazards) {
-			if (hasHazardPermission(hazard.getProjectID(), user)) {
-				Project jiraProject = getHazardProject(hazard);
-				Issue jiraSubtask = getHazardSubTask(hazard);
-				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-
-				allHazardsMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(), hazard
-						.getHazardNumber(), jiraSubtask.getSummary(), baseURL + "/browse/" + jiraProject.getKey() + "-"
-						+ jiraSubtask.getNumber(), jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(),
+						jiraSubtask.getSummary(),
+						baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
+						jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(),
 						hazard.getRevisionDate().toString()));
 			}
 		}
-		return allHazardsMinimal;
+		return hazardsMinimal;
 	}
 
 	public List<Hazards> getAllHazardsByMissionID(Long missionID) {
@@ -189,10 +172,10 @@ public class HazardService {
 			Issue jiraSubtask = getHazardSubTask(hazard);
 			String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 
-			allHazardsByIDMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(), hazard
-					.getHazardNumber(), jiraSubtask.getSummary(), baseURL + "/browse/" + jiraProject.getKey() + "-"
-					+ jiraSubtask.getNumber(), jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(),
-					hazard.getRevisionDate().toString()));
+			allHazardsByIDMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(),
+					hazard.getHazardNumber(), jiraSubtask.getSummary(),
+					baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(), jiraProject.getName(),
+					baseURL + "/browse/" + jiraProject.getKey(), hazard.getRevisionDate().toString()));
 		}
 		return allHazardsByIDMinimal;
 	}
@@ -229,13 +212,12 @@ public class HazardService {
 		Date deleteDate = new Date();
 		SimpleDateFormat deletedTimestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		String hazardNum;
-		if(Strings.isNullOrEmpty(hazard.getHazardNumber()))
+		if (Strings.isNullOrEmpty(hazard.getHazardNumber()))
 			hazardNum = "Hazard id=" + hazard.getID();
 		else
-			hazardNum = "Hazard "+hazard.getHazardNumber();
-		
-		hazard.setHazardNumber(hazardNum + " (DELETED " + deletedTimestampFormat.format(deleteDate)
-				+ ")");
+			hazardNum = "Hazard " + hazard.getHazardNumber();
+
+		hazard.setHazardNumber(hazardNum + " (DELETED " + deletedTimestampFormat.format(deleteDate) + ")");
 		hazard.save();
 
 		// Mark all non-deleted causes as deleted
@@ -257,19 +239,35 @@ public class HazardService {
 		}
 	}
 
-	public List<Long> getProjectsWithHazards() {
-		Set<Long> ids = new HashSet<Long>();
-		// The following query does not return distinct results for some reason. Tried debugging it to no avail.
-		Hazards[] hazards = ao.find(Hazards.class, Query.select("PROJECT_ID").distinct().where("ACTIVE=?", true));
-		if (hazards != null) {
-			for (Hazards hazard : hazards) {
-				ids.add(new Long(hazard.getProjectID()));
+	public List<Hazards> getUserHazards(ApplicationUser user) {
+		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ACTIVE=?", true));
+
+		List<Hazards> allHazards = newArrayList();
+		for (Hazards hazard : hazards) {
+			if (hasHazardPermission(hazard.getProjectID(), user)) {
+				allHazards.add(hazard);
 			}
 		}
-		
-		List<Long> toReturn = new ArrayList<Long>();
-		toReturn.addAll(ids);
-		return toReturn;
+
+		return allHazards;
+	}
+
+	public List<JIRAProject> getUserProjectsWithHazards(ApplicationUser user) {
+		// This set operation would be unnecessary if an AO query could be
+		// constructed that returns a distinct list of project ids, but AO
+		// doesn't seem to be doing this even with the distinct() method.
+		// Debugging it has yielded no infromation.
+		Set<Long> uniqueProjects = new HashSet<Long>();
+		for (Hazards hazard : getUserHazards(user)) {
+			uniqueProjects.add(hazard.getProjectID());
+		}
+
+		ProjectManager projectManager = ComponentAccessor.getProjectManager();
+		List<JIRAProject> jiraProjectList = newArrayList();
+		for (Long projectId : uniqueProjects) {
+			jiraProjectList.add(new JIRAProject(projectId, projectManager.getProjectObj(projectId).getName()));
+		}
+		return jiraProjectList;
 	}
 
 	public Boolean hasHazardPermission(Long projectID, ApplicationUser user) {
@@ -287,11 +285,11 @@ public class HazardService {
 		return hasPermission;
 	}
 
-	public Project getHazardProject(Hazards hazard) {
+	public static Project getHazardProject(Hazards hazard) {
 		return ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
 	}
 
-	public Issue getHazardSubTask(Hazards hazard) {
+	public static Issue getHazardSubTask(Hazards hazard) {
 		return ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 	}
 }

@@ -10,7 +10,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.fraunhofer.plugins.hts.service.HazardService;
-import org.fraunhofer.plugins.hts.service.JIRAProjectService;
 import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
 
 import com.atlassian.jira.component.ComponentAccessor;
@@ -20,11 +19,9 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 @Path("/mission")
 public class MissionRestService {
 	private final HazardService hazardService;
-	private final JIRAProjectService missionService;
 
-	public MissionRestService(HazardService hazardService, JIRAProjectService missionService) {
+	public MissionRestService(HazardService hazardService) {
 		this.hazardService = hazardService;
-		this.missionService = missionService;
 	}
 
 	@GET
@@ -46,7 +43,7 @@ public class MissionRestService {
 	public Response getProjectsForUser() {
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		if (jiraAuthenticationContext.isLoggedInUser()) {
-			return Response.ok(missionService.getUserProjects(jiraAuthenticationContext.getUser())).build();
+			return Response.ok(hazardService.getUserProjectsWithHazards(jiraAuthenticationContext.getUser())).build();
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
 					.build();
