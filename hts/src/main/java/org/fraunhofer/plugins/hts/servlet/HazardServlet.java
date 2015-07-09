@@ -94,7 +94,7 @@ public final class HazardServlet extends HttpServlet {
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
 			} else {
 				try {
-					hazard = hazardService.getHazardByID(hazardId);
+					hazard = hazardService.getHazardById(hazardId);
 					if (hazard == null
 							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
 									jiraAuthenticationContext.getUser())) {
@@ -235,7 +235,7 @@ public final class HazardServlet extends HttpServlet {
 			}
 		case "HAZARD":
 			// The cause transfers to a hazard.
-			Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+			Hazards targetHazard = hazardService.getHazardById(transfer.getTargetID());
 
 			TransferRiskValue value = new TransferRiskValue(targetHazard.getID(), "HAZARD",
 					originCause.getCauseNumber(), originCause.getID());

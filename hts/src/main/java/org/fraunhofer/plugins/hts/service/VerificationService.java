@@ -51,7 +51,7 @@ public class VerificationService {
 	public Verifications add(int hazardID, String description, VerificationStatus status, VerificationType type,
 			String responsibleParty, Date estimatedCompletionDate, Hazard_Controls[] controls) {
 		Verifications verification = ao.create(Verifications.class, new DBParam("VERIFICATION_DESC", description));
-		Hazards hazard = hazardService.getHazardByID(hazardID);
+		Hazards hazard = hazardService.getHazardById(hazardID);
 		verification.setVerificationNumber(hazard.getVerifications().length + 1);
 		verification.setVerificationStatus(status);
 		verification.setVerificationType(type);

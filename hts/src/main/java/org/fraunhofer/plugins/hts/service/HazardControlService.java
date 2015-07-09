@@ -38,7 +38,7 @@ public class HazardControlService {
 
 	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup, Hazard_Causes[] causes) {
 		Hazard_Controls control = ao.create(Hazard_Controls.class);
-		Hazards hazard = hazardService.getHazardByID(hazardID);
+		Hazards hazard = hazardService.getHazardById(hazardID);
 		control.setControlNumber(hazard.getHazardControls().length + 1);
 		control.setTransfer(0);
 		control.setDescription(description);

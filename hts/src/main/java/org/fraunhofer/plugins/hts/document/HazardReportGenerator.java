@@ -635,7 +635,7 @@ public class HazardReportGenerator {
 		Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 
 		if (transfer.getTargetType().equals("HAZARD")) {
-			Hazards hazard = hazardService.getHazardByID(Integer.toString(transfer.getTargetID()));
+			Hazards hazard = hazardService.getHazardById(Integer.toString(transfer.getTargetID()));
 			new ParagraphBuilder()
 					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
 							+ hazard.getHazardTitle()).topMargin(50).bold(inSpecificCause).leftMargin(350)

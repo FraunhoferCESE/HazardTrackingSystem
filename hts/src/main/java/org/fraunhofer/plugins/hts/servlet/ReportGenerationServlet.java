@@ -56,7 +56,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		final String hazardID = request.getParameter("hazardToDownload");
-		Hazards currentHazard = hazardService.getHazardByID(hazardID);
+		Hazards currentHazard = hazardService.getHazardById(hazardID);
 
 		List<Hazards> hazardList = Lists.newArrayList(currentHazard);
 		List<Review_Phases> reviewPhasesList = new ArrayList<Review_Phases>(reviewPhaseService.all());

@@ -36,7 +36,7 @@ public class HazardCauseService {
 	public Hazard_Causes add(int hazardID, String title, String owner, Risk_Categories risk,
 			Risk_Likelihoods likelihood, String description, String effects, String safetyFeatures) {
 		Hazard_Causes cause = ao.create(Hazard_Causes.class, new DBParam("TITLE", title));
-		Hazards hazard = hazardService.getHazardByID(hazardID);
+		Hazards hazard = hazardService.getHazardById(hazardID);
 		cause.setCauseNumber(hazard.getHazardCauses().length + 1);
 		cause.setTransfer(0);
 		cause.setOwner(owner);
@@ -118,7 +118,7 @@ public class HazardCauseService {
 
 				} else {
 					// CauseToHazard transfer
-					Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+					Hazards targetHazard = hazardService.getHazardById(transfer.getTargetID());
 					if (targetHazard.getProjectID() == hazard.getProjectID()) {
 						transferredCauses.put(originCause.getID(),
 								CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));

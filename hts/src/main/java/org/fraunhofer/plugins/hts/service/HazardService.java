@@ -68,7 +68,7 @@ public class HazardService {
 			Subsystems[] subsystems, Review_Phases reviewPhase, Mission_Phase[] missionPhases,
 			Hazard_Group[] hazardGroups, String safetyRequirements, String description, String justification,
 			String openWork, Date initiation, Date completion) {
-		Hazards hazard = getHazardByID(hazardID);
+		Hazards hazard = getHazardById(hazardID);
 
 		PluginCustomization pluginCustomization = null;
 		try {
@@ -145,7 +145,7 @@ public class HazardService {
 	public List<HazardMinimal> getUserHazardsMinimal(List<JIRAProject> projects) {
 		List<HazardMinimal> hazardsMinimal = new ArrayList<HazardMinimal>();
 		for (JIRAProject project : projects) {
-			for (Hazards hazard : getHazardsByMissionPayload(project.getID())) {
+			for (Hazards hazard : getHazardsByProjectId(project.getID())) {
 				Project jiraProject = getHazardProject(hazard);
 				Issue jiraSubtask = getHazardSubTask(hazard);
 				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
@@ -160,12 +160,12 @@ public class HazardService {
 		return hazardsMinimal;
 	}
 
-	public List<Hazards> getAllHazardsByMissionID(Long missionID) {
-		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", missionID, true)));
+	public List<Hazards> getHazardsByProjectId(long projectId) {
+		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", projectId, true)));
 	}
 
-	public List<HazardMinimalJSON> getAllHazardsByMissionIDMinimalJson(Long missionID) {
-		List<Hazards> allHazards = getAllHazardsByMissionID(missionID);
+	public List<HazardMinimalJSON> getAllHazardsByMissionIDMinimalJson(long missionID) {
+		List<Hazards> allHazards = getHazardsByProjectId(missionID);
 		List<HazardMinimalJSON> allHazardsByIDMinimal = new ArrayList<HazardMinimalJSON>();
 		for (Hazards hazard : allHazards) {
 			Project jiraProject = getHazardProject(hazard);
@@ -180,22 +180,18 @@ public class HazardService {
 		return allHazardsByIDMinimal;
 	}
 
-	public Hazards getHazardByID(int hazardID) {
-		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", hazardID));
+	public Hazards getHazardById(int hazardId) {
+		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", hazardId));
 		return hazards.length > 0 ? hazards[0] : null;
 	}
 
-	public Hazards getHazardByID(String hazardID) {
-		return getHazardByID(Integer.parseInt(hazardID));
+	public Hazards getHazardById(String hazardId) {
+		return getHazardById(Integer.parseInt(hazardId));
 	}
 
-	public Hazards getHazardByIssueID(Long issueID) {
+	public Hazards getHazardByIssueId(long issueID) {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ISSUE_ID=?", issueID));
 		return hazards.length > 0 ? hazards[0] : null;
-	}
-
-	public List<Hazards> getHazardsByMissionPayload(Long id) {
-		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", id, true)));
 	}
 
 	public String getHazardPreparerInformation(Hazards hazard) {
@@ -301,7 +297,7 @@ public class HazardService {
 	 * @return <code>true</code> if the user has create or edit permission on
 	 *         the project, <code>false</code> otherwise.
 	 */
-	public boolean hasHazardPermission(Long projectID, ApplicationUser user) {
+	public boolean hasHazardPermission(long projectID, ApplicationUser user) {
 		boolean hasPermission;
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		Project jiraProject = projectManager.getProjectObj(projectID);

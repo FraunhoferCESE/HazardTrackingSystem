@@ -74,7 +74,7 @@ public class HazardRestService {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			List<CauseJSON> causes = new ArrayList<CauseJSON>();
 			for (Hazard_Causes cause : hazardCauseService
-					.getAllNonDeletedCausesWithinHazard(hazardService.getHazardByID(hazardID))) {
+					.getAllNonDeletedCausesWithinHazard(hazardService.getHazardById(hazardID))) {
 				if (cause.getTransfer() == 0) {
 					causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), cause.getTitle(), false, true,
 							"CAUSE"));
@@ -88,7 +88,7 @@ public class HazardRestService {
 						causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), targetCause.getTitle(), true,
 								true, "CAUSE"));
 					} else if (transfer.getTargetType().equals("HAZARD")) {
-						Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
+						Hazards targetHazard = hazardService.getHazardById(transfer.getTargetID());
 						causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), targetHazard.getHazardTitle(),
 								true, true, "CAUSE"));
 					}

@@ -79,7 +79,7 @@ public class VerificationsServlet extends HttpServlet {
 				// Parsing from String to Integer could fail
 				try {
 					int hazardID = Integer.parseInt(hazardIDStr);
-					hazard = hazardService.getHazardByID(hazardID);
+					hazard = hazardService.getHazardById(hazardID);
 					if (hazard != null) {
 						// Check user permission
 						if (!hazardService.hasHazardPermission(hazard.getProjectID(),

@@ -77,7 +77,7 @@ public class CauseServlet extends HttpServlet {
 				errorList.add("where [number] is the unique identifier of the Hazard Report.");
 			} else {
 				try {
-					hazard = hazardService.getHazardByID(hazardId);
+					hazard = hazardService.getHazardById(hazardId);
 					if (hazard == null
 							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
 									jiraAuthenticationContext.getUser())) {
@@ -92,7 +92,7 @@ public class CauseServlet extends HttpServlet {
 						context.put("riskCategories", riskCategoryService.all());
 						context.put("riskLikelihoods", riskLikelihoodService.all());
 						context.put("allHazardsBelongingToMission",
-								hazardService.getHazardsByMissionPayload(hazard.getProjectID()));
+								hazardService.getHazardsByProjectId(hazard.getProjectID()));
 					}
 				} catch (NumberFormatException e) {
 					error = true;

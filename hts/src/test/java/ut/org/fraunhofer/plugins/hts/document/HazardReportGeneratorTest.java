@@ -243,7 +243,7 @@ public class HazardReportGeneratorTest {
 
 		when(mockTransferService.getTransferByID(mockCauseToHazard.getTransfer()))
 				.thenReturn(mockCauseToHazardTransfer);
-		when(mockHazardService.getHazardByID("99999")).thenReturn(transferDestinationHazard);
+		when(mockHazardService.getHazardById("99999")).thenReturn(transferDestinationHazard);
 
 		// Cause to Cause
 		Hazards transferCauseHazard = mock(Hazards.class);
