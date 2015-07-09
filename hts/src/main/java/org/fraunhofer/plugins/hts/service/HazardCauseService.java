@@ -4,7 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
@@ -16,7 +18,7 @@ import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
-import org.fraunhofer.plugins.hts.view.model.HazardCauseTransfer;
+import org.fraunhofer.plugins.hts.view.model.CauseTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.base.Strings;
@@ -89,33 +91,33 @@ public class HazardCauseService {
 		return cause;
 	}
 
-//	public List<Hazard_Causes> getAllCausesWithinAHazard(Hazards hazard) {
-//		return newArrayList(hazard.getHazardCauses());
-//	}
-
 	public List<Hazard_Causes> getAllNonDeletedCausesWithinHazard(Hazards hazard) {
-		List<Hazard_Causes> allRemaining = new ArrayList<Hazard_Causes>();
+		List<Hazard_Causes> nonDeleted = new ArrayList<Hazard_Causes>();
 		for (Hazard_Causes current : hazard.getHazardCauses()) {
 			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
-				allRemaining.add(current);
+				nonDeleted.add(current);
 			}
 		}
-		return allRemaining;
+		return nonDeleted;
 	}
 
-	public List<HazardCauseTransfer> getAllTransferredCauses(Hazards hazard) {
-		List<HazardCauseTransfer> transferredCauses = new ArrayList<HazardCauseTransfer>();
+	public Map<Integer, CauseTransfer> getAllTransferredCauses(Hazards hazard) {
+		Map<Integer, CauseTransfer> transferredCauses = new HashMap<Integer, CauseTransfer>();
 		for (Hazard_Causes originCause : hazard.getHazardCauses()) {
 			if (originCause.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(originCause.getTransfer());
+				CauseTransfer causeTransfer;
 				if (transfer.getTargetType().equals("CAUSE")) {
 					// CauseToCause transfer
 					Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
-					transferredCauses.add(HazardCauseTransfer.createCauseToCause(transfer, originCause, targetCause));
+					causeTransfer = CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause);
+					transferredCauses.put(originCause.getID(), causeTransfer);
+
 				} else {
 					// CauseToHazard transfer
 					Hazards targetHazard = hazardService.getHazardByID(transfer.getTargetID());
-					transferredCauses.add(HazardCauseTransfer.createCauseToHazard(transfer, originCause, targetHazard));
+					transferredCauses.put(originCause.getID(),
+							CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));
 				}
 			}
 		}
@@ -151,7 +153,6 @@ public class HazardCauseService {
 		return causes;
 	}
 
-	
 	public Hazard_Causes getHazardCauseByID(int causeID) {
 		final Hazard_Causes[] hazardCause = ao.find(Hazard_Causes.class, Query.select().where("ID=?", causeID));
 		return hazardCause.length > 0 ? hazardCause[0] : null;

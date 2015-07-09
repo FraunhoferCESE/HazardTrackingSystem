@@ -1,10 +1,4 @@
-#set ($theCause = 0)
-#foreach ($transferredCause in $transferredCauses)
-	#if ($transferredCause.getTransferID() == $cause.getTransfer())
-		#set ($theCause = $transferredCause)
-		#break
-	#end
-#end
+#set ($theCause = $transferredCauses.get($cause.getID()))
 
 <tr id="CauseTableEntryID$cause.getID()">
 	<td class="HazardPropertyTableTd">

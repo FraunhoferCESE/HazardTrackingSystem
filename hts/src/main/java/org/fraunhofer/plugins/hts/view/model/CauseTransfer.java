@@ -8,7 +8,7 @@ import org.fraunhofer.plugins.hts.model.Transfers;
 
 import com.google.common.base.Strings;
 
-public class HazardCauseTransfer {
+public class CauseTransfer {
 	// Joint
 	private int transferID;
 	private String transferTargetType;
@@ -19,6 +19,7 @@ public class HazardCauseTransfer {
 	private int targetID; // targetCauseID or targetHazardID
 	private int originID; // always originCauseID, might not need this?
 	private boolean deleted;
+
 	// For CauseToCause transfers
 	private String targetCauseTitle;
 	private int targetCauseNumber;
@@ -28,11 +29,13 @@ public class HazardCauseTransfer {
 	// For CauseToHazard transfers
 	// ...
 	
-	public static HazardCauseTransfer createCauseToCause(Transfers transfer,
+	public static CauseTransfer createCauseToCauseTransfer(Transfers transfer,
 			Hazard_Causes originCause, Hazard_Causes targetCause) {
-		HazardCauseTransfer instance = new HazardCauseTransfer();
+		CauseTransfer instance = new CauseTransfer();
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
+		
+		
 		instance.setTargetHazardID(targetCause.getHazards()[0].getID());
 		instance.setTargetHazardTitle(targetCause.getHazards()[0].getHazardTitle());
 		instance.setTargetHazardNumber(targetCause.getHazards()[0].getHazardNumber());
@@ -65,10 +68,10 @@ public class HazardCauseTransfer {
 		
 		return instance;
 	}
-	
-	public static HazardCauseTransfer createCauseToHazard(Transfers transfer,
+
+	public static CauseTransfer createCauseToHazardTransfer(Transfers transfer,
 			Hazard_Causes originCause, Hazards targetHazard) {
-		HazardCauseTransfer instance = new HazardCauseTransfer();
+		CauseTransfer instance = new CauseTransfer();
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
 		instance.setTargetHazardID(targetHazard.getID());
@@ -198,4 +201,6 @@ public class HazardCauseTransfer {
 	public void setTargetCauseRiskLikelihoodTitle(String targetCauseRiskLikelihoodTitle) {
 		this.targetCauseRiskLikelihoodTitle = targetCauseRiskLikelihoodTitle;
 	}
+
+
 }
