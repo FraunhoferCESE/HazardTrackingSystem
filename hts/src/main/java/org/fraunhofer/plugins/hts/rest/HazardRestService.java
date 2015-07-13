@@ -14,7 +14,7 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.TransferService;
 import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
@@ -29,12 +29,13 @@ import com.atlassian.jira.user.ApplicationUser;
 @Path("/hazard")
 public class HazardRestService {
 	private HazardService hazardService;
-	private HazardCauseService hazardCauseService;
+	private CauseService hazardCauseService;
 	private TransferService transferService;
 
-	public HazardRestService(HazardService hazardService, HazardCauseService hazardCauseService) {
+	public HazardRestService(HazardService hazardService, CauseService hazardCauseService, TransferService transferService) {
 		this.hazardService = hazardService;
 		this.hazardCauseService = hazardCauseService;
+		this.transferService = transferService;
 	}
 
 	@GET

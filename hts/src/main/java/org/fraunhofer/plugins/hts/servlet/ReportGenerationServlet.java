@@ -16,8 +16,8 @@ import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Review_Phases;
 import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.service.RiskCategoryService;
@@ -35,15 +35,15 @@ public final class ReportGenerationServlet extends HttpServlet {
 	private final ReviewPhaseService reviewPhaseService;
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodsService;
-	private final HazardCauseService causeService;
-	private final HazardControlService controlService;
+	private final CauseService causeService;
+	private final ControlService controlService;
 	private final TransferService transferService;
 
 	Logger log = LoggerFactory.getLogger(ReportGenerationServlet.class);
 
 	public ReportGenerationServlet(HazardService hazardService, ReviewPhaseService reviewPhaseService,
 			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodsService,
-			HazardCauseService causeService, TransferService transferService, HazardControlService controlService) {
+			CauseService causeService, TransferService transferService, ControlService controlService) {
 		this.hazardService = hazardService;
 		this.reviewPhaseService = reviewPhaseService;
 		this.riskCategoryService = riskCategoryService;

@@ -16,7 +16,7 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
+import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.service.RiskLikelihoodsService;
@@ -35,16 +35,16 @@ public class CauseServlet extends HttpServlet {
 	final Log logger = Logger.getInstance(CauseServlet.class);
 
 	private static final long serialVersionUID = 1L;
-	private final HazardCauseService hazardCauseService;
+	private final CauseService causeService;
 	private final HazardService hazardService;
 	private final TemplateRenderer templateRenderer;
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodService;
 
-	public CauseServlet(HazardCauseService hazardCauseService, TemplateRenderer templateRenderer,
+	public CauseServlet(CauseService hazardCauseService, TemplateRenderer templateRenderer,
 			HazardService hazardService, RiskCategoryService riskCategoryService,
 			RiskLikelihoodsService riskLikelihoodService) {
-		this.hazardCauseService = checkNotNull(hazardCauseService);
+		this.causeService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
@@ -87,8 +87,8 @@ public class CauseServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {
 						context.put("hazard", hazard);
-						context.put("causes", hazardCauseService.getAllNonDeletedCausesWithinHazard(hazard));
-						context.put("transferredCauses", hazardCauseService.getAllTransferredCauses(hazard));
+						context.put("causes", causeService.getAllNonDeletedCausesWithinHazard(hazard));
+						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("riskCategories", riskCategoryService.all());
 						context.put("riskLikelihoods", riskLikelihoodService.all());
 						context.put("allHazardsBelongingToMission",
@@ -146,13 +146,13 @@ public class CauseServlet extends HttpServlet {
 					// Regular cause update
 					String causeIDStr = req.getParameter("causeID");
 					int causeID = Integer.parseInt(causeIDStr);
-					hazardCauseService.updateRegularCause(causeID, title, owner, risk, likelihood, description,
+					causeService.updateRegularCause(causeID, title, owner, risk, likelihood, description,
 							effects, safetyFeatures);
 				} else {
 					// Regular cause creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					hazardCauseService.add(hazardID, title, owner, risk, likelihood, description, effects,
+					causeService.add(hazardID, title, owner, risk, likelihood, description, effects,
 							safetyFeatures);
 				}
 			} else {
@@ -162,7 +162,7 @@ public class CauseServlet extends HttpServlet {
 					String causeIDStr = req.getParameter("causeID");
 					int causeID = Integer.parseInt(causeIDStr);
 					String transferReason = req.getParameter("transferReason");
-					hazardCauseService.updateTransferredCause(causeID, transferReason);
+					causeService.updateTransferredCause(causeID, transferReason);
 				} else {
 					// Cause transfer creation
 					int targetHazardID = Integer.parseInt(req.getParameter("causeHazardList"));
@@ -176,9 +176,9 @@ public class CauseServlet extends HttpServlet {
 					String transferReason = req.getParameter("transferReason");
 
 					if (targetCauseID == 0) {
-						hazardCauseService.addHazardTransfer(originHazardID, targetHazardID, transferReason);
+						causeService.addHazardTransfer(originHazardID, targetHazardID, transferReason);
 					} else {
-						hazardCauseService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+						causeService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
 					}
 				}
 			}
@@ -200,7 +200,7 @@ public class CauseServlet extends HttpServlet {
 			int causeID = Integer.parseInt(req.getParameter("id"));
 			String deleteReason = req.getParameter("reason");
 			logger.info("Delete request for Cause id: " + causeID + ", reason: " + deleteReason);
-			Hazard_Causes cause = hazardCauseService.deleteCause(causeID, deleteReason);
+			Hazard_Causes cause = causeService.deleteCause(causeID, deleteReason);
 
 			JSONObject jsonResponse = new JSONObject();
 			if (cause != null) {

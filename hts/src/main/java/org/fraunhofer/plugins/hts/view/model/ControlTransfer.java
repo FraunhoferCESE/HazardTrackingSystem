@@ -7,7 +7,7 @@ import org.fraunhofer.plugins.hts.model.Transfers;
 
 import com.google.common.base.Strings;
 
-public class HazardControlTransfer {
+public class ControlTransfer {
 	// Joint
 	private int transferID;
 	private String transferTargetType;
@@ -25,10 +25,20 @@ public class HazardControlTransfer {
 	// For ControlToCause transfers
 	private int targetCauseNumber;
 	private String targetCauseTitle;
+	private String movedProject;
 	
-	public static HazardControlTransfer createControlToControl(Transfers transfer,
+	public String getMovedProject() {
+		return movedProject;
+	}
+
+	public void setMovedProject(String movedProject) {
+		this.movedProject = movedProject;
+	}
+
+	public static ControlTransfer createControlToControl(Transfers transfer,
 			Hazard_Controls originControl, Hazard_Controls targetControl) {
-		HazardControlTransfer instance = new HazardControlTransfer();
+		ControlTransfer instance = new ControlTransfer();
+		instance.setMovedProject(null);
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
 		instance.setTargetHazardID(targetControl.getHazard()[0].getID());
@@ -56,9 +66,10 @@ public class HazardControlTransfer {
 		return instance;
 	}
 	
-	public static HazardControlTransfer createControlToCause(Transfers transfer,
+	public static ControlTransfer createControlToCause(Transfers transfer,
 			Hazard_Controls originControl, Hazard_Causes targetCause) {
-		HazardControlTransfer instance = new HazardControlTransfer();
+		ControlTransfer instance = new ControlTransfer();
+		instance.setMovedProject(null);
 		instance.setTransferID(transfer.getID());
 		instance.setTransferTargetType(transfer.getTargetType());
 		instance.setTargetHazardID(targetCause.getHazards()[0].getID());
@@ -189,5 +200,14 @@ public class HazardControlTransfer {
 	
 	public void setTargetCauseTitle(String theTargetCauseTitle) {
 		this.targetCauseTitle = theTargetCauseTitle;
+	}
+
+	public static ControlTransfer createMovedProjectTransfer(Transfers transfer, String projectName) {
+		ControlTransfer instance = new ControlTransfer();
+		instance.setTransferID(transfer.getID());
+		instance.setTransferTargetType(transfer.getTargetType());
+		instance.setOriginID(transfer.getOriginID());
+		instance.setMovedProject(projectName);
+		return instance;
 	}
 }

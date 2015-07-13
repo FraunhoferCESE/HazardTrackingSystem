@@ -20,7 +20,7 @@ import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.VerificationService;
 import org.fraunhofer.plugins.hts.service.VerificationStatusService;
@@ -45,11 +45,11 @@ public class VerificationsServlet extends HttpServlet {
 	private final VerificationTypeService verificationTypeService;
 	private final VerificationStatusService verificationStatusService;
 	private final VerificationService verificationService;
-	private final HazardControlService hazardControlService;
+	private final ControlService hazardControlService;
 
 	public VerificationsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
-			VerificationService verificationService, HazardControlService hazardControlService) {
+			VerificationService verificationService, ControlService hazardControlService) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.verificationTypeService = checkNotNull(verificationTypeService);
@@ -120,7 +120,7 @@ public class VerificationsServlet extends HttpServlet {
 				context.put("verifications", verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
 				context.put("statuses", verificationStatusService.all());
 				context.put("types", verificationTypeService.all());
-				context.put("controls", hazardControlService.getAllControlsWithinAHazard(hazard));
+				context.put("controls", hazard.getHazardControls());
 				context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
 				templateRenderer.render("templates/verification-page.vm", context, resp.getWriter());
 			}

@@ -1,11 +1,12 @@
 package org.fraunhofer.plugins.hts.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.java.ao.Query;
 
@@ -17,19 +18,20 @@ import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
-import org.fraunhofer.plugins.hts.view.model.HazardControlTransfer;
+import org.fraunhofer.plugins.hts.view.model.ControlTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Strings;
 
-public class HazardControlService {
+public class ControlService {
 	private final ActiveObjects ao;
 	private final HazardService hazardService;
 	private final TransferService transferService;
-	private final HazardCauseService hazardCauseService;
+	private final CauseService hazardCauseService;
 
-	public HazardControlService(ActiveObjects ao, HazardService hazardService, TransferService transferService,
-			HazardCauseService hazardCauseService) {
+	public ControlService(ActiveObjects ao, HazardService hazardService, TransferService transferService,
+			CauseService hazardCauseService) {
 		this.ao = checkNotNull(ao);
 		this.hazardService = checkNotNull(hazardService);
 		this.transferService = checkNotNull(transferService);
@@ -87,18 +89,14 @@ public class HazardControlService {
 		return control.length > 0 ? control[0] : null;
 	}
 
-	public List<Hazard_Controls> getAllControlsWithinAHazard(Hazards hazard) {
-		return newArrayList(hazard.getHazardControls());
-	}
-
 	public List<Hazard_Controls> getAllNonDeletedControlsWithinAHazard(Hazards hazard) {
-		List<Hazard_Controls> allRemaining = new ArrayList<Hazard_Controls>();
-		for (Hazard_Controls current : getAllControlsWithinAHazard(hazard)) {
+		List<Hazard_Controls> nonDeleted = new ArrayList<Hazard_Controls>();
+		for (Hazard_Controls current : hazard.getHazardControls()) {
 			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
-				allRemaining.add(current);
+				nonDeleted.add(current);
 			}
 		}
-		return allRemaining;
+		return nonDeleted;
 	}
 
 	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
@@ -130,22 +128,36 @@ public class HazardControlService {
 		return controls;
 	}
 
-	public List<HazardControlTransfer> getAllTransferredControls(Hazards hazard) {
-		List<HazardControlTransfer> transferredControls = new ArrayList<HazardControlTransfer>();
-		List<Hazard_Controls> allControlsWithinHazard = getAllControlsWithinAHazard(hazard);
-		for (Hazard_Controls originControl : allControlsWithinHazard) {
+	public Map<Integer, ControlTransfer> getAllTransferredControls(Hazards hazard) {
+		Map<Integer, ControlTransfer> transferredControls = new HashMap<Integer, ControlTransfer>();
+		for (Hazard_Controls originControl : hazard.getHazardControls()) {
 			if (originControl.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(originControl.getTransfer());
 				if (transfer.getTargetType().equals("CONTROL")) {
 					// ControlToControl transfer
 					Hazard_Controls targetControl = getHazardControlByID(transfer.getTargetID());
-					transferredControls.add(HazardControlTransfer.createControlToControl(transfer, originControl,
-							targetControl));
+					if (targetControl.getHazard()[0].getProjectID() == hazard.getProjectID()) {
+						transferredControls.put(originControl.getID(),
+								ControlTransfer.createControlToControl(transfer, originControl, targetControl));
+					} else {
+						transferredControls.put(
+								originControl.getID(),
+								ControlTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
+										.getProjectManager().getProjectObj(targetControl.getHazard()[0].getProjectID())
+										.getName()));
+					}
 				} else {
 					// ControlToCause
 					Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
-					transferredControls.add(HazardControlTransfer.createControlToCause(transfer, originControl,
-							targetCause));
+					if (targetCause.getHazards()[0].getProjectID() == hazard.getProjectID())
+						transferredControls.put(originControl.getID(),
+								ControlTransfer.createControlToCause(transfer, originControl, targetCause));
+					else
+						transferredControls.put(
+								originControl.getID(),
+								ControlTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
+										.getProjectManager().getProjectObj(targetCause.getHazards()[0].getProjectID())
+										.getName()));
 				}
 			}
 		}

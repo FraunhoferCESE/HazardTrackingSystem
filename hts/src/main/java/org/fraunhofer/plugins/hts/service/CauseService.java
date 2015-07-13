@@ -17,17 +17,18 @@ import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.view.model.CauseTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Strings;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 
-public class HazardCauseService {
+public class CauseService {
 	private final ActiveObjects ao;
 	private final TransferService transferService;
 	private final HazardService hazardService;
 
-	public HazardCauseService(ActiveObjects ao, TransferService transferService, HazardService hazardService) {
+	public CauseService(ActiveObjects ao, TransferService transferService, HazardService hazardService) {
 		this.ao = checkNotNull(ao);
 		this.transferService = checkNotNull(transferService);
 		this.hazardService = checkNotNull(hazardService);
@@ -105,16 +106,20 @@ public class HazardCauseService {
 		for (Hazard_Causes originCause : hazard.getHazardCauses()) {
 			if (originCause.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(originCause.getTransfer());
-				CauseTransfer causeTransfer;
 				if (transfer.getTargetType().equals("CAUSE")) {
 					// CauseToCause transfer
 					Hazard_Causes targetCause = getHazardCauseByID(transfer.getTargetID());
 					if (targetCause.getHazards()[0].getProjectID() == hazard.getProjectID()) {
-						causeTransfer = CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause);
+						transferredCauses.put(originCause.getID(),
+								CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause));
 					} else {
-						causeTransfer = CauseTransfer.createMovedProjectTransfer(transfer);
+
+						transferredCauses.put(
+								originCause.getID(),
+								CauseTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
+										.getProjectManager().getProjectObj(targetCause.getHazards()[0].getProjectID())
+										.getName()));
 					}
-					transferredCauses.put(originCause.getID(), causeTransfer);
 
 				} else {
 					// CauseToHazard transfer
@@ -123,8 +128,12 @@ public class HazardCauseService {
 						transferredCauses.put(originCause.getID(),
 								CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));
 					} else {
-						causeTransfer = CauseTransfer.createMovedProjectTransfer(transfer);
+						transferredCauses.put(
+								originCause.getID(),
+								CauseTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
+										.getProjectManager().getProjectObj(targetHazard.getProjectID()).getName()));
 					}
+
 				}
 			}
 		}

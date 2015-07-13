@@ -32,8 +32,8 @@ import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
 import org.fraunhofer.plugins.hts.model.Subsystems;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.Verifications;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.TransferService;
 import org.slf4j.Logger;
@@ -58,8 +58,8 @@ public class HazardReportGenerator {
 	// XXX: Need to refactor the data structures so that this class is not
 	// dependent on the service implementations
 	private final HazardService hazardService;
-	private final HazardCauseService causeService;
-	private final HazardControlService controlService;
+	private final CauseService causeService;
+	private final ControlService controlService;
 	private final TransferService transferService;
 	private final ProjectManager projectManager;
 
@@ -74,8 +74,8 @@ public class HazardReportGenerator {
 	 * @param causeService
 	 * @param transferService
 	 */
-	public HazardReportGenerator(HazardService hazardService, HazardCauseService causeService,
-			TransferService transferService, ProjectManager projectManager, HazardControlService controlService) {
+	public HazardReportGenerator(HazardService hazardService, CauseService causeService,
+			TransferService transferService, ProjectManager projectManager, ControlService controlService) {
 		this.hazardService = hazardService;
 		this.causeService = causeService;
 		this.transferService = transferService;

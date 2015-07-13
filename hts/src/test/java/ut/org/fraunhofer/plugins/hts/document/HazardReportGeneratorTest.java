@@ -26,8 +26,8 @@ import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.TransferService;
 import org.junit.Before;
@@ -45,10 +45,10 @@ public class HazardReportGeneratorTest {
 	private static List<Risk_Likelihoods> validRiskLikelihoods;
 
 	private TransferService mockTransferService;
-	private HazardCauseService mockHazardCauseService;
+	private CauseService mockHazardCauseService;
 	private HazardService mockHazardService;
 	private ProjectManager mockProjectManager;
-	private HazardControlService mockHazardControlService;
+	private ControlService mockHazardControlService;
 
 	private Hazard_Causes mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause, deletedCause;
 
@@ -294,8 +294,8 @@ public class HazardReportGeneratorTest {
 	@Before
 	public void setUp() {
 		mockHazardService = mock(HazardService.class);
-		mockHazardCauseService = mock(HazardCauseService.class);
-		mockHazardControlService = mock(HazardControlService.class);
+		mockHazardCauseService = mock(CauseService.class);
+		mockHazardControlService = mock(ControlService.class);
 
 		initializeMockCauses();
 		initializeMockControls();

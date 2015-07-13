@@ -26,11 +26,11 @@ public interface Hazards extends Entity {
 	void setHazardNumber(String hazardNumber);
 	
 	@NotNull
-	Long getProjectID();
+	long getProjectID();
 	void setProjectID(Long projectID);
 	
 	@NotNull
-	Long getIssueID();
+	long getIssueID();
 	void setIssueID(Long projectID);
 	
 	@StringLength(value = StringLength.UNLIMITED)

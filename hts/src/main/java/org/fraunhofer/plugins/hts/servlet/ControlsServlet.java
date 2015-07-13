@@ -17,8 +17,8 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.service.ControlGroupsService;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 
 import com.atlassian.extras.common.log.Logger;
@@ -37,16 +37,16 @@ public class ControlsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final TemplateRenderer templateRenderer;
 	private final HazardService hazardService;
-	private final HazardControlService hazardControlService;
+	private final ControlService controlService;
 	private final ControlGroupsService controlGroupsService;
-	private final HazardCauseService hazardCauseService;
+	private final CauseService hazardCauseService;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
-			HazardControlService hazardControlService, ControlGroupsService controlGroupsService,
-			HazardCauseService hazardCauseService) {
+			ControlService hazardControlService, ControlGroupsService controlGroupsService,
+			CauseService hazardCauseService) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
-		this.hazardControlService = checkNotNull(hazardControlService);
+		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
 		this.hazardCauseService = checkNotNull(hazardCauseService);
 	}
@@ -87,8 +87,8 @@ public class ControlsServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {
 						context.put("hazard", hazard);
-						context.put("controls", hazardControlService.getAllNonDeletedControlsWithinAHazard(hazard));
-						context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
+						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
+						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",
@@ -136,12 +136,12 @@ public class ControlsServlet extends HttpServlet {
 					// Regular control update
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
-					hazardControlService.updateRegularControl(controlID, description, controlGroup, causes);
+					controlService.updateRegularControl(controlID, description, controlGroup, causes);
 				} else {
 					// Regular control creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					hazardControlService.add(hazardID, description, controlGroup, causes);
+					controlService.add(hazardID, description, controlGroup, causes);
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -150,7 +150,7 @@ public class ControlsServlet extends HttpServlet {
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
 					String transferReason = req.getParameter("transferReason");
-					hazardControlService.updateTransferredControl(controlID, transferReason);
+					controlService.updateTransferredControl(controlID, transferReason);
 				} else {
 					// Control transfer creation
 					int targetCauseID = Integer.parseInt(req.getParameter("controlCauseList"));
@@ -164,9 +164,9 @@ public class ControlsServlet extends HttpServlet {
 					String transferReason = req.getParameter("transferReason");
 
 					if (targetControlID == 0) {
-						hazardControlService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+						controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
 					} else {
-						hazardControlService.addControlTransfer(originHazardID, targetControlID, transferReason);
+						controlService.addControlTransfer(originHazardID, targetControlID, transferReason);
 					}
 				}
 			}
@@ -188,7 +188,7 @@ public class ControlsServlet extends HttpServlet {
 			int controlID = Integer.parseInt(req.getParameter("id"));
 			String deleteReason = req.getParameter("reason");
 			logger.info("Delete request for Control id: " + controlID + ", reason: " + deleteReason);
-			Hazard_Controls control = hazardControlService.deleteControl(controlID, deleteReason);
+			Hazard_Controls control = controlService.deleteControl(controlID, deleteReason);
 
 			JSONObject jsonResponse = new JSONObject();
 			if (control != null) {

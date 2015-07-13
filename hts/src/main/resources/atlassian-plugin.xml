@@ -100,9 +100,9 @@
 	<component key="Subsystems-service" name="Subsystems service" class="org.fraunhofer.plugins.hts.service.SubsystemService" />
 	<component key="ReviewPhase-service" name="ReviewPhase service" class="org.fraunhofer.plugins.hts.service.ReviewPhaseService" />	
 	<component key="MissionPhase-service" name="MissionPhase service" class="org.fraunhofer.plugins.hts.service.MissionPhaseService" />
-	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.service.HazardControlService" />
+	<component key="HazardControl-service" name="HazardControl service" class="org.fraunhofer.plugins.hts.service.ControlService" />
 	<component key="ControlGroups-service" name="ControlGroups service" class="org.fraunhofer.plugins.hts.service.ControlGroupsService" />
-	<component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.service.HazardCauseService" />
+	<component key="HazardCause-service" name="HazardCause service" class="org.fraunhofer.plugins.hts.service.CauseService" />
 	<component key="TransferCause-service" name="TransferCause service" class="org.fraunhofer.plugins.hts.service.TransferService" />
 	<component key="Verification-service" name="Verification service" class="org.fraunhofer.plugins.hts.service.VerificationService"/>
 	<component key="VerificationType-service" name="VerificationType service" class="org.fraunhofer.plugins.hts.service.VerificationTypeService"/>

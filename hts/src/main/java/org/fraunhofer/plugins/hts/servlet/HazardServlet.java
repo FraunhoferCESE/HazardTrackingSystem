@@ -22,8 +22,8 @@ import org.fraunhofer.plugins.hts.model.Mission_Phase;
 import org.fraunhofer.plugins.hts.model.Review_Phases;
 import org.fraunhofer.plugins.hts.model.Subsystems;
 import org.fraunhofer.plugins.hts.model.Transfers;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardGroupService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.MissionPhaseService;
@@ -50,15 +50,15 @@ public final class HazardServlet extends HttpServlet {
 	private final MissionPhaseService missionPhaseService;
 	private final TemplateRenderer templateRenderer;
 	private TransferService transferService;
-	private HazardCauseService causeService;
+	private CauseService causeService;
 	private HazardService hazardService;
-	HazardCauseService hazardCauseService;
+	CauseService hazardCauseService;
 
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
 			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
-			TransferService transferService, HazardControlService controlService, HazardCauseService causeService,
-			HazardCauseService hazardCauseService) {
+			TransferService transferService, ControlService controlService, CauseService causeService,
+			CauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.subsystemService = checkNotNull(subsystemService);

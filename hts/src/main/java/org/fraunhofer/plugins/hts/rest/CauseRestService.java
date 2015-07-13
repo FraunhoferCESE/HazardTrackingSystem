@@ -7,16 +7,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 
 import com.atlassian.jira.component.ComponentAccessor;
 
 //String respStr = "{ \"success\" : \"true\" }";
 @Path("/cause")
 public class CauseRestService {
-	private HazardControlService hazardControlService;
+	private ControlService hazardControlService;
 
-	public CauseRestService(HazardControlService hazardControlService) {
+	public CauseRestService(ControlService hazardControlService) {
 		this.hazardControlService = hazardControlService;
 	}
 

@@ -21,8 +21,8 @@ import org.fraunhofer.plugins.hts.model.Transfers.TransferType;
 import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
 import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
 import org.fraunhofer.plugins.hts.rest.model.TransferJSON;
-import org.fraunhofer.plugins.hts.service.HazardCauseService;
-import org.fraunhofer.plugins.hts.service.HazardControlService;
+import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.TransferService;
 
 import com.atlassian.extras.common.log.Logger;
@@ -36,12 +36,12 @@ public class TransferRestService {
 	private static Log logger = Logger.getInstance(TransferRestService.class);
 
 	private TransferService transferService;
-	private HazardControlService controlService;
-	private HazardCauseService causeService;
-	HazardCauseService hazardCauseService;
+	private ControlService controlService;
+	private CauseService causeService;
+	CauseService hazardCauseService;
 
-	public TransferRestService(TransferService transferService, HazardCauseService causeService,
-			HazardControlService controlService) {
+	public TransferRestService(TransferService transferService, CauseService causeService,
+			ControlService controlService) {
 		this.transferService = transferService;
 		this.causeService = causeService;
 		this.controlService = controlService;
