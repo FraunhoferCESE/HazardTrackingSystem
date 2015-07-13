@@ -146,14 +146,13 @@ public class CauseServlet extends HttpServlet {
 					// Regular cause update
 					String causeIDStr = req.getParameter("causeID");
 					int causeID = Integer.parseInt(causeIDStr);
-					causeService.updateRegularCause(causeID, title, owner, risk, likelihood, description,
-							effects, safetyFeatures);
+					causeService.updateRegularCause(causeID, title, owner, risk, likelihood, description, effects,
+							safetyFeatures);
 				} else {
 					// Regular cause creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					causeService.add(hazardID, title, owner, risk, likelihood, description, effects,
-							safetyFeatures);
+					causeService.add(hazardID, title, owner, risk, likelihood, description, effects, safetyFeatures);
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
