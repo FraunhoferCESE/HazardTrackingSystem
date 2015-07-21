@@ -57,15 +57,16 @@ public class VerificationService {
 		verification.setVerificationType(type);
 		verification.setResponsibleParty(responsibleParty);
 		verification.setEstCompletionDate(estimatedCompletionDate);
-
+		verification.setLastUpdated(new Date());
+		verification.save();
+		
 		if (controls != null) {
 			for (Hazard_Controls control : controls) {
 				associateVerificationToControl(control, verification);
 			}
 		}
 
-		verification.setLastUpdated(new Date());
-		verification.save();
+
 
 		final VerifcToHazard verifcToHazard = ao.create(VerifcToHazard.class);
 		verifcToHazard.setHazard(hazard);
@@ -82,6 +83,8 @@ public class VerificationService {
 		verification.setVerificationType(type);
 		verification.setResponsibleParty(responsibleParty);
 		verification.setEstCompletionDate(estimatedCompletionDate);
+		verification.setLastUpdated(new Date());
+		verification.save();
 
 		if (verification.getControls() != null) {
 			for (Hazard_Controls control : verification.getControls()) {
@@ -94,8 +97,7 @@ public class VerificationService {
 			}
 		}
 
-		verification.setLastUpdated(new Date());
-		verification.save();
+
 		return verification;
 	}
 

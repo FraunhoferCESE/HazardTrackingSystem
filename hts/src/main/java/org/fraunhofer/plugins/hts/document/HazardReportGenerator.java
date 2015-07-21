@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
@@ -114,6 +115,9 @@ public class HazardReportGenerator {
 			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
 			throws XmlException, IOException {
 
+		
+		XWPFParagraph p;
+		
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
 
@@ -515,7 +519,7 @@ public class HazardReportGenerator {
 		Set<Verifications> verificationSet = new HashSet<Verifications>();
 		for (Hazard_Controls control : controls) {
 			if (control.getVerifications() != null) {
-				System.err.println("# verifications for control: " + control.getVerifications().length);
+				System.err.println("# verifications for control " + control.getControlNumber() +": " + control.getVerifications().length);
 				verificationSet.addAll(Arrays.asList(control.getVerifications()));
 			}
 		}
@@ -529,7 +533,8 @@ public class HazardReportGenerator {
 		if (verifications.isEmpty()) {
 			new ParagraphBuilder().text("None").topMargin(50).leftMargin(450).hangingIndent(400).createCellText(cell);
 		} else {
-			for (Verifications verification : verifications) {
+			for (int i = 1; i < verifications.size(); i++) {
+				Verifications verification = verifications.get(i);
 				System.err.println(verification);
 				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
 					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
