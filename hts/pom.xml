@@ -31,9 +31,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- Add dependency on jira-core if you want access to JIRA implementation
+		<!-- Add dependency on jira-core if you want access to JIRA implementation 
 			classes as well as the sanctioned API. -->
-		<!-- This is not normally recommended, but may be required eg when migrating
+		<!-- This is not normally recommended, but may be required eg when migrating 
 			a plugin originally developed against JIRA 4.x -->
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
@@ -68,7 +68,7 @@
 			<version>1.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- To be able to write a servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -113,7 +113,7 @@
 		</dependency>
 		<!-- Uncomment to use TestKit in your project. Details at https://bitbucket.org/atlassian/jira-testkit -->
 		<!-- You can read more about TestKit at https://developer.atlassian.com/display/JIRADEV/Plugin+Tutorial+-+Smarter+integration+testing+with+TestKit -->
-		<!-- <dependency> <groupId>com.atlassian.jira.tests</groupId> <artifactId>jira-testkit-client</artifactId>
+		<!-- <dependency> <groupId>com.atlassian.jira.tests</groupId> <artifactId>jira-testkit-client</artifactId> 
 			<version>${testkit.version}</version> <scope>test</scope> </dependency> -->
 
 		<dependency>
@@ -161,6 +161,10 @@
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>stax</groupId>
+					<artifactId>stax-api</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>dom4j</groupId>
 					<artifactId>dom4j</artifactId>
 				</exclusion>
@@ -181,9 +185,12 @@
 			<artifactId>xml-apis</artifactId>
 			<version>1.0.b2</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version> </dependency> -->
+		<!--  <dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		 -->
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
@@ -202,10 +209,10 @@
 					<productVersion>${jira.version}</productVersion>
 					<productDataVersion>${jira.version}</productDataVersion>
 					<!-- <output>${build.directory}\atlassian-confluence.log</output> -->
-					<!--  <log4jProperties>src/main/resources/log4j.properties</log4jProperties> -->
+					<!-- <log4jProperties>src/main/resources/log4j.properties</log4jProperties> -->
 					<!-- Uncomment to install TestKit backdoor in JIRA. -->
-					<!-- <pluginArtifacts> <pluginArtifact> <groupId>com.atlassian.jira.tests</groupId>
-						<artifactId>jira-testkit-plugin</artifactId> <version>${testkit.version}</version>
+					<!-- <pluginArtifacts> <pluginArtifact> <groupId>com.atlassian.jira.tests</groupId> 
+						<artifactId>jira-testkit-plugin</artifactId> <version>${testkit.version}</version> 
 						</pluginArtifact> </pluginArtifacts> -->
 				</configuration>
 			</plugin>
