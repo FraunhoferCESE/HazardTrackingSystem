@@ -236,6 +236,7 @@ public class HazardReportGeneratorTest {
 		when(transferDestinationHazard.getHazardNumber()).thenReturn("MERV-PRESS-02");
 		when(transferDestinationHazard.getHazardTitle()).thenReturn(
 				"Failure to Maintain Liquid Hydrogen Propellant Tank Pressure leads to USE operational failure");
+		when(transferDestinationHazard.getActive()).thenReturn(false);
 
 		Transfers mockCauseToHazardTransfer = mock(Transfers.class);
 		when(mockCauseToHazardTransfer.getTargetID()).thenReturn(99999);
@@ -255,6 +256,7 @@ public class HazardReportGeneratorTest {
 		when(transferDestinationCause.getHazards()).thenReturn(new Hazards[] { transferCauseHazard });
 		when(transferDestinationCause.getTitle()).thenReturn(
 				"POGO causes dynamic oscillations attaining a resonant frequency with other US components or USE");
+		when(transferDestinationCause.getDeleteReason()).thenReturn("Deleted because I said so");
 
 		Transfers mockCausetoCauseTransfer = mock(Transfers.class);
 		when(mockCausetoCauseTransfer.getTargetID()).thenReturn(88888);
@@ -279,7 +281,7 @@ public class HazardReportGeneratorTest {
 		when(transferDestinationControl.getControlNumber()).thenReturn(42);
 		when(transferDestinationControl.getDescription()).thenReturn(
 				"There are many things that are involved in this control");
-		when(transferDestinationControl.getDeleteReason()).thenReturn(null);
+		when(transferDestinationControl.getDeleteReason()).thenReturn("Because I said so");
 		when(transferDestinationControl.getTransfer()).thenReturn(0);
 
 		Transfers mockControlToControlTransfer = mock(Transfers.class);
