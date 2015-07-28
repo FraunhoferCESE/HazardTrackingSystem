@@ -396,6 +396,7 @@ function postDeleteToVerificationServlet(verificationIDToDelete, reason) {
 		url: "verifications?id=" + verificationIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
+			modifyHTSCookieOpenVerifications("close", verificationIDToDelete, null);
 		},
 		error: function(data) {
 			console.log("ERROR");

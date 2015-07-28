@@ -481,6 +481,7 @@ function postDeleteToCauseServlet(causeIDToDelete, reason) {
 		async: false,
 		url: "causes?id=" + causeIDToDelete + "&reason=" + reason,
 		success: function(data) {
+			modifyHTSCookieOpenCauses("close", causeIDToDelete, null);
 		},
 		error: function(data) {
 			console.log("ERROR");

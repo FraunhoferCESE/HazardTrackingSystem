@@ -398,7 +398,6 @@ function postFormToControlServlet(formElement) {
 		async: false,
 		success: function(data) {
 			console.log("SUCCESS");
-			console.log(data);
 		},
 		error: function(error) {
 			// TODO:
@@ -531,6 +530,7 @@ function postDeleteToControlServlet(controlIDToDelete, reason) {
 		url: "controls?id=" + controlIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
+			modifyHTSCookieOpenControls("close", controlIDToDelete, null);
 		},
 		error: function(data) {
 			console.log("ERROR");

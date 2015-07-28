@@ -80,6 +80,8 @@ function modifyHTSCookieOpenControls(operation, controlID, existingControlsCount
 	}
 }
 
+
+
 function openHTSCookieOpenControls() {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
