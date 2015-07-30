@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.fraunhofer.plugins.hts</groupId>
 	<artifactId>hts</artifactId>
-	<version>0.2-alpha-jira6.1.9</version>
+	<version>0.2-alpha-jira6.1.4</version>
 	<organization>
 		<name>Fraunhofer CESE</name>
 		<url>http://www.fc-md.umd.edu/</url>
@@ -236,7 +236,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<jira.version>6.1.9</jira.version>
+		<jira.version>6.1.7</jira.version>
 		<amps.version>5.0.4</amps.version>
 		<plugin.testrunner.version>1.1.2</plugin.testrunner.version>
 		<!-- TestKit version 5.x for JIRA 5.x, 6.x for JIRA 6.x -->
