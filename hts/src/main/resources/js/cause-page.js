@@ -185,12 +185,11 @@ function initCausePageClickEvents() {
 				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
 				for (var i = 0; i < causes.length; i++) {
 					var optionText;
-					if (causes[i].transfer === true) {
-						optionText = causes[i].causeNumber + "-T - " + causes[i].text;
-					} else {
+					if (causes[i].transfer != true) {
 						optionText = causes[i].causeNumber + " - " + causes[i].text;
+						html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 					}
-					html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+					
 				}
 				html += "</select>";
 				AJS.$(causeContainer).append(html);

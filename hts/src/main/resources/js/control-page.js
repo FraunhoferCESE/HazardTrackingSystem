@@ -199,12 +199,11 @@ function initControlPageClickEvents() {
 				html += "<option value=''>-Select Cause-</option>";
 				for (var i = 0; i < causes.length; i++) {
 					var optionText;
-					if (causes[i].transfer === true) {
-						optionText = causes[i].causeNumber + "-T - " + causes[i].text;
-					} else {
+					if (causes[i].transfer != true) {
 						optionText = causes[i].causeNumber + " - " + causes[i].text;
+						html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 					}
-					html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+					
 				}
 				html += "</select>";
 				AJS.$(causeContainer).append(html);
@@ -230,12 +229,10 @@ function initControlPageClickEvents() {
 				html += "<option value=''>-Link to all Controls in selected Hazard Report-</option>";
 				for (var i = 0; i < controls.length; i++) {
 					var optionText;
-					if (controls[i].transfer === true) {
-						optionText = controls[i].controlNumber + "-T - " + controls[i].text;
-					} else {
+					if (controls[i].transfer != true) {
 						optionText = controls[i].controlNumber + " - " + controls[i].text;
+						html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 					}
-					html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 				}
 				html += "</select>";
 				AJS.$(controlContainer).append(html);
