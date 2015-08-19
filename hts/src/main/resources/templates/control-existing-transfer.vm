@@ -112,7 +112,15 @@
 					<label for="transferReason">Transfer Reason</label>
 					<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$!theControl.getTransferReason()</textarea>
 				</div>
+				<div class="field-group">
+					<label>Verifications</label>
+					<div class="associatedVerifications">
+						#parse("/templates/control-associated-verifications.vm")
+					</div>
+				</div>
 			</form>
+			
+
 		</div>
 	</td>
 </tr>

@@ -104,6 +104,12 @@
 						<span class="HTSMultiSelectFooter">Associated</span>
 					</div>
 				</div>
+				<div class="field-group">
+					<label>Verifications</label>
+					<div class="associatedVerifications">
+						#parse("/templates/control-associated-verifications.vm")
+					</div>
+				</div>
 			</form>
 		</div>
 	</td>

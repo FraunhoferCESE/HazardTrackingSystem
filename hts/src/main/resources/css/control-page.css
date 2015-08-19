@@ -6,3 +6,14 @@
 #ControlPageCauseTransferContainer, #ControlPageControlTransferContainer {
 	display: none;
 }
+
+ul.controlVerificationList
+{
+    list-style-type: none;    
+    padding-left:0;
+}
+
+div.associatedVerifications > p
+{
+	margin-top:5px;
+}

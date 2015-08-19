@@ -37,6 +37,15 @@ function initControlPageClickEvents() {
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
 	});
 	
+	// links to associated verifications to a cause
+	AJS.$(".verificationLink").click(function(event) {
+	    // Get the link that fired the click event
+		var targetID = AJS.$(this).attr("targetID");
+
+	    initHTSCookie();
+	    modifyHTSCookieOpenVerifications("open", targetID, null);
+	});
+	
 	// Clear new Control form
 	AJS.$("#ControlPageClearNew").live("click", function() {
 		var formElement = AJS.$("#ControlPageFormAddNew");
