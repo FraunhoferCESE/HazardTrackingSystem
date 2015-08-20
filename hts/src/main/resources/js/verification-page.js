@@ -111,7 +111,6 @@ function initVerificationPageClickEvents() {
 		}
 
 		var existingResult = existingVerificationFormValidation();
-		console.log(existingResult);
 		if (existingResult.validated === true) {
 			result.existingErrors = false;
 		} else {
@@ -274,6 +273,7 @@ function addNewVerificationFormValidation() {
 }
 
 function postFormToVerificationServlet(formElement) {
+	console.log(formElement);
 	AJS.$(formElement).ajaxSubmit({
 		async: false,
 		success: function(data) {

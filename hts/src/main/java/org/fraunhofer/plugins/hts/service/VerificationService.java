@@ -59,14 +59,12 @@ public class VerificationService {
 		verification.setEstCompletionDate(estimatedCompletionDate);
 		verification.setLastUpdated(new Date());
 		verification.save();
-		
+
 		if (controls != null) {
 			for (Hazard_Controls control : controls) {
 				associateVerificationToControl(control, verification);
 			}
 		}
-
-
 
 		final VerifcToHazard verifcToHazard = ao.create(VerifcToHazard.class);
 		verifcToHazard.setHazard(hazard);
@@ -88,7 +86,8 @@ public class VerificationService {
 
 		if (verification.getControls() != null) {
 			for (Hazard_Controls control : verification.getControls()) {
-				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", control.getID())));
+				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID = ? AND CONTROL_ID = ?",
+						verification.getID(), control.getID())));
 			}
 		}
 		if (controls != null) {
@@ -96,7 +95,6 @@ public class VerificationService {
 				associateVerificationToControl(control, verification);
 			}
 		}
-
 
 		return verification;
 	}
