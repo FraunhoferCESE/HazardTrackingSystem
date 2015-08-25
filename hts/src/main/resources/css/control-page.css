@@ -17,3 +17,31 @@ div.associatedVerifications > p
 {
 	margin-top:5px;
 }
+
+ul#controlsList
+{
+	list-style:none;
+    padding-left:0;
+}
+
+ul#controlsList ul
+{
+	list-style:none;
+    padding-left: 1em;
+}
+
+ul#controlsList > li > div.causeHeader {
+	display: table-row;
+	
+}
+
+ul#controlsList > li.causeHeader > div > span.causeNumber
+{
+	margin-right: 5em;
+	display: table-cell;	
+}
+
+ul#controlsList > li.causeHeader > div > span.causeTitle
+{
+	display: table-cell;	
+}
