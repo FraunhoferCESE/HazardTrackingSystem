@@ -38,7 +38,6 @@ public class TransferRestService {
 	private TransferService transferService;
 	private ControlService controlService;
 	private CauseService causeService;
-	CauseService hazardCauseService;
 
 	public TransferRestService(TransferService transferService, CauseService causeService,
 			ControlService controlService) {
