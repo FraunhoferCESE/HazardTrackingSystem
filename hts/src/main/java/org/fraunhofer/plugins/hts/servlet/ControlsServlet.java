@@ -39,7 +39,7 @@ public class ControlsServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final ControlService controlService;
 	private final ControlGroupsService controlGroupsService;
-	private final CauseService causeService;
+	private final CauseService hazardCauseService;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			ControlService hazardControlService, ControlGroupsService controlGroupsService,
@@ -48,7 +48,7 @@ public class ControlsServlet extends HttpServlet {
 		this.hazardService = checkNotNull(hazardService);
 		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
-		this.causeService = checkNotNull(hazardCauseService);
+		this.hazardCauseService = checkNotNull(hazardCauseService);
 	}
 
 	@Override
@@ -88,7 +88,6 @@ public class ControlsServlet extends HttpServlet {
 					} else {
 						context.put("hazard", hazard);
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
-						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
@@ -129,7 +128,7 @@ public class ControlsServlet extends HttpServlet {
 				}
 
 				String[] causesStr = req.getParameterValues("controlCauses");
-				Hazard_Causes[] causes = causeService.getHazardCausesByID(changeStringArray(causesStr));
+				Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(causesStr));
 
 				// Regular control (not a transfer)
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));

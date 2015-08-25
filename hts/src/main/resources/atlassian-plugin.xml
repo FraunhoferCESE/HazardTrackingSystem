@@ -30,8 +30,6 @@
 		<resource name="shared-rest.js" type="download" location="/js/shared-rest.js" />
 		<resource name="shared-cookies.js" type="download" location="/js/shared-cookies.js" />
 
-		<resource name="transfers.js" type="download" location="/js/transfers.js" />
-
 		<resource name="error-page.css" type="download" location="/css/error-page.css" />
 
 		<resource name="mission-page.css" type="download" location="/css/mission-page.css" />

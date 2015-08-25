@@ -24,23 +24,11 @@
 			#foreach ($cause in $causes)
 				#if (!$cause.getDeleteReason())
 					<option value="$cause.getID()">
-						#if($cause.getTransfer() == 0)
-							$cause.getCauseNumber(): $cause.getTitle()
-						#else 
-							#set( $targetCause = $transferredCauses.get($cause.getID()) )
-							#set( $hazardNum = $targetCause.getTargetHazardNumber() )
-							#if(!$targetCause.getTargetHazardNumber() || $hazardNum.isEmpty())
-								#set( $hazardId = $targetCause.getTargetHazardID() ) 
-								#set( $hazardNum = "<Hazard id=${hazardId}>" )
-							#end
-							#if($targetCause.getTransferTargetType().equals("HAZARD"))
-								#set( $causeNum = "<ALL>" )
-							#else
-								#set( $targetCauseNumber = $targetCause.getTargetCauseNumber() )
-								#set( $causeNum = "Cause ${targetCauseNumber}")
-							#end
-														
-							$cause.getCauseNumber()-T: $hazardNum, $causeNum
+						#if ($cause.getTransfer() != 0)
+							$!cause.getCauseNumber()-T: $!cause.getTitle()
+							<!-- PERFORM LOOKUP IN TRANSFERRED CAUSES -->
+						#else
+							$!cause.getCauseNumber(): $!cause.getTitle()
 						#end
 					</option>
 				#end

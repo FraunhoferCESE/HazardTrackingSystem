@@ -36,29 +36,6 @@
 		</div>
 		<div class="field-group" id="ControlPageControlTransferContainer">
 		</div>
-		<div class="field-group" id="ControlPageFormAddNewMultiSelect">
-			<label for="controlCauses">Causes</label>
-			<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
-				#foreach ($cause in $causes)
-					#if (!$cause.getDeleteReason())
-						<option value="$cause.getID()">
-							#if ($cause.getTransfer() != 0)
-								$!cause.getCauseNumber()-T: $!cause.getTitle()
-								<!-- PERFORM LOOKUP IN TRANSFERRED CAUSES -->
-							#else
-								$!cause.getCauseNumber(): $!cause.getTitle()
-							#end
-						</option>
-					#end
-				#end
-			</select>
-			<div class="HTSMultiSelectFooterContainerOne">
-				<span class="HTSMultiSelectFooter">Non-associated</span>
-			</div>
-			<div class="HTSMultiSelectFooterContainerTwo">
-				<span class="HTSMultiSelectFooter">Associated</span>
-			</div>
-		</div>
 		<div class='field-group'>
 			<label for='transferReason'>Transfer Reason</label>
 			<textarea class='textarea long-field' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea>

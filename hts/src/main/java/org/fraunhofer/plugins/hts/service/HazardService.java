@@ -55,8 +55,8 @@ public class HazardService {
 	public Hazards add(String title, String hazardNum, Long projectID, Long issueID) {
 		final Hazards hazard = ao.create(Hazards.class, new DBParam("PROJECT_ID", projectID),
 				new DBParam("ISSUE_ID", issueID));
-		hazard.setHazardTitle(title == null ? null : title.trim());
-		hazard.setHazardNumber(hazardNum == null ? null : hazardNum.trim());
+		hazard.setHazardTitle(title);
+		hazard.setHazardNumber(hazardNum);
 		hazard.setRevisionDate(new Date());
 		hazard.setActive(true);
 		hazard.save();
@@ -87,9 +87,9 @@ public class HazardService {
 		}
 
 		// Update hazard in HTS
-		hazard.setHazardNumber(hazardNumber == null ? null : hazardNumber.trim());
+		hazard.setHazardNumber(hazardNumber);
 		hazard.setHazardVersionNumber(version);
-		hazard.setHazardTitle(hazardTitle == null ? null : hazardTitle.trim());
+		hazard.setHazardTitle(hazardTitle);
 		hazard.setRevisionDate(new Date());
 
 		ao.delete(ao.find(SubsystemToHazard.class, Query.select().where("HAZARD_ID=?", hazard.getID())));
@@ -136,8 +136,8 @@ public class HazardService {
 	}
 
 	public Hazards update(Hazards hazard, String hazardTitle, String hazardNumber) {
-		hazard.setHazardTitle(hazardTitle == null ? null : hazardTitle.trim());
-		hazard.setHazardNumber(hazardNumber == null ? null : hazardNumber.trim());
+		hazard.setHazardTitle(hazardTitle);
+		hazard.setHazardNumber(hazardNumber);
 		hazard.save();
 		return hazard;
 	}
