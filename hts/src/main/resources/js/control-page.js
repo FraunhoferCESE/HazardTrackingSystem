@@ -9,7 +9,13 @@ function initializeControlPage() {
 	}
 	initControlPageMultiSelectes();
 	initControlPageDateModification();
-	EXISTING_CONTROLS_SERIALIZED = serializeExistingControls();
+	
+	EXISTING_CONTROLS_SERIALIZED = {};
+	AJS.$(".ControlPageFormExisting").each(function () {
+		var controlID = AJS.$(this).find("[name='controlID']").val();
+		var serialized = AJS.$(this).serialize();
+		EXISTING_CONTROLS_SERIALIZED[controlID] = serialized;
+	});
 
 	// Calling functions in shared-cookies.js file
 	var existingControlsCount = AJS.$(".ControlTableToggle").length;
@@ -302,20 +308,6 @@ function initControlPageMultiSelectes() {
 		AJS.$(this).children(":nth-child(2)").css("padding-top", "12px");
 		AJS.$(this).children(":nth-child(3)").css("padding-top", "28px");
 	});
-}
-
-function serializeExistingControls() {
-	if (AJS.$("#ControlPageTable").is(":visible")) {
-		var serializedObj = {};
-		AJS.$(".ControlPageFormExisting").each(function () {
-			var controlID = AJS.$(this).find("[name='controlID']").val();
-			var serialized = AJS.$(this).serialize();
-			serializedObj[controlID] = serialized;
-		});
-		return serializedObj;
-	} else {
-		return null;
-	}
 }
 
 function existingControlFormValidation() {

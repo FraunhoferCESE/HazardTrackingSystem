@@ -64,7 +64,7 @@ public class ControlService {
 		removeAssociationsControlToCause(control.getID());
 		if (causes != null) {
 			associateControlToCause(control, causes);
-		} 
+		}
 		control.setLastUpdated(new Date());
 		control.save();
 		return control;
@@ -163,7 +163,7 @@ public class ControlService {
 	public Hazard_Controls deleteControl(int controlID, String deleteReason) {
 		Hazard_Controls control = getHazardControlByID(controlID);
 		if (control != null) {
-			control.setDeleteReason(deleteReason);
+			control.setDeleteReason(deleteReason == null ? null : deleteReason.trim());
 			if (control.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(control.getTransfer());
 				removeTransfer(transfer.getID());
@@ -211,10 +211,14 @@ public class ControlService {
 	}
 
 	private void associateControlToCause(Hazard_Controls control, Hazard_Causes cause) {
-		final ControlToCause controlToCause = ao.create(ControlToCause.class);
-		controlToCause.setCause(cause);
-		controlToCause.setControl(control);
-		controlToCause.save();
+		ControlToCause[] find = ao.find(ControlToCause.class,
+				Query.select().where("CONTROL_ID=? AND CAUSE_ID=?", control.getID(), cause.getID()));
+		if (find.length == 0) {
+			final ControlToCause controlToCause = ao.create(ControlToCause.class);
+			controlToCause.setCause(cause);
+			controlToCause.setControl(control);
+			controlToCause.save();
+		}
 	}
 
 	private void removeAssociationsControlToCause(int id) {
