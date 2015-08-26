@@ -55,7 +55,6 @@
 										</li>
 										#end
 									#end
-									$orphanControls.size()
 									#if($orphanControls.size() > 0 )
 										<li>
 											<div class="causeHeader" id="orphanControls">
