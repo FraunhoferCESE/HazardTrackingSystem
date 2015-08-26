@@ -78,9 +78,8 @@ public class ControlsServlet extends HttpServlet {
 			} else {
 				try {
 					hazard = hazardService.getHazardById(hazardId);
-					if (hazard == null
-							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
-									jiraAuthenticationContext.getUser())) {
+					if (hazard == null || !hazardService.hasHazardPermission(hazard.getProjectID(),
+							jiraAuthenticationContext.getUser())) {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
 								+ jiraAuthenticationContext.getUser().getUsername()
@@ -127,8 +126,8 @@ public class ControlsServlet extends HttpServlet {
 					controlGroup = null;
 				}
 
-				String[] causesStr = req.getParameterValues("controlCauses");
-				Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(causesStr));
+				Hazard_Causes cause = hazardCauseService
+						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
 
 				// Regular control (not a transfer)
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -136,12 +135,12 @@ public class ControlsServlet extends HttpServlet {
 					// Regular control update
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
-					controlService.updateRegularControl(controlID, description, controlGroup, causes);
+					controlService.updateRegularControl(controlID, description, controlGroup, cause);
 				} else {
 					// Regular control creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					controlService.add(hazardID, description, controlGroup, causes);
+					controlService.add(hazardID, description, controlGroup, cause);
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -204,18 +203,6 @@ public class ControlsServlet extends HttpServlet {
 			res.getWriter().println(jsonResponse);
 		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
-		}
-	}
-
-	private Integer[] changeStringArray(String[] array) {
-		if (array == null) {
-			return null;
-		} else {
-			Integer[] intArray = new Integer[array.length];
-			for (int i = 0; i < array.length; i++) {
-				intArray[i] = Integer.parseInt(array[i]);
-			}
-			return intArray;
 		}
 	}
 

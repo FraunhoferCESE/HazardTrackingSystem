@@ -38,17 +38,15 @@ public class ControlService {
 		this.hazardCauseService = hazardCauseService;
 	}
 
-	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup, Hazard_Causes[] causes) {
+	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup, Hazard_Causes cause) {
 		Hazard_Controls control = ao.create(Hazard_Controls.class);
 		Hazards hazard = hazardService.getHazardById(hazardID);
 		control.setControlNumber(hazard.getHazardControls().length + 1);
 		control.setTransfer(0);
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
-		if (causes != null) {
-			for (Hazard_Causes cause : causes) {
-				associateControlToCause(control, cause);
-			}
+		if (cause != null) {
+			associateControlToCause(control, cause);
 		}
 		control.setOriginalDate(new Date());
 		control.setLastUpdated(new Date());
@@ -58,19 +56,15 @@ public class ControlService {
 	}
 
 	public Hazard_Controls updateRegularControl(int controlID, String description, ControlGroups controlGroup,
-			Hazard_Causes[] causes) {
+			Hazard_Causes causes) {
 		Hazard_Controls control = getHazardControlByID(controlID);
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
 
+		removeAssociationsControlToCause(control.getID());
 		if (causes != null) {
-			removeAssociationsControlToCause(control.getID());
-			for (Hazard_Causes cause : causes) {
-				associateControlToCause(control, cause);
-			}
-		} else {
-			removeAssociationsControlToCause(control.getID());
-		}
+			associateControlToCause(control, causes);
+		} 
 		control.setLastUpdated(new Date());
 		control.save();
 		return control;
@@ -107,19 +101,19 @@ public class ControlService {
 				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
 					if (control.getTransfer() == 0) {
 						// Regular Control
-						controls.add(new ControlJSON(control.getID(), control.getControlNumber(), control
-								.getDescription(), false, true, "CONTROL"));
+						controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
+								control.getDescription(), false, true, "CONTROL"));
 					} else {
 						// Transferred Control
 						Transfers transfer = transferService.getTransferByID(control.getTransfer());
 						if (transfer.getTargetType().equals("CONTROL")) {
 							Hazard_Controls targetControl = getHazardControlByID(transfer.getTargetID());
-							controls.add(new ControlJSON(control.getID(), control.getControlNumber(), targetControl
-									.getDescription(), true, true, "CONTROL"));
+							controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
+									targetControl.getDescription(), true, true, "CONTROL"));
 						} else if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
-							controls.add(new ControlJSON(control.getID(), control.getControlNumber(), targetCause
-									.getTitle(), true, true, "CONTROL"));
+							controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
+									targetCause.getTitle(), true, true, "CONTROL"));
 						}
 					}
 				}
@@ -140,11 +134,12 @@ public class ControlService {
 						transferredControls.put(originControl.getID(),
 								ControlTransfer.createControlToControl(transfer, originControl, targetControl));
 					} else {
-						transferredControls.put(
-								originControl.getID(),
-								ControlTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
-										.getProjectManager().getProjectObj(targetControl.getHazard()[0].getProjectID())
-										.getName()));
+						transferredControls
+								.put(originControl.getID(),
+										ControlTransfer.createMovedProjectTransfer(transfer,
+												ComponentAccessor.getProjectManager()
+														.getProjectObj(targetControl.getHazard()[0].getProjectID())
+														.getName()));
 					}
 				} else {
 					// ControlToCause
@@ -153,11 +148,12 @@ public class ControlService {
 						transferredControls.put(originControl.getID(),
 								ControlTransfer.createControlToCause(transfer, originControl, targetCause));
 					else
-						transferredControls.put(
-								originControl.getID(),
-								ControlTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
-										.getProjectManager().getProjectObj(targetCause.getHazards()[0].getProjectID())
-										.getName()));
+						transferredControls
+								.put(originControl.getID(),
+										ControlTransfer.createMovedProjectTransfer(transfer,
+												ComponentAccessor.getProjectManager()
+														.getProjectObj(targetCause.getHazards()[0].getProjectID())
+														.getName()));
 				}
 			}
 		}

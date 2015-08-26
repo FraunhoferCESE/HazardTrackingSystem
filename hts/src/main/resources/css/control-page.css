@@ -17,31 +17,27 @@ div.associatedVerifications > p
 {
 	margin-top:5px;
 }
-
-ul#controlsList
-{
-	list-style:none;
-    padding-left:0;
-}
-
-ul#controlsList ul
-{
-	list-style:none;
+ul {
+    list-style:none;
     padding-left: 1em;
 }
 
-ul#controlsList > li > div.causeHeader {
-	display: table-row;
-	
+ul#controlsList span.causeTitle {
+    position: absolute;
+    left: 15em;
 }
 
-ul#controlsList > li.causeHeader > div > span.causeNumber
-{
-	margin-right: 5em;
-	display: table-cell;	
+ul#controlsList span.controlDescription {
+    position: absolute;
+    left: 15em;
 }
 
-ul#controlsList > li.causeHeader > div > span.causeTitle
-{
-	display: table-cell;	
+ul#controlsList span.controlDate {
+    position: absolute;
+    left: 55em;
+}
+
+ul#controlsList input.ControlPageDeleteBox {
+    position: absolute;
+    left: 70em;
 }

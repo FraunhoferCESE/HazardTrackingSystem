@@ -18,29 +18,19 @@
 			#end
 		</select>
 	</div>
-	<div class="field-group" id="ControlPageFormAddNewMultiSelect">
-		<label for="controlCauses">Causes</label>
-		<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
-			#foreach ($cause in $causes)
-				#if (!$cause.getDeleteReason())
-					<option value="$cause.getID()">
-						#if ($cause.getTransfer() != 0)
-							$!cause.getCauseNumber()-T: $!cause.getTitle()
-							<!-- PERFORM LOOKUP IN TRANSFERRED CAUSES -->
-						#else
-							$!cause.getCauseNumber(): $!cause.getTitle()
-						#end
-					</option>
-				#end
+	<div class="field-group" id="ControlPageAssociateCauseContainer">
+		<label class='popupLabels' for='controlCauseAssociation'>Associated Cause</label>
+		<select class='select long-field' name='controlCauseAssociation' id='controlCauseAssociation'>
+			<option value=''>-Select Cause-</option>
+			#foreach($cause in $causes)
+				<option value="$cause.getID()">Cause $cause.getCauseNumber()</option>
 			#end
 		</select>
-		<div class="HTSMultiSelectFooterContainerOne">
-			<span class="HTSMultiSelectFooter">Non-associated</span>
-		</div>
-		<div class="HTSMultiSelectFooterContainerTwo">
-			<span class="HTSMultiSelectFooter">Associated</span>
-		</div>
 	</div>
+	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
+		<span class="HTSRequired">Please select a Cause.</span>
+	</div>
+
 	<div class="field-group">
 		<input class="aui-button ControlPageSaveAllChanges" type="button" value="Save All Changes" data-ops="new">
 		<input class="button" type="button" value="Clear" id="ControlPageClearNew">

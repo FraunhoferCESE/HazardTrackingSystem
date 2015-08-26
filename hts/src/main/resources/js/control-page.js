@@ -80,7 +80,7 @@ function initControlPageClickEvents() {
 
 	// Open/close on existing control
 	AJS.$(".ControlTableToggle").live("click", function() {
-		var elementID = AJS.$(this).parent().parent().attr("id");
+		var elementID = AJS.$(this).parent().attr("id");
 		var controlID = elementID.split("ControlTableEntryID")[1];
 		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
 		var operation = toggleOpenCloseIcon(AJS.$(this), displayElement);

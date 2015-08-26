@@ -1,25 +1,22 @@
+#macro( substr $text $length)
+	#if($text.length() > $length)
+		#set( $endIndex = $length - 1)
+		$text.substring(0, $endIndex)...
+	#else
+		$text
+	#end
+#end
+
 <div id="ControlTableEntryID$control.getID()">
-	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand</span>
-	<span>Control $cause.getCauseNumber().$control.getControlNumber()</span>
-	<span>$control.getDescription()</span>
-	<span class="HTSDate">$control.getLastUpdated()</span>
+	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
+	<span class="controlNumber">Control $cause.getCauseNumber().$control.getControlNumber()</span>
+	<span class="controlDescription">
+		#substr($control.getDescription() 75)
+	</span>
+	<span class="HTSDate controlDate">$control.getLastUpdated()</span>
 	<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">	
 </div>
 
-<!--
-<tr id="ControlTableEntryID$control.getID()">
-	<td class="HazardPropertyTableTd"></td>
-	<td class="HazardPropertyTableTd">
-		<div class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
-	</td>
-	<td class="HazardPropertyTableTd">Control $cause.getCauseNumber().$control.getControlNumber()</td>
-	<td class="HazardPropertyTableTd">$control.getDescription()</td>
-	<td class="HTSDate HazardPropertyTableTd">$control.getLastUpdated()</td>
-	<td class="HazardPropertyTableTd">
-		<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
-	</td>
-</tr>
--->
 <div id="ControlTableEntryContentID$control.getID()" class="HazardPropertyContentRow">
 	<div class="HazardPropertyContentHolder">
 		<form method="post" action="controls" class="aui ControlPageFormExisting">
@@ -51,64 +48,6 @@
 					#end
 				</select>
 			</div>
-			<!--
-			<div class="field-group">
-				<label for="controlCauses">Causes</label>
-				<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
-					#set ($foundMatch = 0)
-					#foreach ($cause in $causes)
-						#foreach ($selectedCause in $control.getCauses())
-							#if ($cause.getID() == $selectedCause.getID())
-								#if ($cause.getTransfer() != 0)
-									#if (!$cause.getDeleteReason())
-										<option value="$cause.getID()" selected>
-											$!cause.getCauseNumber()-T: $!cause.getTitle()
-										</option>
-									#else
-										<option value="$cause.getID()" selected>
-											$!cause.getCauseNumber()-T (D): $!cause.getTitle()
-										</option>
-									#end
-								#else
-									#if (!$cause.getDeleteReason())
-										<option value="$cause.getID()" selected>
-											$!cause.getCauseNumber(): $!cause.getTitle()
-										</option>
-									#else
-										<option value="$cause.getID()" selected>
-											$!cause.getCauseNumber() (D): $!cause.getTitle()
-										</option>
-									#end
-								#end
-								#set ($foundMatch = 1)
-								#break
-							#end
-						#end
-						#if ($foundMatch == 0)
-							#if (!$cause.getDeleteReason())
-								#if ($cause.getTransfer() != 0)
-									<option value="$cause.getID()">
-										$!cause.getCauseNumber()-T: $!cause.getTitle()
-									</option>
-								#else
-									<option value="$cause.getID()">
-										$!cause.getCauseNumber(): $!cause.getTitle()
-									</option>
-								#end
-							#end
-						#else
-							#set ($foundMatch = 0)
-						#end
-					#end
-				</select>
-				<div class="HTSMultiSelectFooterContainerOne">
-					<span class="HTSMultiSelectFooter">Non-associated</span>
-				</div>
-				<div class="HTSMultiSelectFooterContainerTwo">
-					<span class="HTSMultiSelectFooter">Associated</span>
-				</div>
-			</div>
-			-->
 			<div class="field-group">
 				<label>Verifications</label>
 				<div class="associatedVerifications">

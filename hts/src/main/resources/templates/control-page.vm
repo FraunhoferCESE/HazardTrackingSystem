@@ -20,11 +20,11 @@
 									#foreach ($cause in $causes)
 										#if(!$cause.getDeleteReason() )
 										<li>
-										 <div class="causeHeader" id="CauseTableEntryID$cause.getID()">
-											<span class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand this cause</span>
-											<span class="causeNumber">Cause $cause.getCauseNumber()</span>
-											<span class="causeTitle">$cause.getTitle()</span>
-										</div>
+											 <div class="causeHeader" id="CauseTableEntryID$cause.getID()">
+												<span class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand this cause</span>
+												<span class="causeNumber">Cause $cause.getCauseNumber()</span>
+												<span class="causeTitle">$cause.getTitle()</span>
+											</div>
 											#if ($cause.getControls() )
 											<ul>
 												#foreach ($control in $cause.getControls())
@@ -42,44 +42,7 @@
 										</li>
 										#end
 									#end
-								<table cellspacing="0" class="HazardPropertyTable" id="ControlPageTable">
-									<thead>
-										<tr>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell1">1</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell2">2</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell3">3</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell4">4</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell5">5</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell6">
-												<div class="HazardPropertyTableCell6Img"></div>
-											</th>
-										</tr>
-									</thead>
-									<tbody id="HazardPropertyTableBody">									
-										#foreach ($cause in $causes)
-											#if(!$cause.getDeleteReason() )
-											<tr id="CauseTableEntryID$cause.getID()">
-												<td class="HazardPropertyTableTd">
-													<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
-												</td>
-												<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
-												<td class="HazardPropertyTableTd">$cause.getTitle()</td>
-											</tr>
-											<tr>
-												<td>
-													#foreach ($control in $cause.getControls())
-														#if( $control.getTransfer() != 0)
-															#parse("/templates/control-existing-transfer.vm")
-														#else
-															#parse("/templates/control-existing-regular.vm")
-														#end
-													#end
-												</td>
-											</tr>
-											#end
-										#end
-									</tbody>
-								</table>
+								</ul>								
 								<div class="HazardPropertyTableButtonsContainer">
 									<input class="aui-button ControlPageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
 									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
