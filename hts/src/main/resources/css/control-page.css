@@ -3,41 +3,67 @@
 }
 
 /* Styles for control-transfer.vm file */
-#ControlPageCauseTransferContainer, #ControlPageControlTransferContainer {
+#ControlPageCauseTransferContainer, #ControlPageControlTransferContainer
+	{
 	display: none;
 }
 
-ul.controlVerificationList
-{
-    list-style-type: none;    
-    padding-left:0;
+ul.controlVerificationList {
+	list-style-type: none;
+	padding-left: 0;
 }
 
-div.associatedVerifications > p
-{
-	margin-top:5px;
+div.associatedVerifications>p {
+	margin-top: 5px;
 }
+
 ul {
-    list-style:none;
-    padding-left: 1em;
+	list-style: none;
+	padding-left: 1em;
 }
 
 ul#controlsList span.causeTitle {
-    position: absolute;
-    left: 15em;
+	position: absolute;
+	left: 15em;
 }
 
 ul#controlsList span.controlDescription {
-    position: absolute;
-    left: 15em;
+	position: absolute;
+	left: 15em;
 }
 
 ul#controlsList span.controlDate {
-    position: absolute;
-    left: 55em;
+	position: absolute;
+	left: 55em;
 }
 
 ul#controlsList input.ControlPageDeleteBox {
-    position: absolute;
-    left: 70em;
+	position: absolute;
+	left: 70em;
+}
+
+div.controlListHeader {
+	padding-bottom: 1.5em;
+	border-bottom: thin solid black;
+	font-weight: bold;
+}
+
+div.controlListHeader>span.headerID {
+	position: absolute;
+	left: 5em;
+}
+
+div.controlListHeader > span.headerDescription {
+	position: absolute;
+	left: 15em;
+}
+
+div.controlListHeader > span.headerDate {
+	position: absolute;
+	left: 55em;
+}
+
+div.controlListHeader > span.headerDelete {
+	position: absolute;
+	left: 67em;
 }

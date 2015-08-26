@@ -16,6 +16,12 @@
 							#if ($controls.size() == 0)
 								<p>No Controls have been created for this Hazard Report.</p>
 							#else
+								<div class="controlListHeader">
+									<span class="headerID">ID</span>
+									<span class="headerDescription">Description</span>
+									<span class="headerDate">Last Updated Date</span>
+									<span class="headerDelete">Delete?</span>
+								</div>
 								<ul id="controlsList">
 									#foreach ($cause in $causes)
 										#if(!$cause.getDeleteReason() )
