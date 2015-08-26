@@ -9,7 +9,11 @@
 
 <div id="ControlTableEntryID$control.getID()">
 	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
-	<span class="controlNumber">Control $cause.getCauseNumber().$control.getControlNumber()</span>
+	#set( $causeNum = "Orph" )
+	#if($cause)
+		#set( $causeNum = $cause.getCauseNumber() )
+	#end	
+	<span class="controlNumber">Control $causeNum.$control.getControlNumber()</span>
 	<span class="controlDescription">
 		#substr($control.getDescription() 75)
 	</span>

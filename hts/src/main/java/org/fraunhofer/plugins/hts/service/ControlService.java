@@ -23,6 +23,7 @@ import org.fraunhofer.plugins.hts.view.model.ControlTransfer;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class ControlService {
 	private final ActiveObjects ao;
@@ -36,6 +37,18 @@ public class ControlService {
 		this.hazardService = checkNotNull(hazardService);
 		this.transferService = checkNotNull(transferService);
 		this.hazardCauseService = hazardCauseService;
+	}
+
+	public List<Hazard_Controls> getOrphanControlIds(Hazards hazard) {
+		List<Hazard_Controls> orphanControls = Lists.newArrayList();
+		List<Hazard_Controls> controls = getAllNonDeletedControlsWithinAHazard(hazard);
+		for (Hazard_Controls control : controls) {
+			Hazard_Causes[] causes = control.getCauses();
+			if (causes == null || causes.length == 0)
+				orphanControls.add(control);
+		}
+
+		return orphanControls;
 	}
 
 	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup, Hazard_Causes cause) {

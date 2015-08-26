@@ -88,6 +88,7 @@ public class ControlsServlet extends HttpServlet {
 						context.put("hazard", hazard);
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
+						context.put("orphanControls", controlService.getOrphanControlIds(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",
@@ -126,8 +127,12 @@ public class ControlsServlet extends HttpServlet {
 					controlGroup = null;
 				}
 
-				Hazard_Causes cause = hazardCauseService
-						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
+				String causeId = req.getParameter("controlCauseAssociation");
+
+				Hazard_Causes cause = null;
+				if (!Strings.isNullOrEmpty(causeId))
+					cause = hazardCauseService
+							.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
 
 				// Regular control (not a transfer)
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));

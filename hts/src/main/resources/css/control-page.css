@@ -48,7 +48,7 @@ div.controlListHeader {
 	font-weight: bold;
 }
 
-div.controlListHeader>span.headerID {
+div.controlListHeader > span.headerID {
 	position: absolute;
 	left: 5em;
 }
@@ -66,4 +66,9 @@ div.controlListHeader > span.headerDate {
 div.controlListHeader > span.headerDelete {
 	position: absolute;
 	left: 67em;
+}
+
+ul#controlsList span.noControlsMessage {
+	padding-left: 3em;	
+	font-style: italic;
 }
