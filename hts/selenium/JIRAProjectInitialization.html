@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:2990/" />
+<title>JIRAProjectInitialization</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">JIRAProjectInitialization</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/jira/secure/Dashboard.jspa</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectFrame</td>
+	<td>gadget-0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=login-form-username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=login-form-password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=login-form-remember-me</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=browse_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=project_template_create_link_lnk</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=li.template.selected</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='add-project-dialog']/div[3]/div/div/div/ol/li[7]/div/div</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='add-project-dialog']/div[3]/div[2]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>ECHO</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//div[@id='add-project-dialog']/div[4]/div[2]/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=no-issues-create-issue</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='issuetype-single-select']/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Task</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=summary</td>
+	<td>Hazard Analysis</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=create-issue-submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=ECHO-1 - Hazard Analysis</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=opsbar-operations_more</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#create-subtask &gt; span.trigger-label</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='issuetype-single-select']/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Hazard</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=summary</td>
+	<td>Avionics hazard</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=customfield_10000</td>
+	<td>AVION-001</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=customfield_10001</td>
+	<td>Avionics failure leads to LOM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=label.qf-create-another</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=qf-create-another</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=create-issue-submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=summary</td>
+	<td>Propulsion hazard</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=customfield_10000</td>
+	<td>PROP-001</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=customfield_10001</td>
+	<td>Propulsion failure leads to LoC/LoM</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=qf-create-another</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=create-issue-submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=org.fraunhofer.plugins.hts.hts:hts-plugin.name</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

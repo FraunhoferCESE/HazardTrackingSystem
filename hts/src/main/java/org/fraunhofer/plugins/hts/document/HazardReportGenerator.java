@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFSettings;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
@@ -113,11 +115,8 @@ public class HazardReportGenerator {
 	 */
 	public List<byte[]> createWordDocument(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
 			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
-			throws XmlException, IOException {
+					throws XmlException, IOException {
 
-		
-		XWPFParagraph p;
-		
 		if (hazardList == null || hazardList.isEmpty())
 			return null;
 
@@ -133,6 +132,7 @@ public class HazardReportGenerator {
 				// text) modify the existing object in memory. Thus, you do not
 				// need to return the doc object, but merely make changes to it.
 				XWPFDocument doc = new XWPFDocument(inputStream);
+				setZoom(doc, 125);
 
 				// Add content to the document
 				createHeader(doc, hazard, reviewPhases);
@@ -151,6 +151,18 @@ public class HazardReportGenerator {
 		}
 
 		return results;
+	}
+
+	private void setZoom(XWPFDocument doc, int zoomPercent) {
+		List<POIXMLDocumentPart> relations = doc.getPart().getRelations();
+		for (Iterator<POIXMLDocumentPart> iterator = relations.iterator(); iterator.hasNext();) {
+			POIXMLDocumentPart docPart = iterator.next();
+			if (docPart.getClass().getName().equals("org.apache.poi.xwpf.usermodel.XWPFSettings")) {
+				XWPFSettings settings = (XWPFSettings) docPart;
+				settings.setZoomPercent(zoomPercent);
+				break;
+			}
+		}
 	}
 
 	// private void createFooter(XWPFDocument doc, Hazards h) throws
@@ -330,21 +342,21 @@ public class HazardReportGenerator {
 		// cell = row.getCell(1);
 		// for (Risk_Categories category : testRiskCategories) {
 		// if (category.getID() == h.getRiskCategory().getID())
-		// new ParagraphBuilder().text("\u2612  " +
+		// new ParagraphBuilder().text("\u2612 " +
 		// category.getValue()).fontSize(6).createCellText(cell);
 		// else
-		// new ParagraphBuilder().text("\u2610  " +
+		// new ParagraphBuilder().text("\u2610 " +
 		// category.getValue()).fontSize(6).createCellText(cell);
 		// }
 		//
 		// cell = row.getCell(2);
 		// for (Risk_Likelihoods likelihood : testRiskLikelihoods) {
 		// if (likelihood.getID() == h.getRiskLikelihood().getID())
-		// new ParagraphBuilder().text("\u2612  " +
+		// new ParagraphBuilder().text("\u2612 " +
 		// likelihood.getValue()).leftMargin(100).fontSize(6)
 		// .createCellText(cell);
 		// else
-		// new ParagraphBuilder().text("\u2610  " +
+		// new ParagraphBuilder().text("\u2610 " +
 		// likelihood.getValue()).leftMargin(100).fontSize(6)
 		// .createCellText(cell);
 		//
@@ -422,15 +434,15 @@ public class HazardReportGenerator {
 					cell = row.getCell(0);
 					setColSpan(cell, 1);
 
-					String riskSeverity = cause.getRiskCategory() == null ? "<TBD>" : cause.getRiskCategory()
-							.getValue();
+					String riskSeverity = cause.getRiskCategory() == null ? "<TBD>"
+							: cause.getRiskCategory().getValue();
 					new ParagraphBuilder().text("Risk Severity: " + riskSeverity).topMargin(50).leftMargin(350)
 							.hangingIndent(300).createCellText(cell);
 
 					cell = row.getCell(1);
 					setColSpan(cell, 3);
-					String riskLikelihood = cause.getRiskLikelihood() == null ? "<TBD>" : cause.getRiskLikelihood()
-							.getValue();
+					String riskLikelihood = cause.getRiskLikelihood() == null ? "<TBD>"
+							: cause.getRiskLikelihood().getValue();
 					new ParagraphBuilder().text("Risk Likelihood: " + riskLikelihood).topMargin(50).leftMargin(350)
 							.hangingIndent(300).createCellText(cell);
 					// Cause description
@@ -484,8 +496,8 @@ public class HazardReportGenerator {
 
 					cell = row.getCell(1);
 					setColSpan(cell, 3);
-					new ParagraphBuilder().text("Risk Likelihood: N/A").topMargin(50).leftMargin(350)
-							.hangingIndent(300).createCellText(cell);
+					new ParagraphBuilder().text("Risk Likelihood: N/A").topMargin(50).leftMargin(350).hangingIndent(300)
+							.createCellText(cell);
 					// Cause description
 
 					row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.SINGLE).createTable(doc)
@@ -519,7 +531,8 @@ public class HazardReportGenerator {
 		Set<Verifications> verificationSet = new HashSet<Verifications>();
 		for (Hazard_Controls control : controls) {
 			if (control.getVerifications() != null) {
-				System.err.println("# verifications for control " + control.getControlNumber() +": " + control.getVerifications().length);
+				System.err.println("# verifications for control " + control.getControlNumber() + ": "
+						+ control.getVerifications().length);
 				verificationSet.addAll(Arrays.asList(control.getVerifications()));
 			}
 		}
@@ -539,19 +552,19 @@ public class HazardReportGenerator {
 				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
 					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
 							: verification.getVerificationStatus().getLabel();
-					String verificationType = verification.getVerificationType() == null ? "" : " ("
-							+ verification.getVerificationType().getLabel() + ")";
+					String verificationType = verification.getVerificationType() == null ? ""
+							: " (" + verification.getVerificationType().getLabel() + ")";
 					String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
 							: verification.getResponsibleParty();
-					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> " : sdf
-							.format(verification.getEstCompletionDate());
+					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> "
+							: sdf.format(verification.getEstCompletionDate());
 					new ParagraphBuilder()
 							.text("Verification " + verification.getVerificationNumber() + verificationType + " - "
-									+ verificationStatus).bold(true).topMargin(150).leftMargin(450).hangingIndent(400)
+									+ verificationStatus)
+							.bold(true).topMargin(150).leftMargin(450).hangingIndent(400).createCellText(cell);
+					new ParagraphBuilder().text("Responsible party: " + verificationRespParty
+							+ ", Estimated Completion Date: " + estCompDate).leftMargin(450).hangingIndent(400)
 							.createCellText(cell);
-					new ParagraphBuilder()
-							.text("Responsible party: " + verificationRespParty + ", Estimated Completion Date: "
-									+ estCompDate).leftMargin(450).hangingIndent(400).createCellText(cell);
 
 					new ParagraphBuilder().text("Description: " + verification.getVerificationDesc()).leftMargin(450)
 							.hangingIndent(400).createCellText(cell);
@@ -577,9 +590,9 @@ public class HazardReportGenerator {
 							controlGroup.getLabel();
 
 							new ParagraphBuilder()
-									.text("Control " + control.getControlNumber() + " (" + controlGroup.getLabel()
-											+ ")" + " - " + control.getDescription()).leftMargin(450)
-									.hangingIndent(400).createCellText(cell);
+									.text("Control " + control.getControlNumber() + " (" + controlGroup.getLabel() + ")"
+											+ " - " + control.getDescription())
+									.leftMargin(450).hangingIndent(400).createCellText(cell);
 						} else {
 							new ParagraphBuilder()
 									.text("Control " + control.getControlNumber() + " - " + control.getDescription())
@@ -612,8 +625,8 @@ public class HazardReportGenerator {
 
 			new ParagraphBuilder()
 					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazardNumber + " \u2013 "
-							+ hazardTitle + ", Control " + targetControl.getControlNumber()).leftMargin(350)
-					.hangingIndent(300).createCellText(cell);
+							+ hazardTitle + ", Control " + targetControl.getControlNumber())
+					.leftMargin(350).hangingIndent(300).createCellText(cell);
 
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
@@ -621,8 +634,8 @@ public class HazardReportGenerator {
 			String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> " : hazard.getHazardNumber();
 			new ParagraphBuilder()
 					.text("Control " + control.getControlNumber() + " (TRANSFER): " + hazardNumber + ", Cause "
-							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).leftMargin(350)
-					.hangingIndent(300).createCellText(cell);
+							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle())
+					.leftMargin(350).hangingIndent(300).createCellText(cell);
 		}
 
 	}
@@ -643,15 +656,15 @@ public class HazardReportGenerator {
 			Hazards hazard = hazardService.getHazardById(Integer.toString(transfer.getTargetID()));
 			new ParagraphBuilder()
 					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
-							+ hazard.getHazardTitle()).topMargin(50).bold(inSpecificCause).leftMargin(350)
-					.hangingIndent(300).createCellText(cell);
+							+ hazard.getHazardTitle())
+					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 			Hazards hazard = targetCause.getHazards()[0];
 			new ParagraphBuilder()
 					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
-							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle()).topMargin(50)
-					.bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
+							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle())
+					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
 		}
 
 	}
