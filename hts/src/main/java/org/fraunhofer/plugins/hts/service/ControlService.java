@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.ControlGroups;
 import org.fraunhofer.plugins.hts.model.ControlToCause;
 import org.fraunhofer.plugins.hts.model.ControlToHazard;
@@ -25,6 +23,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import net.java.ao.Query;
+
 public class ControlService {
 	private final ActiveObjects ao;
 	private final HazardService hazardService;
@@ -39,7 +39,7 @@ public class ControlService {
 		this.hazardCauseService = hazardCauseService;
 	}
 
-	public List<Hazard_Controls> getOrphanControlIds(Hazards hazard) {
+	public List<Hazard_Controls> getOrphanControls(Hazards hazard) {
 		List<Hazard_Controls> orphanControls = Lists.newArrayList();
 		List<Hazard_Controls> controls = getAllNonDeletedControlsWithinAHazard(hazard);
 		for (Hazard_Controls control : controls) {

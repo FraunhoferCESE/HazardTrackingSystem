@@ -35,7 +35,7 @@
 											#if ($cause.getControls() )
 											<ul>												
 												#foreach ($control in $cause.getControls())
-												<li>																								
+												<li>
 													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
 														#set( $activeCauses = $activeCauses + 1 )
 														#if( $control.getTransfer() != 0)

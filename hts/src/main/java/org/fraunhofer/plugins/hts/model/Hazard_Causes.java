@@ -3,6 +3,7 @@ package org.fraunhofer.plugins.hts.model;
 import java.util.Date;
 
 import net.java.ao.Entity;
+import net.java.ao.Implementation;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
@@ -16,6 +17,7 @@ import net.java.ao.schema.NotNull;
  * 
  */
 @Table("Hazard_Causes")
+@Implementation(Hazard_CausesImpl.class)
 public interface Hazard_Causes extends Entity {
 	int getCauseNumber();
 
@@ -33,7 +35,7 @@ public interface Hazard_Causes extends Entity {
 	void setDescription(String description);
 	
 	@ManyToMany(value = ControlToCause.class)
-	Hazard_Controls[] getControls();
+	public Hazard_Controls[] getControls();
 
 	String getOwner();
 	
@@ -77,3 +79,5 @@ public interface Hazard_Causes extends Entity {
 	
 	void setTransfer(int transferID);
 }
+
+

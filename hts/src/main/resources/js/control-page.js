@@ -392,7 +392,8 @@ function addTransferControlFormValidation() {
 }
 
 function postFormToControlServlet(formElement) {
-	AJS.$(formElement).ajaxSubmit({
+	console.log(formElement);
+	AJS.$(formElement).ajaxSubmit({		
 		async: false,
 		success: function(data) {
 			console.log("SUCCESS");

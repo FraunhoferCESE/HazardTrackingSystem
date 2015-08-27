@@ -16,8 +16,8 @@ import org.fraunhofer.plugins.hts.model.ControlGroups;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
-import org.fraunhofer.plugins.hts.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 
@@ -88,7 +88,7 @@ public class ControlsServlet extends HttpServlet {
 						context.put("hazard", hazard);
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
-						context.put("orphanControls", controlService.getOrphanControlIds(hazard));
+						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",
@@ -113,6 +113,8 @@ public class ControlsServlet extends HttpServlet {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
+
+
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
