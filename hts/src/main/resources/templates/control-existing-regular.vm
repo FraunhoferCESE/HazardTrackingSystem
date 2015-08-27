@@ -7,7 +7,7 @@
 	#end
 #end
 
-<div id="ControlTableEntryID$control.getID()">
+<div class="controlHeader" id="ControlTableEntryID$control.getID()">
 	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
 	#set( $causeNum = "Orph" )
 	#if($cause)
@@ -18,7 +18,7 @@
 		#substr($control.getDescription() 75)
 	</span>
 	<span class="HTSDate controlDate">$control.getLastUpdated()</span>
-	<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">	
+	<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
 </div>
 
 <div id="ControlTableEntryContentID$control.getID()" class="HazardPropertyContentRow">

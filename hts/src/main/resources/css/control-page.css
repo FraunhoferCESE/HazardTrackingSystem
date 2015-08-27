@@ -8,7 +8,7 @@
 	display: none;
 }
 
-ul.controlVerificationList {
+ul {
 	list-style-type: none;
 	padding-left: 0;
 }
@@ -17,34 +17,9 @@ div.associatedVerifications>p {
 	margin-top: 5px;
 }
 
-ul {
-	list-style: none;
-	padding-left: 1em;
-}
-
-ul#controlsList span.causeTitle {
-	position: absolute;
-	left: 15em;
-}
-
-ul#controlsList span.controlDescription {
-	position: absolute;
-	left: 15em;
-}
-
-ul#controlsList span.controlDate {
-	position: absolute;
-	left: 55em;
-}
-
-ul#controlsList input.ControlPageDeleteBox {
-	position: absolute;
-	left: 70em;
-}
-
 div.controlListHeader {
-	padding-bottom: 1.5em;
-	border-bottom: thin solid black;
+	margin-top: 0.5em;
+	padding-bottom: 1.2em;
 	font-weight: bold;
 }
 
@@ -55,20 +30,80 @@ div.controlListHeader > span.headerID {
 
 div.controlListHeader > span.headerDescription {
 	position: absolute;
-	left: 15em;
+	left: 13.5em;
 }
 
 div.controlListHeader > span.headerDate {
 	position: absolute;
-	left: 55em;
+	left: 60.7em;
 }
 
 div.controlListHeader > span.headerDelete {
 	position: absolute;
-	left: 67em;
+	left: 73.2em;
 }
 
-ul#controlsList span.noControlsMessage {
+div.controlListHeader > span.headerDelete > div {
+	margin-top: 0.1em;
+}
+
+li div.causeHeader {
+	border-top: 1px solid #CCC;
+	padding-top: 0.5em;
+	margin-bottom: 2em;
+}
+
+li span.CauseTableToggle {
+	position: absolute;
+	left: 2.15em;
+	padding-top: 0.3em;
+}
+
+li span.causeNumber {
+	position: absolute;
+	left: 4.7em;
+}
+
+li span.causeTitle {
+	position: absolute;
+	left: 13.5em;
+}
+
+
+ul#controlsList > li > ul > li:nth-child(odd) { 
+	background: #EEE; 
+}
+
+li div.controlHeader {
+	margin-bottom: 0.7em;
+}
+
+li span.ControlTableToggle {
+	margin-left: 1.5em;
+	padding-top: 0.3em;
+}
+
+li span.controlNumber {
+	position: absolute;
+	left: 4.7em;
+}
+
+li span.controlDescription {
+	position: absolute;
+	left: 13.5em;
+}
+
+li span.controlDate {
+	position: absolute;
+	left: 60.7em;
+}
+
+li input.ControlPageDeleteBox {
+	position: absolute;
+	left: 76.9em;
+}
+
+li span.noControlsMessage {
 	padding-left: 3em;	
 	font-style: italic;
 }

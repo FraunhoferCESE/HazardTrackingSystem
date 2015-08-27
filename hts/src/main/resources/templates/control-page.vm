@@ -17,10 +17,9 @@
 								<p>No Controls have been created for this Hazard Report.</p>
 							#else
 								<div class="controlListHeader">
-									<span class="headerID">ID</span>
-									<span class="headerDescription">Description</span>
-									<span class="headerDate">Last Updated Date</span>
-									<span class="headerDelete">Delete?</span>
+									<span class="headerDescription">Title</span>
+									<span class="headerDate">Last updated</span>
+									<span class="headerDelete"><div class="HazardPropertyTableCell6Img"></div></span>
 								</div>
 								<ul id="controlsList">
 									#foreach ($cause in $causes)
