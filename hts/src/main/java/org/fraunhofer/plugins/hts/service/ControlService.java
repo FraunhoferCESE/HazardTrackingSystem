@@ -106,7 +106,7 @@ public class ControlService {
 		return nonDeleted;
 	}
 
-	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID) {
+	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID, boolean includeTransfers) {
 		Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
 		List<ControlJSON> controls = new ArrayList<ControlJSON>();
 		if (cause != null) {
@@ -116,7 +116,7 @@ public class ControlService {
 						// Regular Control
 						controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
 								control.getDescription(), false, true, "CONTROL"));
-					} else {
+					} else if(includeTransfers) {
 						// Transferred Control
 						Transfers transfer = transferService.getTransferByID(control.getTransfer());
 						if (transfer.getTargetType().equals("CONTROL")) {

@@ -238,7 +238,7 @@ function initControlPageClickEvents() {
 		AJS.$(controlContainer).children().remove();
 		var causeID = AJS.$(this).val();
 		if (causeID !== "") {
-			var controls = getAllControlsWithinCause(causeID);
+			var controls = getAllControlsWithinCause(causeID, false);
 			var html = "<label class='popupLabels' for='controlControlList'>Transfer to Control</label><select class='select long-field' name='controlControlList' id='controlControlList'>";
 			if (controls.length !== 0) {
 				html += "<option value=''>-Link to all Controls in selected Hazard Report-</option>";
@@ -252,7 +252,7 @@ function initControlPageClickEvents() {
 				html += "</select>";
 				AJS.$(controlContainer).append(html);
 			} else {
-				AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no Controls)</div>");
+				AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no non-transferred Controls)</div>");
 			}
 			AJS.$(controlContainer).show();
 		} else {

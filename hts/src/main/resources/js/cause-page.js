@@ -410,7 +410,7 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 					"</tr>";
 		}
 		
-		var controls = getAllControlsWithinCause(causeIDsToDelete[i]);
+		var controls = getAllControlsWithinCause(causeIDsToDelete[i], true);
 		if(controls.length > 0) {
 			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This cause has "+controls.length+" control(s) that will be disassociated from this cause.</p></td></tr>";
 		}
