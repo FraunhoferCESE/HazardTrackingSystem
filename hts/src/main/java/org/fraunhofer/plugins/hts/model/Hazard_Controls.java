@@ -4,6 +4,7 @@ package org.fraunhofer.plugins.hts.model;
 import java.util.Date;
 
 import net.java.ao.Entity;
+import net.java.ao.Implementation;
 import net.java.ao.ManyToMany;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
@@ -16,6 +17,7 @@ import net.java.ao.schema.Table;
  * 
  */
 @Table("Hazard_Controls")
+@Implementation(Hazard_ControlsImpl.class)
 public interface Hazard_Controls extends Entity {
 	
 	@StringLength(value = StringLength.UNLIMITED)
