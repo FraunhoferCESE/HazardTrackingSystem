@@ -242,7 +242,6 @@ function initControlPageClickEvents() {
 			var html = "<label class='popupLabels' for='controlControlList'>Transfer to Control</label><select class='select long-field' name='controlControlList' id='controlControlList'>";
 			if (controls.length !== 0) {
 				html += "<option value=''>-Link to all Controls in selected Cause-</option>";
-				console.log(controls.length);
 				for (var i = 0; i < controls.length; i++) {
 					var optionText;
 					if (controls[i].transfer != true) {
@@ -393,7 +392,6 @@ function addTransferControlFormValidation() {
 }
 
 function postFormToControlServlet(formElement) {
-	console.log(formElement);
 	AJS.$(formElement).ajaxSubmit({		
 		async: false,
 		success: function(data) {

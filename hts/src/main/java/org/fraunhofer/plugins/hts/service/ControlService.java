@@ -59,9 +59,15 @@ public class ControlService {
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
 		if (cause != null) {
-			associateControlToCause(control, cause);
+			
 			Hazard_Controls[] controls = cause.getControls();
+			System.err.println(controls.length);
+			for (int i = 0; i < controls.length; i++) {
+				System.err.println(control.getID() + " " + control.getControlNumber());
+			}
+			System.err.println(controls[controls.length - 1].getControlNumber() + 1);
 			control.setControlNumber(controls.length == 0 ? 1 : controls[controls.length - 1].getControlNumber() + 1);
+			associateControlToCause(control, cause);
 		} else {
 			control.setControlNumber(getOrphanControls(hazard).size() + 1);
 		}
