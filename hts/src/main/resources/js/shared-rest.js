@@ -35,11 +35,11 @@ function getAllHazardsByMissionID(missionID) {
 }
 
 // REST Service call to get all Causes within a Hazard
-function getAllCausesWithinHazard(hazardID) {
+function getAllCausesWithinHazard(hazardID, includeTransfers) {
 	var result = [];
 	AJS.$.ajax({
 		type: "GET",
-		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/cause/" + hazardID,
+		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/cause/" + hazardID + "?includeTransfers="+includeTransfers,
 		async: false,
 		success: function(data) {
 			result = data;

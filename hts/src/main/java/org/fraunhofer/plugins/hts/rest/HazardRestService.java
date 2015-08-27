@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,7 +72,7 @@ public class HazardRestService {
 	@GET
 	@Path("cause/{hazardID}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAllCausesBelongingToHazard(@PathParam("hazardID") int hazardID) {
+	public Response getAllCausesBelongingToHazard(@PathParam("hazardID") int hazardID, @QueryParam("includeTransfers") boolean includeTransfers) {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			List<CauseJSON> causes = new ArrayList<CauseJSON>();
 			for (Hazard_Causes cause : hazardCauseService
@@ -79,7 +80,7 @@ public class HazardRestService {
 				if (cause.getTransfer() == 0) {
 					causes.add(new CauseJSON(cause.getID(), cause.getCauseNumber(), cause.getTitle(), false, true,
 							"CAUSE"));
-				} else {
+				} else if(includeTransfers) {
 					// Transferred Cause
 					Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 					if (transfer.getTargetType().equals("CAUSE")) {

@@ -179,7 +179,7 @@ function initCausePageClickEvents() {
 		AJS.$(causeContainer).children().remove();
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
-			var causes = getAllCausesWithinHazard(hazardID);
+			var causes = getAllCausesWithinHazard(hazardID, false);
 			var html = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causes.length !== 0) {
 				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
