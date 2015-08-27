@@ -49,6 +49,7 @@ public class ControlTransfer {
 		instance.setOriginID(transfer.getOriginID());
 		instance.setTargetControlDescription(targetControl.getDescription());
 		instance.setTargetControlNumber(targetControl.getControlNumber());
+		instance.setTargetCauseNumber(targetControl.getCauses()[0].getCauseNumber());
 		
 		ControlGroups controlGroup = targetControl.getControlGroup();
 		if (controlGroup == null) {

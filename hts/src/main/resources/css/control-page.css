@@ -71,11 +71,15 @@ li span.causeTitle {
 
 
 ul#controlsList > li > ul > li:nth-child(odd) { 
-	background: #EEE; 
+	background: #f3f3f3;
+}
+
+ul#controlsList > li > ul > li:nth-child(odd) > div > div { 
+	background: #f3f3f3; 
 }
 
 li div.controlHeader {
-	margin-bottom: 0.7em;
+	margin-top: 0.7em;
 }
 
 li span.ControlTableToggle {

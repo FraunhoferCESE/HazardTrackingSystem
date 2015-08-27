@@ -119,7 +119,15 @@ public class ControlsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			
+			String causeId = req.getParameter("controlCauseAssociation");
+			Hazard_Causes associatedCause = null;
+			if (!Strings.isNullOrEmpty(causeId))
+				associatedCause = hazardCauseService
+						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
+			
 			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
+			// Regular control (not a transfer)
 			if (regular == true) {
 				String description = req.getParameter("controlDescription");
 				ControlGroups controlGroup;
@@ -128,26 +136,18 @@ public class ControlsServlet extends HttpServlet {
 				} else {
 					controlGroup = null;
 				}
-
-				String causeId = req.getParameter("controlCauseAssociation");
-
-				Hazard_Causes cause = null;
-				if (!Strings.isNullOrEmpty(causeId))
-					cause = hazardCauseService
-							.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
-
-				// Regular control (not a transfer)
+			
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 				if (existing == true) {
 					// Regular control update
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
-					controlService.updateRegularControl(controlID, description, controlGroup, cause);
+					controlService.updateRegularControl(controlID, description, controlGroup, associatedCause);
 				} else {
 					// Regular control creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					controlService.add(hazardID, description, controlGroup, cause);
+					controlService.add(hazardID, description, controlGroup, associatedCause);
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -156,7 +156,7 @@ public class ControlsServlet extends HttpServlet {
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
 					String transferReason = req.getParameter("transferReason");
-					controlService.updateTransferredControl(controlID, transferReason);
+					controlService.updateTransferredControl(controlID, transferReason, associatedCause);
 				} else {
 					// Control transfer creation
 					int targetCauseID = Integer.parseInt(req.getParameter("controlCauseList"));
@@ -168,11 +168,11 @@ public class ControlsServlet extends HttpServlet {
 
 					int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
 					String transferReason = req.getParameter("transferReason");
-
+					
 					if (targetControlID == 0) {
-						controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+						controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason, associatedCause);
 					} else {
-						controlService.addControlTransfer(originHazardID, targetControlID, transferReason);
+						controlService.addControlTransfer(originHazardID, targetControlID, transferReason, associatedCause);
 					}
 				}
 			}

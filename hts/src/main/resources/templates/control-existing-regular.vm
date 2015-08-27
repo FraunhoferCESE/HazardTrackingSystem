@@ -1,12 +1,3 @@
-#macro( substr $text $length)
-	#if($text.length() > $length)
-		#set( $endIndex = $length - 1)
-		$text.substring(0, $endIndex)...
-	#else
-		$text
-	#end
-#end
-
 <div class="controlHeader" id="ControlTableEntryID$control.getID()">
 	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
 	#set( $causeNum = "Orph" )

@@ -1,3 +1,12 @@
+#macro( substr $text $length)
+	#if($text.length() > $length)
+		#set( $endIndex = $length - 1)
+		$text.substring(0, $endIndex)...
+	#else
+		$text
+	#end
+#end
+
 <html>
 	<head>
 		<title>HTS</title>
@@ -38,8 +47,7 @@
 													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
 														#set( $activeCauses = $activeCauses + 1 )
 														#if( $control.getTransfer() != 0)
-															Transfer
-															## #parse("/templates/control-existing-transfer.vm")
+															#parse("/templates/control-existing-transfer.vm")
 														#else
 															#parse("/templates/control-existing-regular.vm")
 														#end
@@ -67,8 +75,7 @@
 												#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
 													#set( $activeCauses = $activeCauses + 1 )
 													#if( $control.getTransfer() != 0)
-														Transfer
-														## #parse("/templates/control-existing-transfer.vm")
+														#parse("/templates/control-existing-transfer.vm")
 													#else
 														#parse("/templates/control-existing-regular.vm")
 													#end
