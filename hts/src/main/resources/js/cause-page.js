@@ -409,6 +409,12 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
+		
+		var controls = getAllControlsWithinCause(causeIDsToDelete[i]);
+		if(controls.length > 0) {
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This cause has "+controls.length+" control(s) that will be disassociated from this cause.</p></td></tr>";
+		}
+		
 		var transferOrigins = getTransferOrigins(causeIDsToDelete[i], "cause");
 		
 		if(transferOrigins.causes.length > 0 || transferOrigins.controls.length > 0) {
