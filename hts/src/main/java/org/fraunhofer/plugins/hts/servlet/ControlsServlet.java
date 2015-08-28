@@ -39,7 +39,7 @@ public class ControlsServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final ControlService controlService;
 	private final ControlGroupsService controlGroupsService;
-	private final CauseService hazardCauseService;
+	private final CauseService causeService;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			ControlService hazardControlService, ControlGroupsService controlGroupsService,
@@ -48,7 +48,7 @@ public class ControlsServlet extends HttpServlet {
 		this.hazardService = checkNotNull(hazardService);
 		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
-		this.hazardCauseService = checkNotNull(hazardCauseService);
+		this.causeService = checkNotNull(hazardCauseService);
 	}
 
 	@Override
@@ -87,6 +87,7 @@ public class ControlsServlet extends HttpServlet {
 					} else {
 						context.put("hazard", hazard);
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
+						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
@@ -121,7 +122,7 @@ public class ControlsServlet extends HttpServlet {
 			String causeId = req.getParameter("controlCauseAssociation");
 			Hazard_Causes associatedCause = null;
 			if (!Strings.isNullOrEmpty(causeId))
-				associatedCause = hazardCauseService
+				associatedCause = causeService
 						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
 
 			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));

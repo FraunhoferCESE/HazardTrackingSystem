@@ -44,7 +44,55 @@
 											 <div class="causeHeader" id="CauseTableEntryID$cause.getID()">
 												<span class="ControlCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/collapse this cause</span>
 												<span class="causeNumber">Cause $cause.getCauseNumber() ($numControls)</span>
-												<span class="causeTitle">$cause.getTitle()</span>
+												<span class="causeTitle">
+													#if($cause.getTransfer() == 0)
+														#substr( $cause.getTitle(), 75)
+													#else
+														#set ($theCause = $transferredCauses.get($cause.getID()))
+													    #if ($theCause.getMovedProject())
+															&lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+														#else
+															#if ($theCause.getTransferTargetType() == "CAUSE")
+																#if ($theCause.isDeleted() == true)
+																	<div class="HTSTransferDeletedOrigin">
+																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+																				&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
+																		#else
+																				$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
+																		#end
+																		 
+																	</div>
+																#else
+																	<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
+																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+																				&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr( $theCause.getTargetCauseTitle(), 60)
+																		#else
+																				$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle(), 60)
+																		#end
+																	</a>
+																#end
+															#else
+																#if ($theCause.isDeleted() == true)
+																	<div class="HTSTransferDeletedOrigin">
+																#else
+																	<a href="/jira/plugins/servlet/hazards?id=$!theCause.getTargetHazardID()">
+																#end
+																	
+																#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+																	&lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+																#else
+																	$theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+																#end
+																
+																#if ($theCause.isDeleted() == true)
+																	</div>
+																#else
+																	</a>
+																#end
+															#end
+														#end
+													#end
+												</span>
 											</div>
 											#set( $activeCauses = 0 )
 											#if ($cause.getControls() )
