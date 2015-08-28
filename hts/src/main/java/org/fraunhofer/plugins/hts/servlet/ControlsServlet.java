@@ -114,18 +114,16 @@ public class ControlsServlet extends HttpServlet {
 		}
 	}
 
-
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			
+			JSONObject jsonResponse = new JSONObject();
 			String causeId = req.getParameter("controlCauseAssociation");
 			Hazard_Causes associatedCause = null;
 			if (!Strings.isNullOrEmpty(causeId))
 				associatedCause = hazardCauseService
 						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
-			
+
 			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
 			// Regular control (not a transfer)
 			if (regular == true) {
@@ -136,7 +134,7 @@ public class ControlsServlet extends HttpServlet {
 				} else {
 					controlGroup = null;
 				}
-			
+
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 				if (existing == true) {
 					// Regular control update
@@ -147,7 +145,8 @@ public class ControlsServlet extends HttpServlet {
 					// Regular control creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					controlService.add(hazardID, description, controlGroup, associatedCause);
+					Hazard_Controls newControl = controlService.add(hazardID, description, controlGroup, associatedCause);
+					createJson(jsonResponse, "newControlID", newControl.getID());
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -168,16 +167,19 @@ public class ControlsServlet extends HttpServlet {
 
 					int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
 					String transferReason = req.getParameter("transferReason");
-					
+
+					Hazard_Controls newControl;
 					if (targetControlID == 0) {
-						controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason, associatedCause);
+						newControl = controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason,
+								associatedCause);
 					} else {
-						controlService.addControlTransfer(originHazardID, targetControlID, transferReason, associatedCause);
+						newControl = controlService.addControlTransfer(originHazardID, targetControlID, transferReason,
+								associatedCause);
 					}
+					createJson(jsonResponse, "newControlID", newControl.getID());
 				}
 			}
 
-			JSONObject jsonResponse = new JSONObject();
 			createJson(jsonResponse, "updateSuccess", true);
 			createJson(jsonResponse, "errorMessage", "none");
 			res.setContentType("application/json");

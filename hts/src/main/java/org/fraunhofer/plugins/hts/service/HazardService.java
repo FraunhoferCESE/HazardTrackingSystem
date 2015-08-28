@@ -10,9 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.java.ao.DBParam;
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
@@ -37,12 +34,17 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.permission.ProjectPermission;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.base.Strings;
+
+import net.java.ao.DBParam;
+import net.java.ao.Query;
 
 @Transactional
 public class HazardService {

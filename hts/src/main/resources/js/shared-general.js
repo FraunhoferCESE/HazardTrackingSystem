@@ -1,5 +1,19 @@
 console.log("=== shared-general.js ===");
 
+function openForm(toggleElement, displayElement) {
+	AJS.$(toggleElement).removeClass("aui-iconfont-add").addClass("aui-iconfont-devtools-task-disabled");
+	AJS.$(displayElement).show();
+}
+
+function closeForm(toggleElement, displayElement) {
+	AJS.$(toggleElement).removeClass("aui-iconfont-devtools-task-disabled").addClass("aui-iconfont-add");
+	AJS.$(displayElement).hide();
+}
+
+function isOpen(toggleElement) {
+	return AJS.$(toggleElement).hasClass("aui-iconfont-devtools-task-disabled");
+}
+
 function formatDate(dateStrUnformatted) {
 	var dateObj = new Date(dateStrUnformatted);
 	var month = (dateObj.getMonth()+1) > 9 ? (dateObj.getMonth()+1) : "0" + (dateObj.getMonth()+1);

@@ -3,11 +3,7 @@ console.log("=== control-page.js ===");
 var EXISTING_CONTROLS_SERIALIZED = null;
 
 function initializeControlPage() {
-	if (INIT.CONTROLS === true) {
-		INIT.CONTROLS = false;
-		initControlPageClickEvents();
-	}
-	initControlPageMultiSelectes();
+	initControlPageClickEvents();
 	initControlPageDateModification();
 	
 	EXISTING_CONTROLS_SERIALIZED = {};
@@ -17,13 +13,27 @@ function initializeControlPage() {
 		EXISTING_CONTROLS_SERIALIZED[controlID] = serialized;
 	});
 
-	// Calling functions in shared-cookies.js file
-	var existingControlsCount = AJS.$(".ControlTableToggle").length;
-	openHTSCookieOpenControls(existingControlsCount);
-	renameControlPageExpandButton(existingControlsCount);
+	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
+		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
+		for (var i = 0; i < htsCookieJson.OPEN_CONTROLS.length; i++) {
+			var controlID = htsCookieJson.OPEN_CONTROLS[i];
+			
+			var controlToggle = AJS.$("#ControlTableEntryID" + controlID + " > span.ControlTableToggle");
+			var controlDisplay = AJS.$("#ControlTableEntryContentID" + controlID);
+			openForm(controlToggle, controlDisplay);			
+		}
+		
+		AJS.$(".ControlCauseTableToggle").each(function () {
+			if(!AJS.$(this).parent().parent().find("[id^='ControlTableEntryContentID']:visible").length) {
+				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+			}
+		});
+	}
 }
 
 function initControlPageClickEvents() {
+	
+	initializeFormToggles();
 	
 	//when doing a control transfer, automatically expand the targetcause on the cause page
 	AJS.$(".controlTransferLink").click(function(event) {
@@ -31,13 +41,12 @@ function initControlPageClickEvents() {
 		var targetID = AJS.$(this).attr("targetID");
 		var targetType = AJS.$(this).attr("targetType");
 		
-
 	    initHTSCookie();
 	    if(targetType === "CAUSE"){
 	    	modifyHTSCookieOpenCauses("open", targetID, null);
 	    }
 	    else{
-	    	modifyHTSCookieOpenControls("open", targetID, null);
+	    	modifyHTSCookieOpenControls("open", targetID);
 	    }
 	    
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
@@ -57,8 +66,6 @@ function initControlPageClickEvents() {
 		var formElement = AJS.$("#ControlPageFormAddNew");
 		AJS.$(formElement).find("#controlDescription").val("");
 		AJS.$(formElement).find("#controlGroup").val("").trigger('chosen:updated');
-		var multiSelectElement = AJS.$("#ControlPageFormAddNewMultiSelect");
-		AJS.$(multiSelectElement).find(".RemoveAll").trigger("click");
 	});
 
 	// Clear new transfer Control form
@@ -74,62 +81,24 @@ function initControlPageClickEvents() {
 
 	// Add new control click event
 	AJS.$("#ControlPageAddNewControl").live("click", function() {
-		// Calling function in shared-cookies.js file
-		toggleOpenCloseIcon(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+		}
+		else {
+			closeForm(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+		}
 	});
 
 	// Add new transfer click event
 	AJS.$("#ControlPageAddTransfer").live("click", function() {
-		// Calling function in shared-cookies.js file
-		toggleOpenCloseIcon(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
-	});
-
-	// Open/close on existing control
-	AJS.$(".ControlTableToggle").live("click", function() {
-		var elementID = AJS.$(this).parent().attr("id");
-		var controlID = elementID.split("ControlTableEntryID")[1];
-		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
-		var operation = toggleOpenCloseIcon(AJS.$(this), displayElement);
-		var existingControlCount = AJS.$(".ControlTableToggle").length;
-		// Calling function in shared-cookies.js file
-		modifyHTSCookieOpenControls(operation, controlID, existingControlCount);
-	});
-
-	// Expand All/Close All controls
-	AJS.$("#ControlPageExpandAllButton").live("click", function() {
-		var operation = AJS.$(this).val();
-		var buttonElements = AJS.$(".ControlTableToggle");
-		var existingControlsCount = AJS.$(".ControlTableToggle").length;
-
-		if (operation === "Expand All") {
-			buttonElements.each(function () {
-				if (AJS.$(this).hasClass("aui-iconfont-add")) {
-					AJS.$(this).removeClass("aui-iconfont-add");
-					AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
-					var elementID = AJS.$(this).parent().parent().attr("id");
-					var controlID = elementID.split("ControlTableEntryID")[1];
-					AJS.$("#ControlTableEntryContentID" + controlID).show();
-					// Calling function in shared-cookies.js file
-					modifyHTSCookieOpenControls("open", controlID, null);
-				}
-			});
-		} else {
-			buttonElements.each(function () {
-				if (AJS.$(this).hasClass("aui-iconfont-devtools-task-disabled")) {
-					AJS.$(this).removeClass("aui-iconfont-devtools-task-disabled");
-					AJS.$(this).addClass("aui-iconfont-add");
-					var elementID = AJS.$(this).parent().parent().attr("id");
-					var controlID = elementID.split("ControlTableEntryID")[1];
-					AJS.$("#ControlTableEntryContentID" + controlID).hide();
-					// Calling function in shared-cookies.js file
-					modifyHTSCookieOpenControls("close", controlID, null);
-				}
-			});
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
 		}
-		// Calling function in shared-cookies.js file
-		renameControlPageExpandButton(existingControlsCount);
+		else {
+			closeForm(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
+		}
 	});
-
+	
 	// Save new control
 	AJS.$(".ControlPageSaveAllChanges").live("click", function() {
 		var result = {
@@ -282,31 +251,79 @@ function initControlPageClickEvents() {
 	});
 }
 
+function initializeFormToggles() {
+	// Open/close on a cause header
+	AJS.$(".ControlCauseTableToggle").click( function() {
+		var displayElement = AJS.$(this).parent().siblings('ul');
+		if(!isOpen(AJS.$(this))) {			
+			openForm(AJS.$(this), displayElement);
+		}
+		else {
+			AJS.$(this).find(".ControlTableToggle").each(function (index) {
+				var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+				var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+				closeForm(AJS.$(this), controlDisplayElement);
+				modifyHTSCookieOpenControls("close", controlID);
+			});
+			
+			closeForm(AJS.$(this), displayElement);
+		}
+	});
+	
+	// Open/close on existing control
+	AJS.$(".ControlTableToggle").click( function() {
+		var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this),displayElement);
+			modifyHTSCookieOpenControls("open", controlID);
+		}
+		else {			
+			closeForm(AJS.$(this),displayElement);
+			modifyHTSCookieOpenControls("close", controlID);
+		}
+	});
+
+	// Expand All button click
+	AJS.$("#ControlPageExpandAllButton").click( function() {
+		AJS.$(".ControlCauseTableToggle").each(function() {
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+			}
+		});	
+		
+		AJS.$(".ControlTableToggle").each(function() {
+			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$("#ControlTableEntryContentID" + controlID));
+				modifyHTSCookieOpenControls("open", controlID);
+			}
+		});
+	});
+	
+	AJS.$("#ControlPageCloseAllButton").click( function() {
+		AJS.$(".ControlTableToggle").each(function (index) {
+			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+			var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+			closeForm(AJS.$(this), controlDisplayElement);
+			modifyHTSCookieOpenControls("close", controlID);
+		});
+		
+		AJS.$(".ControlCauseTableToggle").each(function() {
+			if(isOpen(AJS.$(this))) {
+				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+			}
+		});	
+	});
+	
+}
+
+
 function initControlPageDateModification() {
 	AJS.$(".HTSDate").each(function() {
 		var dateStrUnformatted = AJS.$(this).text();
 		var dateStrFormatted = formatDate(dateStrUnformatted);
 		AJS.$(this).text(dateStrFormatted);
-	});
-}
-
-function initControlPageMultiSelectes() {
-	AJS.$(".controlCauses").multiselect2side({
-		selectedPosition: 'right',
-		moveOptions: false,
-		labelsx: '',
-		labeldx: '',
-		'search': 'Search: ',
-		autoSort: true,
-		autoSortAvailable: true
-	});
-
-	// Adjust the CSS
-	var multiSelectDivs = AJS.$(".ms2side__div");
-	AJS.$(multiSelectDivs).each(function() {
-		AJS.$(this).children(":nth-child(1)").children(":nth-child(1)").css("padding-bottom", "3px");
-		AJS.$(this).children(":nth-child(2)").css("padding-top", "12px");
-		AJS.$(this).children(":nth-child(3)").css("padding-top", "28px");
 	});
 }
 
@@ -396,6 +413,9 @@ function postFormToControlServlet(formElement) {
 		async: false,
 		success: function(data) {
 			console.log("SUCCESS");
+			if(data.newControlID) {
+				modifyHTSCookieOpenControls("open", data.newControlID);
+			}
 		},
 		error: function(error) {
 			// TODO:
@@ -528,7 +548,7 @@ function postDeleteToControlServlet(controlIDToDelete, reason) {
 		url: "controls?id=" + controlIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
-			modifyHTSCookieOpenControls("close", controlIDToDelete, null);
+			modifyHTSCookieOpenControls("close", controlIDToDelete);
 		},
 		error: function(data) {
 			console.log("ERROR");
