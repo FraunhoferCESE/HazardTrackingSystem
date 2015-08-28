@@ -13,18 +13,18 @@
 				#if ($theCause.isDeleted() == true)
 					<div class="HTSTransferDeletedOrigin">
 						#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-								&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  $theCause.getTargetCauseTitle()
+								&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  #substr($theCause.getTargetCauseTitle() 60)
 						#else
-								$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  $theCause.getTargetCauseTitle()
+								$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  #substr($theCause.getTargetCauseTitle() 60)
 						#end
 						 
 					</div>
 				#else
 					<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 						#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-								&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
+								&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 60)
 						#else
-								$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - $theCause.getTargetCauseTitle()
+								$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 60)
 						#end
 					</a>
 				#end

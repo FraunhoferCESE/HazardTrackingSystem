@@ -14,32 +14,32 @@
 			#if ($theControl.getTransferTargetType() == "CONTROL")
 				#if ($theControl.isDeleted() == true)
 						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#else
-							$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+							$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#end
 				#else
 					<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-								&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+								&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#else
-								$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - $theControl.getTargetControlDescription()
+								$theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#end
 					</a>
 				#end
 			#else
 				#if ($theControl.isDeleted() == true)
 						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+							&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#else
-							$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+							$theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#end
 				#else
 					<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-								&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+								&lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#else
-								$!theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - $theControl.getTargetCauseTitle()
+								$!theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#end
 					</a>
 				#end
