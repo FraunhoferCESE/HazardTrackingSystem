@@ -267,9 +267,10 @@ function initializeFormToggles() {
 			openForm(AJS.$(this), displayElement);
 		}
 		else {
-			AJS.$(this).find(".ControlTableToggle").each(function (index) {
+			AJS.$(this).parent().parent().find(".ControlTableToggle").each(function () {
 				var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
 				var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+				console.log("closing " + controlID);
 				closeForm(AJS.$(this), controlDisplayElement);
 				modifyHTSCookieOpenControls("close", controlID);
 			});

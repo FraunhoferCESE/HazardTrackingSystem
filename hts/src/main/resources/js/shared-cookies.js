@@ -65,9 +65,9 @@ function modifyHTSCookieOpenControls(operation, controlID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_CONTROLS.push(controlID);
+			htsCookieJson.OPEN_CONTROLS.push(parseInt(controlID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(controlID);
+			var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(parseInt(controlID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_CONTROLS.splice(indexOfID, 1);
 			}
