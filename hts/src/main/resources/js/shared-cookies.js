@@ -22,9 +22,9 @@ function modifyHTSCookieOpenCauses(operation, causeID, existingCausesCount) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_CAUSES.push(causeID);
+			htsCookieJson.OPEN_CAUSES.push(parseInt(causeID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_CAUSES.indexOf(causeID);
+			var indexOfID = htsCookieJson.OPEN_CAUSES.indexOf(parseInt(causeID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_CAUSES.splice(indexOfID, 1);
 			}
@@ -82,9 +82,9 @@ function modifyHTSCookieOpenVerifications(operation, verificationID, existingVer
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_VERIFICATIONS.push(verificationID);
+			htsCookieJson.OPEN_VERIFICATIONS.push(parseInt(verificationID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(verificationID);
+			var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(parseInt(verificationID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_VERIFICATIONS.splice(indexOfID, 1);
 			}

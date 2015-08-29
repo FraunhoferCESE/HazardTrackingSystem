@@ -19,8 +19,10 @@ function initializeControlPage() {
 			var controlID = htsCookieJson.OPEN_CONTROLS[i];
 			
 			var controlToggle = AJS.$("#ControlTableEntryID" + controlID + " > span.ControlTableToggle");
-			var controlDisplay = AJS.$("#ControlTableEntryContentID" + controlID);
-			openForm(controlToggle, controlDisplay);			
+			if(controlToggle.length > 0) {
+				var controlDisplay = AJS.$("#ControlTableEntryContentID" + controlID);
+				openForm(controlToggle, controlDisplay);
+			}
 		}
 		
 		AJS.$(".ControlCauseTableToggle").each(function () {
