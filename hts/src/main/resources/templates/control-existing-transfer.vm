@@ -1,6 +1,7 @@
 #set ($theControl = $transferredControls.get($control.getID()))
 
 <div class="controlHeader" id="ControlTableEntryID$control.getID()">
+	<a name="controlID$control.getID()"></a>
 	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
 	#set( $causeNum = "Orph" )
 	#if($cause)
