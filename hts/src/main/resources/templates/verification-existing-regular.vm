@@ -92,7 +92,7 @@
 			$verification.getVerificationStatus().getLabel()
 		#end
 	</td>
-	<td class="HTSDate HazardPropertyTableTd">$verification.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">$dateFormatter.format($verification.getLastUpdated())</td>
 	<td class="HazardPropertyTableTd">
 		<input type="checkbox" value="$verification.getID()" class="VerificationPageDeleteBox">
 	</td>

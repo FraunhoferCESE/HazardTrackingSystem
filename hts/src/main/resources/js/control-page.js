@@ -4,7 +4,6 @@ var EXISTING_CONTROLS_SERIALIZED = null;
 
 function initializeControlPage() {
 	initControlPageClickEvents();
-	initControlPageDateModification();
 	
 	EXISTING_CONTROLS_SERIALIZED = {};
 	AJS.$(".ControlPageFormExisting").each(function () {
@@ -325,15 +324,6 @@ function initializeFormToggles() {
 		});	
 	});
 	
-}
-
-
-function initControlPageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
-	});
 }
 
 function existingControlFormValidation() {

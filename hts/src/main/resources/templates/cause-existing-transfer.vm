@@ -57,7 +57,7 @@
 			$theCause.getTargetCauseOwner()
 		#end
 	</td>
-	<td class="HTSDate HazardPropertyTableTd">$cause.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">$dateFormatter.format($cause.getLastUpdated())</td>
 	<td class="HazardPropertyTableTd">
 		<input type="checkbox" value="$cause.getID()" class="CausePageDeleteBox">
 	</td>

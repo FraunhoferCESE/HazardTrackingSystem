@@ -166,12 +166,6 @@ function initVerificationPageClickEvents() {
 }
 
 function initVerificationPageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
-	});
-
 	var estimatedCompletionDates = AJS.$(".VerificationDate");
 	estimatedCompletionDates.each(function () {
 		var defaultDateArr = (AJS.$(this).data("date")).split(" ");

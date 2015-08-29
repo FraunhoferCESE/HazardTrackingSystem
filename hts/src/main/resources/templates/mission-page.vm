@@ -87,7 +87,7 @@
 												<td>
 													<a href="$hazard.getJiraProjectURL()">$hazard.getMissionTitle()</a>
 												</td>
-												<td class="HTSDate">$!hazard.getRevisionDate()</td>
+												<td>$dateFormatter.format( $hazard.getRevisionDate())</td>
 												<td>
 													<ul class='menu'>
 														<li>

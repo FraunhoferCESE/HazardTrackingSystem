@@ -7,7 +7,6 @@ function initializeCausePage() {
 		INIT.CAUSES = false;
 		initCausePageClickEvents();
 	}
-	initCausePageDateModification();
 	EXISTING_CAUSES_SERIALIZED = serializeExistingCauses();
 
 	// Calling functions in shared-cookies.js file
@@ -223,14 +222,6 @@ function initCausePageClickEvents() {
 		});
 	});
 	
-}
-
-function initCausePageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
-	});
 }
 
 function serializeExistingCauses() {

@@ -6,7 +6,20 @@ function initializeMissionPage() {
 		initMissionClickEvents();
 	}
 	initMissionPageHeight();
-	initHazardPageDateModification();
+}
+
+function formatDate(timeInMillis) {
+	var dateObject = new Date();
+	dateObject.setTime(timeInMillis);
+	console.log(timeInMillis);
+	var dateString = (dateObject.getMonth() + 1) + "/";
+	dateString += dateObject.getDate() + "/";
+	dateString += dateObject.getFullYear() + " ";
+	dateString += dateObject.getHours() + ":";
+	dateString += dateObject.getMinutes() +":";
+	dateString += dateObject.getSeconds();
+	
+	return dateString;
 }
 
 function initMissionPageHeight() {
@@ -23,14 +36,6 @@ function initMissionPageHeight() {
 		// This is to keep a nice big white background, until there are enough Hazards in the system
 		AJS.$(".aui-page-panel-inner").css({"height": fakeTableHeight + "px"});
 	}
-}
-
-function initHazardPageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
-	});
 }
 
 function initMissionClickEvents() {
@@ -72,7 +77,7 @@ function updateHazardTable(hazards) {
 					"<td>" + hazardNumber + "</td>" +
 					"<td>" + hazardTitle + "</td>" +
 					"<td><a href='" + hazards[i].jiraProjectURL + "'>" + hazards[i].missionTitle + "</a></td>" +
-					"<td>" + formatDate(hazards[i].revisionDate) + "</td>" +
+					"<td>" + hazards[i].revisionDate + "</td>" +
 					"<td>" +
 						"<ul class='menu'>" +
 							"<li><a href='/jira/plugins/servlet/hazards?id=" + hazards[i].hazardID + "' class='RouteLink'>Edit</a></li>" +

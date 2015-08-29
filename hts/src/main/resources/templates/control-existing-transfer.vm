@@ -47,7 +47,7 @@
 			#end
 		#end
 	</span>
-	<span class="HTSDate controlDate">$control.getLastUpdated()</span>
+	<span class="controlDate">$dateFormatter.format($control.getLastUpdated())</span>
 	<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
 </div>
 

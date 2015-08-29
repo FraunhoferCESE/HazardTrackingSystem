@@ -24,6 +24,7 @@ import org.fraunhofer.plugins.hts.service.HazardService;
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.datetime.DateTimeFormatter;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
@@ -40,15 +41,17 @@ public class ControlsServlet extends HttpServlet {
 	private final ControlService controlService;
 	private final ControlGroupsService controlGroupsService;
 	private final CauseService causeService;
+	private final DateTimeFormatter dateTimeFormatter;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			ControlService hazardControlService, ControlGroupsService controlGroupsService,
-			CauseService hazardCauseService) {
+			CauseService hazardCauseService, DateTimeFormatter dateTimeFormatter) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
 		this.causeService = checkNotNull(hazardCauseService);
+		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class ControlsServlet extends HttpServlet {
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("dateFormatter", dateTimeFormatter);
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();

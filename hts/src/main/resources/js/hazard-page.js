@@ -23,7 +23,6 @@ function initHazardPageClickEvents() {
 			async: false,
 			success: function(data) {
 				console.log("SUCCESS");
-				console.log(data);
 				JIRA.Messages.showSuccessMsg(
 					"The Hazard was successfully updated.",
 					{closeable: true}

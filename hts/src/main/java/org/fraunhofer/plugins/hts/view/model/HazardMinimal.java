@@ -1,5 +1,7 @@
 package org.fraunhofer.plugins.hts.view.model;
 
+import java.util.Date;
+
 public class HazardMinimal {
 	private int hazardID;
 	private String hazardTitle;
@@ -8,10 +10,10 @@ public class HazardMinimal {
 	private String jiraSubtaskURL;
 	private String missionTitle;
 	private String jiraProjectURL;
-	private String revisionDate;
+	private Date revisionDate;
 	
 	public HazardMinimal(int hazardID, String hazardTitle, String hazardNumber, String jiraSubtaskSummary,
-			String jiraSubtaskURL, String missionTitle, String jiraProjectURL, String lastRevision) {
+			String jiraSubtaskURL, String missionTitle, String jiraProjectURL, Date lastRevision) {
 		this.hazardID = hazardID;
 		this.hazardTitle = hazardTitle;
 		this.hazardNumber = hazardNumber;
@@ -50,7 +52,7 @@ public class HazardMinimal {
 		return jiraProjectURL;
 	}
 
-	public String getRevisionDate() {
+	public Date getRevisionDate() {
 		return revisionDate;
 	}
 

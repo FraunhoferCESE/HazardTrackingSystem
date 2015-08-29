@@ -29,6 +29,7 @@ import org.fraunhofer.plugins.hts.service.VerificationTypeService;
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.datetime.DateTimeFormatter;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
@@ -47,16 +48,18 @@ public class VerificationsServlet extends HttpServlet {
 	private final VerificationStatusService verificationStatusService;
 	private final VerificationService verificationService;
 	private final ControlService hazardControlService;
+	private final DateTimeFormatter dateTimeFormatter;
 
 	public VerificationsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
-			VerificationService verificationService, ControlService hazardControlService) {
+			VerificationService verificationService, ControlService hazardControlService, DateTimeFormatter dateTimeFormatter) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.verificationTypeService = checkNotNull(verificationTypeService);
 		this.verificationStatusService = checkNotNull(verificationStatusService);
 		this.verificationService = checkNotNull(verificationService);
 		this.hazardControlService = checkNotNull(hazardControlService);
+		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
 	}
 
 	@Override
@@ -69,6 +72,8 @@ public class VerificationsServlet extends HttpServlet {
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("dateFormatter", dateTimeFormatter);
+			
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
@@ -93,7 +98,7 @@ public class VerificationsServlet extends HttpServlet {
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
 								+ jiraAuthenticationContext.getUser().getUsername()
 								+ ") do not have permission to view/edit it.";
-					} else {
+					} else {						
 						context.put("hazard", hazard);
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));

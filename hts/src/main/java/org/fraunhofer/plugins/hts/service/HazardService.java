@@ -156,7 +156,7 @@ public class HazardService {
 						jiraSubtask.getSummary(),
 						baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
 						jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(),
-						hazard.getRevisionDate().toString()));
+						hazard.getRevisionDate()));
 			}
 		}
 		return hazardsMinimal;

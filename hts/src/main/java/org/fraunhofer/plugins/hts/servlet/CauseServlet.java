@@ -24,6 +24,7 @@ import org.fraunhofer.plugins.hts.service.RiskLikelihoodsService;
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.datetime.DateTimeFormatter;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
@@ -40,15 +41,17 @@ public class CauseServlet extends HttpServlet {
 	private final TemplateRenderer templateRenderer;
 	private final RiskCategoryService riskCategoryService;
 	private final RiskLikelihoodsService riskLikelihoodService;
+	private final DateTimeFormatter dateTimeFormatter;
 
 	public CauseServlet(CauseService hazardCauseService, TemplateRenderer templateRenderer,
 			HazardService hazardService, RiskCategoryService riskCategoryService,
-			RiskLikelihoodsService riskLikelihoodService) {
+			RiskLikelihoodsService riskLikelihoodService, DateTimeFormatter dateTimeFormatter) {
 		this.causeService = checkNotNull(hazardCauseService);
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.riskCategoryService = checkNotNull(riskCategoryService);
 		this.riskLikelihoodService = checkNotNull(riskLikelihoodService);
+		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class CauseServlet extends HttpServlet {
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("dateFormatter", dateTimeFormatter);
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
