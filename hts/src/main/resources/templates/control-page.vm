@@ -43,7 +43,7 @@
 										<li>
 											 <div class="causeHeader" id="CauseTableEntryID$cause.getID()">
 												<span class="ControlCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/collapse this cause</span>
-												<span class="causeNumber"><a href="causes?id=$hazard.getID()#causeID$cause.getID()" causeID=$cause.getID()>Cause $cause.getCauseNumber()</a> ($numControls)</span>
+												<span class="causeNumber"><a href="causes?id=$hazard.getID()#causeID$cause.getID()" causeID="$cause.getID()">Cause $cause.getCauseNumber()</a> ($numControls)</span>
 												<span class="causeTitle">
 													#if($cause.getTransfer() == 0)
 														#substr( $cause.getTitle(), 75)
