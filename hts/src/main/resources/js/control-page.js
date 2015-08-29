@@ -35,6 +35,12 @@ function initControlPageClickEvents() {
 	
 	initializeFormToggles();
 	
+	// Make sure cause is opened when user clicks on a cause link
+	AJS.$("div.causeHeader > span.causeNumber > a").click(function() {
+		var causeID = AJS.$(this).attr("causeID");
+		modifyHTSCookieOpenCauses("open", causeID, null);
+	});
+	
 	//when doing a control transfer, automatically expand the targetcause on the cause page
 	AJS.$(".controlTransferLink").click(function(event) {
 	    // Get the link that fired the click event

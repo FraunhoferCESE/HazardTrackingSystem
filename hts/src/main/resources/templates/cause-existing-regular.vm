@@ -1,5 +1,6 @@
 <tr id="CauseTableEntryID$cause.getID()">
 	<td class="HazardPropertyTableTd">
+		<a name="causeID$cause.getID()"></a>
 		<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
 	</td>
 	<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
@@ -17,7 +18,7 @@
 	</td>
 </tr>
 <tr id="CauseTableEntryContentID$cause.getID()" class="HazardPropertyContentRow">
-	<td colspan="100%">
+	<td colspan="100%">		
 		<div class="HazardPropertyContentHolder">
 			<form method="post" action="causes" class="aui CausePageFormExisting">
 				<input type="hidden" name="regular" id="regular" value="true">
