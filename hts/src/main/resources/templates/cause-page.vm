@@ -1,3 +1,12 @@
+#macro( substr $text $length)
+	#if($text.length() > $length)
+		#set( $endIndex = $length - 1)
+		$text.substring(0, $endIndex)...
+	#else
+		$text
+	#end
+#end
+
 <html>
 	<head>
 		<title>HTS</title>
