@@ -8,20 +8,6 @@ function initializeMissionPage() {
 	initMissionPageHeight();
 }
 
-function formatDate(timeInMillis) {
-	var dateObject = new Date();
-	dateObject.setTime(timeInMillis);
-	console.log(timeInMillis);
-	var dateString = (dateObject.getMonth() + 1) + "/";
-	dateString += dateObject.getDate() + "/";
-	dateString += dateObject.getFullYear() + " ";
-	dateString += dateObject.getHours() + ":";
-	dateString += dateObject.getMinutes() +":";
-	dateString += dateObject.getSeconds();
-	
-	return dateString;
-}
-
 function initMissionPageHeight() {
 	var theWindow = AJS.$(window).height();
 	var elementOne = AJS.$(".aui-header").outerHeight();
@@ -39,57 +25,9 @@ function initMissionPageHeight() {
 }
 
 function initMissionClickEvents() {
-	// Mission (left panel) click event
-	AJS.$(".LandingPageMissionLink").live("click", function() {
-		var missionID = AJS.$(this).data("mission");
-		var hazards;
-		if (missionID === "all") {
-			// Call REST Service method in shared-rest.js file
-			hazards = getAllHazards();
-		} else {
-			// Call REST Service method in shared-rest.js file
-			hazards = getAllHazardsByMissionID(missionID);
-		}
-		if (hazards.length !== 0) {
-			// Insert hazards data into the Mission Table
-			updateHazardTable(hazards);
-		} else {
-			// TODO: ...
-		}
-	});
-
 	AJS.$(".PrintLink").live("click", function() {
-		console.log("print stuff");
 		var hazardID = AJS.$(this).data("id");
 		var form = AJS.$("#report-generation" + hazardID);
 		AJS.$(form).submit();
 	});
-}
-
-function updateHazardTable(hazards) {
-	console.log(hazards);
-	var html;
-	for (var i = 0; i < hazards.length; i++) {
-		var hazardNumber = hazards[i].hazardNumber === undefined ? "&lt;To Be Determined&gt;" : hazards[i].hazardNumber;
-		var hazardTitle = hazards[i].hazardTitle === undefined ? "&lt;To Be Determined&gt;" : hazards[i].hazardTitle;
-
-		html += "<tr>" +
-					"<td>" + hazardNumber + "</td>" +
-					"<td>" + hazardTitle + "</td>" +
-					"<td><a href='" + hazards[i].jiraProjectURL + "'>" + hazards[i].missionTitle + "</a></td>" +
-					"<td>" + hazards[i].revisionDate + "</td>" +
-					"<td>" +
-						"<ul class='menu'>" +
-							"<li><a href='/jira/plugins/servlet/hazards?id=" + hazards[i].hazardID + "' class='RouteLink'>Edit</a></li>" +
-							"<li><a href='#' class='PrintLink' data-id='" + hazards[i].hazardID + "'>Print</a></li>" +
-							"<form method='post' action='report-generation' id='report-generation" + hazards[i].hazardID + "'>" +
-								"<input type='hidden' name='hazardToDownload' id='hazardToDownload' value='" + hazards[i].hazardID + "' />" +
-							"</form>" +
-						"</ul>" +
-					"</td>" +
-					"<td><a href='" + hazards[i].jiraSubtaskURL + "'>" + hazards[i].jiraSubtaskSummary + "</a></td>" +
-				"</tr>";
-	}
-	AJS.$("#MissionPageTableBody").empty();
-	AJS.$("#MissionPageTableBody").append(html);
 }

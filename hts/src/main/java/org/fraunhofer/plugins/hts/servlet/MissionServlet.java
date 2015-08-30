@@ -43,20 +43,17 @@ public class MissionServlet extends HttpServlet {
 			context.put("dateFormatter", dateTimeFormatter);
 
 			List<HazardMinimal> hazards = Lists.newArrayList();
-			List<JIRAProject> userProjects = Lists.newArrayList();
+			List<JIRAProject> userProjects = hazardService.getUserProjectsWithHazards(jiraAuthenticationContext.getUser());
 
 			String missionId = req.getParameter("missionId");
 			if (missionId == null) {
-				userProjects = hazardService.getUserProjectsWithHazards(jiraAuthenticationContext.getUser());
 				hazards = hazardService.getUserHazardsMinimal(userProjects);
-
 			} else {
 				try {
 					long projectId = Long.parseLong(missionId);
 					if (hazardService.hasHazardPermission(projectId, jiraAuthenticationContext.getUser())) {
-						userProjects.add(new JIRAProject(projectId,
-								ComponentAccessor.getProjectManager().getProjectObj(projectId).getName()));
-						hazards = hazardService.getUserHazardsMinimal(userProjects);
+						hazards = hazardService.getUserHazardsMinimal(Lists.newArrayList(new JIRAProject(projectId,
+								ComponentAccessor.getProjectManager().getProjectObj(projectId).getName())));
 					}
 				} catch (NumberFormatException e) {
 				}

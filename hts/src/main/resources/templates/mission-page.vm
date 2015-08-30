@@ -20,13 +20,13 @@
 											<li>-None-</li>
 										#else
 											<li class="MissionPageLink">
-												<a class="LandingPageMissionLink" data-mission="all">
+												<a href="missions" data-mission="all">
 													-All Hazard Reports-
 												</a>
 											</li>
 											#foreach ($mission in $missions)
 												<li class="MissionPageLink">
-													<a class="LandingPageMissionLink" data-mission="$mission.getID()">
+													<a href="missions?missionId=$mission.getID()" data-mission="$mission.getID()">
 														$!mission.getName()
 													</a>
 												</li>

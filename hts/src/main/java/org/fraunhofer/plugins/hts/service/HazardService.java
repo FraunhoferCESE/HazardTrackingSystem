@@ -155,8 +155,7 @@ public class HazardService {
 				hazardsMinimal.add(new HazardMinimal(hazard.getID(), hazard.getHazardTitle(), hazard.getHazardNumber(),
 						jiraSubtask.getSummary(),
 						baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
-						jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(),
-						hazard.getRevisionDate()));
+						jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(), hazard.getRevisionDate()));
 			}
 		}
 		return hazardsMinimal;
@@ -300,16 +299,17 @@ public class HazardService {
 	 *         the project, <code>false</code> otherwise.
 	 */
 	public boolean hasHazardPermission(long projectID, ApplicationUser user) {
-		boolean hasPermission;
+		checkNotNull(user);
+		boolean hasPermission = false;
 		ProjectManager projectManager = ComponentAccessor.getProjectManager();
 		Project jiraProject = projectManager.getProjectObj(projectID);
-		PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
+		if (jiraProject != null) {
+			PermissionManager permissionManager = ComponentAccessor.getPermissionManager();
+			if (permissionManager.hasPermission(Permissions.CREATE_ISSUE, jiraProject, user)
+					|| permissionManager.hasPermission(Permissions.EDIT_ISSUE, jiraProject, user)) {
+				hasPermission = true;
+			}
 
-		if (permissionManager.hasPermission(Permissions.CREATE_ISSUE, jiraProject, user)
-				|| permissionManager.hasPermission(Permissions.EDIT_ISSUE, jiraProject, user)) {
-			hasPermission = true;
-		} else {
-			hasPermission = false;
 		}
 		return hasPermission;
 	}
