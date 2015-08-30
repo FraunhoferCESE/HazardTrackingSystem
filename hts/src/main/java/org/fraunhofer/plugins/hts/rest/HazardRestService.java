@@ -57,8 +57,8 @@ public class HazardRestService {
 		List<Hazards> allHazards = hazardService.getUserHazards(user);
 		List<HazardMinimalJSON> allHazardsMinimal = new ArrayList<HazardMinimalJSON>();
 		for (Hazards hazard : allHazards) {
-			Project jiraProject = hazardService.getHazardProject(hazard);
-			Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+			Project jiraProject = ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
+			Issue jiraSubtask = ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 			String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 
 			allHazardsMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(),

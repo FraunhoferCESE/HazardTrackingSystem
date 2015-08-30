@@ -103,8 +103,9 @@ public final class HazardServlet extends HttpServlet {
 								+ jiraAuthenticationContext.getUser().getUsername()
 								+ ") do not have permission to view/edit it.";
 					} else {
-						Project jiraProject = hazardService.getHazardProject(hazard);
-						Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+						Project jiraProject = ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
+						Issue jiraSubtask = ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
+						
 
 						String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 						String jiraSubTaskSummary = jiraSubtask.getSummary();

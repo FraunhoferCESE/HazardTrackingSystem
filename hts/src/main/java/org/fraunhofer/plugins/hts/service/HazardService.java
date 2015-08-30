@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
@@ -42,6 +43,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
@@ -144,23 +146,6 @@ public class HazardService {
 		return hazard;
 	}
 
-	public List<HazardMinimal> getUserHazardsMinimal(List<JIRAProject> projects) {
-		List<HazardMinimal> hazardsMinimal = new ArrayList<HazardMinimal>();
-		for (JIRAProject project : projects) {
-			for (Hazards hazard : getHazardsByProjectId(project.getID())) {
-				Project jiraProject = getHazardProject(hazard);
-				Issue jiraSubtask = getHazardSubTask(hazard);
-				String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-
-				hazardsMinimal.add(new HazardMinimal(hazard.getID(), hazard.getHazardTitle(), hazard.getHazardNumber(),
-						jiraSubtask.getSummary(),
-						baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(),
-						jiraProject.getName(), baseURL + "/browse/" + jiraProject.getKey(), hazard.getRevisionDate()));
-			}
-		}
-		return hazardsMinimal;
-	}
-
 	public List<Hazards> getHazardsByProjectId(long projectId) {
 		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", projectId, true)));
 	}
@@ -169,8 +154,8 @@ public class HazardService {
 		List<Hazards> allHazards = getHazardsByProjectId(missionID);
 		List<HazardMinimalJSON> allHazardsByIDMinimal = new ArrayList<HazardMinimalJSON>();
 		for (Hazards hazard : allHazards) {
-			Project jiraProject = getHazardProject(hazard);
-			Issue jiraSubtask = getHazardSubTask(hazard);
+			Project jiraProject = ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
+			Issue jiraSubtask = ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 			String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 
 			allHazardsByIDMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(),
@@ -247,43 +232,22 @@ public class HazardService {
 	 */
 	public List<Hazards> getUserHazards(ApplicationUser user) {
 		Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ACTIVE=?", true));
+		Map<Long, Boolean> permissions = Maps.newHashMap();
 
 		List<Hazards> allHazards = newArrayList();
 		for (Hazards hazard : hazards) {
-			if (hasHazardPermission(hazard.getProjectID(), user)) {
+			Boolean hasPermission = permissions.get(hazard.getProjectID());
+			if (hasPermission == null) {
+				hasPermission = hasHazardPermission(hazard.getProjectID(), user);
+				permissions.put(hazard.getProjectID(), hasPermission);
+			}
+
+			if (hasPermission) {
 				allHazards.add(hazard);
 			}
 		}
 
 		return allHazards;
-	}
-
-	/**
-	 * Returns JIRA projects that contain active (non-deleted) hazards for which
-	 * the user has permission to see as defined by
-	 * {@link HazardService#hasHazardPermission(Long, ApplicationUser)}
-	 * 
-	 * @param user
-	 *            the application user
-	 * @return a list of JIRAProject objects representing the JIRA projects the
-	 *         user has access to
-	 */
-	public List<JIRAProject> getUserProjectsWithHazards(ApplicationUser user) {
-		// This set operation would be unnecessary if an AO query could be
-		// constructed that returns a distinct list of project ids, but AO
-		// doesn't seem to be doing this even with the distinct() method.
-		// Debugging it has yielded no information.
-		Set<Long> uniqueProjects = new HashSet<Long>();
-		for (Hazards hazard : getUserHazards(user)) {
-			uniqueProjects.add(hazard.getProjectID());
-		}
-
-		ProjectManager projectManager = ComponentAccessor.getProjectManager();
-		List<JIRAProject> jiraProjectList = newArrayList();
-		for (Long projectId : uniqueProjects) {
-			jiraProjectList.add(new JIRAProject(projectId, projectManager.getProjectObj(projectId).getName()));
-		}
-		return jiraProjectList;
 	}
 
 	/**
@@ -312,13 +276,5 @@ public class HazardService {
 
 		}
 		return hasPermission;
-	}
-
-	public Project getHazardProject(Hazards hazard) {
-		return ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
-	}
-
-	public Issue getHazardSubTask(Hazards hazard) {
-		return ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 	}
 }
