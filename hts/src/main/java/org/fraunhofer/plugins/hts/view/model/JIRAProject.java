@@ -17,7 +17,7 @@ public class JIRAProject {
 		this.name = name;
 	}
 
-	public Long getID() {
+	public Long getId() {
 		return ID;
 	}
 

@@ -2,8 +2,11 @@
     cursor: pointer;
 }
 
+.MissionLinkSelected {	
+	border: thin solid lightblue;
+}
+
 .MissionPageMissionHeader {
-	border-bottom: 1px solid #CCC;
 	font-weight: bold;
 	padding-top: 7px;
 	padding-bottom: 7px;

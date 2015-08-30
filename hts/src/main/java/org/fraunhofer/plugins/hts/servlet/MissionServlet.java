@@ -25,6 +25,7 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class MissionServlet extends HttpServlet {
@@ -49,47 +50,49 @@ public class MissionServlet extends HttpServlet {
 		}
 		else {
 			Map<String, Object> context = Maps.newHashMap();
-
-			List<Hazards> userHazards = hazardService.getUserHazards(user);
-
-			ProjectManager projectManager = ComponentAccessor.getProjectManager();
+			List<HazardMinimal> hazards = new ArrayList<HazardMinimal>();
 			Map<Long, Project> userProjects = Maps.newHashMap();
+			
+			// Get all hazards accessible by the user
+			List<Hazards> userHazards = hazardService.getUserHazards(user);
+			
+			// Extract the unique projects from the available hazards
+			ProjectManager projectManager = ComponentAccessor.getProjectManager();			
+			for (Hazards hazard : userHazards) {
+				if (userProjects.get(hazard.getProjectID()) == null) {
+					userProjects.put(hazard.getProjectID(), projectManager.getProjectObj(hazard.getProjectID()));
+				}
+			}	
+				
+			// If the user specified a valid project, remove all others proejcts' hazards from the hazard list.
+			Project project = null;
 			String missionId = req.getParameter("missionId");
 			if (missionId != null) {
 				try {
-					Project project = projectManager.getProjectObj(Long.parseLong(missionId));
-					final long projectId = project.getId();
-					if (project != null
-							&& hazardService.hasHazardPermission(projectId, jiraAuthenticationContext.getUser())) {
-						userProjects.put(projectId, project);
+					project = projectManager.getProjectObj(Long.parseLong(missionId));
+					if (project != null) {
 						// Not ideal, but best approach given the current design
+						final long projectID = project.getId();
 						userHazards.removeIf(new Predicate<Hazards>() {
 							public boolean test(Hazards t) {
-								return t.getProjectID() == projectId;
+								return t.getProjectID() != projectID;
 							}
 						});
 					}
 				} catch (NumberFormatException e) {
 				}
-			} else {
-				for (Hazards hazard : userHazards) {
-					if (userProjects.get(hazard.getProjectID()) == null) {
-						Project project = projectManager.getProjectObj(hazard.getProjectID());
-						userProjects.put(hazard.getProjectID(), project);
-					}
-				}
 			}
-
-			List<HazardMinimal> hazards = new ArrayList<HazardMinimal>();
+			
+			
 			IssueManager issueManager = ComponentAccessor.getIssueManager();
-
 			for (Hazards hazard : userHazards) {
 				hazards.add(HazardMinimal.create(hazard, userProjects.get(hazard.getProjectID()),
 						issueManager.getIssueObject(hazard.getIssueID())));
 			}
 			
 			context.put("hazards", hazards);
-			context.put("missions", userProjects);
+			context.put("selectedMission", project == null ? null : project.getId());
+			context.put("missions", Lists.newArrayList(userProjects.values()));
 			context.put("dateFormatter", dateTimeFormatter);
 			res.setContentType("text/html");
 			templateRenderer.render("templates/mission-page.vm", context, res.getWriter());
