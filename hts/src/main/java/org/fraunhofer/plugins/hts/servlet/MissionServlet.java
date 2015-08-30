@@ -23,6 +23,7 @@ import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.Maps;
 
@@ -42,10 +43,14 @@ public class MissionServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
-		if (jiraAuthenticationContext.isLoggedInUser()) {
+		ApplicationUser user = jiraAuthenticationContext.getUser();
+		if (user == null) {
+			res.sendRedirect(req.getContextPath() + "/login.jsp");
+		}
+		else {
 			Map<String, Object> context = Maps.newHashMap();
 
-			List<Hazards> userHazards = hazardService.getUserHazards(jiraAuthenticationContext.getUser());
+			List<Hazards> userHazards = hazardService.getUserHazards(user);
 
 			ProjectManager projectManager = ComponentAccessor.getProjectManager();
 			Map<Long, Project> userProjects = Maps.newHashMap();

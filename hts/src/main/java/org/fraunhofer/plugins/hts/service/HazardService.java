@@ -4,12 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
@@ -24,14 +21,11 @@ import org.fraunhofer.plugins.hts.model.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.model.Subsystems;
 import org.fraunhofer.plugins.hts.model.Verifications;
 import org.fraunhofer.plugins.hts.view.model.HazardMinimal;
-import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
-import org.fraunhofer.plugins.hts.view.model.JIRAProject;
 import org.ofbiz.core.entity.GenericEntityException;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -43,6 +37,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.java.ao.DBParam;
@@ -150,22 +145,6 @@ public class HazardService {
 		return newArrayList(ao.find(Hazards.class, Query.select().where("PROJECT_ID=? AND ACTIVE=?", projectId, true)));
 	}
 
-	public List<HazardMinimalJSON> getAllHazardsByMissionIDMinimalJson(long missionID) {
-		List<Hazards> allHazards = getHazardsByProjectId(missionID);
-		List<HazardMinimalJSON> allHazardsByIDMinimal = new ArrayList<HazardMinimalJSON>();
-		for (Hazards hazard : allHazards) {
-			Project jiraProject = ComponentAccessor.getProjectManager().getProjectObj(hazard.getProjectID());
-			Issue jiraSubtask = ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
-			String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
-
-			allHazardsByIDMinimal.add(new HazardMinimalJSON(hazard.getID(), hazard.getHazardTitle(),
-					hazard.getHazardNumber(), jiraSubtask.getSummary(),
-					baseURL + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(), jiraProject.getName(),
-					baseURL + "/browse/" + jiraProject.getKey(), hazard.getRevisionDate().toString()));
-		}
-		return allHazardsByIDMinimal;
-	}
-
 	public Hazards getHazardById(int hazardId) {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", hazardId));
 		return hazards.length > 0 ? hazards[0] : null;
@@ -178,14 +157,6 @@ public class HazardService {
 	public Hazards getHazardByIssueId(long issueID) {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ISSUE_ID=?", issueID));
 		return hazards.length > 0 ? hazards[0] : null;
-	}
-
-	public String getHazardPreparerInformation(Hazards hazard) {
-		IssueManager issueManager = ComponentAccessor.getIssueManager();
-		MutableIssue mutableIssue = issueManager.getIssueObject(hazard.getIssueID());
-		String information = mutableIssue.getReporter().getDisplayName() + " ("
-				+ mutableIssue.getReporter().getEmailAddress() + ")";
-		return information;
 	}
 
 	public void deleteHazard(Hazards hazard, String reason) {

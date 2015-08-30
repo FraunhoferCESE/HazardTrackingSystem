@@ -9,16 +9,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.StatusType;
 
 import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.response.ResponseHelper;
 import org.fraunhofer.plugins.hts.service.HazardService;
-import org.fraunhofer.plugins.hts.view.model.HazardMinimalJSON;
+import org.fraunhofer.plugins.hts.view.model.HazardMinimal;
 import org.fraunhofer.plugins.hts.view.model.JIRAProject;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -35,13 +41,30 @@ public class MissionRestService {
 	@Path("hazards/{missionID}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getAllHazardsByMissionID(@PathParam("missionID") Long missionID) {
-		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
-			List<HazardMinimalJSON> hazards = hazardService.getAllHazardsByMissionIDMinimalJson(missionID);
-			return Response.ok(hazards).build();
-		} else {
-			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
-					.build();
+
+		ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
+		if (user == null) {
+			return ResponseHelper.notLoggedIn();
 		}
+
+		if (missionID == null) {
+			return ResponseHelper.badRequest("Invalid missionID");
+		}
+
+		if (!hazardService.hasHazardPermission(missionID, user)) {
+			return ResponseHelper.forbidden("User does not have permission to access hazard reports for that project");
+		}
+
+		List<HazardMinimal> hazards = Lists.newArrayList();
+		ProjectManager projectManager = ComponentAccessor.getProjectManager();
+		IssueManager issueManager = ComponentAccessor.getIssueManager();
+		for (Hazards hazard : hazardService.getHazardsByProjectId(missionID)) {
+			hazards.add(HazardMinimal.create(hazard, projectManager.getProjectObj(hazard.getProjectID()),
+					issueManager.getIssueObject(hazard.getIssueID())));
+		}
+
+		return Response.ok(hazards).build();
+
 	}
 
 	@GET
@@ -52,20 +75,17 @@ public class MissionRestService {
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<Long, JIRAProject> userProjects = Maps.newHashMap();
 			ProjectManager projectManager = ComponentAccessor.getProjectManager();
-			
+
 			for (Hazards hazard : hazardService.getUserHazards(jiraAuthenticationContext.getUser())) {
 				if (userProjects.get(hazard.getProjectID()) == null) {
 					Project project = projectManager.getProjectObj(hazard.getProjectID());
 					userProjects.put(hazard.getProjectID(), JIRAProject.create(project));
 				}
 			}
-			
+
 			return Response.ok(Lists.newArrayList(userProjects.values())).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
-					.build();
+			return ResponseHelper.notLoggedIn();
 		}
 	}
-	
-	
 }

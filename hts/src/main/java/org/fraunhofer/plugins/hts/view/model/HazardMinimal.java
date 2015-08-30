@@ -2,12 +2,18 @@ package org.fraunhofer.plugins.hts.view.model;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.fraunhofer.plugins.hts.model.Hazards;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 
+@XmlRootElement(name = "HazardJsonDT")
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HazardMinimal {
 	
 	private static final String baseurl = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");

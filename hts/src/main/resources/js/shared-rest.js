@@ -1,23 +1,6 @@
 console.log("=== shared-rest.js ===");
 
 // REST Service call to get all hazards
-function getAllHazards() {
-	var result = [];
-	AJS.$.ajax({
-		type: "GET",
-		url: AJS.params.baseURL + "/rest/hts/1.0/hazard/all",
-		async: false,
-		success: function(data) {
-			result = data;
-		},
-		error: function() {
-			console.log("ERROR");
-		}
-	});
-	return result;
-}
-
-// REST Service call to get all hazards
 function getAllHazardsByMissionID(missionID) {
 	var result = [];
 	AJS.$.ajax({
