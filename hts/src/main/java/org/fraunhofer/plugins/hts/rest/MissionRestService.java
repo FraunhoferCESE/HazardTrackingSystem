@@ -9,8 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.StatusType;
 
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.response.ResponseHelper;
@@ -20,7 +18,6 @@ import org.fraunhofer.plugins.hts.view.model.JIRAProject;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;

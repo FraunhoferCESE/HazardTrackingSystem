@@ -2,8 +2,6 @@ package org.fraunhofer.plugins.hts.response;
 
 import javax.ws.rs.core.Response;
 
-import org.fraunhofer.plugins.hts.rest.HazardResourceModel;
-
 
 public class ResponseHelper {
 
@@ -12,7 +10,7 @@ public class ResponseHelper {
 	}
 
 	public static Response notLoggedIn() {
-		return forbidden(new HazardResourceModel("User is not logged in"));
+		return forbidden("User is not logged in");
 	}
 
 	public static Response forbidden(Object content) {

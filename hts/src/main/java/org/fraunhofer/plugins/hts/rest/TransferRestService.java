@@ -18,6 +18,7 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.Transfers.TransferType;
+import org.fraunhofer.plugins.hts.response.ResponseHelper;
 import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
 import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
 import org.fraunhofer.plugins.hts.rest.model.TransferJSON;
@@ -95,8 +96,7 @@ public class TransferRestService {
 
 			return Response.ok(new TransferJSON(causesJSON, controlsJSON)).build();
 		} else {
-			return Response.status(Response.Status.FORBIDDEN).entity(new HazardResourceModel("User is not logged in"))
-					.build();
+			return ResponseHelper.notLoggedIn();
 		}
 	}
 }
