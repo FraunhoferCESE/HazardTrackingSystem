@@ -58,9 +58,9 @@
 					#foreach($cause in $causes)
 						#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
 							#if($associatedCause && $cause.getID() == $associatedCause.getID())
-							<option value="$cause.getID()" selected>Cause $cause.getCauseNumber()</option>
+							<option value="$cause.getID()" selected>#getCauseName($cause)</option>
 							#else
-							<option value="$cause.getID()">Cause $cause.getCauseNumber()</option>
+							<option value="$cause.getID()">#getCauseName($cause)</option>
 							#end
 						#end
 					#end

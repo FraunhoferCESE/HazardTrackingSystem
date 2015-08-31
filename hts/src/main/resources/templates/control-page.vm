@@ -7,6 +7,31 @@
 	#end
 #end
 
+#macro( getCauseName $cause)
+	#if($cause.getTransfer() == 0)
+		Cause $cause.getCauseNumber() - #substr( $cause.getTitle() 50)
+	#else
+		#set ($theCause = $transferredCauses.get($cause.getID()))
+		#if ($theCause.getMovedProject())
+			&lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+	    #else
+			#if ($theCause.getTransferTargetType() == "CAUSE")
+				#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+					Cause $cause.getCauseNumber() (TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 50)
+				#else
+					Cause $cause.getCauseNumber() (TRANSFER) - $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 50)
+				#end
+			#else
+				#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+					Cause $cause.getCauseNumber() (TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+				#else
+					Cause $cause.getCauseNumber() (TRANSFER) - $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+				#end
+			#end
+		#end
+	#end
+#end
+
 <html>
 	<head>
 		<title>HTS</title>
