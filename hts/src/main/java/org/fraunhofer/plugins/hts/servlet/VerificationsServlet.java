@@ -20,6 +20,7 @@ import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
+import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.VerificationService;
@@ -47,26 +48,27 @@ public class VerificationsServlet extends HttpServlet {
 	private final VerificationTypeService verificationTypeService;
 	private final VerificationStatusService verificationStatusService;
 	private final VerificationService verificationService;
-	private final ControlService hazardControlService;
+	private final ControlService controlService;
+	private final CauseService causeService;
 	private final DateTimeFormatter dateTimeFormatter;
 
 	public VerificationsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			VerificationTypeService verificationTypeService, VerificationStatusService verificationStatusService,
-			VerificationService verificationService, ControlService hazardControlService, DateTimeFormatter dateTimeFormatter) {
+			VerificationService verificationService, ControlService hazardControlService, DateTimeFormatter dateTimeFormatter, CauseService causeService) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.verificationTypeService = checkNotNull(verificationTypeService);
 		this.verificationStatusService = checkNotNull(verificationStatusService);
 		this.verificationService = checkNotNull(verificationService);
-		this.hazardControlService = checkNotNull(hazardControlService);
+		this.controlService = checkNotNull(hazardControlService);
 		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
+		this.causeService = causeService;
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO: Look into re-factoring permissions/generating error messages is
 		// done - see issue on the Huboard.
-
 		JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
 		resp.setContentType("text/html;charset=utf-8");
 
@@ -100,12 +102,16 @@ public class VerificationsServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {						
 						context.put("hazard", hazard);
+						context.put("causes", hazard.getHazardCauses());
+						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
+						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));		
+						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
 						context.put("statuses", verificationStatusService.all());
 						context.put("types", verificationTypeService.all());
-						context.put("controls", hazard.getHazardControls());
-						context.put("transferredControls", hazardControlService.getAllTransferredControls(hazard));
+						context.put("allHazardsBelongingToMission",
+								hazardService.getHazardsByProjectId(hazard.getProjectID()));
 					}
 				} catch (NumberFormatException e) {
 					error = true;
@@ -152,7 +158,7 @@ public class VerificationsServlet extends HttpServlet {
 			Date estimatedCompletionDate = changeToDate(req.getParameter("verificationEstComplDate"));
 
 			String[] controlsStr = req.getParameterValues("verificationControls");
-			Hazard_Controls[] controls = hazardControlService.getHazardControlsByID(changeStringArray(controlsStr));
+			Hazard_Controls[] controls = controlService.getHazardControlsByID(changeStringArray(controlsStr));
 
 			boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 			if (existing == true) {

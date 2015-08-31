@@ -9,38 +9,42 @@
 	#end	
 	<span class="controlNumber">Control $causeNum.$control.getControlNumber()</span>
 	<span class="controlDescription">
+		#set( $targetCauseNum = "Orph")
+		#if ( $theControl.getTargetCauseNumber() > 0)
+			$targetCauseNum == $theControl.getTargetCauseNumber()
+		#end
 		#if ($theControl.getMovedProject())
 			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
 	    #else	
 			#if ($theControl.getTransferTargetType() == "CONTROL")
 				#if ($theControl.isDeleted() == true)
 						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#end
 				#else
 					<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#end
 					</a>
 				#end
 			#else
 				#if ($theControl.isDeleted() == true)
 						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
 						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
+							(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
 						#end
 				#else
 					<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-								(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
+								(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
 						#else
-								(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
+								(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
 						#end
 					</a>
 				#end

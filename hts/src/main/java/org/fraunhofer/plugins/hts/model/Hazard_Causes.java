@@ -1,13 +1,15 @@
 package org.fraunhofer.plugins.hts.model;
 
 import java.util.Date;
+import java.util.List;
 
 import net.java.ao.Entity;
 import net.java.ao.Implementation;
 import net.java.ao.ManyToMany;
+import net.java.ao.schema.Ignore;
+import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
-import net.java.ao.schema.NotNull;
 
 /**
  * The table definition for the Hazard_Cause table. It extends Entity which
@@ -78,6 +80,9 @@ public interface Hazard_Causes extends Entity {
 	int getTransfer();
 	
 	void setTransfer(int transferID);
+	
+	@Ignore
+	public List<Hazard_Controls> getActiveControls();
 }
 
 

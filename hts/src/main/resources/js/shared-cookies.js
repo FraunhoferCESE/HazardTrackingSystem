@@ -91,31 +91,5 @@ function modifyHTSCookieOpenVerifications(operation, verificationID, existingVer
 		}
 		AJS.Cookie.save("HTS_COOKIE", JSON.stringify(htsCookieJson));
 		// Check if Expand All button needs renaming
-		if (existingVerificationsCount !== null) {
-			renameVerificationPageExpandButton(existingVerificationsCount);
-		}
-	}
-}
-
-function openHTSCookieOpenVerifications() {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		for (var i = 0; i < htsCookieJson.OPEN_VERIFICATIONS.length; i++) {
-			var verificationID = htsCookieJson.OPEN_VERIFICATIONS[i];
-			var buttonElement = AJS.$("#VerificationTableEntryID" + verificationID + " td:first-child").children("div");
-			var contentElement = AJS.$("#VerificationTableEntryContentID" + verificationID);
-			openPropertyElement(buttonElement, contentElement);
-		}
-	}
-}
-
-function renameVerificationPageExpandButton(existingVerificationsCount) {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		if (existingVerificationsCount === htsCookieJson.OPEN_VERIFICATIONS.length) {
-			AJS.$("#VerificationPageExpandAllButton").val("Close All");
-		} else {
-			AJS.$("#VerificationPageExpandAllButton").val("Expand All");
-		}
 	}
 }
