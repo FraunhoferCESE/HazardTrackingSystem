@@ -75,24 +75,24 @@
 													#else
 														#set ($theCause = $transferredCauses.get($cause.getID()))
 													    #if ($theCause.getMovedProject())
-															&lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+															(TRANSFER) &lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
 														#else
 															#if ($theCause.getTransferTargetType() == "CAUSE")
 																#if ($theCause.isDeleted() == true)
 																	<div class="HTSTransferDeletedOrigin">
 																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																				&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
+																				(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
 																		#else
-																				$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
+																				(TRANSFER) $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
 																		#end
 																		 
 																	</div>
 																#else
 																	<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																				&lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr( $theCause.getTargetCauseTitle(), 60)
+																				(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr( $theCause.getTargetCauseTitle(), 60)
 																		#else
-																				$theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle(), 60)
+																				(TRANSFER) $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle(), 60)
 																		#end
 																	</a>
 																#end
@@ -104,9 +104,9 @@
 																#end
 																	
 																#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																	&lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+																	(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
 																#else
-																	$theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+																	(TRANSFER) $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
 																#end
 																
 																#if ($theCause.isDeleted() == true)
