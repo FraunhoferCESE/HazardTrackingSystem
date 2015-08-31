@@ -37,13 +37,13 @@ function initControlPageClickEvents() {
 	initializeFormToggles();
 	
 	// Make sure cause is opened when user clicks on a cause link
-	AJS.$("div.causeHeader > span.causeNumber > a").click(function() {
+	AJS.$("div.causeHeader > span.causeNumber > a").on("click",function() {
 		var causeID = AJS.$(this).attr("causeID");
 		modifyHTSCookieOpenCauses("open", causeID, null);
 	});
 	
 	//when doing a control transfer, automatically expand the targetcause on the cause page
-	AJS.$(".controlTransferLink").click(function(event) {
+	AJS.$(".controlTransferLink").on("click",function(event) {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 		var targetType = AJS.$(this).attr("targetType");
@@ -60,7 +60,7 @@ function initControlPageClickEvents() {
 	});
 	
 	// links to associated verifications to a cause
-	AJS.$(".verificationLink").click(function(event) {
+	AJS.$(".verificationLink").on("click",function(event) {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 
@@ -69,14 +69,14 @@ function initControlPageClickEvents() {
 	});
 	
 	// Clear new Control form
-	AJS.$("#ControlPageClearNew").live("click", function() {
+	AJS.$("#ControlPageClearNew").on("click", function() {
 		var formElement = AJS.$("#ControlPageFormAddNew");
 		AJS.$(formElement).find("#controlDescription").val("");
 		AJS.$(formElement).find("#controlGroup").val("").trigger('chosen:updated');
 	});
 
 	// Clear new transfer Control form
-	AJS.$("#ControlPageClearTransfer").live("click", function() {
+	AJS.$("#ControlPageClearTransfer").on("click", function() {
 		AJS.$("#ControlPageCauseTransferContainer").hide();
 		AJS.$("#ControlPageCauseTransferContainer").children().remove();
 		AJS.$("#ControlPageControlTransferContainer").hide();
@@ -87,7 +87,7 @@ function initControlPageClickEvents() {
 	});
 
 	// Add new control click event
-	AJS.$("#ControlPageAddNewControl").live("click", function() {
+	AJS.$("#ControlPageAddNewControl").on("click", function() {
 		if(!isOpen(AJS.$(this))) {
 			openForm(AJS.$(this), AJS.$("#ControlPageNewContainer"));
 		}
@@ -97,7 +97,7 @@ function initControlPageClickEvents() {
 	});
 
 	// Add new transfer click event
-	AJS.$("#ControlPageAddTransfer").live("click", function() {
+	AJS.$("#ControlPageAddTransfer").on("click", function() {
 		if(!isOpen(AJS.$(this))) {
 			openForm(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
 		}
@@ -107,7 +107,7 @@ function initControlPageClickEvents() {
 	});
 	
 	// Save new control
-	AJS.$(".ControlPageSaveAllChanges").live("click", function() {
+	AJS.$(".ControlPageSaveAllChanges").on("click", function() {
 		var result = {
 			existingPost: false,
 			existingDelete: false,
@@ -260,7 +260,7 @@ function initControlPageClickEvents() {
 
 function initializeFormToggles() {
 	// Open/close on a cause header
-	AJS.$(".ControlCauseTableToggle").click( function() {
+	AJS.$(".ControlCauseTableToggle").on("click", function() {
 		var displayElement = AJS.$(this).parent().siblings('ul');
 		if(!isOpen(AJS.$(this))) {			
 			openForm(AJS.$(this), displayElement);
@@ -279,7 +279,7 @@ function initializeFormToggles() {
 	});
 	
 	// Open/close on existing control
-	AJS.$(".ControlTableToggle").click( function() {
+	AJS.$(".ControlTableToggle").on("click", function() {
 		var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
 		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
 		if(!isOpen(AJS.$(this))) {
@@ -293,7 +293,7 @@ function initializeFormToggles() {
 	});
 
 	// Expand All button click
-	AJS.$("#ControlPageExpandAllButton").click( function() {
+	AJS.$("#ControlPageExpandAllButton").on("click", function() {
 		AJS.$(".ControlCauseTableToggle").each(function() {
 			if(!isOpen(AJS.$(this))) {
 				openForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
@@ -309,7 +309,7 @@ function initializeFormToggles() {
 		});
 	});
 	
-	AJS.$("#ControlPageCloseAllButton").click( function() {
+	AJS.$("#ControlPageCloseAllButton").on("click", function() {
 		AJS.$(".ControlTableToggle").each(function (index) {
 			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
 			var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
