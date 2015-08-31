@@ -185,22 +185,18 @@ function initControlPageClickEvents() {
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
 			var causes = getAllCausesWithinHazard(hazardID, false);
-			var html = "<label class='popupLabels' for='controlCauseList'>Transfer to Cause</label><select class='select long-field' name='controlCauseList' id='controlCauseList'>";
+			var html = "<label class='popupLabels' for='controlCauseList'>Transfer to Cause</label>";
 			if (causes.length !== 0) {
+				html += "<select class='select long-field' name='controlCauseList' id='controlCauseList'>";
 				html += "<option value=''>-Select Cause-</option>";
 				for (var i = 0; i < causes.length; i++) {
-					var optionText;
-					if (causes[i].transfer != true) {
-						optionText = causes[i].causeNumber + " - " + causes[i].text;
-						html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
-					}
-					
+					var optionText = causes[i].causeNumber + " - " + causes[i].text;
+					html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 				}
 				html += "</select>";
 				AJS.$(causeContainer).append(html);
 			} else {
 				AJS.$(causeContainer).append("<span class='ConfirmDialogErrorText'>This Hazard has no non-transferred Causes. No transfer can be created.</span>");
-
 			}
 			AJS.$(causeContainer).show();
 		} else {
@@ -217,18 +213,34 @@ function initControlPageClickEvents() {
 			var controls = getAllControlsWithinCause(causeID, false);
 			var html = "<label class='popupLabels' for='controlControlList'>Transfer to Control</label><select class='select long-field' name='controlControlList' id='controlControlList'>";
 			if (controls.length !== 0) {
-				html += "<option value=''>-Link to all Controls in selected Cause-</option>";
-				for (var i = 0; i < controls.length; i++) {
-					var optionText;
-					if (controls[i].transfer != true) {
-						optionText = controls[i].controlNumber + " - " + controls[i].text;
-						html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+				if(AJS.$("#controlHazardList").val() == AJS.$("hazard").attr("currentId")) {
+					for (var i = 0; i < controls.length; i++) {
+						var optionText;
+						if (controls[i].transfer != true) {
+							optionText = controls[i].controlNumber + " - " + controls[i].text;
+							html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+						}
+					}
+				}
+				else {
+					html += "<option value=''>-Link to all Controls in selected Cause-</option>";
+					for (var i = 0; i < controls.length; i++) {
+						var optionText;
+						if (controls[i].transfer != true) {
+							optionText = controls[i].controlNumber + " - " + controls[i].text;
+							html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+						}
 					}
 				}
 				html += "</select>";
 				AJS.$(controlContainer).append(html);
 			} else {
-				AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no non-transferred Controls)</div>");
+				if(AJS.$("#controlHazardList").val() == AJS.$("hazard").attr("currentId")) {
+					AJS.$(controlContainer).append("<span class='ConfirmDialogErrorText'>No non-transferred controls are available for this cause.</span>");
+				}
+				else {
+					AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no non-transferred Controls)</div>");
+				}
 			}
 			AJS.$(controlContainer).show();
 		} else {

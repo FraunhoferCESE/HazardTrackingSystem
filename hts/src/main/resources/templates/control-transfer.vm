@@ -22,6 +22,7 @@
 			<label for='controlHazardList'>Transfer to Hazard</label>
 			<select size="1" class="select long-field" name="controlHazardList" id="controlHazardList">
 				<option value=''>-Select Hazard Report-</option>
+				<option value='$hazard.getID()'>This Hazard</option>
 				#foreach ($currentHazard in $allHazardsBelongingToMission)
 					#if ($currentHazard.getID() != $hazard.getID())
 						#set ($optionText = "")
