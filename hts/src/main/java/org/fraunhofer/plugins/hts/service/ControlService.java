@@ -51,20 +51,20 @@ public class ControlService {
 		return orphanControls;
 	}
 
-	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup, Hazard_Causes cause) {
+	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup,
+			Hazard_Causes associatedCause) {
 		Hazard_Controls control = ao.create(Hazard_Controls.class);
 		Hazards hazard = hazardService.getHazardById(hazardID);
 
 		control.setTransfer(0);
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
-		if (cause != null) {
-			Hazard_Controls[] controls = cause.getControls();
-			control.setControlNumber(controls.length == 0 ? 1 : controls[controls.length - 1].getControlNumber() + 1);
-			associateControlToCause(control, cause);
-		} else {
-			control.setControlNumber(getOrphanControls(hazard).size() + 1);
+		if (associatedCause != null) {
+			associateControlToCause(control, associatedCause);
 		}
+
+		control.setControlNumber(control.getID());
+
 		control.setOriginalDate(new Date());
 		control.setLastUpdated(new Date());
 		control.save();
@@ -73,14 +73,14 @@ public class ControlService {
 	}
 
 	public Hazard_Controls updateRegularControl(int controlID, String description, ControlGroups controlGroup,
-			Hazard_Causes causes) {
+			Hazard_Causes associatedCause) {
 		Hazard_Controls control = getHazardControlByID(controlID);
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
 
 		removeAssociationsControlToCause(control.getID());
-		if (causes != null) {
-			associateControlToCause(control, causes);
+		if (associatedCause != null) {
+			associateControlToCause(control, associatedCause);
 		}
 		control.setLastUpdated(new Date());
 		control.save();
@@ -91,6 +91,7 @@ public class ControlService {
 			Hazard_Causes associatedCause) {
 		Hazard_Controls control = getHazardControlByID(controlID);
 		control.setDescription(transferReason);
+
 		removeAssociationsControlToCause(control.getID());
 		if (associatedCause != null) {
 			associateControlToCause(control, associatedCause);
