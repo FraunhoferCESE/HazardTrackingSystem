@@ -7,7 +7,7 @@
 								#if($verification.getVerificationStatus()) 
 									#set ($vStatus = $verification.getVerificationStatus().getLabel())
 								#end															
-								<li><a href="/jira/plugins/servlet/verifications?id=$hazard.getID()" targetID="$verification.getID()" class="verificationLink">Verification $verification.getVerificationNumber() (Status: $vStatus)</a> - #substr($verification.getVerificationDesc() 60)</li>
+								<li><a href="verifications?id=$hazard.getID()" targetID="$verification.getID()" class="verificationLink">Verification $verification.getVerificationNumber() (Status: $vStatus)</a> - #substr($verification.getVerificationDesc() 60)</li>
 								#set ($totalDisplayed = $totalDisplayed + 1)
 							#end
 						#end

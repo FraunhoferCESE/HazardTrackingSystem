@@ -21,7 +21,7 @@
 						 
 					</div>
 				#else
-					<a href="/jira/plugins/servlet/causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
+					<a href="causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 						#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
 								(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 60)
 						#else
@@ -33,7 +33,7 @@
 				#if ($theCause.isDeleted() == true)
 					<div class="HTSTransferDeletedOrigin">
 				#else
-					<a href="/jira/plugins/servlet/hazards?id=$!theCause.getTargetHazardID()">
+					<a href="hazards?id=$!theCause.getTargetHazardID()">
 				#end
 					
 				#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")

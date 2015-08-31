@@ -145,7 +145,7 @@
 								</div>
 								<div class="field-group">
 									<input class="button" type="button" value="Save All Changes" id="HazardPageSave">
-									<input class="button" type="button" value="Print" id="HazardPagePrint" onClick="window.location.href = '/jira/plugins/servlet/report-generation?hazardToDownload=$hazard.getID()';">
+									<input class="button" type="button" value="Print" id="HazardPagePrint" onClick="window.location.href = 'report-generation?hazardToDownload=$hazard.getID()';">
 								</div>
 							</form>
 						</section>

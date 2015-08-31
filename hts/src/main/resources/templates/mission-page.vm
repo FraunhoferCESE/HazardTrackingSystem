@@ -99,7 +99,7 @@
 												<td>
 													<ul class='menu'>
 														<li>
-															<a href="/jira/plugins/servlet/hazards?id=$!hazard.getHazardID()" class="RouteLink">
+															<a href="hazards?id=$!hazard.getHazardID()" class="RouteLink">
 																Edit
 															</a>
 														</li>

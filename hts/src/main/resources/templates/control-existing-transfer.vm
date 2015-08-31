@@ -20,7 +20,7 @@
 							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#end
 				#else
-					<a href="/jira/plugins/servlet/controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+					<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
 							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
 						#else
@@ -36,7 +36,7 @@
 							(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#end
 				#else
-					<a href="/jira/plugins/servlet/causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+					<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
 								(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
 						#else
