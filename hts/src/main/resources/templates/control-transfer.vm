@@ -13,7 +13,7 @@
 				<option value=''>-Select Cause-</option>
 				#foreach($cause in $causes)
 					#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
-					<option value="$cause.getID()">#getCauseName($cause)</option>
+					<option value="$cause.getID()">Cause $cause.getCauseNumber() #getCauseName($cause)</option>
 					#end
 				#end
 			</select>
@@ -47,6 +47,9 @@
 			<span class="HTSRequired">Please select a Cause.</span>
 		</div>
 		<div class="field-group" id="ControlPageControlTransferContainer">
+		</div>
+		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="transferToCauseinCurrentHazard">
+			<span class="HTSRequired">You cannot transfer to a Cause within the current hazard - you must select a concrete Control.</span>
 		</div>
 		<div class='field-group'>
 			<label for='transferReason'>Transfer Reason</label>

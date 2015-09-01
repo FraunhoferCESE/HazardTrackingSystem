@@ -24,11 +24,11 @@ function initializeControlPage() {
 			}
 		}
 		
-		AJS.$(".ControlCauseTableToggle").each(function () {
-			if(!AJS.$(this).parent().parent().find("[id^='ControlTableEntryContentID']:visible").length) {
-				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
-			}
-		});
+//		AJS.$(".ControlCauseTableToggle").each(function () {
+//			if(!AJS.$(this).parent().parent().find("[id^='ControlTableEntryContentID']:visible").length) {
+//				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+//			}
+//		});
 	}
 }
 
@@ -73,6 +73,8 @@ function initControlPageClickEvents() {
 		var formElement = AJS.$("#ControlPageFormAddNew");
 		AJS.$(formElement).find("#controlDescription").val("");
 		AJS.$(formElement).find("#controlGroup").val("").trigger('chosen:updated');
+		AJS.$(formElement).find("#controlCauseAssociation").val("");
+		AJS.$(formElement).find("[data-error='controlDescription']").hide();
 	});
 
 	// Clear new transfer Control form
@@ -84,6 +86,9 @@ function initControlPageClickEvents() {
 		var formElement = AJS.$("#ControlPageFormAddTransfer");
 		AJS.$(formElement).find("#transferReason").val("");
 		AJS.$(formElement).find("#controlHazardList").val("").trigger('chosen:updated');
+		AJS.$(formElement).find("#controlCauseAssociation").val("");
+		AJS.$(formElement).find("[data-error='controlCauseList']").hide();
+		AJS.$(formElement).find("[data-error='transferToCauseinCurrentHazard']").hide();
 	});
 
 	// Add new control click event
@@ -379,7 +384,7 @@ function addNewControlFormValidation() {
 	var validated = false;
 	if (AJS.$(formElement).find("#controlDescription").val() !== "" ||
 		AJS.$(formElement).find("#controlGroup").val() !== "" ||
-		AJS.$(formElement).find("#controlCausesms2side__dx").children().length !== 0) {
+		AJS.$(formElement).find("#controlCauseAssociation").val() !== "") {
 		dirty = true;
 	}
 	if (dirty === true) {
@@ -399,23 +404,30 @@ function addTransferControlFormValidation() {
 
 	var hazardListElement = AJS.$(formElement).find("#controlHazardList").val();
 	var causeListElement = AJS.$(formElement).find("#controlCauseList").val();
+	var controlListElement = AJS.$(formElement).find("#controlControlList").val();
 	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
-
+	
+	if(AJS.$(formElement).find("#controlCauseAssociation").val() !== "") {
+		dirty = true;
+	}
+	
 	if (hazardListElement !== undefined && causeListElement !== undefined && transferReasonElement !== undefined) {
 		if (hazardListElement !== "" || causeListElement !== "" || transferReasonElement !== "") {
 			dirty = true;
 		}
-		if (dirty === true) {
-			if (causeListElement === "") {
-				AJS.$(formElement).find("[data-error='controlCauseList']").show();
-			} else {
-				validated = true;
-			}
-		}
-		return {"dirty" : dirty, "validated" : validated};
-	} else {
-		return {"dirty" : false, "validated" : false};
 	}
+	
+	if (dirty === true) {
+		if(causeListElement === undefined || causeListElement === "") {
+			AJS.$(formElement).find("[data-error='controlCauseList']").show();
+		} else if (hazardListElement === AJS.$("hazard").attr("currentId")
+				&& (controlListElement === undefined || controlListElement === "")) {
+			AJS.$(formElement).find("[data-error='transferToCauseinCurrentHazard']").show();
+		} else {
+			validated = true;
+		}
+	}
+	return {"dirty" : dirty, "validated" : validated};
 }
 
 function postFormToControlServlet(formElement) {

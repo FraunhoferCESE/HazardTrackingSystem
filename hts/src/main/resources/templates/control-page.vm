@@ -7,9 +7,9 @@
 	#end
 #end
 
-#macro( getCauseName $cause)
+#macro( getCauseName $cause $length)
 	#if($cause.getTransfer() == 0)
-		Cause $cause.getCauseNumber() - #substr( $cause.getTitle() 50)
+		#substr( $cause.getTitle() $length)
 	#else
 		#set ($theCause = $transferredCauses.get($cause.getID()))
 		#if ($theCause.getMovedProject())
@@ -17,24 +17,54 @@
 	    #else
 			#if ($theCause.getTransferTargetType() == "CAUSE")
 				#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-					Cause $cause.getCauseNumber() (TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 50)
+					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
 				#else
-					Cause $cause.getCauseNumber() (TRANSFER) - $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() 50)
+					(TRANSFER) - $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
 				#end
 			#else
 				#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-					Cause $cause.getCauseNumber() (TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
 				#else
-					Cause $cause.getCauseNumber() (TRANSFER) - $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+					(TRANSFER) - $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
 				#end
 			#end
 		#end
 	#end
 #end
 
+#macro( getControlName $control $length)
+	#if($control.getTransfer() == 0)
+		#substr($control.getDescription() $length)
+	#else
+		#set ($theControl = $transferredControls.get($control.getID()))
+		#set( $targetCauseNum = "Orph")
+		#if ( $theControl.getTargetCauseNumber() > 0)
+			#set($targetCauseNum = $theControl.getTargetCauseNumber())
+		#end
+		#if ($theControl.getMovedProject())
+			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
+		#else	
+			#if ($theControl.getTransferTargetType() == "CONTROL")
+				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+				#else
+					(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+				#end
+			#else
+				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+				#else
+					(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+				#end
+			#end
+		#end
+	#end
+#end
+
+
 <html>
 	<head>
-		<title>HTS</title>
+		<title>Hazard Tracking System</title>
 		<meta name="decorator" content="atl.general">
 		$webResourceManager.requireResourcesForContext("HTSContext")
 	</head>
@@ -70,52 +100,25 @@
 												<span class="ControlCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/collapse this cause</span>
 												<span class="causeNumber"><a href="causes?id=$hazard.getID()#causeID$cause.getID()" causeID="$cause.getID()">Cause $cause.getCauseNumber()</a> ($numControls)</span>
 												<span class="causeTitle">
+													#set($length = 75)
 													#if($cause.getTransfer() == 0)
-														#substr( $cause.getTitle(), 75)
+														#getCauseName($cause $length)
 													#else
 														#set ($theCause = $transferredCauses.get($cause.getID()))
-													    #if ($theCause.getMovedProject())
-															(TRANSFER) &lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+														#if ($theCause.isDeleted() == true)
+															<div class="HTSTransferDeletedOrigin">
+																#getCauseName($cause $length)
+															</div>
 														#else
 															#if ($theCause.getTransferTargetType() == "CAUSE")
-																#if ($theCause.isDeleted() == true)
-																	<div class="HTSTransferDeletedOrigin">
-																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																				(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
-																		#else
-																				(TRANSFER) $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() -  #substr( $theCause.getTargetCauseTitle(), 60)
-																		#end
-																		 
-																	</div>
-																#else
-																	<a href="causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
-																		#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																				(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr( $theCause.getTargetCauseTitle(), 60)
-																		#else
-																				(TRANSFER) $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle(), 60)
-																		#end
-																	</a>
-																#end
+															<a href="causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
 															#else
-																#if ($theCause.isDeleted() == true)
-																	<div class="HTSTransferDeletedOrigin">
-																#else
-																	<a href="hazards?id=$!theCause.getTargetHazardID()">
-																#end
-																	
-																#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-																	(TRANSFER) &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
-																#else
-																	(TRANSFER) $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
-																#end
-																
-																#if ($theCause.isDeleted() == true)
-																	</div>
-																#else
-																	</a>
-																#end
+															<a href="hazards?id=$!theCause.getTargetHazardID()">
 															#end
+																#getCauseName($cause $length)
+															</a>
 														#end
+														
 													#end
 												</span>
 											</div>

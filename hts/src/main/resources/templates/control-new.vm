@@ -24,7 +24,7 @@
 			<option value=''>-Select Cause-</option>
 			#foreach($cause in $causes)
 				#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
-				<option value="$cause.getID()">#getCauseName($cause)</option>
+				<option value="$cause.getID()">Cause $cause.getCauseNumber() #getCauseName($cause)</option>
 				#end
 			#end
 		</select>

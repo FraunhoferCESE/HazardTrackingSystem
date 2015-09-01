@@ -120,6 +120,7 @@ function initVerificationPageClickEvents() {
 		AJS.$(formElement).find("#verificationType").val("").trigger('chosen:updated');
 		AJS.$(formElement).find("#verificationRespParty").val("");
 		AJS.$(formElement).find("#verificationEstComplDate").val("");
+		AJS.$(formElement).find("#verificationControlAssociation").val("");
 	});
 
 	// Add new Verification click event

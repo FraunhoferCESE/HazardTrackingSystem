@@ -1,4 +1,4 @@
-<form method="post" action="verifications" class="aui" id="VerificationPageFormAddNew">
+local<form method="post" action="verifications" class="aui" id="VerificationPageFormAddNew">
 	<input type="hidden" name="existing" id="existing" value="false">
 	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
 	<div class="field-group">
@@ -35,66 +35,29 @@
 		<input class="aui-date-picker" name="verificationEstComplDate" id="verificationEstComplDate" type="date"/>
 	</div>
 	<div class="field-group" id="VerificationPageAssociateControlContainer">
-		<label class='popupLabels' for='controlCauseAssociation'>Associated Control</label>
-		<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
-			<option value=''>-Select Control-</option>
-			#foreach($cause in $causes)
-				#set( $controls = $cause.getActiveControls())
-				$controls.size()
-				#if((!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty()) && $controls.size() != 0)
-				<optgroup label="#getCauseName($cause)">
-					#foreach($control in $controls)
-						<option value="$control.getID()">
-						#if($control.getTransfer() == 0)
-		Control $cause.getCauseNumber().$control.getControlNumber() - #substr($control.getDescription() 60)
-	#else
-		#set ($theControl = $transferredControls.get($control.getID()))
-		#set( $targetCauseNum = "Orph")
-		#if ( $theControl.getTargetCauseNumber() > 0)
-			$targetCauseNum == $theControl.getTargetCauseNumber()
-		#end
-		#if ($theControl.getTransferTargetType() == "CONTROL")
-			#if ($theControl.isDeleted() == true)
-					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#end
-			#else
-				<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#end
-				</a>
-			#end
-		#else
-			#if ($theControl.isDeleted() == true)
-					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#end
-			#else
-				<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#else
-							(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#end
-				</a>
-			#end
-		#end
-	#end
-						
-						</option>
-					#end
-				</optgroup>
+	<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
+	<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
+		<option value=''>-Select Control-</option>
+		#foreach($cause in $causes)
+			#set( $causeNum = "Orph" )
+			#if($cause)
+				#set( $causeNum = $cause.getCauseNumber() )
+			#end	
+			<optgroup label="#getCauseName($cause)">
+			#foreach($control in $cause.getControls())
+				#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+					<option value="$control.getID()">#getControlName($control)</option>
 				#end
 			#end
-		</select>
-	</div>
+			</optgroup>
+			<optgroup label="Orphan controls">
+				#foreach($control in $orphanControls)
+				<option value="$control.getID()">#getControlName($control)</option>
+				#end
+			</optgroup>
+		#end
+	</select>
+</div>
 	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
 		<span class="HTSRequired">Please select a Cause.</span>
 	</div>

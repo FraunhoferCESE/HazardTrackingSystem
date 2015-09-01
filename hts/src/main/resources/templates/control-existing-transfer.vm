@@ -9,46 +9,19 @@
 	#end	
 	<span class="controlNumber">Control $causeNum.$control.getControlNumber()</span>
 	<span class="controlDescription">
-		#set( $targetCauseNum = "Orph")
-		#if ( $theControl.getTargetCauseNumber() > 0)
-			$targetCauseNum == $theControl.getTargetCauseNumber()
-		#end
-		#if ($theControl.getMovedProject())
-			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
-	    #else	
+		#if ($theControl.isDeleted() == true)
+			<div class="HTSTransferDeletedOrigin">
+				#getControlName($control)
+			</div>
+		#else
 			#if ($theControl.getTransferTargetType() == "CONTROL")
-				#if ($theControl.isDeleted() == true)
-						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-						#end
-				#else
-					<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-						#end
-					</a>
-				#end
+				<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 			#else
-				#if ($theControl.isDeleted() == true)
-						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
-						#else
-							(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
-						#end
-				#else
-					<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-								(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
-						#else
-								(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
-						#end
-					</a>
-				#end
+				<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 			#end
+			#set( $length = 75)
+			#getControlName($control $length)
+			</a>
 		#end
 	</span>
 	<span class="controlDate">$dateFormatter.format($control.getLastUpdated())</span>
@@ -84,7 +57,11 @@
 				<div class="field-group">
 					<label for="controlTargetControlNumber">Control #</label>
 					<div class="field-group-static">
-						$!theControl.getTargetCauseNumber().$!theControl.getTargetControlNumber()
+						#set($targetCauseNum = "Orph")
+						#if($theControl.getTargetCauseNumber() > 0)
+							#set($targetCauseNum = $theControl.getTargetCauseNumber())
+						#end
+						$targetCauseNum.$!theControl.getTargetControlNumber()
 					</div>
 				</div>
 			#end

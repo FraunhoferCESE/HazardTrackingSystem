@@ -106,6 +106,7 @@ public class VerificationsServlet extends HttpServlet {
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));		
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
+						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
 						context.put("statuses", verificationStatusService.all());

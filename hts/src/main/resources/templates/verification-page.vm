@@ -32,47 +32,60 @@
 	#end
 #end
 
-#macro( getControlName $causeNum $control)
+#macro( getControlName $control)
+	#set( $causeNum = "Orph" )
+	#set( $causes = $control.getCauses())
+	#foreach( $cause in $causes)
+		#set( $causeNum = $cause.getCauseNumber() )
+		#break
+	#end	
+	Control $causeNum.$control.getControlNumber() -
 	#if($control.getTransfer() == 0)
-		$causeNum.$control.getControlNumber() - #substr($control.getDescription() 60)
+		#substr($control.getDescription() 60)
 	#else
 		#set ($theControl = $transferredControls.get($control.getID()))
-		#if ($theControl.getTransferTargetType() == "CONTROL")
-			#if ($theControl.isDeleted() == true)
-					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#end
+		#set( $targetCauseNum = "Orph")
+		#if ( $theControl.getTargetCauseNumber() > 0)
+			$targetCauseNum = $theControl.getTargetCauseNumber()
+		#end
+		#if ($theControl.getMovedProject())
+			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
+		#else	
+			#if ($theControl.getTransferTargetType() == "CONTROL")
+				#if ($theControl.isDeleted() == true)
+						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+						#else
+							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+						#end
+				#else
+					<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+						#else
+							(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
+						#end
+					</a>
+				#end
 			#else
-				<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $theControl.getTargetCauseNumber().$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() 55)
-					#end
-				</a>
-			#end
-		#else
-			#if ($theControl.isDeleted() == true)
-					#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-						(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#else
-						(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#end
-			#else
-				<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
-					#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
-							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#else
-							(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $theControl.getTargetCauseNumber() - #substr($theControl.getTargetCauseTitle() 60)
-					#end
-				</a>
+				#if ($theControl.isDeleted() == true)
+						#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+							(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
+						#else
+							(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
+						#end
+				#else
+					<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+						#if (!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber()== "")
+								(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
+						#else
+								(TRANSFER) $!theControl.getTargetHazardNumber():All controls for CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() 60)
+						#end
+					</a>
+				#end
 			#end
 		#end
 	#end
-
-
 #end
 
 <html>
@@ -230,7 +243,7 @@
 								</div>
 								<div id="VerificationPageTransferContainer">
 									Add a new transfer here
-									#parse("/templates/verification-transfer.vm")
+									##parse("/templates/verification-transfer.vm")
 								</div>
 							</div>
 						</section>
