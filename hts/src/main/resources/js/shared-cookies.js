@@ -78,7 +78,7 @@ function modifyHTSCookieOpenControls(operation, controlID) {
 
 
 // Verifications
-function modifyHTSCookieOpenVerifications(operation, verificationID, existingVerificationsCount) {
+function modifyHTSCookieOpenVerifications(operation, verificationID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
@@ -90,6 +90,5 @@ function modifyHTSCookieOpenVerifications(operation, verificationID, existingVer
 			}
 		}
 		AJS.Cookie.save("HTS_COOKIE", JSON.stringify(htsCookieJson));
-		// Check if Expand All button needs renaming
 	}
 }

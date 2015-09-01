@@ -50,6 +50,10 @@ public interface Verifications extends Entity {
 
 	void setLastUpdated(Date lastEdit);
 	
+	int getTransfer();
+	
+	void setTransfer(int transferID);
+	
 	@StringLength(value = StringLength.UNLIMITED)
 	String getDeleteReason();
 

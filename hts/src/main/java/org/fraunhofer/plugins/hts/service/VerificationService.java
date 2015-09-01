@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.java.ao.DBParam;
-import net.java.ao.Query;
-
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
+import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.VerifcToControl;
 import org.fraunhofer.plugins.hts.model.VerifcToHazard;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
@@ -19,13 +17,18 @@ import org.fraunhofer.plugins.hts.model.Verifications;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 
+import net.java.ao.DBParam;
+import net.java.ao.Query;
+
 public class VerificationService {
 	private final ActiveObjects ao;
 	private final HazardService hazardService;
+	private final TransferService transferService;
 
-	public VerificationService(ActiveObjects ao, HazardService hazardService) {
+	public VerificationService(ActiveObjects ao, HazardService hazardService, TransferService transferService) {
 		this.ao = checkNotNull(ao);
 		this.hazardService = checkNotNull(hazardService);
+		this.transferService = transferService;
 	}
 
 	private Verifications getVerificationByID(int verificationID) {
@@ -49,10 +52,10 @@ public class VerificationService {
 	}
 
 	public Verifications add(int hazardID, String description, VerificationStatus status, VerificationType type,
-			String responsibleParty, Date estimatedCompletionDate, Hazard_Controls[] controls) {
+			String responsibleParty, Date estimatedCompletionDate, Hazard_Controls associatedControl) {
 		Verifications verification = ao.create(Verifications.class, new DBParam("VERIFICATION_DESC", description));
 		Hazards hazard = hazardService.getHazardById(hazardID);
-		verification.setVerificationNumber(hazard.getVerifications().length + 1);
+		verification.setVerificationNumber(verification.getID());
 		verification.setVerificationStatus(status);
 		verification.setVerificationType(type);
 		verification.setResponsibleParty(responsibleParty);
@@ -60,10 +63,8 @@ public class VerificationService {
 		verification.setLastUpdated(new Date());
 		verification.save();
 
-		if (controls != null) {
-			for (Hazard_Controls control : controls) {
-				associateVerificationToControl(control, verification);
-			}
+		if (associatedControl != null) {
+			associateVerificationToControl(associatedControl, verification);
 		}
 
 		final VerifcToHazard verifcToHazard = ao.create(VerifcToHazard.class);
@@ -73,8 +74,18 @@ public class VerificationService {
 		return verification;
 	}
 
+	public Verifications addVerificationTransfer(int originHazardID, int targetVerificationId, String transferReason,
+			Hazard_Controls associatedControl) {
+		Verifications verification = add(originHazardID, transferReason, null, null, null, null, associatedControl);
+		int transferID = createTransfer(verification.getID(), "VERIFICATION", targetVerificationId, "VERIFICATION");
+		verification.setTransfer(transferID);
+		verification.save();
+		return verification;
+	}
+	
 	public Verifications update(int verificationID, String description, VerificationStatus status,
-			VerificationType type, String responsibleParty, Date estimatedCompletionDate, Hazard_Controls[] controls) {
+			VerificationType type, String responsibleParty, Date estimatedCompletionDate,
+			Hazard_Controls associatedControl) {
 		Verifications verification = getVerificationByID(verificationID);
 		verification.setVerificationDesc(description);
 		verification.setVerificationStatus(status);
@@ -90,10 +101,9 @@ public class VerificationService {
 						verification.getID(), control.getID())));
 			}
 		}
-		if (controls != null) {
-			for (Hazard_Controls control : controls) {
-				associateVerificationToControl(control, verification);
-			}
+		
+		if (associatedControl != null) {
+			associateVerificationToControl(associatedControl, verification);
 		}
 
 		return verification;
@@ -101,14 +111,30 @@ public class VerificationService {
 
 	public Verifications deleteVerification(Verifications verificationToDelete, String reason) {
 		verificationToDelete.setDeleteReason(reason);
+		
+		if (verificationToDelete.getTransfer() != 0) {
+			Transfers transfer = transferService.getTransferByID(verificationToDelete.getTransfer());
+			removeTransfer(transfer.getID());
+			transfer.save();
+			verificationToDelete.setTransfer(0);
+		}
 		verificationToDelete.save();
 		return verificationToDelete;
 	}
 
+	private void removeTransfer(int id) {
+		ao.delete(ao.find(Transfers.class, Query.select().where("ID=?", id)));
+	}
+	
 	private void associateVerificationToControl(Hazard_Controls control, Verifications verification) {
 		final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
 		verifcToControl.setControl(control);
 		verifcToControl.setVerification(verification);
 		verifcToControl.save();
+	}
+	
+	private int createTransfer(int originID, String originType, int targetID, String targetType) {
+		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
+		return transfer.getID();
 	}
 }

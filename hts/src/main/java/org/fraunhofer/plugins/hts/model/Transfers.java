@@ -8,7 +8,7 @@ import net.java.ao.schema.Table;
 public interface Transfers extends Entity {
 
 	public enum TransferType {
-		HAZARD("HAZARD"), CAUSE("CAUSE"), CONTROL("CONTROL");
+		HAZARD("HAZARD"), CAUSE("CAUSE"), CONTROL("CONTROL"), VERIFICATION("VERIFICATION");
 
 		private String code;
 

@@ -1,3 +1,116 @@
-#VerificationPageNewContainer {
+#VerificationPageNewContainer, #VerificationPageTransferContainer {
 	display: none;
+}
+
+/* Styles for Verification-transfer.vm file */
+#VerificationPageVerificationTransferContainer
+{
+	display: none;
+}
+
+ul {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+div.verificationListHeader {
+	margin-top: 0.5em;
+	padding-bottom: 1.2em;
+	font-weight: bold;
+}
+
+div.verificationListHeader > span.headerID {
+	position: absolute;
+	left: 5em;
+}
+
+div.verificationListHeader > span.headerDescription {
+	position: absolute;
+	left: 16.5em;
+}
+
+div.verificationListHeader > span.headerDate {
+	position: absolute;
+	left: 60.7em;
+}
+
+div.verificationListHeader > span.headerStatus {
+	position: absolute;
+	left: 73.2em;
+}
+
+div.verificationListHeader > span.headerDelete {
+	position: absolute;
+	left: 88.2em;
+}
+
+div.verificationListHeader > span.headerDelete > div {
+	margin-top: 0.1em;
+}
+
+ul#verificationsList span.causeTitle {
+	position: absolute;
+	left: 16.5em;
+}
+
+ul#verificationsList span.controlDescription {
+	position: absolute;
+	left: 16.5em;
+}
+
+ul#verificationsList  > li > ul > li:nth-child(odd) { 
+	background: #f3f3f3;
+}
+
+ul#verificationsList  > li > ul > li:nth-child(odd) > div > div { 
+	background: #f3f3f3; 
+}
+
+ul#verificationsList span.causeNumber {
+	position: absolute;
+	left: 3.3em;
+}
+
+ul#verificationsList span.VerificationControlTableToggle {
+	margin-left: 1.5em;
+	padding-top: 0.3em;
+}
+
+div.verificationHeader {
+	margin-top: 0.7em;
+}
+
+div.verificationHeader span.VerificationTableToggle {
+	margin-left: 2.8em;
+	padding-top: 0.3em;
+}
+
+div.verificationHeader span.verificationNumber {
+	position: absolute;
+	left: 6em;
+}
+
+div.verificationHeader span.verificationDescription {
+	position: absolute;
+	left: 16.5em;
+}
+
+div.verificationHeader span.verificationDate {
+	position: absolute;
+	left: 60.7em;
+}
+
+div.verificationHeader span.verificationStatus {
+	position: absolute;
+	left: 73.2em;
+}
+
+div.verificationHeader > input.VerificationPageDeleteBox {
+	position: absolute;
+	left: 92.7em;
+}
+
+div.existingVerification {
+	padding-left:3em;
+	background: #f3f3f3;
 }

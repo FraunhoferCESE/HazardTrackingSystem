@@ -224,7 +224,6 @@ public class ControlsServlet extends HttpServlet {
 		try {
 			json.put(key, value);
 		} catch (JSONException e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 		return json;
