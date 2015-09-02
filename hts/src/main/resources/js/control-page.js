@@ -407,10 +407,11 @@ function addTransferControlFormValidation() {
 	var controlListElement = AJS.$(formElement).find("#controlControlList").val();
 	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
 	
-	if(AJS.$(formElement).find("#controlCauseAssociation").val() !== "") {
+	var controlAssociationElement = AJS.$(formElement).find("#controlCauseAssociation").val();
+	if(controlAssociationElement !== undefined && controlAssociationElement !== "") {
 		dirty = true;
 	}
-	
+
 	if (hazardListElement !== undefined && causeListElement !== undefined && transferReasonElement !== undefined) {
 		if (hazardListElement !== "" || causeListElement !== "" || transferReasonElement !== "") {
 			dirty = true;
