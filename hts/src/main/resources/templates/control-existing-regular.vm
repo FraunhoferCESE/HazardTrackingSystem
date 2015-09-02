@@ -1,116 +1,80 @@
-<tr id="ControlTableEntryID$control.getID()">
-	<td class="HazardPropertyTableTd">
-		<div class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
-	</td>
-	<td class="HazardPropertyTableTd">Control $control.getControlNumber()</td>
-	<td class="HazardPropertyTableTd">$control.getDescription()</td>
-	<td class="HazardPropertyTableTd">
-		#if (!$control.getControlGroup())
-			N/A
-		#else
-			$control.getControlGroup().getLabel()
-		#end
-	</td>
-	<td class="HTSDate HazardPropertyTableTd">$control.getLastUpdated()</td>
-	<td class="HazardPropertyTableTd">
-		<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
-	</td>
-</tr>
-<tr id="ControlTableEntryContentID$control.getID()" class="HazardPropertyContentRow">
-	<td colspan="100%">
-		<div class="HazardPropertyContentHolder">
-			<form method="post" action="controls" class="aui ControlPageFormExisting">
-				<input type="hidden" name="regular" id="regular" value="true">
-				<input type="hidden" name="existing" id="existing" value="true">
-				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
-				<input type="hidden" name="controlID" id="controlID" value="$!control.getID()">
-				<div class="field-group" style="padding-bottom: 0">
-					<label for="controlDescription"><span class="HTSRequired">* </span>Description</label>
-					<textarea class="textarea long-field" name="controlDescription" id="controlDescription">$!control.getDescription()</textarea>
-				</div>
-				<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlDescription">
-					<span class="HTSRequired">This field is required.</span>
-				</div>
-				<div class="field-group">
-					<label for="controlGroup">Control group</label>
-					<select class="select" id="controlGroup" name="controlGroup">
-						#if (!$control.getControlGroup())
-							<option value="" selected>-Select-</option>
+<div class="controlHeader" id="ControlTableEntryID$control.getID()">
+	<a name="controlID$control.getID()"></a>
+	<span class="ControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
+	#set( $causeNum = "Orph" )
+	#if($cause)
+		#set( $causeNum = $cause.getCauseNumber() )
+	#end	
+	<span class="controlNumber">Control $causeNum.$control.getControlNumber()</span>
+	<span class="controlDescription">
+		#substr($control.getDescription() 75)
+	</span>
+	<span class="controlDate">$dateFormatter.format($control.getLastUpdated())</span>
+	<input type="checkbox" value="$control.getID()" class="ControlPageDeleteBox">
+</div>
+
+<div id="ControlTableEntryContentID$control.getID()" class="HazardPropertyContentRow">
+	<div class="HazardPropertyContentHolder">
+		<form method="post" action="controls" class="aui ControlPageFormExisting">
+			<input type="hidden" name="regular" id="regular" value="true">
+			<input type="hidden" name="existing" id="existing" value="true">
+			<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+			<input type="hidden" name="controlID" id="controlID" value="$!control.getID()">
+			<div class="field-group" style="padding-bottom: 0">
+				<label for="controlDescription"><span class="HTSRequired">* </span>Description</label>
+				<textarea class="textarea long-field" name="controlDescription" id="controlDescription">$!control.getDescription()</textarea>
+			</div>
+			<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlDescription">
+				<span class="HTSRequired">This field is required.</span>
+			</div>
+			<div class="field-group">
+				<label for="controlGroup">Control group</label>
+				<select class="select" id="controlGroup" name="controlGroup">
+					#if (!$control.getControlGroup())
+						<option value="" selected>-Select-</option>
+					#else
+						<option value="">-Select-</option>
+					#end
+					#foreach ($controlGroup in $controlGroups)
+						#if ($controlGroup.getID() == $control.getControlGroup().getID())
+							<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
 						#else
-							<option value="">-Select-</option>
+							<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
 						#end
-						#foreach ($controlGroup in $controlGroups)
-							#if ($controlGroup.getID() == $control.getControlGroup().getID())
-								<option value="$controlGroup.getID()" selected>$!controlGroup.getLabel()</option>
+					#end
+				</select>
+			</div>
+			<div class="field-group" id="ControlPageAssociateCauseContainer">
+				
+				#set( $associatedCause = false)
+				#foreach($cause in $control.getCauses())
+					#set( $associatedCause = $cause )
+					#break
+				#end
+
+				<label class='popupLabels' for='controlCauseAssociation'>Associated Cause</label>
+				<select class='select long-field' name='controlCauseAssociation' id='controlCauseAssociation'>
+					<option value=''>-Select Cause-</option>
+					#foreach($cause in $causes)
+						#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
+							#if($associatedCause && $cause.getID() == $associatedCause.getID())
+							<option value="$cause.getID()" selected>#getCauseName($cause)</option>
 							#else
-								<option value="$controlGroup.getID()">$!controlGroup.getLabel()</option>
+							<option value="$cause.getID()">#getCauseName($cause)</option>
 							#end
 						#end
-					</select>
+					#end
+				</select>
+			</div>
+	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
+		<span class="HTSRequired">Please select a Cause.</span>
+	</div>
+			<div class="field-group">
+				<label>Verifications</label>
+				<div class="associatedVerifications">
+					#parse("/templates/control-associated-verifications.vm")
 				</div>
-				<div class="field-group">
-					<label for="controlCauses">Causes</label>
-					<select class="multi-select controlCauses" size="5" multiple="multiple" name="controlCauses" id="controlCauses">
-						#set ($foundMatch = 0)
-						#foreach ($cause in $causes)
-							#foreach ($selectedCause in $control.getCauses())
-								#if ($cause.getID() == $selectedCause.getID())
-									#if ($cause.getTransfer() != 0)
-										#if (!$cause.getDeleteReason())
-											<option value="$cause.getID()" selected>
-												$!cause.getCauseNumber()-T: $!cause.getTitle()
-											</option>
-										#else
-											<option value="$cause.getID()" selected>
-												$!cause.getCauseNumber()-T (D): $!cause.getTitle()
-											</option>
-										#end
-									#else
-										#if (!$cause.getDeleteReason())
-											<option value="$cause.getID()" selected>
-												$!cause.getCauseNumber(): $!cause.getTitle()
-											</option>
-										#else
-											<option value="$cause.getID()" selected>
-												$!cause.getCauseNumber() (D): $!cause.getTitle()
-											</option>
-										#end
-									#end
-									#set ($foundMatch = 1)
-									#break
-								#end
-							#end
-							#if ($foundMatch == 0)
-								#if (!$cause.getDeleteReason())
-									#if ($cause.getTransfer() != 0)
-										<option value="$cause.getID()">
-											$!cause.getCauseNumber()-T: $!cause.getTitle()
-										</option>
-									#else
-										<option value="$cause.getID()">
-											$!cause.getCauseNumber(): $!cause.getTitle()
-										</option>
-									#end
-								#end
-							#else
-								#set ($foundMatch = 0)
-							#end
-						#end
-					</select>
-					<div class="HTSMultiSelectFooterContainerOne">
-						<span class="HTSMultiSelectFooter">Non-associated</span>
-					</div>
-					<div class="HTSMultiSelectFooterContainerTwo">
-						<span class="HTSMultiSelectFooter">Associated</span>
-					</div>
-				</div>
-				<div class="field-group">
-					<label>Verifications</label>
-					<div class="associatedVerifications">
-						#parse("/templates/control-associated-verifications.vm")
-					</div>
-				</div>
-			</form>
-		</div>
-	</td>
-</tr>
+			</div>
+		</form>
+	</div>
+</div>

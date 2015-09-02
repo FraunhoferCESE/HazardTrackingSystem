@@ -4,7 +4,7 @@
 			<div class="GeneralNavContent1">
 				<ul class="aui-nav">
 					<li id="MissionNavItem">
-						<a href="/jira/plugins/servlet/missions" class="RouteLink">Index</a>
+						<a href="missions" class="RouteLink">Index</a>
 					</li>
 				</ul>
 			</div>

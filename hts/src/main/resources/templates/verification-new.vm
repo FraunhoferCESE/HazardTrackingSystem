@@ -1,37 +1,6 @@
-#set ($theControls= [])
-#foreach ($control in $controls)
-	#if (!$control.getDeleteReason())
-		#if ($control.getTransfer() != 0)
-			#foreach ($transferredControl in $transferredControls)
-				#if ($control.getID() == $transferredControl.getOriginID())
-					#set ($item = {})
-					#set ($item.ID = $control.getID())
-					#set ($item.number = $control.getControlNumber())
-					#if ($transferredControl.getTransferTargetType() == "CONTROL")
-						#set ($item.text = $transferredControl.getTargetControlDescription())
-						#set ($item.transfer = "-T")
-					#else
-						#set ($item.text = $transferredControl.getTargetCauseTitle())
-						#set ($item.transfer = "-T")
-					#end
-					#set ($result = $theControls.add($item))
-					#break
-				#end
-			#end
-		#else
-			#set ($item = {})
-			#set ($item.ID = $control.getID())
-			#set ($item.number = $control.getControlNumber())
-			#set ($item.text = $control.getDescription())
-			#set ($item.transfer = false)
-			#set ($result = $theControls.add($item))
-		#end
-	#end
-#end
-
 <form method="post" action="verifications" class="aui" id="VerificationPageFormAddNew">
 	<input type="hidden" name="existing" id="existing" value="false">
-	<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+	<input type="hidden" name="hazardID" id="hazardID" value="$hazard.getID()">
 	<div class="field-group">
 		<label for="verificationDescription"><span class="HTSRequired">* </span>Description</label>
 		<input class="text long-field" type="text" id="verificationDescription" name="verificationDescription">
@@ -44,7 +13,7 @@
 		<select class="select" id="verificationStatus" name="verificationStatus">
 			<option value="" selected>-Select-</option>
 			#foreach ($status in $statuses)
-				<option value="$status.getID()">$!status.getLabel()</option>
+				<option value="$status.getID()">$status.getLabel()</option>
 			#end
 		</select>
 	</div>
@@ -53,7 +22,7 @@
 		<select class="select" id="verificationType" name="verificationType">
 			<option value="" selected>-Select-</option>
 			#foreach ($type in $types)
-				<option value="$type.getID()">$!type.getLabel()</option>
+				<option value="$type.getID()">$type.getLabel()</option>
 			#end
 		</select>
 	</div>
@@ -65,26 +34,36 @@
 		<label for="verificationEstComplDate">Estimated Completion Date</label>
 		<input class="aui-date-picker" name="verificationEstComplDate" id="verificationEstComplDate" type="date"/>
 	</div>
-	<div class="field-group" id="VerificationPageFormAddNewMultiSelect">
-		<label for="verificationControls">Controls</label>
-		<select class="multi-select verificationControls" size="5" multiple="multiple" name="verificationControls">
-			#foreach ($theControl in $theControls)
-				<option value="$theControl.ID">
-				#if ($theControl.transfer == "-T")
-					$!theControl.number$!theControl.transfer: $!theControl.text
-				#else
-					$!theControl.number: $!theControl.text
+	<div class="field-group" id="VerificationPageAssociateControlContainer">
+		<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
+		<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
+			<option value=''>-Select Control-</option>
+			#set($length = 50)
+			#foreach($cause in $causes)
+				#set( $causeNum = "Orph" )
+				#if($cause)
+					#set( $causeNum = $cause.getCauseNumber() )
+				#end	
+				
+				<optgroup label="Cause $causeNum #getCauseName($cause $length)">
+				#foreach($control in $cause.getControls())
+					#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+						<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+					#end
 				#end
-				</option>
+				</optgroup>
 			#end
+			<optgroup label="Orphan controls">
+				#foreach($control in $orphanControls)
+				<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control $length)</option>
+				#end
+			</optgroup>
 		</select>
-		<div class="HTSMultiSelectFooterContainerOne">
-			<span class="HTSMultiSelectFooter">Non-associated</span>
-		</div>
-		<div class="HTSMultiSelectFooterContainerTwo">
-			<span class="HTSMultiSelectFooter">Associated</span>
-		</div>
 	</div>
+	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
+		<span class="HTSRequired">Please select a Control.</span>
+	</div>
+	
 	<div class="field-group">
 		<input class="aui-button VerificationPageSaveAllChanges" type="button" value="Save All Changes" data-ops="new">
 		<input class="button" type="button" value="Clear" id="VerificationPageClearNew">

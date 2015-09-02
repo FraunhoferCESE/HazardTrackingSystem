@@ -7,10 +7,22 @@
 		<input type="hidden" name="regular" id="regular" value="false">
 		<input type="hidden" name="existing" id="existing" value="false">
 		<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+		<div class="field-group" id="ControlPageAssociateCauseContainer">
+			<label class='popupLabels' for='controlCauseAssociation'>Associated Cause</label>
+			<select class='select long-field' name='controlCauseAssociation' id='controlCauseAssociation'>
+				<option value=''>-Select Cause-</option>
+				#foreach($cause in $causes)
+					#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
+					<option value="$cause.getID()">Cause $cause.getCauseNumber() #getCauseName($cause)</option>
+					#end
+				#end
+			</select>
+		</div>
 		<div class='field-group'>
-			<label for='controlHazardList'>Hazard Reports</label>
+			<label for='controlHazardList'>Transfer to Hazard</label>
 			<select size="1" class="select long-field" name="controlHazardList" id="controlHazardList">
 				<option value=''>-Select Hazard Report-</option>
+				<option value='$hazard.getID()'>This Hazard</option>
 				#foreach ($currentHazard in $allHazardsBelongingToMission)
 					#if ($currentHazard.getID() != $hazard.getID())
 						#set ($optionText = "")
@@ -35,6 +47,9 @@
 			<span class="HTSRequired">Please select a Cause.</span>
 		</div>
 		<div class="field-group" id="ControlPageControlTransferContainer">
+		</div>
+		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="transferToCauseinCurrentHazard">
+			<span class="HTSRequired">You cannot transfer to a Cause within the current hazard - you must select a concrete Control.</span>
 		</div>
 		<div class='field-group'>
 			<label for='transferReason'>Transfer Reason</label>

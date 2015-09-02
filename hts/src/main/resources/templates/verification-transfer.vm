@@ -1,0 +1,67 @@
+#if ($allHazardsBelongingToMission.size() == 1)
+	<div class="HTSNoTransfersContainer">
+		<p class="HTSNoTransfersText">No other Hazard Reports (JIRA Sub-Tasks) have been created for this Project.</p>
+	</div>
+#else
+	<form method="post" action="controls" class="aui" id="VerificationPageFormAddTransfer">
+		<input type="hidden" name="regular" id="regular" value="false">
+		<input type="hidden" name="existing" id="existing" value="false">
+		<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
+		<div class="field-group" id="VerificationPageAssociateControlContainer">
+			<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
+			<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
+				<option value=''>-Select Control-</option>
+				#foreach($cause in $causes)
+					#set( $causeNum = "Orph" )
+					#if($cause)
+						#set( $causeNum = $cause.getCauseNumber() )
+					#end	
+					<optgroup label="#getCauseName($cause)">
+					#foreach($control in $cause.getControls())
+						#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+							<option value="$control.getID()">
+							#getControlName($control)
+							</option>
+						#end
+					#end
+					</optgroup>
+				#end
+			</select>
+		</div>
+		<div class='field-group'>
+			<label for='transferVerificationList'>Transfer to Verification</label>
+			<select size="1" class="select long-field" name="transferVerificationList" id="transferVerificationList">
+				<option value=''>-Select Verification-</option>
+				#foreach ($verification in $verifications)
+					#set ($optionText = "")
+					#if (!$currentHazard.getHazardNumber() || $currentHazard.getHazardNumber() == "")
+						#set ($optionText = "<Haz id=$currentHazard.getID()> - ")
+					#else
+						#set ($optionText = $currentHazard.getHazardNumber() + " - ")
+					#end
+					#if (!$currentHazard.getHazardTitle() || $currentHazard.getHazardTitle() == "")
+						#set ($optionText = $optionText + "<Title TBD>")
+					#else
+						#set ($optionText = $optionText + $currentHazard.getHazardTitle())
+					#end
+					<option value="$currentHazard.getID()">$optionText</option>
+				#end
+			</select>
+		</div>
+		<div class="field-group" id="ControlPageCauseTransferContainer">
+		</div>
+		<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
+			<span class="HTSRequired">Please select a Cause.</span>
+		</div>
+		<div class="field-group" id="ControlPageControlTransferContainer">
+		</div>
+		<div class='field-group'>
+			<label for='transferReason'>Transfer Reason</label>
+			<textarea class='textarea long-field' rows='6' cols='5' type='textarea' id='transferReason' name='transferReason'></textarea>
+		</div>
+		<div class="field-group">
+			<input class="aui-button ControlPageSaveAllChanges" type="button" value="Save All Changes" data-ops="transfer">
+			<input class="button" type="button" value="Clear" id="ControlPageClearTransfer">
+		</div>
+	</form>
+#end

@@ -1,188 +1,130 @@
-#set ($theControls = [])
-#set ($foundMatch = 0)
-#foreach ($control in $controls)
-	#foreach ($selectedControl in $verification.getControls())
-		#if ($control.getID() == $selectedControl.getID())
-			#if ($control.getTransfer() != 0)
-				#foreach ($transferredControl in $transferredControls)
-					#if ($control.getID() == $transferredControl.getOriginID())
-						#set ($item = {})
-						#set ($item.ID = $control.getID())
-						#set ($item.number = $control.getControlNumber())
-						#set ($item.transfer = "-T")
-						#set ($item.selected = true)
-						#if (!$control.getDeleteReason())
-							#set ($item.deleted = false)
-						#else
-							#set ($item.deleted = true)
-						#end
-						#if ($transferredControl.getTransferTargetType() == "CONTROL")
-							#set ($item.text = $transferredControl.getTargetControlDescription())
-						#else
-							#set ($item.text = $transferredControl.getTargetCauseTitle())
-						#end
-						#set ($result = $theControls.add($item))
-						#break
-					#end
-				#end
-			#else
-				#set ($item = {})
-				#set ($item.ID = $control.getID())
-				#set ($item.number = $control.getControlNumber())
-				#set ($item.text = $control.getDescription())
-				#set ($item.transfer = "")
-				#set ($item.selected = true)
-				#if (!$control.getDeleteReason())
-					#set ($item.deleted = false)
-				#else
-					#set ($item.deleted = true)
-				#end
-				#set ($result = $theControls.add($item))
-			#end
-			#set ($foundMatch = 1)
-			#break
-		#end
+<div class="verificationHeader" id="VerificationTableEntryID$verification.getID()" verificationId=$verification.getID()>
+	<a name="verificationID$verification.getID()"></a>
+	<span class="VerificationTableToggle aui-icon aui-icon-small aui-iconfont-add"></span>
+	
+	#set( $causeNum = "Orph" )
+	#if($cause)
+		#set( $causeNum = $cause.getCauseNumber() )
+	#end	
+	
+	#set ($controlNum = "")
+	#set ($separator = "")
+	#if ($control)
+		#set ($controlNum = $control.getControlNumber() )
+		#set ($separator = "." )
 	#end
-	#if ($foundMatch == 0)
-		#if (!$control.getDeleteReason())
-			#if ($control.getTransfer() != 0)
-				#foreach($transferredControl in $transferredControls)
-					#if ($control.getID() == $transferredControl.getOriginID())
-						#set ($item = {})
-						#set ($item.ID = $control.getID())
-						#set ($item.number = $control.getControlNumber())
-						#set ($item.transfer = "-T")
-						#set ($item.selected = false)
-						#set ($item.deleted = false)
-						#if ($transferredControl.getTransferTargetType() == "CONTROL")
-							#set ($item.text = $transferredControl.getTargetControlDescription())
-						#else
-							#set ($item.text = $transferredControl.getTargetCauseTitle())
-						#end
-						#set ($result = $theControls.add($item))
-						#break
-					#end
-				#end
-			#else
-				#set ($item = {})
-				#set ($item.ID = $control.getID())
-				#set ($item.number = $control.getControlNumber())
-				#set ($item.text = $control.getDescription())
-				#set ($item.transfer = "")
-				#set ($item.selected = false)
-				#set ($item.deleted = false)
-				#set ($result = $theControls.add($item))
-			#end
-		#end
-	#else
-		#set ($foundMatch = 0)
-	#end
-#end
-
-<tr id="VerificationTableEntryID$verification.getID()">
-	<td class="HazardPropertyTableTd">
-		<div class="VerificationTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
-	</td>
-	<td class="HazardPropertyTableTd">Verification $verification.getVerificationNumber()</td>
-	<td class="HazardPropertyTableTd">$verification.getVerificationDesc()</td>
-	<td class="HazardPropertyTableTd">
+	
+	<span class="verificationNumber">Verification $causeNum$separator$controlNum.$verification.getVerificationNumber()</span>
+	<span class="verificationDescription">$verification.getVerificationDesc()</span>
+	<span class="verificationStatus">
 		#if (!$verification.getVerificationStatus())
-			N/A
+			No status
 		#else
 			$verification.getVerificationStatus().getLabel()
 		#end
-	</td>
-	<td class="HTSDate HazardPropertyTableTd">$verification.getLastUpdated()</td>
-	<td class="HazardPropertyTableTd">
-		<input type="checkbox" value="$verification.getID()" class="VerificationPageDeleteBox">
-	</td>
-</tr>
+	</span>
+	<span class="verificationDate">$dateFormatter.format($verification.getLastUpdated())</span>
+	<input type="checkbox" value="$verification.getID()" class="VerificationPageDeleteBox">
+</div>
 
-<tr id="VerificationTableEntryContentID$verification.getID()" class="HazardPropertyContentRow">
-	<td colspan="100%">
-		<div class="HazardPropertyContentHolder">
-			<form method="post" action="verifications" class="aui VerificationPageFormExisting">
-				<input type="hidden" name="existing" id="existing" value="true">
-				<input type="hidden" name="hazardID" id="hazardID" value="$!hazard.getID()">
-				<input type="hidden" name="verificationID" id="verificationID" value="$!verification.getID()">
-				<div class="field-group">
-					<label for="verificationDescription"><span class="HTSRequired">* </span>Description</label>
-					<input class="text long-field" type="text" id="verificationDescription" name="verificationDescription" value="$!verification.getVerificationDesc()">
-				</div>
-				<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="verificationDescription">
-					<span class="HTSRequired">This field is required.</span>
-				</div>
-				<div class="field-group">
-					<label for="verificationStatus">Verification Status</label>
-					<select class="select" id="verificationStatus" name="verificationStatus">
-						#if (!$verification.getVerificationStatus())
-							<option value="" selected>-Select-</option>
+<div id="VerificationTableEntryContentID$verification.getID()" class="HazardPropertyContentRow" >
+	<div class="existingVerification">
+		<form method="post" action="verifications" class="aui VerificationPageFormExisting">
+			<input type="hidden" name="regular" id="regular" value="true">
+			<input type="hidden" name="existing" id="existing" value="true">
+			<input type="hidden" name="hazardID" id="hazardID" value="$hazard.getID()">
+			<input type="hidden" name="verificationID" id="verificationID" value="$verification.getID()">
+			<div class="field-group">
+				<label for="verificationDescription"><span class="HTSRequired">* </span>Description</label>
+				<input class="text long-field" type="text" id="verificationDescription" name="verificationDescription" value="$!verification.getVerificationDesc()">
+			</div>
+			<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="verificationDescription">
+				<span class="HTSRequired">This field is required.</span>
+			</div>
+			<div class="field-group">
+				<label for="verificationStatus">Verification Status</label>
+				<select class="select" id="verificationStatus" name="verificationStatus">
+					#if (!$verification.getVerificationStatus())
+						<option value="" selected>-Select-</option>
+					#else
+						<option value="">-Select-</option>
+					#end
+					#foreach ($status in $statuses)
+						#if ($status.getID() == $verification.getVerificationStatus().getID())
+							<option value="$status.getID()" selected>$!status.getLabel()</option>
 						#else
-							<option value="">-Select-</option>
+							<option value="$status.getID()">$!status.getLabel()</option>
 						#end
-						#foreach ($status in $statuses)
-							#if ($status.getID() == $verification.getVerificationStatus().getID())
-								<option value="$status.getID()" selected>$!status.getLabel()</option>
-							#else
-								<option value="$status.getID()">$!status.getLabel()</option>
-							#end
-						#end
-					</select>
-				</div>
-				<div class="field-group">
-					<label for="verificationType">Verification Type</label>
-					<select class="select" id="verificationType" name="verificationType">
-						#if (!$verification.getVerificationType())
-							<option value="" selected>-Select-</option>
+					#end
+				</select>
+			</div>
+			<div class="field-group">
+				<label for="verificationType">Verification Type</label>
+				<select class="select" id="verificationType" name="verificationType">
+					#if (!$verification.getVerificationType())
+						<option value="" selected>-Select-</option>
+					#else
+						<option value="">-Select-</option>
+					#end
+					#foreach ($type in $types)
+						#if ($type.getID() == $verification.getVerificationType().getID())
+							<option value="$type.getID()" selected>$!type.getLabel()</option>
 						#else
-							<option value="">-Select-</option>
+							<option value="$type.getID()">$!type.getLabel()</option>
 						#end
-						#foreach ($type in $types)
-							#if ($type.getID() == $verification.getVerificationType().getID())
-								<option value="$type.getID()" selected>$!type.getLabel()</option>
-							#else
-								<option value="$type.getID()">$!type.getLabel()</option>
-							#end
-						#end
-					</select>
-				</div>
-				<div class="field-group">
-					<label for="verificationRespParty">Responsible Party</label>
-					<input class="text long-field" type="text" id="verificationRespParty" name="verificationRespParty" value="$!verification.getResponsibleParty()">
-				</div>
-				<div class="field-group">
-					<label for="VerificationEstComplDate">Estimated Completion Date</label>
-					<input class="aui-date-picker VerificationDate" name="VerificationEstComplDate" id="VerificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
-				</div>
-				<div class="field-group">
-					<label for="verificationControls">Controls</label>
-					<select class="multi-select verificationControls" size="5" multiple="multiple" name="verificationControls">
-						#foreach( $theControl in $theControls )
-							#if( $theControl.selected == true )
-								#if( $theControl.deleted == true )
-									<option value="$theControl.ID" selected>
-										$!theControl.number$!theControl.transfer (D): $!theControl.text
-									</option>
+					#end
+				</select>
+			</div>
+			<div class="field-group">
+				<label for="verificationRespParty">Responsible Party</label>
+				<input class="text long-field" type="text" id="verificationRespParty" name="verificationRespParty" value="$!verification.getResponsibleParty()">
+			</div>
+			<div class="field-group">
+				<label for="VerificationEstComplDate">Estimated Completion Date</label>
+				<input class="aui-date-picker VerificationDate" name="verificationEstComplDate" id="verificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
+			</div>
+			<div class="field-group" id="VerificationPageAssociateControlContainer">
+				#set( $associatedControl = false)
+				#foreach($control in $verification.getControls())
+					#set( $associatedControl = $control )
+					#break
+				#end
+
+				<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
+				<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
+					<option value=''>-Select Control-</option>
+					#set($length = 50)
+					#foreach($cause in $causes)
+						#set( $causeNum = "Orph" )
+						#if($cause)
+							#set( $causeNum = $cause.getCauseNumber() )
+						#end	
+						
+						<optgroup label="Cause $causeNum #getCauseName($cause $length)">
+						#foreach($control in $cause.getControls())
+							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+								#if($associatedControl && $control.getID() == $associatedControl.getID())
+								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
 								#else
-									<option value="$theControl.ID" selected>
-										$!theControl.number$!theControl.transfer: $!theControl.text
-									</option>
+								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
 								#end
-							#else
-								<option value="$theControl.ID">
-									$!theControl.number$!theControl.transfer: $!theControl.text
-								</option>
 							#end
 						#end
-					</select>
-					<div class="HTSMultiSelectFooterContainerOne">
-						<span class="HTSMultiSelectFooter">Non-associated</span>
-					</div>
-					<div class="HTSMultiSelectFooterContainerTwo">
-						<span class="HTSMultiSelectFooter">Associated</span>
-					</div>
-				</div>
-			</form>
-		</div>
-	</td>
-</tr>
+						</optgroup>
+					#end
+					<optgroup label="Orphan controls">
+						#foreach($control in $orphanControls)
+							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+								#if($associatedControl && $control.getID() == $associatedControl.getID())
+								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								#else
+								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								#end
+							#end
+						#end
+					</optgroup>
+				</select>
+			</div>
+		</form>
+	</div>
+</div>

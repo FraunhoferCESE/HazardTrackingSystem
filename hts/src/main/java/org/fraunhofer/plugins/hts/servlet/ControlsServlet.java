@@ -16,14 +16,15 @@ import org.fraunhofer.plugins.hts.model.ControlGroups;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
-import org.fraunhofer.plugins.hts.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.service.CauseService;
+import org.fraunhofer.plugins.hts.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.datetime.DateTimeFormatter;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
@@ -39,16 +40,18 @@ public class ControlsServlet extends HttpServlet {
 	private final HazardService hazardService;
 	private final ControlService controlService;
 	private final ControlGroupsService controlGroupsService;
-	private final CauseService hazardCauseService;
+	private final CauseService causeService;
+	private final DateTimeFormatter dateTimeFormatter;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			ControlService hazardControlService, ControlGroupsService controlGroupsService,
-			CauseService hazardCauseService) {
+			CauseService hazardCauseService, DateTimeFormatter dateTimeFormatter) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
-		this.hazardCauseService = checkNotNull(hazardCauseService);
+		this.causeService = checkNotNull(hazardCauseService);
+		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class ControlsServlet extends HttpServlet {
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
+			context.put("dateFormatter", dateTimeFormatter);
 			boolean error = false;
 			String errorMessage = null;
 			List<String> errorList = new ArrayList<String>();
@@ -78,9 +82,8 @@ public class ControlsServlet extends HttpServlet {
 			} else {
 				try {
 					hazard = hazardService.getHazardById(hazardId);
-					if (hazard == null
-							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
-									jiraAuthenticationContext.getUser())) {
+					if (hazard == null || !hazardService.hasHazardPermission(hazard.getProjectID(),
+							jiraAuthenticationContext.getUser())) {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
 								+ jiraAuthenticationContext.getUser().getUsername()
@@ -88,7 +91,9 @@ public class ControlsServlet extends HttpServlet {
 					} else {
 						context.put("hazard", hazard);
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
+						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
+						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",
@@ -117,7 +122,15 @@ public class ControlsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
+			JSONObject jsonResponse = new JSONObject();
+			String causeId = req.getParameter("controlCauseAssociation");
+			Hazard_Causes associatedCause = null;
+			if (!Strings.isNullOrEmpty(causeId))
+				associatedCause = causeService
+						.getHazardCauseByID(Integer.parseInt(req.getParameter("controlCauseAssociation")));
+
 			boolean regular = Boolean.parseBoolean(req.getParameter("regular"));
+			// Regular control (not a transfer)
 			if (regular == true) {
 				String description = req.getParameter("controlDescription");
 				ControlGroups controlGroup;
@@ -127,21 +140,18 @@ public class ControlsServlet extends HttpServlet {
 					controlGroup = null;
 				}
 
-				String[] causesStr = req.getParameterValues("controlCauses");
-				Hazard_Causes[] causes = hazardCauseService.getHazardCausesByID(changeStringArray(causesStr));
-
-				// Regular control (not a transfer)
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
 				if (existing == true) {
 					// Regular control update
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
-					controlService.updateRegularControl(controlID, description, controlGroup, causes);
+					controlService.updateRegularControl(controlID, description, controlGroup, associatedCause);
 				} else {
 					// Regular control creation
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					controlService.add(hazardID, description, controlGroup, causes);
+					Hazard_Controls newControl = controlService.add(hazardID, description, controlGroup, associatedCause);
+					createJson(jsonResponse, "newControlID", newControl.getID());
 				}
 			} else {
 				boolean existing = Boolean.parseBoolean(req.getParameter("existing"));
@@ -150,7 +160,7 @@ public class ControlsServlet extends HttpServlet {
 					String controlIDStr = req.getParameter("controlID");
 					int controlID = Integer.parseInt(controlIDStr);
 					String transferReason = req.getParameter("transferReason");
-					controlService.updateTransferredControl(controlID, transferReason);
+					controlService.updateTransferredControl(controlID, transferReason, associatedCause);
 				} else {
 					// Control transfer creation
 					int targetCauseID = Integer.parseInt(req.getParameter("controlCauseList"));
@@ -163,15 +173,18 @@ public class ControlsServlet extends HttpServlet {
 					int originHazardID = Integer.parseInt(req.getParameter("hazardID"));
 					String transferReason = req.getParameter("transferReason");
 
+					Hazard_Controls newControl;
 					if (targetControlID == 0) {
-						controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason);
+						newControl = controlService.addCauseTransfer(originHazardID, targetCauseID, transferReason,
+								associatedCause);
 					} else {
-						controlService.addControlTransfer(originHazardID, targetControlID, transferReason);
+						newControl = controlService.addControlTransfer(originHazardID, targetControlID, transferReason,
+								associatedCause);
 					}
+					createJson(jsonResponse, "newControlID", newControl.getID());
 				}
 			}
 
-			JSONObject jsonResponse = new JSONObject();
 			createJson(jsonResponse, "updateSuccess", true);
 			createJson(jsonResponse, "errorMessage", "none");
 			res.setContentType("application/json");
@@ -207,23 +220,10 @@ public class ControlsServlet extends HttpServlet {
 		}
 	}
 
-	private Integer[] changeStringArray(String[] array) {
-		if (array == null) {
-			return null;
-		} else {
-			Integer[] intArray = new Integer[array.length];
-			for (int i = 0; i < array.length; i++) {
-				intArray[i] = Integer.parseInt(array[i]);
-			}
-			return intArray;
-		}
-	}
-
 	private JSONObject createJson(JSONObject json, String key, Object value) {
 		try {
 			json.put(key, value);
 		} catch (JSONException e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 		return json;

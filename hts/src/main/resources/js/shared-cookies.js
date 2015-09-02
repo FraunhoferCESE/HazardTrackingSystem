@@ -22,9 +22,9 @@ function modifyHTSCookieOpenCauses(operation, causeID, existingCausesCount) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_CAUSES.push(causeID);
+			htsCookieJson.OPEN_CAUSES.push(parseInt(causeID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_CAUSES.indexOf(causeID);
+			var indexOfID = htsCookieJson.OPEN_CAUSES.indexOf(parseInt(causeID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_CAUSES.splice(indexOfID, 1);
 			}
@@ -61,89 +61,34 @@ function renameCausePageExpandButton(existingCausesCount) {
 }
 
 // Controls
-function modifyHTSCookieOpenControls(operation, controlID, existingControlsCount) {
+function modifyHTSCookieOpenControls(operation, controlID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_CONTROLS.push(controlID);
+			htsCookieJson.OPEN_CONTROLS.push(parseInt(controlID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(controlID);
+			var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(parseInt(controlID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_CONTROLS.splice(indexOfID, 1);
 			}
 		}
 		AJS.Cookie.save("HTS_COOKIE", JSON.stringify(htsCookieJson));
-		// Check if Expand All button needs renaming
-		if (existingControlsCount !== null) {
-			renameControlPageExpandButton(existingControlsCount);
-		}
 	}
 }
 
-
-
-function openHTSCookieOpenControls() {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		for (var i = 0; i < htsCookieJson.OPEN_CONTROLS.length; i++) {
-			var controlID = htsCookieJson.OPEN_CONTROLS[i];
-			var buttonElement = AJS.$("#ControlTableEntryID" + controlID + " td:first-child").children("div");
-			var contentElement = AJS.$("#ControlTableEntryContentID" + controlID);
-			openPropertyElement(buttonElement, contentElement);
-		}
-	}
-}
-
-function renameControlPageExpandButton(existingControlsCount) {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		if (existingControlsCount === htsCookieJson.OPEN_CONTROLS.length) {
-			AJS.$("#ControlPageExpandAllButton").val("Close All");
-		} else {
-			AJS.$("#ControlPageExpandAllButton").val("Expand All");
-		}
-	}
-}
 
 // Verifications
-function modifyHTSCookieOpenVerifications(operation, verificationID, existingVerificationsCount) {
+function modifyHTSCookieOpenVerifications(operation, verificationID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		if (operation === "open") {
-			htsCookieJson.OPEN_VERIFICATIONS.push(verificationID);
+			htsCookieJson.OPEN_VERIFICATIONS.push(parseInt(verificationID));
 		} else {
-			var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(verificationID);
+			var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(parseInt(verificationID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_VERIFICATIONS.splice(indexOfID, 1);
 			}
 		}
 		AJS.Cookie.save("HTS_COOKIE", JSON.stringify(htsCookieJson));
-		// Check if Expand All button needs renaming
-		if (existingVerificationsCount !== null) {
-			renameVerificationPageExpandButton(existingVerificationsCount);
-		}
-	}
-}
-
-function openHTSCookieOpenVerifications() {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		for (var i = 0; i < htsCookieJson.OPEN_VERIFICATIONS.length; i++) {
-			var verificationID = htsCookieJson.OPEN_VERIFICATIONS[i];
-			var buttonElement = AJS.$("#VerificationTableEntryID" + verificationID + " td:first-child").children("div");
-			var contentElement = AJS.$("#VerificationTableEntryContentID" + verificationID);
-			openPropertyElement(buttonElement, contentElement);
-		}
-	}
-}
-
-function renameVerificationPageExpandButton(existingVerificationsCount) {
-	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
-		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		if (existingVerificationsCount === htsCookieJson.OPEN_VERIFICATIONS.length) {
-			AJS.$("#VerificationPageExpandAllButton").val("Close All");
-		} else {
-			AJS.$("#VerificationPageExpandAllButton").val("Expand All");
-		}
 	}
 }

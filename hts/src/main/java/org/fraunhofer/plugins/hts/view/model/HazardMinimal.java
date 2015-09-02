@@ -1,6 +1,23 @@
 package org.fraunhofer.plugins.hts.view.model;
 
+import java.util.Date;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.fraunhofer.plugins.hts.model.Hazards;
+
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.project.Project;
+
+@XmlRootElement(name = "HazardJsonDT")
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HazardMinimal {
+	
+	private static final String baseurl = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+			
 	private int hazardID;
 	private String hazardTitle;
 	private String hazardNumber;
@@ -8,10 +25,10 @@ public class HazardMinimal {
 	private String jiraSubtaskURL;
 	private String missionTitle;
 	private String jiraProjectURL;
-	private String revisionDate;
+	private Date revisionDate;
 	
 	public HazardMinimal(int hazardID, String hazardTitle, String hazardNumber, String jiraSubtaskSummary,
-			String jiraSubtaskURL, String missionTitle, String jiraProjectURL, String lastRevision) {
+			String jiraSubtaskURL, String missionTitle, String jiraProjectURL, Date lastRevision) {
 		this.hazardID = hazardID;
 		this.hazardTitle = hazardTitle;
 		this.hazardNumber = hazardNumber;
@@ -50,8 +67,14 @@ public class HazardMinimal {
 		return jiraProjectURL;
 	}
 
-	public String getRevisionDate() {
+	public Date getRevisionDate() {
 		return revisionDate;
 	}
-
+	
+	public static HazardMinimal create(Hazards hazard, Project jiraProject, Issue jiraSubtask) {
+		return new HazardMinimal(hazard.getID(), hazard.getHazardTitle(), hazard.getHazardNumber(),
+				jiraSubtask.getSummary(),
+				baseurl + "/browse/" + jiraProject.getKey() + "-" + jiraSubtask.getNumber(), jiraProject.getName(),
+				baseurl + "/browse/" + jiraProject.getKey(), hazard.getRevisionDate());
+	}
 }

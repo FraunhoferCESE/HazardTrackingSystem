@@ -3,42 +3,64 @@ console.log("=== control-page.js ===");
 var EXISTING_CONTROLS_SERIALIZED = null;
 
 function initializeControlPage() {
-	if (INIT.CONTROLS === true) {
-		INIT.CONTROLS = false;
-		initControlPageClickEvents();
-	}
-	initControlPageMultiSelectes();
-	initControlPageDateModification();
-	EXISTING_CONTROLS_SERIALIZED = serializeExistingControls();
+	initControlPageClickEvents();
+	
+	EXISTING_CONTROLS_SERIALIZED = {};
+	AJS.$(".ControlPageFormExisting").each(function () {
+		var controlID = AJS.$(this).find("[name='controlID']").val();
+		var serialized = AJS.$(this).serialize();
+		EXISTING_CONTROLS_SERIALIZED[controlID] = serialized;
+	});
 
-	// Calling functions in shared-cookies.js file
-	var existingControlsCount = AJS.$(".ControlTableToggle").length;
-	openHTSCookieOpenControls(existingControlsCount);
-	renameControlPageExpandButton(existingControlsCount);
+	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
+		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
+		for (var i = 0; i < htsCookieJson.OPEN_CONTROLS.length; i++) {
+			var controlID = htsCookieJson.OPEN_CONTROLS[i];
+			
+			var controlToggle = AJS.$("#ControlTableEntryID" + controlID + " > span.ControlTableToggle");
+			if(controlToggle.length > 0) {
+				var controlDisplay = AJS.$("#ControlTableEntryContentID" + controlID);
+				openForm(controlToggle, controlDisplay);
+			}
+		}
+		
+//		AJS.$(".ControlCauseTableToggle").each(function () {
+//			if(!AJS.$(this).parent().parent().find("[id^='ControlTableEntryContentID']:visible").length) {
+//				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+//			}
+//		});
+	}
 }
 
 function initControlPageClickEvents() {
 	
+	initializeFormToggles();
+	
+	// Make sure cause is opened when user clicks on a cause link
+	AJS.$("div.causeHeader > span.causeNumber > a").on("click",function() {
+		var causeID = AJS.$(this).attr("causeID");
+		modifyHTSCookieOpenCauses("open", causeID, null);
+	});
+	
 	//when doing a control transfer, automatically expand the targetcause on the cause page
-	AJS.$(".controlTransferLink").click(function(event) {
+	AJS.$(".controlTransferLink").on("click",function(event) {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 		var targetType = AJS.$(this).attr("targetType");
 		
-
 	    initHTSCookie();
 	    if(targetType === "CAUSE"){
 	    	modifyHTSCookieOpenCauses("open", targetID, null);
 	    }
 	    else{
-	    	modifyHTSCookieOpenControls("open", targetID, null);
+	    	modifyHTSCookieOpenControls("open", targetID);
 	    }
 	    
 	    // CAll the shared-cookes.js code that will set the user's cookie to expand Cause Number on HazardNumber 
 	});
 	
 	// links to associated verifications to a cause
-	AJS.$(".verificationLink").click(function(event) {
+	AJS.$(".verificationLink").on("click",function(event) {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 
@@ -47,16 +69,16 @@ function initControlPageClickEvents() {
 	});
 	
 	// Clear new Control form
-	AJS.$("#ControlPageClearNew").live("click", function() {
+	AJS.$("#ControlPageClearNew").on("click", function() {
 		var formElement = AJS.$("#ControlPageFormAddNew");
 		AJS.$(formElement).find("#controlDescription").val("");
 		AJS.$(formElement).find("#controlGroup").val("").trigger('chosen:updated');
-		var multiSelectElement = AJS.$("#ControlPageFormAddNewMultiSelect");
-		AJS.$(multiSelectElement).find(".RemoveAll").trigger("click");
+		AJS.$(formElement).find("#controlCauseAssociation").val("");
+		AJS.$(formElement).find("[data-error='controlDescription']").hide();
 	});
 
 	// Clear new transfer Control form
-	AJS.$("#ControlPageClearTransfer").live("click", function() {
+	AJS.$("#ControlPageClearTransfer").on("click", function() {
 		AJS.$("#ControlPageCauseTransferContainer").hide();
 		AJS.$("#ControlPageCauseTransferContainer").children().remove();
 		AJS.$("#ControlPageControlTransferContainer").hide();
@@ -64,68 +86,33 @@ function initControlPageClickEvents() {
 		var formElement = AJS.$("#ControlPageFormAddTransfer");
 		AJS.$(formElement).find("#transferReason").val("");
 		AJS.$(formElement).find("#controlHazardList").val("").trigger('chosen:updated');
+		AJS.$(formElement).find("#controlCauseAssociation").val("");
+		AJS.$(formElement).find("[data-error='controlCauseList']").hide();
+		AJS.$(formElement).find("[data-error='transferToCauseinCurrentHazard']").hide();
 	});
 
 	// Add new control click event
-	AJS.$("#ControlPageAddNewControl").live("click", function() {
-		// Calling function in shared-cookies.js file
-		toggleOpenCloseIcon(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+	AJS.$("#ControlPageAddNewControl").on("click", function() {
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+		}
+		else {
+			closeForm(AJS.$(this), AJS.$("#ControlPageNewContainer"));
+		}
 	});
 
 	// Add new transfer click event
-	AJS.$("#ControlPageAddTransfer").live("click", function() {
-		// Calling function in shared-cookies.js file
-		toggleOpenCloseIcon(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
-	});
-
-	// Open/close on existing control
-	AJS.$(".ControlTableToggle").live("click", function() {
-		var elementID = AJS.$(this).parent().parent().attr("id");
-		var controlID = elementID.split("ControlTableEntryID")[1];
-		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
-		var operation = toggleOpenCloseIcon(AJS.$(this), displayElement);
-		var existingControlCount = AJS.$(".ControlTableToggle").length;
-		// Calling function in shared-cookies.js file
-		modifyHTSCookieOpenControls(operation, controlID, existingControlCount);
-	});
-
-	// Expand All/Close All controls
-	AJS.$("#ControlPageExpandAllButton").live("click", function() {
-		var operation = AJS.$(this).val();
-		var buttonElements = AJS.$(".ControlTableToggle");
-		var existingControlsCount = AJS.$(".ControlTableToggle").length;
-
-		if (operation === "Expand All") {
-			buttonElements.each(function () {
-				if (AJS.$(this).hasClass("aui-iconfont-add")) {
-					AJS.$(this).removeClass("aui-iconfont-add");
-					AJS.$(this).addClass("aui-iconfont-devtools-task-disabled");
-					var elementID = AJS.$(this).parent().parent().attr("id");
-					var controlID = elementID.split("ControlTableEntryID")[1];
-					AJS.$("#ControlTableEntryContentID" + controlID).show();
-					// Calling function in shared-cookies.js file
-					modifyHTSCookieOpenControls("open", controlID, null);
-				}
-			});
-		} else {
-			buttonElements.each(function () {
-				if (AJS.$(this).hasClass("aui-iconfont-devtools-task-disabled")) {
-					AJS.$(this).removeClass("aui-iconfont-devtools-task-disabled");
-					AJS.$(this).addClass("aui-iconfont-add");
-					var elementID = AJS.$(this).parent().parent().attr("id");
-					var controlID = elementID.split("ControlTableEntryID")[1];
-					AJS.$("#ControlTableEntryContentID" + controlID).hide();
-					// Calling function in shared-cookies.js file
-					modifyHTSCookieOpenControls("close", controlID, null);
-				}
-			});
+	AJS.$("#ControlPageAddTransfer").on("click", function() {
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
 		}
-		// Calling function in shared-cookies.js file
-		renameControlPageExpandButton(existingControlsCount);
+		else {
+			closeForm(AJS.$(this), AJS.$("#ControlPageTransferContainer"));
+		}
 	});
-
+	
 	// Save new control
-	AJS.$(".ControlPageSaveAllChanges").live("click", function() {
+	AJS.$(".ControlPageSaveAllChanges").on("click", function() {
 		var result = {
 			existingPost: false,
 			existingDelete: false,
@@ -202,23 +189,19 @@ function initControlPageClickEvents() {
 
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
-			var causes = getAllCausesWithinHazard(hazardID);
-			var html = "<label class='popupLabels' for='controlCauseList'>Hazard Causes</label><select class='select long-field' name='controlCauseList' id='controlCauseList'>";
+			var causes = getAllCausesWithinHazard(hazardID, false);
+			var html = "<label class='popupLabels' for='controlCauseList'>Transfer to Cause</label>";
 			if (causes.length !== 0) {
+				html += "<select class='select long-field' name='controlCauseList' id='controlCauseList'>";
 				html += "<option value=''>-Select Cause-</option>";
 				for (var i = 0; i < causes.length; i++) {
-					var optionText;
-					if (causes[i].transfer != true) {
-						optionText = causes[i].causeNumber + " - " + causes[i].text;
-						html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
-					}
-					
+					var optionText = causes[i].causeNumber + " - " + causes[i].text;
+					html += "<option value=" + causes[i].causeID + ">" + manipulateTextLength(optionText, 85) + "</option>";
 				}
 				html += "</select>";
 				AJS.$(causeContainer).append(html);
 			} else {
-				AJS.$(causeContainer).append("<span>This Hazard Report has no Causes. No Control Transfer can be created.</span>");
-
+				AJS.$(causeContainer).append("<span class='ConfirmDialogErrorText'>This Hazard has no non-transferred Causes. No transfer can be created.</span>");
 			}
 			AJS.$(causeContainer).show();
 		} else {
@@ -232,21 +215,37 @@ function initControlPageClickEvents() {
 		AJS.$(controlContainer).children().remove();
 		var causeID = AJS.$(this).val();
 		if (causeID !== "") {
-			var controls = getAllControlsWithinCause(causeID);
-			var html = "<label class='popupLabels' for='controlControlList'>Hazard Controls</label><select class='select long-field' name='controlControlList' id='controlControlList'>";
+			var controls = getAllControlsWithinCause(causeID, false);
+			var html = "<label class='popupLabels' for='controlControlList'>Transfer to Control</label><select class='select long-field' name='controlControlList' id='controlControlList'>";
 			if (controls.length !== 0) {
-				html += "<option value=''>-Link to all Controls in selected Hazard Report-</option>";
-				for (var i = 0; i < controls.length; i++) {
-					var optionText;
-					if (controls[i].transfer != true) {
-						optionText = controls[i].controlNumber + " - " + controls[i].text;
-						html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+				if(AJS.$("#controlHazardList").val() == AJS.$("hazard").attr("currentId")) {
+					for (var i = 0; i < controls.length; i++) {
+						var optionText;
+						if (controls[i].transfer != true) {
+							optionText = controls[i].controlNumber + " - " + controls[i].text;
+							html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+						}
+					}
+				}
+				else {
+					html += "<option value=''>-Link to all Controls in selected Cause-</option>";
+					for (var i = 0; i < controls.length; i++) {
+						var optionText;
+						if (controls[i].transfer != true) {
+							optionText = controls[i].controlNumber + " - " + controls[i].text;
+							html += "<option value=" + controls[i].controlID + ">" + manipulateTextLength(optionText, 85) + "</option>";
+						}
 					}
 				}
 				html += "</select>";
 				AJS.$(controlContainer).append(html);
 			} else {
-				AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no Controls)</div>");
+				if(AJS.$("#controlHazardList").val() == AJS.$("hazard").attr("currentId")) {
+					AJS.$(controlContainer).append("<span class='ConfirmDialogErrorText'>No non-transferred controls are available for this cause.</span>");
+				}
+				else {
+					AJS.$(controlContainer).append("<label class='popupLabels' for='controlControlList'>Hazard Controls</label><div>-Link to all Controls in selected Cause- (Selected Cause currently has no non-transferred Controls)</div>");
+				}
 			}
 			AJS.$(controlContainer).show();
 		} else {
@@ -276,46 +275,71 @@ function initControlPageClickEvents() {
 	});
 }
 
-function initControlPageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
+function initializeFormToggles() {
+	// Open/close on a cause header
+	AJS.$(".ControlCauseTableToggle").on("click", function() {
+		var displayElement = AJS.$(this).parent().siblings('ul');
+		if(!isOpen(AJS.$(this))) {			
+			openForm(AJS.$(this), displayElement);
+		}
+		else {
+			AJS.$(this).parent().parent().find(".ControlTableToggle").each(function () {
+				var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+				var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+				closeForm(AJS.$(this), controlDisplayElement);
+				modifyHTSCookieOpenControls("close", controlID);
+			});
+			
+			closeForm(AJS.$(this), displayElement);
+		}
 	});
-}
-
-function initControlPageMultiSelectes() {
-	AJS.$(".controlCauses").multiselect2side({
-		selectedPosition: 'right',
-		moveOptions: false,
-		labelsx: '',
-		labeldx: '',
-		'search': 'Search: ',
-		autoSort: true,
-		autoSortAvailable: true
+	
+	// Open/close on existing control
+	AJS.$(".ControlTableToggle").on("click", function() {
+		var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+		var displayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+		if(!isOpen(AJS.$(this))) {
+			openForm(AJS.$(this),displayElement);
+			modifyHTSCookieOpenControls("open", controlID);
+		}
+		else {			
+			closeForm(AJS.$(this),displayElement);
+			modifyHTSCookieOpenControls("close", controlID);
+		}
 	});
 
-	// Adjust the CSS
-	var multiSelectDivs = AJS.$(".ms2side__div");
-	AJS.$(multiSelectDivs).each(function() {
-		AJS.$(this).children(":nth-child(1)").children(":nth-child(1)").css("padding-bottom", "3px");
-		AJS.$(this).children(":nth-child(2)").css("padding-top", "12px");
-		AJS.$(this).children(":nth-child(3)").css("padding-top", "28px");
-	});
-}
-
-function serializeExistingControls() {
-	if (AJS.$("#ControlPageTable").is(":visible")) {
-		var serializedObj = {};
-		AJS.$(".ControlPageFormExisting").each(function () {
-			var controlID = AJS.$(this).find("[name='controlID']").val();
-			var serialized = AJS.$(this).serialize();
-			serializedObj[controlID] = serialized;
+	// Expand All button click
+	AJS.$("#ControlPageExpandAllButton").on("click", function() {
+		AJS.$(".ControlCauseTableToggle").each(function() {
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+			}
+		});	
+		
+		AJS.$(".ControlTableToggle").each(function() {
+			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$("#ControlTableEntryContentID" + controlID));
+				modifyHTSCookieOpenControls("open", controlID);
+			}
 		});
-		return serializedObj;
-	} else {
-		return null;
-	}
+	});
+	
+	AJS.$("#ControlPageCloseAllButton").on("click", function() {
+		AJS.$(".ControlTableToggle").each(function (index) {
+			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
+			var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
+			closeForm(AJS.$(this), controlDisplayElement);
+			modifyHTSCookieOpenControls("close", controlID);
+		});
+		
+		AJS.$(".ControlCauseTableToggle").each(function() {
+			if(isOpen(AJS.$(this))) {
+				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
+			}
+		});	
+	});
+	
 }
 
 function existingControlFormValidation() {
@@ -360,7 +384,7 @@ function addNewControlFormValidation() {
 	var validated = false;
 	if (AJS.$(formElement).find("#controlDescription").val() !== "" ||
 		AJS.$(formElement).find("#controlGroup").val() !== "" ||
-		AJS.$(formElement).find("#controlCausesms2side__dx").children().length !== 0) {
+		AJS.$(formElement).find("#controlCauseAssociation").val() !== "") {
 		dirty = true;
 	}
 	if (dirty === true) {
@@ -380,30 +404,41 @@ function addTransferControlFormValidation() {
 
 	var hazardListElement = AJS.$(formElement).find("#controlHazardList").val();
 	var causeListElement = AJS.$(formElement).find("#controlCauseList").val();
+	var controlListElement = AJS.$(formElement).find("#controlControlList").val();
 	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
+	
+	var controlAssociationElement = AJS.$(formElement).find("#controlCauseAssociation").val();
+	if(controlAssociationElement !== undefined && controlAssociationElement !== "") {
+		dirty = true;
+	}
 
 	if (hazardListElement !== undefined && causeListElement !== undefined && transferReasonElement !== undefined) {
 		if (hazardListElement !== "" || causeListElement !== "" || transferReasonElement !== "") {
 			dirty = true;
 		}
-		if (dirty === true) {
-			if (causeListElement === "") {
-				AJS.$(formElement).find("[data-error='controlCauseList']").show();
-			} else {
-				validated = true;
-			}
-		}
-		return {"dirty" : dirty, "validated" : validated};
-	} else {
-		return {"dirty" : false, "validated" : false};
 	}
+	
+	if (dirty === true) {
+		if(causeListElement === undefined || causeListElement === "") {
+			AJS.$(formElement).find("[data-error='controlCauseList']").show();
+		} else if (hazardListElement === AJS.$("hazard").attr("currentId")
+				&& (controlListElement === undefined || controlListElement === "")) {
+			AJS.$(formElement).find("[data-error='transferToCauseinCurrentHazard']").show();
+		} else {
+			validated = true;
+		}
+	}
+	return {"dirty" : dirty, "validated" : validated};
 }
 
 function postFormToControlServlet(formElement) {
-	AJS.$(formElement).ajaxSubmit({
+	AJS.$(formElement).ajaxSubmit({		
 		async: false,
 		success: function(data) {
 			console.log("SUCCESS");
+			if(data.newControlID) {
+				modifyHTSCookieOpenControls("open", data.newControlID);
+			}
 		},
 		error: function(error) {
 			// TODO:
@@ -536,7 +571,7 @@ function postDeleteToControlServlet(controlIDToDelete, reason) {
 		url: "controls?id=" + controlIDToDelete + "&reason=" + reason,
 		success: function(data) {
 			console.log("SUCCESS");
-			modifyHTSCookieOpenControls("close", controlIDToDelete, null);
+			modifyHTSCookieOpenControls("close", controlIDToDelete);
 		},
 		error: function(data) {
 			console.log("ERROR");

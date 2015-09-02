@@ -1,9 +1,10 @@
 <tr id="CauseTableEntryID$cause.getID()">
 	<td class="HazardPropertyTableTd">
+		<a name="causeID$cause.getID()"></a>
 		<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
 	</td>
 	<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
-	<td class="HazardPropertyTableTd">$cause.getTitle()</td>
+	<td class="HazardPropertyTableTd">#substr($cause.getTitle() 75)</td>
 	<td class="HazardPropertyTableTd">
 		#if (!$cause.getOwner() || $cause.getOwner() == "")
 			N/A
@@ -11,13 +12,13 @@
 			$cause.getOwner()
 		#end
 	</td>
-	<td class="HTSDate HazardPropertyTableTd">$cause.getLastUpdated()</td>
+	<td class="HazardPropertyTableTd">$dateFormatter.format($cause.getLastUpdated())</td>
 	<td class="HazardPropertyTableTd">
 		<input type="checkbox" value="$cause.getID()" class="CausePageDeleteBox">
 	</td>
 </tr>
 <tr id="CauseTableEntryContentID$cause.getID()" class="HazardPropertyContentRow">
-	<td colspan="100%">
+	<td colspan="100%">		
 		<div class="HazardPropertyContentHolder">
 			<form method="post" action="causes" class="aui CausePageFormExisting">
 				<input type="hidden" name="regular" id="regular" value="true">

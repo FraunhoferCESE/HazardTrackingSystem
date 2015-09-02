@@ -1,3 +1,12 @@
+#macro( substr $text $length)
+	#if($text.length() > $length)
+		#set( $endIndex = $length - 1)
+		$text.substring(0, $endIndex)...
+	#else
+		$text
+	#end
+#end
+
 <html>
 	<head>
 		<title>HTS</title>
@@ -31,6 +40,7 @@
 									</thead>
 									<tbody id="HazardPropertyTableBody">
 										#foreach ($cause in $causes)
+										
 											#if ($cause.getTransfer() != 0)
 												#parse("/templates/cause-existing-transfer.vm")
 											#else

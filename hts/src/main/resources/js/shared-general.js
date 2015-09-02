@@ -1,18 +1,17 @@
 console.log("=== shared-general.js ===");
 
-function formatDate(dateStrUnformatted) {
-	var dateObj = new Date(dateStrUnformatted);
-	var month = (dateObj.getMonth()+1) > 9 ? (dateObj.getMonth()+1) : "0" + (dateObj.getMonth()+1);
-	var day = (dateObj.getDate()) > 9 ? (dateObj.getDate()) : "0" + (dateObj.getDate());
-	var hours = (dateObj.getHours()) > 9 ? (dateObj.getHours()) : "0" + (dateObj.getHours());
-	var minutes = (dateObj.getMinutes()) > 9 ? (dateObj.getMinutes()) : "0" + (dateObj.getMinutes());
-	var dateStrFormatted =
-		month + "/" +
-		day + "/" +
-		dateObj.getFullYear() + " " +
-		hours + ":" +
-		minutes;
-	return dateStrFormatted;
+function openForm(toggleElement, displayElement) {
+	AJS.$(toggleElement).removeClass("aui-iconfont-add").addClass("aui-iconfont-devtools-task-disabled");
+	AJS.$(displayElement).show();
+}
+
+function closeForm(toggleElement, displayElement) {
+	AJS.$(toggleElement).removeClass("aui-iconfont-devtools-task-disabled").addClass("aui-iconfont-add");
+	AJS.$(displayElement).hide();
+}
+
+function isOpen(toggleElement) {
+	return AJS.$(toggleElement).hasClass("aui-iconfont-devtools-task-disabled");
 }
 
 function toggleOpenCloseIcon(clickedElement, displayElement) {

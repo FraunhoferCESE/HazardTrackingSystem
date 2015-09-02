@@ -1,3 +1,66 @@
+#macro( substr $text $length)
+	#if($text.length() > $length)
+		#set( $endIndex = $length - 1)
+		$text.substring(0, $endIndex)...
+	#else
+		$text
+	#end
+#end
+
+#macro( getCauseName $cause $length)
+	#if($cause.getTransfer() == 0)
+		#substr( $cause.getTitle() $length)
+	#else
+		#set ($theCause = $transferredCauses.get($cause.getID()))
+		#if ($theCause.getMovedProject())
+			&lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+	    #else
+			#if ($theCause.getTransferTargetType() == "CAUSE")
+				#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
+				#else
+					(TRANSFER) - $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
+				#end
+			#else
+				#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
+					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+				#else
+					(TRANSFER) - $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+				#end
+			#end
+		#end
+	#end
+#end
+
+#macro( getControlName $control $length)
+	#if($control.getTransfer() == 0)
+		#substr($control.getDescription() $length)
+	#else
+		#set ($theControl = $transferredControls.get($control.getID()))
+		#set( $targetCauseNum = "Orph")
+		#if ( $theControl.getTargetCauseNumber() > 0)
+			#set($targetCauseNum = $theControl.getTargetCauseNumber())
+		#end
+		#if ($theControl.getMovedProject())
+			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
+		#else	
+			#if ($theControl.getTransferTargetType() == "CONTROL")
+				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+				#else
+					(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+				#end
+			#else
+				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+				#else
+					(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+				#end
+			#end
+		#end
+	#end
+#end
+
 <html>
 	<head>
 		<title>HTS</title>
@@ -16,38 +79,236 @@
 							#if ($verifications.size() == 0)
 								<p>No Verifications have been created for this Hazard Report.</p>
 							#else
-								<table cellspacing="0" class="HazardPropertyTable" id="VerificationPageTable">
-									<thead>
-										<tr>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell1"></th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell2"></th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell3">Description</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell4">Status</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell5">Last updated</th>
-											<th class="HazardPropertyTableTh HazardPropertyTableCell6">
-												<div class="HazardPropertyTableCell6Img"></div>
-											</th>
-										</tr>
-									</thead>
-									<tbody id="HazardPropertyTableBody">
-										#foreach ($verification in $verifications)
-											#parse("/templates/verification-existing-regular.vm")
+								<div class="verificationListHeader">
+									<span class="headerDescription">Title</span>
+									<span class="headerDate">Last updated</span>
+									<span class="headerStatus">Status</span>
+									<span class="headerDelete"><div class="HazardPropertyTableCell6Img"></div></span>
+								</div>
+								<ul id="verificationsList">
+									#foreach ($cause in $causes)
+										#if(!$cause.getDeleteReason() )
+										#set( $numControls = 0 )
+										
+										#foreach ($control in $cause.getControls())
+											#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
+												#set( $numControls = $numControls + 1 )
+											#end
 										#end
-									</tbody>
-								</table>
+										<li>
+											 <div class="causeHeader" id="CauseTableEntryID$cause.getID()">
+												<span class="VerificationCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/collapse this cause</span>
+												<span class="causeNumber"><a href="causes?id=$hazard.getID()#causeID$cause.getID()" causeID="$cause.getID()">Cause $cause.getCauseNumber()</a> ($numControls)</span>
+												<span class="causeTitle">
+													#set($length = 75)
+													#if($cause.getTransfer() == 0)
+														#getCauseName($cause $length)
+													#else
+														#set ($theCause = $transferredCauses.get($cause.getID()))
+														#if ($theCause.isDeleted() == true)
+															<div class="HTSTransferDeletedOrigin">
+																#getCauseName($cause $length)
+															</div>
+														#else
+															#if ($theCause.getTransferTargetType() == "CAUSE")
+															<a href="causes?id=$!theCause.getTargetHazardID()" originID="$!theCause.getOriginID()" targetID="$!theCause.getTargetID()" class="transferLink" >
+															#else
+															<a href="hazards?id=$!theCause.getTargetHazardID()">
+															#end
+																#getCauseName($cause $length)
+															</a>
+														#end
+														
+													#end
+												</span>
+											</div>
+											
+											#if ($numControls > 0 )
+											<ul>												
+												#foreach ($control in $cause.getControls())
+													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
+														#set( $numVerifications = 0 )
+														#foreach ($verification in $control.getVerifications())
+															#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																#set( $numVerifications = $numVerifications + 1 )
+															#end
+														#end
+													<li>
+														<div class="controlHeader" id="ControlTableEntryID$control.getID()">
+															<a name="controlID$control.getID()"></a>
+															<span class="VerificationControlTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+															#set( $causeNum = "Orph" )
+															#if($cause)
+																#set( $causeNum = $cause.getCauseNumber() )
+															#end	
+															<span class="controlNumber"><a href="controls?id=$hazard.getID()#controlID$control.getID()" controlID="$control.getID()">Control $causeNum.$control.getControlNumber()</a> ($numVerifications)</span>
+															<span class="controlDescription">
+																#set( $length = 75)
+																#if($control.getTransfer() > 0)
+																	#if ($theControl.isDeleted() == true)
+																		<div class="HTSTransferDeletedOrigin">
+																			#getControlName($control $length)
+																		</div>
+																	#else
+																		#if ($theControl.getTransferTargetType() == "CONTROL")
+																			<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#else
+																			<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#end
+																		
+																		#getControlName($control $length)
+																		</a>
+																	#end			
+																#else
+																	#getControlName($control $length)
+																#end
+															</span>
+
+														</div>
+														#if($numVerifications > 0)
+														<ul>												
+															#foreach ($verification in $control.getVerifications())
+																#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																<li>
+																	#set( $activeCauses = $activeCauses + 1 )
+																	#if( $verification.getTransfer() > 0)
+																		Transfer verification
+																		##parse("/templates/verification-existing-transfer.vm")
+																	#else
+																		#parse("/templates/verification-existing-regular.vm")
+																	#end
+																</li>
+																#end												
+															#end
+														</ul>
+														#else
+															<span class="noVerificationsMessage">No verifications for this control.</span>
+														#end
+													</li>
+													#end												
+												#end
+											</ul>
+											#else
+												<span class="noControlsMessage">No controls for this cause.</span>
+											#end
+										</li>
+										#end
+									#end
+									#if($orphanControls.size() > 0 )
+										<li>
+											<div class="causeHeader" id="orphanControls">
+												<span class="VerificationCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+												<span class="causeNumber">Orphan Controls ($orphanControls.size())</span>												
+											</div>
+											<ul>												
+												#foreach ($control in $orphanControls)
+													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
+														#set( $numVerifications = 0 )
+														#foreach ($verification in $control.getVerifications())
+															#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																#set( $numVerifications = $numVerifications + 1 )
+															#end
+														#end
+													<li>
+														<div class="controlHeader" id="ControlTableEntryID$control.getID()">
+															<a name="controlID$control.getID()"></a>
+															<span class="VerificationControlTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+															<span class="controlNumber"><a href="controls?id=$hazard.getID()#controlID$control.getID()" controlID="$control.getID()">Control Orph.$control.getControlNumber()</a> ($numVerifications)</span>
+															<span class="controlDescription">
+																#set( $length = 75)
+																#if($control.getTransfer() > 0)
+																	#if ($theControl.isDeleted() == true)
+																		<div class="HTSTransferDeletedOrigin">
+																			#getControlName($control $length)
+																		</div>
+																	#else
+																		#if ($theControl.getTransferTargetType() == "CONTROL")
+																			<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#else
+																			<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#end
+																		
+																		#getControlName($control $length)
+																		</a>
+																	#end			
+																#else
+																	#getControlName($control $length)
+																#end
+															</span>
+														</div>
+														#if($numVerifications > 0)
+														<ul>												
+															#foreach ($verification in $control.getVerifications())
+																#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																<li>
+																	#if( $verification.getTransfer() > 0)
+																		Transfer verification
+																		##parse("/templates/verification-existing-transfer.vm")
+																	#else
+																		#parse("/templates/verification-existing-regular.vm")
+																	#end
+																</li>
+																#end												
+															#end
+														</ul>
+														#else
+															<span class="noVerificationsMessage">No verifications for this control.</span>
+														#end
+													</li>
+													#end												
+												#end
+											</ul>
+										</li>
+									#else
+										<span class="noControlsMessage">No controls for this cause.</span>
+									#end
+									
+									#if($orphanVerifications.size() > 0 )
+										<li>
+											<div class="causeHeader" id="orphanVerifications">
+												<span class="VerificationCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+												<span class="causeNumber">Orphan Verifications ($orphanVerifications.size())</span>												
+											</div>
+											
+											<ul>												
+												#foreach ($verification in $orphanVerifications)
+													#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+													<li>
+														#if( $verification.getTransfer() > 0)
+															Transfer verification
+															##parse("/templates/verification-existing-transfer.vm")
+														#else
+															#parse("/templates/verification-existing-regular.vm")
+														#end
+													</li>
+													#end												
+												#end
+											</ul>
+										<li>
+									#end
+								</ul>								
 								<div class="HazardPropertyTableButtonsContainer">
 									<input class="aui-button VerificationPageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
 									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
 									<input class="aui-button" type="button" value="Expand All" id="VerificationPageExpandAllButton" style="margin: 0">
+									<input class="aui-button" type="button" value="Close All" id="VerificationPageCloseAllButton" style="margin: 0">
 								</div>
 							#end
 							<div>
 								<div class="HazardPropertyHeadingTwo">
-									<span class="aui-icon aui-icon-small aui-iconfont-add" id="VerificationPageAddNewVerification"></span>
+									<span class="aui-icon aui-icon-small aui-iconfont-add" id="AddNewVerification"></span>
 									<span>Add New Verification</span>
 								</div>
 								<div id="VerificationPageNewContainer">
 									#parse("/templates/verification-new.vm")
+								</div>
+								<div class="HazardPropertyHeadingTwo">
+									<span class="aui-icon aui-icon-small aui-iconfont-add" id="VerificationPageAddTransfer"></span>
+									<span>Add Verification Transfer</span>
+								</div>
+								<div id="VerificationPageTransferContainer">
+									form for adding a verification transfer
+									##parse("/templates/control-transfer.vm")
 								</div>
 							</div>
 						</section>

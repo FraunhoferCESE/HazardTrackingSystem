@@ -7,7 +7,6 @@ function initializeCausePage() {
 		INIT.CAUSES = false;
 		initCausePageClickEvents();
 	}
-	initCausePageDateModification();
 	EXISTING_CAUSES_SERIALIZED = serializeExistingCauses();
 
 	// Calling functions in shared-cookies.js file
@@ -179,7 +178,7 @@ function initCausePageClickEvents() {
 		AJS.$(causeContainer).children().remove();
 		var hazardID = AJS.$(this).val();
 		if (hazardID !== "") {
-			var causes = getAllCausesWithinHazard(hazardID);
+			var causes = getAllCausesWithinHazard(hazardID, false);
 			var html = "<label class='popupLabels' for='causeList'>Hazard Causes</label><select class='select long-field' name='causeList' id='causeList'>";
 			if (causes.length !== 0) {
 				html += "<option value=''>-Link to all Causes in selected Hazard Report-</option>";
@@ -223,14 +222,6 @@ function initCausePageClickEvents() {
 		});
 	});
 	
-}
-
-function initCausePageDateModification() {
-	AJS.$(".HTSDate").each(function() {
-		var dateStrUnformatted = AJS.$(this).text();
-		var dateStrFormatted = formatDate(dateStrUnformatted);
-		AJS.$(this).text(dateStrFormatted);
-	});
 }
 
 function serializeExistingCauses() {
@@ -409,6 +400,12 @@ function openDeleteCauseDialog(causeIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
+		
+		var controls = getAllControlsWithinCause(causeIDsToDelete[i], true);
+		if(controls.length > 0) {
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This cause has "+controls.length+" control(s) that will be disassociated from this cause.</p></td></tr>";
+		}
+		
 		var transferOrigins = getTransferOrigins(causeIDsToDelete[i], "cause");
 		
 		if(transferOrigins.causes.length > 0 || transferOrigins.controls.length > 0) {

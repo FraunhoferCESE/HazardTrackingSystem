@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.fraunhofer.plugins.hts.model.CausesToHazards;
+import org.fraunhofer.plugins.hts.model.ControlToCause;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
+import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Risk_Categories;
 import org.fraunhofer.plugins.hts.model.Risk_Likelihoods;
@@ -114,11 +116,12 @@ public class CauseService {
 								CauseTransfer.createCauseToCauseTransfer(transfer, originCause, targetCause));
 					} else {
 
-						transferredCauses.put(
-								originCause.getID(),
-								CauseTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
-										.getProjectManager().getProjectObj(targetCause.getHazards()[0].getProjectID())
-										.getName()));
+						transferredCauses
+								.put(originCause.getID(),
+										CauseTransfer.createMovedProjectTransfer(transfer,
+												ComponentAccessor.getProjectManager()
+														.getProjectObj(targetCause.getHazards()[0].getProjectID())
+														.getName()));
 					}
 
 				} else {
@@ -128,10 +131,9 @@ public class CauseService {
 						transferredCauses.put(originCause.getID(),
 								CauseTransfer.createCauseToHazardTransfer(transfer, originCause, targetHazard));
 					} else {
-						transferredCauses.put(
-								originCause.getID(),
-								CauseTransfer.createMovedProjectTransfer(transfer, ComponentAccessor
-										.getProjectManager().getProjectObj(targetHazard.getProjectID()).getName()));
+						transferredCauses.put(originCause.getID(),
+								CauseTransfer.createMovedProjectTransfer(transfer, ComponentAccessor.getProjectManager()
+										.getProjectObj(targetHazard.getProjectID()).getName()));
 					}
 
 				}
@@ -182,6 +184,11 @@ public class CauseService {
 				removeTransfer(transfer.getID());
 				transfer.save();
 				cause.setTransfer(0);
+			}
+
+			for (Hazard_Controls control : cause.getControls()) {
+				ao.delete(ao.find(ControlToCause.class,
+						Query.select().where("CONTROL_ID=? AND CAUSE_ID=?", control.getID(), causeID)));
 			}
 			cause.save();
 		}

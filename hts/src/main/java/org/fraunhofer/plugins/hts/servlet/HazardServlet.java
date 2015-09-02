@@ -44,6 +44,8 @@ import com.google.common.collect.Maps;
 public final class HazardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	private static final String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
+
 	private final HazardGroupService hazardGroupService;
 	private final SubsystemService subsystemService;
 	private final ReviewPhaseService reviewPhaseService;
@@ -56,9 +58,8 @@ public final class HazardServlet extends HttpServlet {
 
 	public HazardServlet(HazardService hazardService, HazardGroupService hazardGroupService,
 			SubsystemService subsystemService, ReviewPhaseService reviewPhaseService,
-			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer,
-			TransferService transferService, ControlService controlService, CauseService causeService,
-			CauseService hazardCauseService) {
+			MissionPhaseService missionPhaseService, TemplateRenderer templateRenderer, TransferService transferService,
+			ControlService controlService, CauseService causeService, CauseService hazardCauseService) {
 		this.hazardService = checkNotNull(hazardService);
 		this.hazardGroupService = checkNotNull(hazardGroupService);
 		this.subsystemService = checkNotNull(subsystemService);
@@ -95,18 +96,17 @@ public final class HazardServlet extends HttpServlet {
 			} else {
 				try {
 					hazard = hazardService.getHazardById(hazardId);
-					if (hazard == null
-							|| !hazardService.hasHazardPermission(hazard.getProjectID(),
-									jiraAuthenticationContext.getUser())) {
+					if (hazard == null || !hazardService.hasHazardPermission(hazard.getProjectID(),
+							jiraAuthenticationContext.getUser())) {
 						error = true;
 						errorMessage = "Either this Hazard Report doesn't exist (it may have been deleted) or you ("
 								+ jiraAuthenticationContext.getUser().getUsername()
 								+ ") do not have permission to view/edit it.";
 					} else {
-						Project jiraProject = hazardService.getHazardProject(hazard);
-						Issue jiraSubtask = hazardService.getHazardSubTask(hazard);
+						Project jiraProject = ComponentAccessor.getProjectManager()
+								.getProjectObj(hazard.getProjectID());
+						Issue jiraSubtask = ComponentAccessor.getIssueManager().getIssueObject(hazard.getIssueID());
 
-						String baseURL = ComponentAccessor.getApplicationProperties().getString("jira.baseurl");
 						String jiraSubTaskSummary = jiraSubtask.getSummary();
 						String jiraSubtaskURL = baseURL + "/browse/" + jiraProject.getKey() + "-"
 								+ jiraSubtask.getNumber();
@@ -143,7 +143,8 @@ public final class HazardServlet extends HttpServlet {
 						context.put("jiraProjectName", jiraProjectName);
 						context.put("jiraProjectURL", jiraProjectURL);
 						context.put("nonAssociatedSubsystems", subsystemService.getRemaining(hazard.getSubsystems()));
-						context.put("hazardPreparer", hazardService.getHazardPreparerInformation(hazard));
+						context.put("hazardPreparer", jiraSubtask.getReporter().getDisplayName() + " ("
+								+ jiraSubtask.getReporter().getEmailAddress() + ")");
 						context.put("reviewPhases", reviewPhaseService.all());
 						context.put("nonAssociatedMissionPhases",
 								missionPhaseService.getRemaining(hazard.getMissionPhases()));
@@ -185,13 +186,13 @@ public final class HazardServlet extends HttpServlet {
 			String hazardNumber = req.getParameter("hazardNumber");
 			String version = req.getParameter("hazardVersionNumber");
 			String hazardTitle = req.getParameter("hazardTitle");
-			Subsystems[] subsystems = subsystemService.getSubsystemsByID(changeStringArray(req
-					.getParameterValues("hazardSubsystem")));
+			Subsystems[] subsystems = subsystemService
+					.getSubsystemsByID(changeStringArray(req.getParameterValues("hazardSubsystem")));
 			Review_Phases reviewPhase = reviewPhaseService.getReviewPhaseByID(req.getParameter("hazardReviewPhase"));
-			Mission_Phase[] missionPhases = missionPhaseService.getMissionPhasesByID(changeStringArray(req
-					.getParameterValues("hazardPhase")));
-			Hazard_Group[] hazardGroups = hazardGroupService.getHazardGroupsByID(changeStringArray(req
-					.getParameterValues("hazardGroup")));
+			Mission_Phase[] missionPhases = missionPhaseService
+					.getMissionPhasesByID(changeStringArray(req.getParameterValues("hazardPhase")));
+			Hazard_Group[] hazardGroups = hazardGroupService
+					.getHazardGroupsByID(changeStringArray(req.getParameterValues("hazardGroup")));
 			String safetyRequirements = req.getParameter("hazardSafetyRequirements");
 			String description = req.getParameter("hazardDescription");
 			String justification = req.getParameter("hazardJustification");
