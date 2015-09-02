@@ -122,8 +122,8 @@
 													#end
 												</span>
 											</div>
-											#set( $activeControls = 0 )
-											#if ($cause.getControls() )
+											
+											#if ($numControls > 0 )
 											<ul>												
 												#foreach ($control in $cause.getControls())
 													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
@@ -136,7 +136,7 @@
 													<li>
 														<div class="controlHeader" id="ControlTableEntryID$control.getID()">
 															<a name="controlID$control.getID()"></a>
-															<span class="VerificationControlTableToggle aui-icon aui-icon-small aui-iconfont-add">Expand/Collapse Form</span>
+															<span class="VerificationControlTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
 															#set( $causeNum = "Orph" )
 															#if($cause)
 																#set( $causeNum = $cause.getCauseNumber() )
@@ -165,6 +165,7 @@
 															</span>
 
 														</div>
+														#if($numVerifications > 0)
 														<ul>												
 															#foreach ($verification in $control.getVerifications())
 																#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
@@ -180,13 +181,14 @@
 																#end												
 															#end
 														</ul>
+														#else
+															<span class="noVerificationsMessage">No verifications for this control.</span>
+														#end
 													</li>
-													#set($activeControls = ($activeControls + 1))
 													#end												
 												#end
 											</ul>
-											#end
-											#if($activeControls == 0)
+											#else
 												<span class="noControlsMessage">No controls for this cause.</span>
 											#end
 										</li>
@@ -195,32 +197,101 @@
 									#if($orphanControls.size() > 0 )
 										<li>
 											<div class="causeHeader" id="orphanControls">
-												<span class="ControlCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/collapse this cause</span>
+												<span class="VerificationCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
 												<span class="causeNumber">Orphan Controls ($orphanControls.size())</span>												
 											</div>
-
 											<ul>												
 												#foreach ($control in $orphanControls)
-												<li>																								
 													#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
-														#set( $activeCauses = $activeCauses + 1 )
-														#if( $control.getTransfer() != 0)
-															#parse("/templates/control-existing-transfer.vm")
-														#else
-															#parse("/templates/control-existing-regular.vm")
+														#set( $numVerifications = 0 )
+														#foreach ($verification in $control.getVerifications())
+															#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																#set( $numVerifications = $numVerifications + 1 )
+															#end
 														#end
-													#end
-												</li>
+													<li>
+														<div class="controlHeader" id="ControlTableEntryID$control.getID()">
+															<a name="controlID$control.getID()"></a>
+															<span class="VerificationControlTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+															<span class="controlNumber"><a href="controls?id=$hazard.getID()#controlID$control.getID()" controlID="$control.getID()">Control Orph.$control.getControlNumber()</a> ($numVerifications)</span>
+															<span class="controlDescription">
+																#set( $length = 75)
+																#if($control.getTransfer() > 0)
+																	#if ($theControl.isDeleted() == true)
+																		<div class="HTSTransferDeletedOrigin">
+																			#getControlName($control $length)
+																		</div>
+																	#else
+																		#if ($theControl.getTransferTargetType() == "CONTROL")
+																			<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#else
+																			<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+																		#end
+																		
+																		#getControlName($control $length)
+																		</a>
+																	#end			
+																#else
+																	#getControlName($control $length)
+																#end
+															</span>
+														</div>
+														#if($numVerifications > 0)
+														<ul>												
+															#foreach ($verification in $control.getVerifications())
+																#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+																<li>
+																	#if( $verification.getTransfer() > 0)
+																		Transfer verification
+																		##parse("/templates/verification-existing-transfer.vm")
+																	#else
+																		#parse("/templates/verification-existing-regular.vm")
+																	#end
+																</li>
+																#end												
+															#end
+														</ul>
+														#else
+															<span class="noVerificationsMessage">No verifications for this control.</span>
+														#end
+													</li>
+													#end												
 												#end
 											</ul>
 										</li>
+									#else
+										<span class="noControlsMessage">No controls for this cause.</span>
+									#end
+									
+									#if($orphanVerifications.size() > 0 )
+										<li>
+											<div class="causeHeader" id="orphanVerifications">
+												<span class="VerificationCauseTableToggle aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">Expand/Collapse Form</span>
+												<span class="causeNumber">Orphan Verifications ($orphanVerifications.size())</span>												
+											</div>
+											
+											<ul>												
+												#foreach ($verification in $orphanVerifications)
+													#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
+													<li>
+														#if( $verification.getTransfer() > 0)
+															Transfer verification
+															##parse("/templates/verification-existing-transfer.vm")
+														#else
+															#parse("/templates/verification-existing-regular.vm")
+														#end
+													</li>
+													#end												
+												#end
+											</ul>
+										<li>
 									#end
 								</ul>								
 								<div class="HazardPropertyTableButtonsContainer">
-									<input class="aui-button ControlPageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
+									<input class="aui-button VerificationPageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
 									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
-									<input class="aui-button" type="button" value="Expand All" id="ControlPageExpandAllButton" style="margin: 0">
-									<input class="aui-button" type="button" value="Close All" id="ControlPageCloseAllButton" style="margin: 0">
+									<input class="aui-button" type="button" value="Expand All" id="VerificationPageExpandAllButton" style="margin: 0">
+									<input class="aui-button" type="button" value="Close All" id="VerificationPageCloseAllButton" style="margin: 0">
 								</div>
 							#end
 							<div>

@@ -7,12 +7,14 @@
 		#set( $causeNum = $cause.getCauseNumber() )
 	#end	
 	
-	#set ($controlNum = "Orph")
+	#set ($controlNum = "")
+	#set ($separator = "")
 	#if ($control)
 		#set ($controlNum = $control.getControlNumber() )
+		#set ($separator = "." )
 	#end
-
-	<span class="verificationNumber">Verification $causeNum.$controlNum.$verification.getVerificationNumber()</span>
+	
+	<span class="verificationNumber">Verification $causeNum$separator$controlNum.$verification.getVerificationNumber()</span>
 	<span class="verificationDescription">$verification.getVerificationDesc()</span>
 	<span class="verificationStatus">
 		#if (!$verification.getVerificationStatus())
@@ -25,7 +27,7 @@
 	<input type="checkbox" value="$verification.getID()" class="VerificationPageDeleteBox">
 </div>
 
-<div id="VerificationTableEntryContentID$verification.getID()" class="HazardPropertyContentRow">
+<div id="VerificationTableEntryContentID$verification.getID()" class="HazardPropertyContentRow" >
 	<div class="existingVerification">
 		<form method="post" action="verifications" class="aui VerificationPageFormExisting">
 			<input type="hidden" name="regular" id="regular" value="true">
@@ -79,12 +81,12 @@
 			</div>
 			<div class="field-group">
 				<label for="VerificationEstComplDate">Estimated Completion Date</label>
-				<input class="aui-date-picker VerificationDate" name="VerificationEstComplDate" id="VerificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
+				<input class="aui-date-picker VerificationDate" name="verificationEstComplDate" id="verificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
 			</div>
 			<div class="field-group" id="VerificationPageAssociateControlContainer">
 				#set( $associatedControl = false)
 				#foreach($control in $verification.getControls())
-					#set( $associatedControl = $cause )
+					#set( $associatedControl = $control )
 					#break
 				#end
 
@@ -112,7 +114,13 @@
 					#end
 					<optgroup label="Orphan controls">
 						#foreach($control in $orphanControls)
-						<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control $length)</option>
+							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
+								#if($associatedControl && $control.getID() == $associatedControl.getID())
+								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								#else
+								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								#end
+							#end
 						#end
 					</optgroup>
 				</select>

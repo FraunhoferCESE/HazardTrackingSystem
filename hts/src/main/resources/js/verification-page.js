@@ -4,7 +4,8 @@ var EXISTING_VERIFICATIONS_SERIALIZED = null;
 
 function initializeVerificationPage() {
 	initVerificationPageClickEvents();
-
+	initVerificationPageDateModification();
+	
 	EXISTING_VERIFICATIONS_SERIALIZED = [];
 	AJS.$(".VerificationPageFormExisting").each(function() {
 		var verificationID = AJS.$(this).find("[name='verificationID']").val();
@@ -15,22 +16,25 @@ function initializeVerificationPage() {
 	// TODO: This needs updated for Verification page
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
-		for (var i = 0; i < htsCookieJson.OPEN_CONTROLS.length; i++) {
-			var controlID = htsCookieJson.OPEN_CONTROLS[i];
+		for (var i = 0; i < htsCookieJson.OPEN_VERIFICATIONS.length; i++) {
+			var verificationID = htsCookieJson.OPEN_VERIFICATIONS[i];
 			
-			var controlToggle = AJS.$("#ControlTableEntryID" + controlID + " > span.ControlTableToggle");
-			if(controlToggle.length > 0) {
-				var controlDisplay = AJS.$("#ControlTableEntryContentID" + controlID);
-				openForm(controlToggle, controlDisplay);
+			var verificationToggle = AJS.$("#VerificationTableEntryID" + verificationID + " > span.VerificationTableToggle");
+			if(verificationToggle.length > 0) {
+				var verificationDisplay = AJS.$("#VerificationTableEntryContentID" + verificationID);
+				openForm(verificationToggle, verificationDisplay);
 			}
 		}
-		
-		AJS.$(".ControlCauseTableToggle").each(function () {
-			if(!AJS.$(this).parent().parent().find("[id^='ControlTableEntryContentID']:visible").length) {
-				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
-			}
-		});
 	}
+}
+
+function initVerificationPageDateModification() {
+	var estimatedCompletionDates = AJS.$(".VerificationDate");
+	estimatedCompletionDates.each(function () {
+		var defaultDateArr = (AJS.$(this).data("date")).split(" ");
+		var defaultDateStr = defaultDateArr[0];
+		AJS.$(this).val(defaultDateStr);
+	});
 }
 
 function initVerificationPageClickEvents() {
@@ -42,20 +46,25 @@ function initVerificationPageClickEvents() {
 	
 	// Make sure control is opened when user clicks on a control link
 	AJS.$("div.controlHeader > span.controlNumber > a").on("click",function() {
-		console.log("don't pack");
 		var controlID = AJS.$(this).attr("controlID");
 		modifyHTSCookieOpenControls("open", controlID);
 	});
 	
 	// Open/close on a cause header
 	AJS.$(".VerificationCauseTableToggle").on("click", function() {
-		var displayElement = AJS.$(this).parent().siblings('ul');
+		var displayElement = AJS.$(this).parent().next();
 		if(!isOpen(AJS.$(this))) {			
 			openForm(AJS.$(this), displayElement);
 		}
 		else {
-			// TODO: This should close controls and verifications. Close verifications in the cookie
 			AJS.$(this).parent().parent().find(".VerificationControlTableToggle").each(function () {
+				AJS.$(this).parent().parent().find(".VerificationTableToggle").each(function () {
+					var verificationID = AJS.$(this).parent().attr("verificationId");
+					var displayElement = AJS.$(this).parent().next();
+					closeForm(AJS.$(this), displayElement);
+					modifyHTSCookieOpenVerifications("close", verificationID);
+				});
+				
 				var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
 				var controlDisplayElement = AJS.$(this).parent().siblings('ul');
 				closeForm(AJS.$(this), controlDisplayElement);
@@ -74,7 +83,12 @@ function initVerificationPageClickEvents() {
 			openForm(AJS.$(this),displayElement);
 		}
 		else {	
-			// TODO: This needs to close child verifications and their cookies.
+			AJS.$(this).parent().parent().find(".VerificationTableToggle").each(function () {
+				var verificationID = AJS.$(this).parent().attr("verificationId");
+				var displayElement = AJS.$(this).parent().next();
+				closeForm(AJS.$(this), displayElement);
+				modifyHTSCookieOpenVerifications("close", verificationID);
+			});
 			closeForm(AJS.$(this),displayElement);
 		}
 	});
@@ -95,36 +109,43 @@ function initVerificationPageClickEvents() {
 	});
 
 	// Expand All button click
-	AJS.$("#ControlPageExpandAllButton").on("click", function() {
-		// TODO: This needs to open all causes, controls, and verifications. Verification cookie open.
-//		AJS.$(".VerificationCauseTableToggle").each(function() {
-//			if(!isOpen(AJS.$(this))) {
-//				openForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
-//			}
-//		});	
-//		
-//		AJS.$(".VerificationControlTableToggle").each(function() {
-//			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
-//			if(!isOpen(AJS.$(this))) {
-//				openForm(AJS.$(this), AJS.$("#ControlTableEntryContentID" + controlID));
-//			}
-//		});
+	AJS.$("#VerificationPageExpandAllButton").on("click", function() {
+		AJS.$(".VerificationTableToggle").each(function() {
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$(this).parent().next());
+				modifyHTSCookieOpenVerifications("open", AJS.$(this).parent().attr("verificationId"));
+			}
+		});	
+		
+		AJS.$(".VerificationControlTableToggle").each(function() {
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$(this).parent().next());
+			}
+		});
+		
+		AJS.$(".VerificationCauseTableToggle").each(function() {
+			if(!isOpen(AJS.$(this))) {
+				openForm(AJS.$(this), AJS.$(this).parent().next());
+			}
+		});
 	});
 	
-	AJS.$("#ControlPageCloseAllButton").on("click", function() {
-		// TODO: This needs to cascadingly close verifications - controls - causes. Verification cookie close.
-//		AJS.$(".ControlTableToggle").each(function (index) {
-//			var controlID = AJS.$(this).parent().attr("id").split("ControlTableEntryID")[1];
-//			var controlDisplayElement = AJS.$("#ControlTableEntryContentID" + controlID);
-//			closeForm(AJS.$(this), controlDisplayElement);
-//			modifyHTSCookieOpenControls("close", controlID);
-//		});
-//		
-//		AJS.$(".ControlCauseTableToggle").each(function() {
-//			if(isOpen(AJS.$(this))) {
-//				closeForm(AJS.$(this), AJS.$(this).parent().siblings('ul'));
-//			}
-//		});	
+	
+	AJS.$("#VerificationPageCloseAllButton").on("click", function() {
+		AJS.$(".VerificationTableToggle").each(function() {
+			closeForm(AJS.$(this), AJS.$(this).parent().next());
+			modifyHTSCookieOpenVerifications("close", AJS.$(this).parent().attr("verificationId"));
+		});	
+		
+		AJS.$(".VerificationControlTableToggle").each(function (index) {
+			closeForm(AJS.$(this), AJS.$(this).parent().next());;
+		});
+		
+		AJS.$(".VerificationCauseTableToggle").each(function() {
+			if(isOpen(AJS.$(this))) {
+				closeForm(AJS.$(this), AJS.$(this).parent().next());
+			}
+		});	
 	});
 	
 	// Clear new Verification form

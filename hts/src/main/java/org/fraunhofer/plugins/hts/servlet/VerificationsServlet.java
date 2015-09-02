@@ -62,7 +62,7 @@ public class VerificationsServlet extends HttpServlet {
 		this.verificationStatusService = checkNotNull(verificationStatusService);
 		this.verificationService = checkNotNull(verificationService);
 		this.controlService = checkNotNull(hazardControlService);
-		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
+		this.dateTimeFormatter = dateTimeFormatter;
 		this.causeService = causeService;
 	}
 
@@ -73,7 +73,7 @@ public class VerificationsServlet extends HttpServlet {
 
 		if (jiraAuthenticationContext.isLoggedInUser()) {
 			Map<String, Object> context = Maps.newHashMap();
-			context.put("dateFormatter", dateTimeFormatter);
+			context.put("dateFormatter", dateTimeFormatter.forLoggedInUser());
 
 			boolean error = false;
 			String errorMessage = null;
@@ -107,6 +107,7 @@ public class VerificationsServlet extends HttpServlet {
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
+						context.put("orphanVerifications", verificationService.getOrphanVerifications(hazard));
 						context.put("statuses", verificationStatusService.all());
 						context.put("types", verificationTypeService.all());
 						context.put("allHazardsBelongingToMission",

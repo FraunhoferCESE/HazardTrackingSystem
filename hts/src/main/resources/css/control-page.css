@@ -11,6 +11,11 @@
 ul {
 	list-style-type: none;
 	padding-left: 0;
+	margin-bottom: 2em;
+}
+
+ul#verificationsList div.causeHeader {
+	margin-bottom: 0;
 }
 
 div.associatedVerifications>p {
@@ -108,6 +113,11 @@ li input.ControlPageDeleteBox {
 }
 
 li span.noControlsMessage {
+	padding-left: 3em;	
+	font-style: italic;
+}
+
+span.noVerificationsMessage {
 	padding-left: 3em;	
 	font-style: italic;
 }
