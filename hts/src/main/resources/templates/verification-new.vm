@@ -59,11 +59,7 @@
 				#end
 			</optgroup>
 		</select>
-	</div>
-	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
-		<span class="HTSRequired">Please select a Control.</span>
-	</div>
-	
+	</div>	
 	<div class="field-group">
 		<input class="aui-button VerificationPageSaveAllChanges" type="button" value="Save All Changes" data-ops="new">
 		<input class="button" type="button" value="Clear" id="VerificationPageClearNew">

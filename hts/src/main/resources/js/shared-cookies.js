@@ -64,8 +64,11 @@ function renameCausePageExpandButton(existingCausesCount) {
 function modifyHTSCookieOpenControls(operation, controlID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
+		var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(parseInt(controlID));
 		if (operation === "open") {
-			htsCookieJson.OPEN_CONTROLS.push(parseInt(controlID));
+			if(indexOfID == -1) {
+				htsCookieJson.OPEN_CONTROLS.push(parseInt(controlID));
+			}
 		} else {
 			var indexOfID = htsCookieJson.OPEN_CONTROLS.indexOf(parseInt(controlID));
 			if (indexOfID > -1) {
@@ -81,10 +84,12 @@ function modifyHTSCookieOpenControls(operation, controlID) {
 function modifyHTSCookieOpenVerifications(operation, verificationID) {
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
+		var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(parseInt(verificationID));
 		if (operation === "open") {
-			htsCookieJson.OPEN_VERIFICATIONS.push(parseInt(verificationID));
+			if(indexOfID == -1) {
+				htsCookieJson.OPEN_VERIFICATIONS.push(parseInt(verificationID));
+			}
 		} else {
-			var indexOfID = htsCookieJson.OPEN_VERIFICATIONS.indexOf(parseInt(verificationID));
 			if (indexOfID > -1) {
 				htsCookieJson.OPEN_VERIFICATIONS.splice(indexOfID, 1);
 			}

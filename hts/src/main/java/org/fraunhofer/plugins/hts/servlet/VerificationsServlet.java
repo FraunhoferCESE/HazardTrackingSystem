@@ -107,6 +107,7 @@ public class VerificationsServlet extends HttpServlet {
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
+						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
 						context.put("orphanVerifications", verificationService.getOrphanVerifications(hazard));
 						context.put("statuses", verificationStatusService.all());
 						context.put("types", verificationTypeService.all());
@@ -181,8 +182,9 @@ public class VerificationsServlet extends HttpServlet {
 				if (!existing) {
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					verificationService.add(hazardID, description, status, type, responsibleParty, estimatedCompletionDate,
+					Verifications newVerification = verificationService.add(hazardID, description, status, type, responsibleParty, estimatedCompletionDate,
 							associatedControl);
+					createJson(jsonResponse, "newVerificationId", newVerification.getID());
 				} else {
 					String verificationIDStr = req.getParameter("verificationID");
 					int verificationID = Integer.parseInt(verificationIDStr);
@@ -191,7 +193,23 @@ public class VerificationsServlet extends HttpServlet {
 				}	
 			}
 			else {
-				//transfer
+				String transferReason = req.getParameter("transferReason");
+				
+				if(!existing) {
+					//transfer
+					String transferTarget = req.getParameter("transferVerificationList");
+					int targetID = Integer.parseInt(transferTarget);
+					String hazardIDStr = req.getParameter("hazardID");
+					int hazardID = Integer.parseInt(hazardIDStr);
+					Verifications newTransferredVerification = verificationService.addVerificationTransfer(hazardID, targetID, transferReason, associatedControl);
+					createJson(jsonResponse, "newVerificationID", newTransferredVerification.getID());
+				}
+				else {
+					String verificationIDStr = req.getParameter("verificationID");
+					int verificationID = Integer.parseInt(verificationIDStr);
+					verificationService.updateTransferredVerification(verificationID, transferReason, associatedControl);
+				}
+				
 			}
 			
 			createJson(jsonResponse, "updateSuccess", true);

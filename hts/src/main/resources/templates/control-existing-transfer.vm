@@ -15,7 +15,7 @@
 			</div>
 		#else
 			#if ($theControl.getTransferTargetType() == "CONTROL")
-				<a href="controls?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
+				<a href="controls?id=$!theControl.getTargetHazardID()#controlID$theControl.getID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 			#else
 				<a href="causes?id=$!theControl.getTargetHazardID()" targetID="$!theControl.getTargetID()" targetType="$!theControl.getTransferTargetType()" class="controlTransferLink">
 			#end

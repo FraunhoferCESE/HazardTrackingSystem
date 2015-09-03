@@ -58,4 +58,5 @@ public interface Hazard_Controls extends Entity {
 	
 	@ManyToMany(value = VerifcToControl.class)
 	Verifications[] getVerifications();
+	
 }

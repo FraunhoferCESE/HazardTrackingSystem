@@ -93,19 +93,26 @@ function assert(condition, message) {
 }
 
 function getTransferTargetDeleteWarning(targetElement, elementType) {
-	var html = "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
-				"<a href='hazards?id=" + targetElement.hazardId + "'>Hazard " + targetElement.hazardNumber + "</a>" +
-				" (owned by " + targetElement.hazardOwner + "): ";
+	var html = "";
 	
 	if(elementType == "cause") {
-		AJS.log(targetElement.causeID);
-		AJS.log(targetElement.causeNumber);
+		html += "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+		"<a href='hazards?id=" + targetElement.hazardId + "'>Hazard " + targetElement.hazardNumber + "</a>" +
+		" (owned by " + targetElement.hazardOwner + "): ";
 		html += "<a href='causes?id=" + targetElement.hazardId + "' class='openAssociatedCause' data-causeid='" + targetElement.causeID + "'>" +
 		"Cause " + targetElement.causeNumber + "</a>";
 	}
 	else if (elementType == "control") {
-		html += "<a href='controls?id=" + targetElement.hazardId + "' class='openAssociatedControl' data-controlid='" + targetElement.controlID + "'>" +
-		"Control " + targetElement.controlNumber + "</a>";
+		html += "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>" +
+		"<a href='hazards?id=" + targetElement.hazardId + "'>Hazard " + targetElement.hazardNumber + "</a>" +
+		" (owned by " + targetElement.hazardOwner + "): ";
+		html += "<a href='controls?id=" + targetElement.hazardId + "#controlID"+targetElement.controlID+"' class='openAssociatedControl' data-controlid='" + targetElement.controlID + "'>" +
+		"Control " + targetElement.fullyQualifiedNumber + "</a>";
+	}
+	else if (elementType == "verification") {
+		html += "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>";
+		html += "<a href='verifications?id=" + targetElement.hazardId + "#verificationID"+targetElement.verificationId+"' class='openAssociatedVerification' data-verificationid='" + targetElement.verificationId + "'>" +
+		"Verification " + targetElement.fullyQualifiedNumber + "</a>";
 	}
 	
 	html += "</p>";

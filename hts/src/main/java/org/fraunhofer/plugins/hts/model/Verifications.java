@@ -5,7 +5,6 @@ import java.util.Date;
 import net.java.ao.Entity;
 import net.java.ao.Implementation;
 import net.java.ao.ManyToMany;
-import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
@@ -20,7 +19,6 @@ import net.java.ao.schema.Table;
 @Implementation(VerificationsImpl.class)
 public interface Verifications extends Entity {
 
-	@NotNull
 	@StringLength(value = StringLength.UNLIMITED)
 	String getVerificationDesc();
 

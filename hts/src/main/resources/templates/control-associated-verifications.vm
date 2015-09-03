@@ -4,10 +4,17 @@
 						#foreach ($verification in $control.getVerifications())				
 							#if($velocityCount != 1  && !$verification.getDeleteReason())
 								#set ($vStatus = "N/A")
-								#if($verification.getVerificationStatus()) 
-									#set ($vStatus = $verification.getVerificationStatus().getLabel())
+								#if($verification.getTransfer() != 0)
+									#if($transferredVerifications.get($verification.getID()).getVerificationStatus())
+										#set ($vStatus = $transferredVerifications.get($verification.getID()).getVerificationStatus().getLabel())
+									#end
+								#else
+									#if($verification.getVerificationStatus()) 
+										#set ($vStatus = $verification.getVerificationStatus().getLabel())
+									#end
 								#end															
-								<li><a href="verifications?id=$hazard.getID()" targetID="$verification.getID()" class="verificationLink">Verification $verification.getVerificationNumber() (Status: $vStatus)</a> - #substr($verification.getVerificationDesc() 60)</li>
+								<li><a href="verifications?id=$hazard.getID()#verificationID$verification.getID()" targetID="$verification.getID()" class="verificationLink">Verification $verification.getVerificationNumber() (Status: $vStatus)</a> - #getVerificationName($verification 60)</li>
+								
 								#set ($totalDisplayed = $totalDisplayed + 1)
 							#end
 						#end

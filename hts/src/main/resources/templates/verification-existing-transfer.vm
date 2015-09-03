@@ -1,15 +1,20 @@
+#set ($theVerification = $transferredVerifications.get($verification.getID()).getTarget())
+
 <div class="verificationHeader" id="VerificationTableEntryID$verification.getID()" verificationId=$verification.getID()>
 	<a name="verificationID$verification.getID()"></a>
 	<span class="VerificationTableToggle aui-icon aui-icon-small aui-iconfont-add"></span>
 	<span class="verificationNumber">Verification #getVerificationNumber($verification)</span>
 	#set($length = 75)
-	<span class="verificationDescription">#getVerificationName( $verification $length)</span>
-	<span class="verificationStatus">
-		#if (!$verification.getVerificationStatus())
-			No status
-		#else
-			$verification.getVerificationStatus().getLabel()
-		#end
+	<span class="verificationDescription">
+	#if($theVerification.getDeleteReason() && !$theVerification.getDeleteReason().isEmpty())
+		<div class="HTSTransferDeletedOrigin">
+			(TRANSFER) Verification #getVerificationNumber($theVerification) - #getVerificationName( $theVerification $length)
+		</div>
+	#else
+		<a href="verifications?id=$hazard.getID()#verificationID$theVerification.getID()" targetID="$theVerification.getID()" class="verificationTransferLink">
+			(TRANSFER) Verification #getVerificationNumber($theVerification) - #getVerificationName( $theVerification $length)
+		</a>
+	#end
 	</span>
 	<span class="verificationDate">$dateFormatter.format($verification.getLastUpdated())</span>
 	<input type="checkbox" value="$verification.getID()" class="VerificationPageDeleteBox">
@@ -18,66 +23,38 @@
 <div id="VerificationTableEntryContentID$verification.getID()" class="HazardPropertyContentRow" >
 	<div class="existingVerification">
 		<form method="post" action="verifications" class="aui VerificationPageFormExisting">
-			<input type="hidden" name="regular" id="regular" value="true">
+			<input type="hidden" name="regular" id="regular" value="false">
 			<input type="hidden" name="existing" id="existing" value="true">
 			<input type="hidden" name="hazardID" id="hazardID" value="$hazard.getID()">
 			<input type="hidden" name="verificationID" id="verificationID" value="$verification.getID()">
+		
 			<div class="field-group">
-				<label for="verificationDescription"><span class="HTSRequired">* </span>Description</label>
-				<input class="text long-field" type="text" id="verificationDescription" name="verificationDescription" value="$!verification.getVerificationDesc()">
+				<label for="targetVerification">Target Verification</label>
+				<div class="field-group-static">
+					Verification #getVerificationNumber($theVerification)
+				</div>
 			</div>
-			<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="verificationDescription">
-				<span class="HTSRequired">This field is required.</span>
-			</div>
+			
 			<div class="field-group">
-				<label for="verificationStatus">Verification Status</label>
-				<select class="select" id="verificationStatus" name="verificationStatus">
-					#if (!$verification.getVerificationStatus())
-						<option value="" selected>-Select-</option>
-					#else
-						<option value="">-Select-</option>
-					#end
-					#foreach ($status in $statuses)
-						#if ($status.getID() == $verification.getVerificationStatus().getID())
-							<option value="$status.getID()" selected>$!status.getLabel()</option>
-						#else
-							<option value="$status.getID()">$!status.getLabel()</option>
-						#end
-					#end
-				</select>
+				<label for="targetVerificationDescription">Target Description</label>
+				<div class="field-group-static">
+					$theVerification.getVerificationDesc()
+				</div>
 			</div>
-			<div class="field-group">
-				<label for="verificationType">Verification Type</label>
-				<select class="select" id="verificationType" name="verificationType">
-					#if (!$verification.getVerificationType())
-						<option value="" selected>-Select-</option>
-					#else
-						<option value="">-Select-</option>
-					#end
-					#foreach ($type in $types)
-						#if ($type.getID() == $verification.getVerificationType().getID())
-							<option value="$type.getID()" selected>$!type.getLabel()</option>
-						#else
-							<option value="$type.getID()">$!type.getLabel()</option>
-						#end
-					#end
-				</select>
-			</div>
-			<div class="field-group">
-				<label for="verificationRespParty">Responsible Party</label>
-				<input class="text long-field" type="text" id="verificationRespParty" name="verificationRespParty" value="$!verification.getResponsibleParty()">
-			</div>
-			<div class="field-group">
-				<label for="VerificationEstComplDate">Estimated Completion Date</label>
-				<input class="aui-date-picker VerificationDate" name="verificationEstComplDate" id="verificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
-			</div>
-			<div class="field-group" id="VerificationPageAssociateControlContainer">
-				#set( $associatedControl = false)
-				#foreach($control in $verification.getControls())
-					#set( $associatedControl = $control )
-					#break
-				#end
 
+			<div class="field-group">
+				<label for="targetVerificationStatus">Target Status</label>
+				<div class="field-group-static">
+					#foreach ($status in $statuses)
+						#if ($status.getID() == $theVerification.getVerificationStatus().getID())
+							$status.getLabel()
+							#break
+						#end
+					#end
+				</div>
+			</div>		
+			
+			<div class="field-group" id="VerificationPageAssociateControlContainer">
 				<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
 				<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
 					<option value=''>-Select Control-</option>
@@ -112,6 +89,10 @@
 						#end
 					</optgroup>
 				</select>
+			</div>
+			<div class="field-group">
+				<label for="transferReason">Transfer Reason</label>
+				<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$!theVerification.getTransferReason()</textarea>
 			</div>
 		</form>
 	</div>

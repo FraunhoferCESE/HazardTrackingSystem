@@ -48,7 +48,6 @@ function initControlPageClickEvents() {
 		var targetID = AJS.$(this).attr("targetID");
 		var targetType = AJS.$(this).attr("targetType");
 		
-	    initHTSCookie();
 	    if(targetType === "CAUSE"){
 	    	modifyHTSCookieOpenCauses("open", targetID, null);
 	    }
@@ -64,8 +63,7 @@ function initControlPageClickEvents() {
 	    // Get the link that fired the click event
 		var targetID = AJS.$(this).attr("targetID");
 
-	    initHTSCookie();
-	    modifyHTSCookieOpenVerifications("open", targetID, null);
+	    modifyHTSCookieOpenVerifications("open", targetID);
 	});
 	
 	// Clear new Control form
@@ -505,8 +503,8 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 						"</td>" +
 					"</tr>";
 		}
-		var transferOrigins = getTransferOrigins(controlIDsToDelete[i], "control");
 		
+		var transferOrigins = getTransferOrigins(controlIDsToDelete[i], "control");
 		if(transferOrigins.controls.length > 0) {
 			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This control is the target of a transfer:</p></td></tr>";
 		}

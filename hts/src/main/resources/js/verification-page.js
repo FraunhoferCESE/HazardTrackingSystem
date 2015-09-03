@@ -13,7 +13,6 @@ function initializeVerificationPage() {
 		EXISTING_VERIFICATIONS_SERIALIZED[verificationID] = serialized;
 	});
 	
-	// TODO: This needs updated for Verification page
 	if (AJS.Cookie.read("HTS_COOKIE") !== undefined) {
 		var htsCookieJson = JSON.parse(AJS.Cookie.read("HTS_COOKIE"));
 		for (var i = 0; i < htsCookieJson.OPEN_VERIFICATIONS.length; i++) {
@@ -150,7 +149,7 @@ function initVerificationPageClickEvents() {
 	
 	// Clear new Verification form
 	AJS.$("#VerificationPageClearNew").on("click", function() {
-		var formElement = AJS.$("#VerificationPageFormAddNew");
+		var formElement = AJS.$("#VerificationPageFormAddTransfer");
 		AJS.$(formElement).find("#verificationDescription").val("");
 		AJS.$(formElement).find("#verificationStatus").val("").trigger('chosen:updated');
 		AJS.$(formElement).find("#verificationType").val("").trigger('chosen:updated');
@@ -158,6 +157,15 @@ function initVerificationPageClickEvents() {
 		AJS.$(formElement).find("#verificationEstComplDate").val("");
 		AJS.$(formElement).find("#verificationControlAssociation").val("");
 		AJS.$(formElement).find("[data-error='verificationDescription']").hide();
+	});
+	
+	// Clear new transfer Verification form
+	AJS.$("#VerificationPageClearTransfer").on("click", function() {
+		var formElement = AJS.$("#VerificationPageFormAddTransfer");
+		AJS.$(formElement).find("#transferReason").val("");
+		AJS.$(formElement).find("#transferVerificationList").val("");
+		AJS.$(formElement).find("#verificationControlAssociation").val("");
+		AJS.$(formElement).find("[data-error='transferVerificationList']").hide();
 	});
 
 	// Add new Verification click event
@@ -180,7 +188,19 @@ function initVerificationPageClickEvents() {
 		}
 	});
 	
-	// TODO: Need to add event handler to clear the new Verification transfer form
+	//when doing a control transfer, automatically expand the targetcause on the cause page
+	AJS.$(".verificationTransferLink").on("click",function(event) {
+		var targetID = AJS.$(this).attr("targetID");
+		
+		var verificationToggle = AJS.$("#VerificationTableEntryID" + targetID + " > span.VerificationTableToggle");
+		if(verificationToggle.length > 0) {
+			var verificationDisplay = verificationToggle.parent().next();
+			openForm(verificationToggle, verificationDisplay);
+			modifyHTSCookieOpenVerifications("open", targetID);
+		}
+		
+	});
+	
 	// Save new verification
 	AJS.$(".VerificationPageSaveAllChanges").on("click", function() {
 		var result = {
@@ -206,6 +226,18 @@ function initVerificationPageClickEvents() {
 				result.addNewErrors = true;
 			} else if (addNewResult.dirty === false && addNewResult.validated === false) {
 				result.addNewNoChanges = true;
+			}
+		}
+		
+		if (operation === "transfer" || operation === "all") {
+			var addTransferResult = addTransferVerificationFormValidation();
+			if (addTransferResult.dirty === true && addTransferResult.validated === true) {
+				result.addTransferPost = true;
+				postFormToVerificationServlet(AJS.$("#VerificationPageFormAddTransfer"));
+			} else if (addTransferResult.dirty === true && addTransferResult.validated === false) {
+				result.addTransferErrors = true;
+			} else if (addTransferResult.dirty === false && addTransferResult.validated === false) {
+				result.addTransferNoChanges = true;
 			}
 		}
 
@@ -244,10 +276,10 @@ function initVerificationPageClickEvents() {
 
 	});
 
-	// Duplicate delete reason in delete dialog
-	AJS	.$("#ConfirmDialogDuplBtnVerifications").on("click", function() {
+	AJS.$("#ConfirmDialogDuplBtnVerifications").live("click", function() {
 		var reasonTextFields = AJS.$(".ConfirmDialogReasonTextInput");
 		var reasonToDuplicate;
+		
 		reasonTextFields.each(function(index) {
 			if (index === 0) {
 				reasonToDuplicate = AJS.$(this).val();
@@ -265,6 +297,35 @@ function initVerificationPageClickEvents() {
 	});
 }
 
+function addTransferVerificationFormValidation() {
+	var formElement = AJS.$("#VerificationPageFormAddTransfer");
+	var dirty = false;
+	var validated = false;
+
+	var verificationList = AJS.$(formElement).find("#transferVerificationList").val();
+	var transferReasonElement = AJS.$(formElement).find("#transferReason").val();
+	
+	var verificationControlAssociation = AJS.$(formElement).find("#verificationControlAssociation").val();
+	if(verificationControlAssociation !== undefined && verificationControlAssociation !== "") {
+		dirty = true;
+	}
+
+	if (verificationList !== undefined &&  transferReasonElement !== undefined) {
+		if (verificationList !== "" || transferReasonElement !== "") {
+			dirty = true;
+		}
+	}
+	
+	if (dirty === true) {
+		if(verificationList === undefined || verificationList === "") {
+			AJS.$(formElement).find("[data-error='transferVerificationList']").show();
+		} else {
+			validated = true;
+		}
+	}
+	return {"dirty" : dirty, "validated" : validated};
+}
+
 function existingVerificationFormValidation() {
 	var modifiedExistingVerificationsIDs = [];
 	var deleteExistingVerificationsIDs = [];
@@ -276,6 +337,7 @@ function existingVerificationFormValidation() {
 		var deleteSelected = AJS.$(".VerificationPageDeleteBox[value='"	+ verificationID + "']").is(':checked');
 		var oldSerialized = EXISTING_VERIFICATIONS_SERIALIZED[verificationID];
 		var newSerialized = AJS.$(this).serialize();
+
 		if (newSerialized !== oldSerialized) {
 			if (newSerialized.indexOf("verificationDescription=&") > -1) {
 				if (deleteSelected === false) {
@@ -328,11 +390,17 @@ function addNewVerificationFormValidation() {
 	};
 }
 
+
+
 function postFormToVerificationServlet(formElement) {
 	AJS.$(formElement).ajaxSubmit({
 		async : false,
 		success : function(data) {
 			console.log("SUCCESS");
+			if(data.newVerificationID) {
+				console.log(data.newVerificationID);
+				modifyHTSCookieOpenVerifications("open", data.newVerificationID);
+			}
 		},
 		error : function(error) {
 			console.log("ERROR");
@@ -383,7 +451,7 @@ function openDeleteVerificationDialog(verificationIDsToDelete, result) {
 			html3 += "<tr>"
 					+ "<td colspan='100%' class='ConfirmDialogTableNoBorder'>"
 					+ "<div class='ConfirmDialogLabelContainer'>"
-					+ "<label for='ReasonTextForControl'><span class='HTSRequired'>* </span>Reason</label>"
+					+ "<label for='ReasonTextForVerification'><span class='HTSRequired'>* </span>Reason</label>"
 					+ "</div>"
 					+ "<div class='ConfirmDialogReasonTextContainer'>"
 					+ "<input type='text' class='ConfirmDialogReasonTextInput' name='ReasonTextForVerification' id='ReasonTextForVerificationID"
@@ -404,6 +472,21 @@ function openDeleteVerificationDialog(verificationIDsToDelete, result) {
 					+ verificationIDsToDelete[i] + "'>" + "</div>" + "</td>"
 					+ "</tr>";
 		}
+		
+		var transferOrigins = getTransferOrigins(verificationIDsToDelete[i], "verification");
+		if(transferOrigins.verifications.length > 0) {
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This verification is the target of a transfer:</p></td></tr>";
+		}
+		
+		for(var j = 0; j < transferOrigins.verifications.length; j++) {
+			html3 += "<tr>" +
+				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForVerificationID" + verificationIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.verifications[j], "verification")+"</p>" +
+				"</td>" +
+				"</tr>";
+		}	
+		
+		
 		html3 += "<tr>"
 				+ "<td colspan='100%' class='ConfirmDialogTableNoBorder'>"
 				+ "<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogErrorTextForVerificationID"

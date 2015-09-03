@@ -20,6 +20,7 @@ import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.ControlGroupsService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
+import org.fraunhofer.plugins.hts.service.VerificationService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
@@ -42,16 +43,18 @@ public class ControlsServlet extends HttpServlet {
 	private final ControlGroupsService controlGroupsService;
 	private final CauseService causeService;
 	private final DateTimeFormatter dateTimeFormatter;
+	private final VerificationService verificationService;
 
 	public ControlsServlet(TemplateRenderer templateRenderer, HazardService hazardService,
 			ControlService hazardControlService, ControlGroupsService controlGroupsService,
-			CauseService hazardCauseService, DateTimeFormatter dateTimeFormatter) {
+			CauseService hazardCauseService, DateTimeFormatter dateTimeFormatter, VerificationService verificationService) {
 		this.templateRenderer = checkNotNull(templateRenderer);
 		this.hazardService = checkNotNull(hazardService);
 		this.controlService = checkNotNull(hazardControlService);
 		this.controlGroupsService = checkNotNull(controlGroupsService);
 		this.causeService = checkNotNull(hazardCauseService);
 		this.dateTimeFormatter = dateTimeFormatter.forLoggedInUser();
+		this.verificationService = verificationService;
 	}
 
 	@Override
@@ -93,6 +96,7 @@ public class ControlsServlet extends HttpServlet {
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
+						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());

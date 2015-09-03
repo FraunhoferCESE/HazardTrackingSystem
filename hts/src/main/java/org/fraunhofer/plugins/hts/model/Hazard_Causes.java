@@ -83,6 +83,7 @@ public interface Hazard_Causes extends Entity {
 	
 	@Ignore
 	public List<Hazard_Controls> getActiveControls();
+	
 }
 
 

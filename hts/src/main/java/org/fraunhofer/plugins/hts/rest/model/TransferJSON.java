@@ -21,11 +21,13 @@ import org.fraunhofer.plugins.hts.model.Transfers;
 public class TransferJSON {
 	private final List<CauseJSON> causes;
 	private final List<ControlJSON> controls;
+	private final List<VerificationJSON> verifications;
 
-	public TransferJSON(List<CauseJSON> causes, List<ControlJSON> controls) {
+	public TransferJSON(List<CauseJSON> causes, List<ControlJSON> controls, List<VerificationJSON> verifications) {
 		super();
 		this.causes = causes;
 		this.controls = controls;
+		this.verifications = verifications;
 	}
 
 	public List<CauseJSON> getCauses() {
@@ -34,6 +36,10 @@ public class TransferJSON {
 
 	public List<ControlJSON> getControls() {
 		return controls;
+	}
+	
+	public List<VerificationJSON> getVerifications() {
+		return verifications;
 	}
 
 }

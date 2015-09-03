@@ -2,7 +2,6 @@ package org.fraunhofer.plugins.hts.rest;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -18,13 +17,16 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.Transfers.TransferType;
+import org.fraunhofer.plugins.hts.model.Verifications;
 import org.fraunhofer.plugins.hts.response.ResponseHelper;
 import org.fraunhofer.plugins.hts.rest.model.CauseJSON;
 import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
 import org.fraunhofer.plugins.hts.rest.model.TransferJSON;
+import org.fraunhofer.plugins.hts.rest.model.VerificationJSON;
 import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.TransferService;
+import org.fraunhofer.plugins.hts.service.VerificationService;
 
 import com.atlassian.extras.common.log.Logger;
 import com.atlassian.extras.common.log.Logger.Log;
@@ -39,13 +41,14 @@ public class TransferRestService {
 	private TransferService transferService;
 	private ControlService controlService;
 	private CauseService causeService;
-	CauseService hazardCauseService;
+	private VerificationService verificationService;
 
 	public TransferRestService(TransferService transferService, CauseService causeService,
-			ControlService controlService) {
+			ControlService controlService, VerificationService verificationService) {
 		this.transferService = transferService;
 		this.causeService = causeService;
 		this.controlService = controlService;
+		this.verificationService = verificationService;
 	}
 
 	@GET
@@ -56,8 +59,9 @@ public class TransferRestService {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			checkArgument(type != null && TransferType.valueOf(type.toUpperCase()) != null && elementId > 0);
 
-			List<Hazard_Causes> causes = new ArrayList<Hazard_Causes>();
-			List<Hazard_Controls> controls = new ArrayList<Hazard_Controls>();
+			List<Hazard_Causes> causes = Lists.newArrayList();
+			List<Hazard_Controls> controls = Lists.newArrayList();
+			List<Verifications> verifications = Lists.newArrayList();
 
 			List<Transfers> originsForId = transferService.getOriginsForId(type.toUpperCase(), elementId);
 
@@ -77,6 +81,13 @@ public class TransferRestService {
 					else
 						controls.add(control);
 					break;
+				case VERIFICATION:
+					Verifications verification = verificationService.getVerificationByID(transfer.getOriginID());
+					if(verification == null)
+						logger.warn("Transfer origin verification could not be found by id.");
+					else
+						verifications.add(verification);
+					break;
 				default:
 					logger.warn("Request for incoming transfer origins: unknown origin type");
 				}
@@ -93,8 +104,14 @@ public class TransferRestService {
 					return new ControlJSON(c, c.getHazard()[0]);
 				}
 			});
+			
+			List<VerificationJSON> verificationsJSON = Lists.transform(verifications, new Function<Verifications, VerificationJSON>() {
+				public VerificationJSON apply(Verifications v) {
+					return new VerificationJSON(v, v.getHazards()[0]);
+				}
+			});
 
-			return Response.ok(new TransferJSON(causesJSON, controlsJSON)).build();
+			return Response.ok(new TransferJSON(causesJSON, controlsJSON, verificationsJSON)).build();
 		} else {
 			return ResponseHelper.notLoggedIn();
 		}

@@ -21,6 +21,7 @@ public class ControlJSON {
 	private int hazardId;
 	private String hazardNumber;
 	private String hazardOwner;
+	private String fullyQualifiedNumber;
 
 	public ControlJSON(Hazard_Controls control, Hazards hazard) {
 		this.controlID = control.getID();
@@ -31,6 +32,8 @@ public class ControlJSON {
 		this.hazardId = hazard.getID();
 		this.hazardOwner = hazard.getPreparer() == null ? "N/A" : hazard.getPreparer();
 		this.hazardNumber = hazard.getHazardNumber() == null ? "N/A" : hazard.getHazardNumber();
+		
+		this.fullyQualifiedNumber = control.getCauses() == null ? "Orph." + controlNumber : control.getCauses()[0].getCauseNumber() +"."+controlNumber;
 	}
 
 	public ControlJSON(int controlID, int controlNumber, String text, boolean transfer, boolean active, String type) {
@@ -76,5 +79,9 @@ public class ControlJSON {
 
 	public String getHazardNumber() {
 		return hazardNumber;
+	}
+	
+	public String getFullyQualifiedNumber() {
+		return fullyQualifiedNumber;
 	}
 }

@@ -1,9 +1,11 @@
 #macro( substr $text $length)
-	#if($text.length() > $length)
-		#set( $endIndex = $length - 1)
-		$text.substring(0, $endIndex)...
-	#else
-		$text
+	#if($text && $length)
+		#if($text.length() > $length)
+			#set( $endIndex = $length - 1)
+			$text.substring(0, $endIndex)...
+		#else
+			$text
+		#end
 	#end
 #end
 
@@ -60,6 +62,47 @@
 		#end
 	#end
 #end
+
+#macro( getVerificationName $verification $length)
+	#if($verification.getTransfer() == 0)	
+		#substr( $verification.getVerificationDesc() $length)
+	#else
+		#set ($target = $transferredVerification.get($verification.getID()).getTarget())
+		#set ($verificationNum = "Orph")
+		#if($target.getControls() && $target.getControls().size() > 0)
+			#set($controlParent = $target.getControls().get(0))
+			#set($controlNum = $controlParent.getControlNumber())		
+			#if($controlParent.getCauses().size() > 0)
+				#set($causeNum = $controlParent.getCauses().get(0).getCauseNumber())
+				#set($verificationNum = "$causeNum.$controlNum")
+			#else
+				#set($verificationNum = $controlNum)
+			#end
+		#end
+		
+		#set($verificationDesc = "")
+		#if($target.getVerificationDesc())
+			$verificationDesc = "- #substr($target.getVerificationDesc() $length)"
+		#end
+		(TRANSFER) - Verification $verificationNum.$verification.getID() $verificationDesc
+	#end
+#end
+
+#macro( getVerificationNumber $verification)
+	#set( $causeNum = "Orph" )
+	#if($cause)
+		#set( $causeNum = $cause.getCauseNumber() )
+	#end	
+	
+	#set ($controlNum = "")
+	#set ($separator = "")
+	#if ($control)
+		#set ($controlNum = $control.getControlNumber() )
+		#set ($separator = "." )
+	#end
+	$causeNum$separator$controlNum.$verification.getVerificationNumber()
+#end	
+
 
 <html>
 	<head>
@@ -172,8 +215,7 @@
 																<li>
 																	#set( $activeCauses = $activeCauses + 1 )
 																	#if( $verification.getTransfer() > 0)
-																		Transfer verification
-																		##parse("/templates/verification-existing-transfer.vm")
+																		#parse("/templates/verification-existing-transfer.vm")
 																	#else
 																		#parse("/templates/verification-existing-regular.vm")
 																	#end
@@ -242,8 +284,7 @@
 																#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
 																<li>
 																	#if( $verification.getTransfer() > 0)
-																		Transfer verification
-																		##parse("/templates/verification-existing-transfer.vm")
+																		#parse("/templates/verification-existing-transfer.vm")
 																	#else
 																		#parse("/templates/verification-existing-regular.vm")
 																	#end
@@ -259,8 +300,6 @@
 												#end
 											</ul>
 										</li>
-									#else
-										<span class="noControlsMessage">No controls for this cause.</span>
 									#end
 									
 									#if($orphanVerifications.size() > 0 )
@@ -275,8 +314,7 @@
 													#if( $verification.getID() != 0 && (!$verification.getDeleteReason() || $verification.getDeleteReason().isEmpty()))
 													<li>
 														#if( $verification.getTransfer() > 0)
-															Transfer verification
-															##parse("/templates/verification-existing-transfer.vm")
+															#parse("/templates/verification-existing-transfer.vm")
 														#else
 															#parse("/templates/verification-existing-regular.vm")
 														#end
@@ -307,8 +345,7 @@
 									<span>Add Verification Transfer</span>
 								</div>
 								<div id="VerificationPageTransferContainer">
-									form for adding a verification transfer
-									##parse("/templates/control-transfer.vm")
+									#parse("/templates/verification-transfer.vm")
 								</div>
 							</div>
 						</section>

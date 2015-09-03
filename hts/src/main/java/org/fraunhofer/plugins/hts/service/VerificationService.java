@@ -4,9 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Transfers;
@@ -15,6 +16,7 @@ import org.fraunhofer.plugins.hts.model.VerifcToHazard;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
+import org.fraunhofer.plugins.hts.view.model.VerificationTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.collect.Lists;
@@ -33,7 +35,7 @@ public class VerificationService {
 		this.transferService = transferService;
 	}
 
-	private Verifications getVerificationByID(int verificationID) {
+	public Verifications getVerificationByID(int verificationID) {
 		final Verifications[] verification = ao.find(Verifications.class, Query.select().where("ID=?", verificationID));
 		return verification.length > 0 ? verification[0] : null;
 	}
@@ -96,13 +98,9 @@ public class VerificationService {
 		verification.setEstCompletionDate(estimatedCompletionDate);
 		verification.setLastUpdated(new Date());
 		verification.save();
-
-		if (verification.getControls() != null) {
-			for (Hazard_Controls control : verification.getControls()) {
-				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID = ? AND CONTROL_ID = ?",
-						verification.getID(), control.getID())));
-			}
-		}
+		
+		
+		removeAssociationsVerificationToControl(verificationID);
 
 		if (associatedControl != null) {
 			associateVerificationToControl(associatedControl, verification);
@@ -149,5 +147,35 @@ public class VerificationService {
 				orphanVerifications.add(verification);
 		}
 		return orphanVerifications;
+	}
+
+	public Map<Integer, VerificationTransfer> getAllTransferredVerifications(Hazards hazard) {
+		Map<Integer, VerificationTransfer> transferredVerifications = new HashMap<Integer, VerificationTransfer>();
+		for (Verifications originVerification : hazard.getVerifications()) {
+			if (originVerification.getTransfer() != 0) {
+				Transfers transfer = transferService.getTransferByID(originVerification.getTransfer());
+				getVerificationByID(transfer.getTargetID());
+				transferredVerifications.put(originVerification.getID(), VerificationTransfer
+						.createTransfer(originVerification, getVerificationByID(transfer.getTargetID())));
+			}
+		}
+		return transferredVerifications;
+	}
+
+	public Verifications updateTransferredVerification(int verificationId, String transferReason,
+			Hazard_Controls associatedControl) {
+		Verifications verification = getVerificationByID(verificationId);
+		verification.setVerificationDesc(transferReason);
+		removeAssociationsVerificationToControl(verification.getID());
+		if (associatedControl != null) {
+			associateVerificationToControl(associatedControl, verification);
+		}
+		verification.setLastUpdated(new Date());
+		verification.save();
+		return verification;
+	}
+
+	public void removeAssociationsVerificationToControl(int verificationId) {
+		ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verificationId)));
 	}
 }
