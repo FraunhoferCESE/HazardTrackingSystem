@@ -63,11 +63,38 @@
 	#end
 #end
 
+#macro( getVerificationNumber $verification)
+	#set( $causeNum = "" )
+	#set( $separator = "" )
+	#set( $controlNum = "" )
+	#set($controls = $verification.getControls())
+	#if($controls)
+		#foreach($control in $verification.getControls())
+			#set($controlNum = $control.getControlNumber())
+			#set($causes = $control.getCauses())
+			#if($causes)
+				#foreach($cause in $control.getCauses())
+					#set($causeNum = $cause.getCauseNumber())
+					#set($separator = "." )
+					#break
+				#end
+			#else
+				#set( $causeNum = "Orph" )
+				#set($separator = "." )
+			#end
+			#break
+		#end
+	#else
+		$controlNum = "Orph"
+	#end
+	$causeNum$separator$controlNum.$verification.getVerificationNumber()
+#end
+
 #macro( getVerificationName $verification $length)
 	#if($verification.getTransfer() == 0)	
 		#substr( $verification.getVerificationDesc() $length)
 	#else
-		#set ($target = $transferredVerification.get($verification.getID()).getTarget())
+		#set ($target = $transferredVerifications.get($verification.getID()))
 		#set ($verificationNum = "Orph")
 		#if($target.getControls() && $target.getControls().size() > 0)
 			#set($controlParent = $target.getControls().get(0))
@@ -84,24 +111,32 @@
 		#if($target.getVerificationDesc())
 			$verificationDesc = "- #substr($target.getVerificationDesc() $length)"
 		#end
-		(TRANSFER) - Verification $verificationNum.$verification.getID() $verificationDesc
+		(TRANSFER) - Verification #getVerificationNumber($target) $verificationDesc
 	#end
 #end
 
 #macro( getVerificationNumber $verification)
-	#set( $causeNum = "Orph" )
-	#if($cause)
-		#set( $causeNum = $cause.getCauseNumber() )
-	#end	
-	
-	#set ($controlNum = "")
-	#set ($separator = "")
-	#if ($control)
-		#set ($controlNum = $control.getControlNumber() )
-		#set ($separator = "." )
+	#set( $causeNum = "" )
+	#set( $separator = "" )
+	#set( $controlNum = "Orph" )
+	#set($controls = $verification.getControls())
+	#if($controls)
+		#foreach($control in $verification.getControls())
+			#set( $causeNum = "Orph" )
+			#set($separator = "." )
+			#set($controlNum = $control.getControlNumber())
+			#set($causes = $control.getCauses())
+			#if($causes)
+				#foreach($cause in $control.getCauses())
+					#set($causeNum = $cause.getCauseNumber())
+					#break
+				#end
+			#end
+			#break
+		#end
 	#end
 	$causeNum$separator$controlNum.$verification.getVerificationNumber()
-#end	
+#end
 
 
 <html>
@@ -129,10 +164,10 @@
 									<span class="headerDelete"><div class="HazardPropertyTableCell6Img"></div></span>
 								</div>
 								<ul id="verificationsList">
+									$causes
 									#foreach ($cause in $causes)
 										#if(!$cause.getDeleteReason() )
 										#set( $numControls = 0 )
-										
 										#foreach ($control in $cause.getControls())
 											#if( !$control.getDeleteReason() || $control.getDeleteReason().isEmpty() )
 												#set( $numControls = $numControls + 1 )

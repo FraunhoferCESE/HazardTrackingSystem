@@ -1,19 +1,26 @@
-					<div class="associatedVerifications">
 						<ul class="controlVerificationList">
 						#set ($totalDisplayed = 0)
 						#foreach ($verification in $control.getVerifications())				
-							#if($velocityCount != 1  && !$verification.getDeleteReason())
+							#if($verification.getID() != 0  && !$verification.getDeleteReason())
 								#set ($vStatus = "N/A")
+								#set ($verificationName = "")
+								
+								
 								#if($verification.getTransfer() != 0)
+									#set($verificationName = "(TRANSFER) to Verification #getVerificationNumber($transferredVerifications.get($verification.getID()))")
 									#if($transferredVerifications.get($verification.getID()).getVerificationStatus())
-										#set ($vStatus = $transferredVerifications.get($verification.getID()).getVerificationStatus().getLabel())
+										#set ($vStatus = $transferredVerifications.get($verification.getID()).getVerificationStatus().getLabel())										
 									#end
 								#else
+									#set ($length = 60)				
+									#set($verificationName = "#getVerificationName($verification $length)")
 									#if($verification.getVerificationStatus()) 
 										#set ($vStatus = $verification.getVerificationStatus().getLabel())
 									#end
-								#end															
-								<li><a href="verifications?id=$hazard.getID()#verificationID$verification.getID()" targetID="$verification.getID()" class="verificationLink">Verification $verification.getVerificationNumber() (Status: $vStatus)</a> - #getVerificationName($verification 60)</li>
+								#end		
+
+												
+								<li><a href="verifications?id=$hazard.getID()#verificationID$verification.getID()" targetID="$verification.getID()" class="verificationLink">Verification #getVerificationNumber($verification) (Status: $vStatus)</a> - $verificationName</li>
 								
 								#set ($totalDisplayed = $totalDisplayed + 1)
 							#end

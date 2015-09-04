@@ -47,7 +47,27 @@
 				#set($length = 50)
 				#foreach ($verification in $verifications)
 					#if($verification.getID() != 0 && $verification.getTransfer() == 0)
-						<option value="$verification.getID()">Verification #getVerificationNumber($verification) - #substr($verification.getVerificationDesc() $length)</option>
+
+					#set( $causeNum = "" )
+					#set( $separator = "" )
+					#set( $controlNum = "Orph" )
+					#set($controls = $verification.getControls())
+					#if($controls)
+						#foreach($control in $verification.getControls())
+							#set( $causeNum = "Orph" )
+							#set($separator = "." )
+							#set($controlNum = $control.getControlNumber())
+							#set($causes = $control.getCauses())
+							#if($causes)
+								#foreach($cause in $control.getCauses())
+									#set($causeNum = $cause.getCauseNumber())
+									#break
+								#end
+							#end
+							#break
+						#end
+					#end
+					<option value="$verification.getID()">Verification $causeNum$separator$controlNum.$verification.getVerificationNumber() - #substr($verification.getVerificationDesc() $length)</option>
 					#end
 				#end
 			</select>

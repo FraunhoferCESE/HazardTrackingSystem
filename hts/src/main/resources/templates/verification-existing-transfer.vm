@@ -1,11 +1,12 @@
-#set ($theVerification = $transferredVerifications.get($verification.getID()).getTarget())
+#set ($theVerification = $transferredVerifications.get($verification.getID()))
 
 <div class="verificationHeader" id="VerificationTableEntryID$verification.getID()" verificationId=$verification.getID()>
 	<a name="verificationID$verification.getID()"></a>
 	<span class="VerificationTableToggle aui-icon aui-icon-small aui-iconfont-add"></span>
 	<span class="verificationNumber">Verification #getVerificationNumber($verification)</span>
-	#set($length = 75)
+	#set($length = 50)
 	<span class="verificationDescription">
+	
 	#if($theVerification.getDeleteReason() && !$theVerification.getDeleteReason().isEmpty())
 		<div class="HTSTransferDeletedOrigin">
 			(TRANSFER) Verification #getVerificationNumber($theVerification) - #getVerificationName( $theVerification $length)
@@ -55,11 +56,18 @@
 			</div>		
 			
 			<div class="field-group" id="VerificationPageAssociateControlContainer">
+				#set( $associatedControl = false)
+				#foreach($control in $verification.getControls())
+					#set( $associatedControl = $control )
+					#break
+				#end
+
 				<label class='popupLabels' for='verificationControlAssociation'>Associated Control</label>
+					
 				<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
 					<option value=''>-Select Control-</option>
 					#set($length = 50)
-					#foreach($cause in $causes)
+					#foreach($cause in $causesForPrinting)
 						#set( $causeNum = "Orph" )
 						#if($cause)
 							#set( $causeNum = $cause.getCauseNumber() )
@@ -81,9 +89,9 @@
 						#foreach($control in $orphanControls)
 							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
 								#if($associatedControl && $control.getID() == $associatedControl.getID())
-								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()" selected>Control Orph.$control.getControlNumber() #getControlName($control)</option>
 								#else
-								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()">Control Orph.$control.getControlNumber() #getControlName($control)</option>
 								#end
 							#end
 						#end

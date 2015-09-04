@@ -100,13 +100,15 @@ public class VerificationsServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {
 						context.put("hazard", hazard);
-						context.put("causes", hazard.getHazardCauses());
+						context.put("causes", hazard.getHazardCauses());						
+						context.put("causesForPrinting", hazard.getHazardCauses());
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("verifications",
 								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
+					
 						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
 						context.put("orphanVerifications", verificationService.getOrphanVerifications(hazard));
 						context.put("statuses", verificationStatusService.all());

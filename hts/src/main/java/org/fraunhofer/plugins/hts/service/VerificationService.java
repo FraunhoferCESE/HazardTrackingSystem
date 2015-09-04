@@ -16,7 +16,6 @@ import org.fraunhofer.plugins.hts.model.VerifcToHazard;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
-import org.fraunhofer.plugins.hts.view.model.VerificationTransfer;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.collect.Lists;
@@ -149,14 +148,13 @@ public class VerificationService {
 		return orphanVerifications;
 	}
 
-	public Map<Integer, VerificationTransfer> getAllTransferredVerifications(Hazards hazard) {
-		Map<Integer, VerificationTransfer> transferredVerifications = new HashMap<Integer, VerificationTransfer>();
+	public Map<Integer, Verifications> getAllTransferredVerifications(Hazards hazard) {
+		Map<Integer, Verifications> transferredVerifications = new HashMap<Integer, Verifications>();
 		for (Verifications originVerification : hazard.getVerifications()) {
 			if (originVerification.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(originVerification.getTransfer());
-				getVerificationByID(transfer.getTargetID());
-				transferredVerifications.put(originVerification.getID(), VerificationTransfer
-						.createTransfer(originVerification, getVerificationByID(transfer.getTargetID())));
+				Verifications target = getVerificationByID(transfer.getTargetID());
+				transferredVerifications.put(originVerification.getID(), target);
 			}
 		}
 		return transferredVerifications;

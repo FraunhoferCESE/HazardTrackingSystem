@@ -97,6 +97,7 @@ public class ControlsServlet extends HttpServlet {
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
+						
 						context.put("orphanControls", controlService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());

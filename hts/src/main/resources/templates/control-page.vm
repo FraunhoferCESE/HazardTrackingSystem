@@ -1,9 +1,11 @@
 #macro( substr $text $length)
-	#if($text.length() > $length)
-		#set( $endIndex = $length - 1)
-		$text.substring(0, $endIndex)...
-	#else
-		$text
+	#if($text && $length)
+		#if($text.length() > $length)
+			#set( $endIndex = $length - 1)
+			$text.substring(0, $endIndex)...
+		#else
+			$text
+		#end
 	#end
 #end
 
@@ -61,11 +63,34 @@
 	#end
 #end
 
+#macro( getVerificationNumber $verification)
+	#set( $causeNum = "" )
+	#set( $separator = "" )
+	#set( $controlNum = "Orph" )
+	#set($controls = $verification.getControls())
+	#if($controls)
+		#foreach($control in $verification.getControls())
+			#set( $causeNum = "Orph" )
+			#set($separator = "." )
+			#set($controlNum = $control.getControlNumber())
+			#set($causes = $control.getCauses())
+			#if($causes)
+				#foreach($cause in $control.getCauses())
+					#set($causeNum = $cause.getCauseNumber())
+					#break
+				#end
+			#end
+			#break
+		#end
+	#end
+	$causeNum$separator$controlNum.$verification.getVerificationNumber()
+#end
+
 #macro( getVerificationName $verification $length)
 	#if($verification.getTransfer() == 0)	
 		#substr( $verification.getVerificationDesc() $length)
 	#else
-		#set ($target = $transferredVerification.get($verification.getID()).getTarget())
+		#set ($target = $transferredVerification.get($verification.getID()))
 		#set ($verificationNum = "Orph")
 		#if($target.getControls() && $target.getControls().size() > 0)
 			#set($controlParent = $target.getControls().get(0))
@@ -82,9 +107,11 @@
 		#if($target.getVerificationDesc())
 			$verificationDesc = "- #substr($target.getVerificationDesc() $length)"
 		#end
-		(TRANSFER) - Verification $verificationNum.$verification.getID() $verificationDesc
+		(TRANSFER) - Verification #getVerificationNumber($target) $verificationDesc
 	#end
 #end
+
+
 
 <html>
 	<head>
