@@ -36,11 +36,11 @@ public class VerificationJSON {
 		this.hazardNumber = hazard.getHazardNumber() == null ? "N/A" : hazard.getHazardNumber();
 
 		Hazard_Controls[] controls = verification.getControls();
-		if (controls == null)
+		if (controls == null || controls.length == 0)
 			this.fullyQualifiedNumber = "Orph." + verificationNumber;
 		else {
 			Hazard_Causes[] causes = controls[0].getCauses();
-			if (causes == null)
+			if (causes == null || causes.length == 0)
 				this.fullyQualifiedNumber = "Orph." + controls[0].getControlNumber() + "." + verificationNumber;
 			else
 				this.fullyQualifiedNumber = causes[0].getCauseNumber() + "." + controls[0].getControlNumber() + "."
