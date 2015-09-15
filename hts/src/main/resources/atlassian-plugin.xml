@@ -176,4 +176,8 @@
 		<description key="transfer-rest.description">Transfer REST Service</description>
 	</rest>
 
+	<rest name="Control REST Service" i18n-name-key="control-rest.name"
+		key="control-rest" path="/hts" version="1.0">
+		<description key="control-rest.description">Control REST Service</description>
+	</rest>
 </atlassian-plugin>

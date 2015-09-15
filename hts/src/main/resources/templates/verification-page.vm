@@ -119,7 +119,7 @@
 	#set( $causeNum = "" )
 	#set( $separator = "" )
 	#set( $controlNum = "Orph" )
-	#set($controls = $verification.getControls())
+	#set( $controls = $verification.getControls())
 	#if($controls)
 		#foreach($control in $verification.getControls())
 			#set( $causeNum = "Orph" )

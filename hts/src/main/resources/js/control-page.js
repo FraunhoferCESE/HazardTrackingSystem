@@ -507,16 +507,25 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 		var transferOrigins = getTransferOrigins(controlIDsToDelete[i], "control");
 		if(transferOrigins.controls.length > 0) {
 			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This control is the target of a transfer:</p></td></tr>";
+			for(var j = 0; j < transferOrigins.controls.length; j++) {
+				html3 += "<tr>" +
+					"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+					"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.controls[j], "control")+"</p>" +
+					"</td></tr>";
+			}
 		}
+				
 		
-		for(var j = 0; j < transferOrigins.controls.length; j++) {
-			html3 += "<tr>" +
-				"<td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
-				"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogTransferWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(transferOrigins.controls[j], "control")+"</p>" +
-				"</td>" +
-				"</tr>";
-		}		
-		
+		var associatedVerifications = getAssociatedVerifications(controlIDsToDelete[i]);
+		if(associatedVerifications.length > 0) {
+			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This control has associated verifications:</p></td></tr>";
+			for(var j = 0; j < associatedVerifications.length; j++) {
+				html3 += "<tr>" +
+					"<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+					"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogAssociatedVerificationWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(associatedVerifications[j],"verification")+"</p>" +
+					"</td></tr>";
+			}	
+		}
 
 
 		html3 += "<tr>" +
@@ -561,6 +570,33 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 
 	dialog.show();
 }
+
+function getAssociatedVerificationDeleteWarning(verification) {
+		html = "<p class='ConfirmDialogErrorText ConfirmDialogHazardAssociationText'>Dammit ";
+		html += "<a href='verifications?id=" + verification.hazardId + "#verificationID"+verification.verificationId+"' class='openAssociatedVerification' data-verificationid='" + verification.verificationId + "'>" +
+		"Verification " + verification.fullyQualifiedNumber + "</a>";
+	
+	html += "</p>";
+	return html;
+}	
+
+function getAssociatedVerifications(controlId) {
+	var associatedControls = [];
+ 	AJS.$.ajax({
+		type: "GET",
+		url: AJS.params.baseURL + "/rest/hts/1.0/control/" + controlId + "/verifications",
+		async: false,
+		success: function(data) {
+			associatedControls = data;
+		},
+		error: function() {
+			console.log("ERROR - could not retrieve associated verifications for controlID=" + controlId);
+		}
+	}); 
+
+	return associatedControls;
+}
+
 
 function postDeleteToControlServlet(controlIDToDelete, reason) {
 	AJS.$.ajax({

@@ -15,6 +15,8 @@ import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Transfers;
+import org.fraunhofer.plugins.hts.model.VerifcToControl;
+import org.fraunhofer.plugins.hts.model.Verifications;
 import org.fraunhofer.plugins.hts.rest.model.ControlJSON;
 import org.fraunhofer.plugins.hts.view.model.ControlTransfer;
 
@@ -195,6 +197,11 @@ public class ControlService {
 				transfer.save();
 				control.setTransfer(0);
 			}
+			for(Verifications verification : control.getVerifications()) {
+				ao.delete(ao.find(VerifcToControl.class,
+						Query.select().where("VERIFICATION_ID=? AND CONTROL_ID=?", verification.getID(), controlID)));
+			}
+			
 			control.save();
 		}
 		return control;
@@ -202,7 +209,7 @@ public class ControlService {
 
 	public Hazard_Controls addControlTransfer(int originHazardID, int targetControlID, String transferReason,
 			Hazard_Causes associatedCause) {
-		Hazard_Controls control = add(originHazardID, transferReason, null, associatedCause);
+		Hazard_Controls control = add(originHazardID, transferReason, null, associatedCause);  
 		int transferID = createTransfer(control.getID(), "CONTROL", targetControlID, "CONTROL");
 		control.setTransfer(transferID);
 		control.save();

@@ -2,6 +2,7 @@
 	<a name="verificationID$verification.getID()"></a>
 	<span class="VerificationTableToggle aui-icon aui-icon-small aui-iconfont-add"></span>
 	<span class="verificationNumber">Verification #getVerificationNumber($verification)</span>
+	
 	#set($length = 75)
 	<span class="verificationDescription">#getVerificationName( $verification $length)</span>
 	<span class="verificationStatus">
@@ -70,6 +71,12 @@
 			<div class="field-group">
 				<label for="VerificationEstComplDate">Estimated Completion Date</label>
 				<input class="aui-date-picker VerificationDate" name="verificationEstComplDate" id="verificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
+			</div>
+			<div>
+				Associated controls
+				#foreach($control in $verification.getControls())
+					$control
+				#end
 			</div>
 			<div class="field-group" id="VerificationPageAssociateControlContainer">
 				#set( $associatedControl = false)
