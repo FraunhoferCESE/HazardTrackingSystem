@@ -4,7 +4,8 @@
 		<div class="CauseTableToggle aui-icon aui-icon-small aui-iconfont-add"></div>
 	</td>
 	<td class="HazardPropertyTableTd">Cause $cause.getCauseNumber()</td>
-	<td class="HazardPropertyTableTd">#substr($cause.getTitle() 75)</td>
+	#set($length = 75)
+	<td class="HazardPropertyTableTd">#substr($cause.getTitle() $length)</td>
 	<td class="HazardPropertyTableTd">
 		#if (!$cause.getOwner() || $cause.getOwner() == "")
 			N/A

@@ -51,7 +51,7 @@
 								</table>
 								<div class="HazardPropertyTableButtonsContainer">
 									<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
-									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" disabled>
+									<input class="aui-button renumberButton" type="button" value="Renumber &amp; Save" style="margin: 0" hazardid=$hazard.getID()>
 									<input class="aui-button" type="button" value="Expand All" id="CausePageExpandAllButton" style="margin: 0">
 								</div>
 							#end
@@ -76,5 +76,27 @@
 				</div>
 			</div>
 		</div>
+		
+		<section role="dialog" id="renumber-dialog" class="aui-layer aui-dialog2 aui-dialog2-small aui-dialog2-warning " aria-hidden="true" 
+			data-aui-model="true"
+			data-aui-remove-on-hide="true">
+		    <!-- Dialog header -->
+		    <header class="aui-dialog2-header">
+		        <h2 class="aui-dialog2-header-main">Are you sure?</h2>
+		    </header>
+		    <!-- Main dialog content -->
+		    <div class="aui-dialog2-content">
+		        <p>You are about to renumber all of the causes, controls, and verifications for this hazard.</p>
+		        <p>This action cannot be undone!</p>
+		    </div>
+		    <!-- Dialog footer -->
+		    <footer class="aui-dialog2-footer">
+		        <!-- Actions to render on the right of the footer -->
+		        <div class="aui-dialog2-footer-actions">
+		            <button id="renumber-submit-button" class="aui-button aui-button-primary">OK</button>
+		            <button id="renumber-close-button" class="aui-button">Cancel</button>
+		        </div>
+		    </footer>
+		</section>
 	</body>
 </html>

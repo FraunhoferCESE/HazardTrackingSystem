@@ -72,12 +72,6 @@
 				<label for="VerificationEstComplDate">Estimated Completion Date</label>
 				<input class="aui-date-picker VerificationDate" name="verificationEstComplDate" id="verificationEstComplDate" type="date" data-date="$!verification.getEstCompletionDate()"/>
 			</div>
-			<div>
-				Associated controls
-				#foreach($control in $verification.getControls())
-					$control
-				#end
-			</div>
 			<div class="field-group" id="VerificationPageAssociateControlContainer">
 				#set( $associatedControl = false)
 				#foreach($control in $verification.getControls())

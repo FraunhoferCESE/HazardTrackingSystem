@@ -271,6 +271,7 @@ function initControlPageClickEvents() {
 			}
 		});
 	});
+	
 }
 
 function initializeFormToggles() {

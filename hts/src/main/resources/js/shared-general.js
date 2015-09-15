@@ -82,6 +82,17 @@ function displayAppropriateMessage(result, property) {
 	
 }
 
+function renumberHazard(hazardId) {
+	AJS.$.get(AJS.params.baseURL+ "/rest/hts/1.0/hazard/" + hazardId + "/renumber", function(data) {
+		JIRA.Messages.showSuccessMsg("Hazard contentes successfully renumbered", {closeable: true});
+		var path = AJS.$.url().data.attr.relative;
+		loadTemplate(path);
+	})
+	.fail( function(data) {
+		JIRA.Messages.showErrorMsg(data.statusText, {closeable: true});
+	});
+}
+
 function assert(condition, message) {
     if (!condition) {
         message = message || "Assertion failed";

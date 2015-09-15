@@ -4,11 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
+import org.fraunhofer.plugins.hts.model.EntityIdComparator;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
@@ -20,14 +22,12 @@ import org.fraunhofer.plugins.hts.model.Review_Phases;
 import org.fraunhofer.plugins.hts.model.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.model.Subsystems;
 import org.fraunhofer.plugins.hts.model.Verifications;
-import org.fraunhofer.plugins.hts.view.model.HazardMinimal;
 import org.ofbiz.core.entity.GenericEntityException;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.permission.ProjectPermission;
 import com.atlassian.jira.permission.ProjectPermissions;
@@ -37,7 +37,6 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.java.ao.DBParam;
@@ -148,6 +147,61 @@ public class HazardService {
 	public Hazards getHazardById(int hazardId) {
 		final Hazards[] hazards = ao.find(Hazards.class, Query.select().where("ID=?", hazardId));
 		return hazards.length > 0 ? hazards[0] : null;
+	}
+
+	/**
+	 * The method renumbers causes, controls, and verifications within a hazard
+	 * to make the numbers consecutive. This is useful prior to printing a
+	 * report, or to clean up the numbering after much deleting of elements.
+	 * 
+	 * @param hazardId
+	 *            the id of the hazard whose elements should be renumbered
+	 */
+	public void renumberHazardElements(int hazardId) {
+		Hazards hazard = getHazardById(hazardId);
+		if (hazard != null) {
+			Hazard_Causes[] causes = hazard.getHazardCauses();
+			if (causes != null && causes.length > 0) {
+				Arrays.sort(causes, new EntityIdComparator());
+				int num = 1;
+				for (Hazard_Causes cause : causes) {
+					if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
+						cause.setCauseNumber(num++);
+					} else {
+						cause.setCauseNumber(-1);
+					}
+					cause.save();
+				}
+			}
+
+			Hazard_Controls[] controls = hazard.getHazardControls();
+			if (controls != null && controls.length > 0) {
+				Arrays.sort(controls, new EntityIdComparator());
+				int num = 1;
+				for (Hazard_Controls control : controls) {
+					if (Strings.isNullOrEmpty(control.getDeleteReason())) {
+						control.setControlNumber(num++);
+					} else {
+						control.setControlNumber(-1);
+					}
+					control.save();
+				}
+			}
+
+			Verifications[] verifications = hazard.getVerifications();
+			if (verifications != null && verifications.length > 0) {
+				Arrays.sort(verifications, new EntityIdComparator());
+				int num = 1;
+				for(Verifications verification : verifications) {
+					if(Strings.isNullOrEmpty(verification.getDeleteReason())) {
+						verification.setVerificationNumber(num++);
+					} else {
+						verification.setVerificationNumber(-1);
+					}
+					verification.save();
+				}
+			}
+		}
 	}
 
 	public Hazards getHazardById(String hazardId) {

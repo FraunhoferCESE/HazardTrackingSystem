@@ -3,16 +3,18 @@ console.log("=== cause-page.js ===");
 var EXISTING_CAUSES_SERIALIZED = null;
 
 function initializeCausePage() {
-	if (INIT.CAUSES === true) {
-		INIT.CAUSES = false;
-		initCausePageClickEvents();
-	}
-	EXISTING_CAUSES_SERIALIZED = serializeExistingCauses();
-
-	// Calling functions in shared-cookies.js file
-	var existingCausesCount = AJS.$(".CauseTableToggle").length;
-	openHTSCookieOpenCauses(existingCausesCount);
-	renameCausePageExpandButton(existingCausesCount);
+	AJS.toInit(function()  {
+		if (INIT.CAUSES === true) {
+			INIT.CAUSES = false;
+			initCausePageClickEvents();
+		}
+		EXISTING_CAUSES_SERIALIZED = serializeExistingCauses();
+	
+		// Calling functions in shared-cookies.js file
+		var existingCausesCount = AJS.$(".CauseTableToggle").length;
+		openHTSCookieOpenCauses(existingCausesCount);
+		renameCausePageExpandButton(existingCausesCount);
+	});
 }
 
 function initCausePageClickEvents() {
@@ -222,6 +224,28 @@ function initCausePageClickEvents() {
 		});
 	});
 	
+	AJS.toInit(function () {
+		AJS.$(".renumberButton").click(function () {
+		    AJS.dialog2("#renumber-dialog").show();
+
+			AJS.$("#renumber-close-button").click(function(e) {
+			    AJS.dialog2("#renumber-dialog").hide();
+			});
+			
+			AJS.$("#renumber-submit-button").click(function(e) {
+				AJS.dialog2("#renumber-dialog").hide();
+				AJS.$.get(AJS.params.baseURL+ "/rest/hts/1.0/hazard/" + AJS.$(this).attr("hazardid") + "/renumber", function(data) {
+					JIRA.Messages.showSuccessMsg("Hazard contentes successfully renumbered", {closeable: true});
+					var path = AJS.$.url().data.attr.relative;
+					loadTemplate(path);
+				})
+				.fail( function(data) {
+					JIRA.Messages.showErrorMsg(data.statusText, {closeable: true});
+				});
+			});
+			
+		});
+	});
 }
 
 function serializeExistingCauses() {
