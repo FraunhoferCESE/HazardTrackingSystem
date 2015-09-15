@@ -1,9 +1,11 @@
-#macro( substr $text $length)
-	#if($text.length() > $length)
-		#set( $endIndex = $length - 1)
-		$text.substring(0, $endIndex)...
-	#else
-		$text
+#macro( substr $__text $__length)
+	#if($__text && $__length)
+		#if($__text.length() > $__length)
+			#set( $__endIndex = $__length - 1)
+			$__text.substring(0, $__endIndex)...
+		#else
+			$__text
+		#end
 	#end
 #end
 

@@ -106,6 +106,6 @@ public class HazardRestService {
 		}
 
 		hazardService.renumberHazardElements(hazardID);
-		return Response.ok().build();
+		return Response.ok().build(); 
 	}
 }

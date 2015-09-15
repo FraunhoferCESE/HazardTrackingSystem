@@ -1,141 +1,114 @@
-#macro( substr $text $length)
-	#if($text && $length)
-		#if($text.length() > $length)
-			#set( $endIndex = $length - 1)
-			$text.substring(0, $endIndex)...
+#macro( substr $__text $__length)
+	#if($__text && $__length)
+		#if($__text.length() > $__length)
+			#set( $__endIndex = $__length - 1)
+			$__text.substring(0, $__endIndex)...
 		#else
-			$text
+			$__text
 		#end
 	#end
 #end
 
-#macro( getCauseName $cause $length)
-	#if($cause.getTransfer() == 0)
-		#substr( $cause.getTitle() $length)
+#macro( getCauseName $_cause $_length)
+	#if($_cause.getTransfer() == 0)
+		#substr( $_cause.getTitle() $_length)
 	#else
-		#set ($theCause = $transferredCauses.get($cause.getID()))
-		#if ($theCause.getMovedProject())
-			&lt;The transfer target is in another JIRA project: $theCause.getMovedProject()&gt;
+		#set ($_theCause = $transferredCauses.get($_cause.getID()))
+		#if ($_theCause.getMovedProject())
+			&lt;The transfer target is in another JIRA project: $_theCause.getMovedProject()&gt;
 	    #else
-			#if ($theCause.getTransferTargetType() == "CAUSE")
-				#if (!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
+			#if ($_theCause.getTransferTargetType() == "CAUSE")
+				#if (!$_theCause.getTargetHazardNumber() || !$_theCause.getTargetHazardNumber() == "")
+					(TRANSFER) - &lt;Hazard id=$_theCause.getTargetHazardID()&gt;:CAUSE $_theCause.getTargetCauseNumber() - #substr($_theCause.getTargetCauseTitle() $_length)
 				#else
-					(TRANSFER) - $theCause.getTargetHazardNumber():CAUSE $theCause.getTargetCauseNumber() - #substr($theCause.getTargetCauseTitle() $length)
+					(TRANSFER) - $_theCause.getTargetHazardNumber():CAUSE $_theCause.getTargetCauseNumber() - #substr($_theCause.getTargetCauseTitle() $_length)
 				#end
 			#else
-				#if(!$theCause.getTargetHazardNumber() || !$theCause.getTargetHazardNumber() == "")
-					(TRANSFER) - &lt;Hazard id=$theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
+				#if(!$_theCause.getTargetHazardNumber() || !$_theCause.getTargetHazardNumber() == "")
+					(TRANSFER) - &lt;Hazard id=$_theCause.getTargetHazardID()&gt;:&lt;ALL CAUSES&gt;
 				#else
-					(TRANSFER) - $theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
+					(TRANSFER) - $_theCause.getTargetHazardNumber():&lt;ALL CAUSES&gt;
 				#end
 			#end
 		#end
 	#end
 #end
 
-#macro( getControlName $control $length)
-	#if($control.getTransfer() == 0)
-		#substr($control.getDescription() $length)
+#macro( getControlName $_control $_length)
+	#if($_control.getTransfer() == 0)
+		#substr($_control.getDescription() $_length)
 	#else
-		#set ($theControl = $transferredControls.get($control.getID()))
-		#set( $targetCauseNum = "Orph")
-		#if ( $theControl.getTargetCauseNumber() > 0)
-			#set($targetCauseNum = $theControl.getTargetCauseNumber())
+		#set ($_theControl = $transferredControls.get($_control.getID()))
+		#set( $_targetCauseNum = "Orph")
+		#if ( $_theControl.getTargetCauseNumber() > 0)
+			#set($_targetCauseNum = $_theControl.getTargetCauseNumber())
 		#end
-		#if ($theControl.getMovedProject())
-			(TRANSFER) &lt;The transfer target is in another JIRA project: $theControl.getMovedProject()&gt;
+		#if ($_theControl.getMovedProject())
+			(TRANSFER) &lt;The transfer target is in another JIRA project: $_theControl.getMovedProject()&gt;
 		#else	
-			#if ($theControl.getTransferTargetType() == "CONTROL")
-				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+			#if ($_theControl.getTransferTargetType() == "CONTROL")
+				#if(!$_theControl.getTargetHazardNumber() || $_theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$_theControl.getTargetHazardID()&gt;:CONTROL $_targetCauseNum.$_theControl.getTargetControlNumber() - #substr($_theControl.getTargetControlDescription() $_length)
 				#else
-					(TRANSFER) $theControl.getTargetHazardNumber():CONTROL $targetCauseNum.$theControl.getTargetControlNumber() - #substr($theControl.getTargetControlDescription() $length)
+					(TRANSFER) $_theControl.getTargetHazardNumber():CONTROL $_targetCauseNum.$_theControl.getTargetControlNumber() - #substr($_theControl.getTargetControlDescription() $_length)
 				#end
 			#else
-				#if(!$theControl.getTargetHazardNumber() || $theControl.getTargetHazardNumber() == "")
-					(TRANSFER) &lt;Hazard id=$theControl.getTargetHazardID()&gt;:CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+				#if(!$_theControl.getTargetHazardNumber() || $_theControl.getTargetHazardNumber() == "")
+					(TRANSFER) &lt;Hazard id=$_theControl.getTargetHazardID()&gt;:CAUSE $_targetCauseNum - #substr($_theControl.getTargetCauseTitle() $_length)
 				#else
-					(TRANSFER) $theControl.getTargetHazardNumber():CAUSE $targetCauseNum - #substr($theControl.getTargetCauseTitle() $length)
+					(TRANSFER) $_theControl.getTargetHazardNumber():CAUSE $_targetCauseNum - #substr($_theControl.getTargetCauseTitle() $_length)
 				#end
 			#end
 		#end
 	#end
 #end
 
-#macro( getVerificationNumber $verification)
-	#set( $causeNum = "" )
-	#set( $separator = "" )
-	#set( $controlNum = "" )
-	#set($controls = $verification.getControls())
-	#if($controls)
-		#foreach($control in $verification.getControls())
-			#set($controlNum = $control.getControlNumber())
-			#set($causes = $control.getCauses())
-			#if($causes)
-				#foreach($cause in $control.getCauses())
-					#set($causeNum = $cause.getCauseNumber())
-					#set($separator = "." )
+#macro( getVerificationNumber $_verification)
+	#set( $_causeNum = "" )
+	#set( $_separator = "" )
+	#set( $_controlNum = "Orph" )
+	#set( $_controls = $_verification.getControls())
+	#if( $_controls)
+		#foreach($_control in $_verification.getControls())
+			#set( $_causeNum = "Orph" )
+			#set($_separator = "." )
+			#set($_controlNum = $_control.getControlNumber())
+			#set($_causes = $_control.getCauses())
+			#if($_causes)
+				#foreach($_cause in $_control.getCauses())
+					#set($_causeNum = $_cause.getCauseNumber())
 					#break
 				#end
-			#else
-				#set( $causeNum = "Orph" )
-				#set($separator = "." )
 			#end
 			#break
 		#end
-	#else
-		$controlNum = "Orph"
 	#end
-	$causeNum$separator$controlNum.$verification.getVerificationNumber()
+	$_causeNum$_separator$_controlNum.$verification.getVerificationNumber()
 #end
 
-#macro( getVerificationName $verification $length)
-	#if($verification.getTransfer() == 0)	
-		#substr( $verification.getVerificationDesc() $length)
+#macro( getVerificationName $_verification $_length)
+	#if($_verification.getTransfer() == 0)	
+		#substr( $_verification.getVerificationDesc() $_length)
 	#else
-		#set ($target = $transferredVerifications.get($verification.getID()))
-		#set ($verificationNum = "Orph")
-		#if($target.getControls() && $target.getControls().size() > 0)
-			#set($controlParent = $target.getControls().get(0))
-			#set($controlNum = $controlParent.getControlNumber())		
-			#if($controlParent.getCauses().size() > 0)
-				#set($causeNum = $controlParent.getCauses().get(0).getCauseNumber())
-				#set($verificationNum = "$causeNum.$controlNum")
+		#set ($_target = $_transferredVerification.get($_verification.getID()))
+		#set ($_verificationNum = "Orph")
+		#if($_target.getControls() && $_target.getControls().size() > 0)
+			#set($_controlParent = $_target.getControls().get(0))
+			#set($_controlNum = $_controlParent.getControlNumber())		
+			#if($_controlParent.getCauses().size() > 0)
+				#set($_causeNum = $_controlParent.getCauses().get(0).getCauseNumber())
+				#set($_verificationNum = "$_causeNum.$_controlNum")
 			#else
-				#set($verificationNum = $controlNum)
+				#set($_verificationNum = $_controlNum)
 			#end
 		#end
 		
-		#set($verificationDesc = "")
-		#if($target.getVerificationDesc())
-			$verificationDesc = "- #substr($target.getVerificationDesc() $length)"
+		#set($_verificationDesc = "")
+		#if($_target.getVerificationDesc())
+			$_verificationDesc = "- #substr($_target.getVerificationDesc() $_length)"
 		#end
-		(TRANSFER) - Verification #getVerificationNumber($target) $verificationDesc
+		(TRANSFER) - Verification #getVerificationNumber($_target) $_verificationDesc
 	#end
-#end
-
-#macro( getVerificationNumber $verification)
-	#set( $causeNum = "" )
-	#set( $separator = "" )
-	#set( $controlNum = "Orph" )
-	#set( $controls = $verification.getControls())
-	#if($controls)
-		#foreach($control in $verification.getControls())
-			#set( $causeNum = "Orph" )
-			#set($separator = "." )
-			#set($controlNum = $control.getControlNumber())
-			#set($causes = $control.getCauses())
-			#if($causes)
-				#foreach($cause in $control.getCauses())
-					#set($causeNum = $cause.getCauseNumber())
-					#break
-				#end
-			#end
-			#break
-		#end
-	#end
-	$causeNum$separator$controlNum.$verification.getVerificationNumber()
 #end
 
 
