@@ -22,11 +22,12 @@
 		<label class='popupLabels' for='controlCauseAssociation'>Associated Cause</label>
 		<select class='select long-field' name='controlCauseAssociation' id='controlCauseAssociation'>
 			<option value=''>-Select Cause-</option>
-			#foreach($cause in $causes)
-				#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
-				<option value="$cause.getID()">Cause $cause.getCauseNumber() #getCauseName($cause)</option>
+				#set($length = 50)
+				#foreach($cause in $causes)
+					#if(!$cause.getDeleteReason() || $cause.getDeleteReason().isEmpty())
+					<option value="$cause.getID()">Cause $cause.getCauseNumber() - #getCauseName($cause $length)</option>
+					#end
 				#end
-			#end
 		</select>
 	</div>
 	<div class="field-group HTSRequiredContainer" style="padding-top: 0" data-error="controlCauseList">
