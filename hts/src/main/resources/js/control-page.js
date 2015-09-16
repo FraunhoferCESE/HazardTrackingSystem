@@ -518,13 +518,15 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 				
 		
 		var associatedVerifications = getAssociatedVerifications(controlIDsToDelete[i]);
-		if(associatedVerifications.length > 0) {
+		if(associatedVerifications.length > 1) {
 			html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><p class='ConfirmDialogErrorText'>Warning: This control has associated verifications:</p></td></tr>";
 			for(var j = 0; j < associatedVerifications.length; j++) {
-				html3 += "<tr>" +
-					"<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
-					"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogAssociatedVerificationWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(associatedVerifications[j],"verification")+"</p>" +
-					"</td></tr>";
+				if(associatedVerifications[j].verificationId != 0) {
+					html3 += "<tr>" +
+						"<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'>" +
+						"<p class='ConfirmDialogErrorText ConfirmDialogErrorTextHidden' id='ConfirmDialogAssociatedVerificationWarningForControlID" + controlIDsToDelete[i] +"'>"+getTransferTargetDeleteWarning(associatedVerifications[j],"verification")+"</p>" +
+						"</td></tr>";
+				}
 			}	
 		}
 

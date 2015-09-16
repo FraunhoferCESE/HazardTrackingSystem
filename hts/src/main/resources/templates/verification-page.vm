@@ -127,7 +127,7 @@
 				<div class="aui-page-panel">
 					<div class="aui-page-panel-inner">
 						<section class="aui-page-panel-content">
-							#if ($verifications.size() == 0)
+							#if ($numVerifications == 0)
 								<p>No Verifications have been created for this Hazard Report.</p>
 							#else
 								<div class="verificationListHeader">

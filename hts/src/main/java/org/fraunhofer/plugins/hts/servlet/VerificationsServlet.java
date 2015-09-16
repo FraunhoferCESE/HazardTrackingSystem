@@ -100,17 +100,25 @@ public class VerificationsServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {
 						context.put("hazard", hazard);
-						context.put("causes", hazard.getHazardCauses());						
+						context.put("causes", hazard.getHazardCauses());
 						context.put("causesForPrinting", hazard.getHazardCauses());
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
-						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
-						context.put("orphanControls", controlService.getOrphanControls(hazard));
-						context.put("verifications",
-								verificationService.getAllNonDeletedVerificationsWithinAHazard(hazard));
-					
-						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
-						context.put("orphanVerifications", verificationService.getOrphanVerifications(hazard));
+						context.put("orphanControls", hazardService.getOrphanControls(hazard));
+
+						int numVerifications = 0;
+						Verifications[] verifications = hazard.getVerifications();
+						if (verifications != null) {
+							for (Verifications verification : hazard.getVerifications()) {
+								if (Strings.isNullOrEmpty(verification.getDeleteReason()))
+									numVerifications++;
+							}
+						}
+						context.put("numVerifications", numVerifications);
+
+						context.put("transferredVerifications",
+								verificationService.getAllTransferredVerifications(hazard));
+						context.put("orphanVerifications", hazardService.getOrphanVerifications(hazard));
 						context.put("statuses", verificationStatusService.all());
 						context.put("types", verificationTypeService.all());
 						context.put("allHazardsBelongingToMission",
@@ -140,27 +148,27 @@ public class VerificationsServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		if (ComponentAccessor.getJiraAuthenticationContext().isLoggedInUser()) {
 			JSONObject jsonResponse = new JSONObject();
-			
+
 			Hazard_Controls associatedControl = null;
 			String controlId = req.getParameter("verificationControlAssociation");
 			if (!Strings.isNullOrEmpty(controlId))
 				associatedControl = controlService.getHazardControlByID(Integer.parseInt(controlId));
-			
-			
+
 			boolean isRegular = true;
-			if(!Strings.isNullOrEmpty(req.getParameter("regular")))
+			if (!Strings.isNullOrEmpty(req.getParameter("regular")))
 				isRegular = Boolean.parseBoolean(req.getParameter("regular"));
-			
+
 			boolean existing = false;
-			if(!Strings.isNullOrEmpty(req.getParameter("existing"))) {
+			if (!Strings.isNullOrEmpty(req.getParameter("existing"))) {
 				existing = Boolean.parseBoolean(req.getParameter("existing"));
 			}
-			
-			if(isRegular) {
+
+			if (isRegular) {
 				String description = req.getParameter("verificationDescription");
 				VerificationStatus status = null;
 				if (!Strings.isNullOrEmpty(req.getParameter("verificationStatus"))) {
-					status = verificationStatusService.getVerificationStatusByID(req.getParameter("verificationStatus"));
+					status = verificationStatusService
+							.getVerificationStatusByID(req.getParameter("verificationStatus"));
 				}
 
 				VerificationType type = null;
@@ -169,7 +177,7 @@ public class VerificationsServlet extends HttpServlet {
 				}
 
 				String responsibleParty = req.getParameter("verificationRespParty");
-				
+
 				Date estimatedCompletionDate = null;
 				String date = req.getParameter("verificationEstComplDate");
 				if (!Strings.isNullOrEmpty(date)) {
@@ -180,46 +188,45 @@ public class VerificationsServlet extends HttpServlet {
 						logger.warn("Unparseable Estimated Completion Date received");
 					}
 				}
-				
+
 				if (!existing) {
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					Verifications newVerification = verificationService.add(hazardID, description, status, type, responsibleParty, estimatedCompletionDate,
-							associatedControl);
+					Verifications newVerification = verificationService.add(hazardID, description, status, type,
+							responsibleParty, estimatedCompletionDate, associatedControl);
 					createJson(jsonResponse, "newVerificationId", newVerification.getID());
 				} else {
 					String verificationIDStr = req.getParameter("verificationID");
 					int verificationID = Integer.parseInt(verificationIDStr);
 					verificationService.update(verificationID, description, status, type, responsibleParty,
 							estimatedCompletionDate, associatedControl);
-				}	
-			}
-			else {
+				}
+			} else {
 				String transferReason = req.getParameter("transferReason");
-				
-				if(!existing) {
-					//transfer
+
+				if (!existing) {
+					// transfer
 					String transferTarget = req.getParameter("transferVerificationList");
 					int targetID = Integer.parseInt(transferTarget);
 					String hazardIDStr = req.getParameter("hazardID");
 					int hazardID = Integer.parseInt(hazardIDStr);
-					Verifications newTransferredVerification = verificationService.addVerificationTransfer(hazardID, targetID, transferReason, associatedControl);
+					Verifications newTransferredVerification = verificationService.addVerificationTransfer(hazardID,
+							targetID, transferReason, associatedControl);
 					createJson(jsonResponse, "newVerificationID", newTransferredVerification.getID());
-				}
-				else {
+				} else {
 					String verificationIDStr = req.getParameter("verificationID");
 					int verificationID = Integer.parseInt(verificationIDStr);
-					verificationService.updateTransferredVerification(verificationID, transferReason, associatedControl);
+					verificationService.updateTransferredVerification(verificationID, transferReason,
+							associatedControl);
 				}
-				
+
 			}
-			
+
 			createJson(jsonResponse, "updateSuccess", true);
 			createJson(jsonResponse, "errorMessage", "none");
 			res.setContentType("application/json");
 			res.getWriter().println(jsonResponse);
-		}
-		else {
+		} else {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
@@ -258,7 +265,7 @@ public class VerificationsServlet extends HttpServlet {
 			res.sendRedirect(req.getContextPath() + "/login.jsp");
 		}
 	}
-	
+
 	private JSONObject createJson(JSONObject json, String key, Object value) {
 		try {
 			json.put(key, value);

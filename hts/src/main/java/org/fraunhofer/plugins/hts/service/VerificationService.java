@@ -2,7 +2,6 @@ package org.fraunhofer.plugins.hts.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -21,7 +20,6 @@ import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.google.common.collect.Lists;
 
 import net.java.ao.DBParam;
 import net.java.ao.Query;
@@ -45,16 +43,6 @@ public class VerificationService {
 	public Verifications getVerificationByID(String verificationID) {
 		checkNotNull(verificationID);
 		return getVerificationByID(Integer.parseInt(verificationID));
-	}
-
-	public List<Verifications> getAllNonDeletedVerificationsWithinAHazard(Hazards hazard) {
-		List<Verifications> allRemaining = new ArrayList<Verifications>();
-		for (Verifications current : hazard.getVerifications()) {
-			if (current.getDeleteReason() == null) {
-				allRemaining.add(current);
-			}
-		}
-		return allRemaining;
 	}
 
 	public Verifications add(int hazardID, String description, VerificationStatus status, VerificationType type,
@@ -141,7 +129,7 @@ public class VerificationService {
 			verifcToControl.setVerification(verification);
 			verifcToControl.save();
 		} else {
-			List<Verifications> orphanVerifications = getOrphanVerifications(hazard);
+			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
 			if (!orphanVerifications.isEmpty()) {
 				Collections.sort(orphanVerifications, new VerificationNumComparator());
 				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber() + 1;
@@ -155,18 +143,6 @@ public class VerificationService {
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
 		Transfers transfer = transferService.add(originID, originType, targetID, targetType);
 		return transfer.getID();
-	}
-
-	public List<Verifications> getOrphanVerifications(Hazards hazard) {
-		List<Verifications> orphanVerifications = Lists.newArrayList();
-		List<Verifications> verifications = getAllNonDeletedVerificationsWithinAHazard(hazard);
-		for (Verifications verification : verifications) {
-			Hazard_Controls[] controls = verification.getControls();
-			if (controls == null || controls.length == 0)
-				orphanVerifications.add(verification);
-		}
-		orphanVerifications.sort(new VerificationNumComparator());
-		return orphanVerifications;
 	}
 
 	public Map<Integer, Verifications> getAllTransferredVerifications(Hazards hazard) {

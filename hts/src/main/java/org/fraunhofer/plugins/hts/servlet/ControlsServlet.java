@@ -93,12 +93,23 @@ public class ControlsServlet extends HttpServlet {
 								+ ") do not have permission to view/edit it.";
 					} else {
 						context.put("hazard", hazard);
-						context.put("controls", controlService.getAllNonDeletedControlsWithinAHazard(hazard));
+						
+						Hazard_Controls[] hazardControls = hazard.getHazardControls();
+						int numControls = 0;
+						if(hazardControls != null) {
+							for (Hazard_Controls controls : hazardControls) {
+								if(Strings.isNullOrEmpty(controls.getDeleteReason())) {
+									numControls++;
+								}
+							}
+						}
+							
+						context.put("numControls", numControls);
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("transferredVerifications", verificationService.getAllTransferredVerifications(hazard));
 						
-						context.put("orphanControls", controlService.getOrphanControls(hazard));
+						context.put("orphanControls", hazardService.getOrphanControls(hazard));
 						context.put("controlGroups", controlGroupsService.all());
 						context.put("causes", hazard.getHazardCauses());
 						context.put("allHazardsBelongingToMission",

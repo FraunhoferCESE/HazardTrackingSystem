@@ -4,11 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.fraunhofer.plugins.hts.document.VerificationNumberComparator;
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
+import org.fraunhofer.plugins.hts.model.ControlNumComparator;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
@@ -35,6 +38,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.java.ao.DBParam;
@@ -160,45 +164,57 @@ public class HazardService {
 		if (hazard != null) {
 			Hazard_Causes[] causes = hazard.getHazardCauses();
 			if (causes != null && causes.length > 0) {
-//				Arrays.sort(causes, new EntityIdComparator());
-				int num = 1;
+				int causeNum = 1;
 				for (Hazard_Causes cause : causes) {
 					if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
-						cause.setCauseNumber(num++);
+						cause.setCauseNumber(causeNum++);
 					} else {
 						cause.setCauseNumber(-1);
 					}
 					cause.save();
+
+					Hazard_Controls[] controls = cause.getControls();
+					if (controls != null) {
+						renumberControls(Arrays.asList(controls));
+					}
 				}
 			}
 
-			// TODO: Don't forget the orphans!
-			Hazard_Controls[] controls = hazard.getHazardControls();
-			if (controls != null && controls.length > 0) {
-//				Arrays.sort(controls, new EntityIdComparator());
-				int num = 1;
-				for (Hazard_Controls control : controls) {
-					if (Strings.isNullOrEmpty(control.getDeleteReason())) {
-						control.setControlNumber(num++);
-					} else {
-						control.setControlNumber(-1);
-					}
-					control.save();
+			// Don't forget the orphans!
+			renumberControls(getOrphanControls(hazard));
+			renumberVerifications(getOrphanVerifications(hazard));
+		}
+	}
+
+	private void renumberControls(List<Hazard_Controls> controls) {
+		if (!controls.isEmpty()) {
+			int controlNum = 1;
+			for (Hazard_Controls control : controls) {
+				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
+					control.setControlNumber(controlNum++);
+				} else {
+					control.setControlNumber(-1);
+				}
+				control.save();
+
+				Verifications[] verifications = control.getVerifications();
+				if (verifications != null) {
+					renumberVerifications(Arrays.asList(verifications));
 				}
 			}
+		}
+	}
 
-			Verifications[] verifications = hazard.getVerifications();
-			if (verifications != null && verifications.length > 0) {
-//				Arrays.sort(verifications, new EntityIdComparator());
-				int num = 1;
-				for(Verifications verification : verifications) {
-					if(Strings.isNullOrEmpty(verification.getDeleteReason())) {
-						verification.setVerificationNumber(num++);
-					} else {
-						verification.setVerificationNumber(-1);
-					}
-					verification.save();
+	private void renumberVerifications(List<Verifications> verifications) {
+		if (!verifications.isEmpty()) {
+			int verificationNum = 1;
+			for (Verifications verification : verifications) {
+				if (verification.getID() != 0 && Strings.isNullOrEmpty(verification.getDeleteReason())) {
+					verification.setVerificationNumber(verificationNum++);
+				} else {
+					verification.setVerificationNumber(-1);
 				}
+				verification.save();
 			}
 		}
 	}
@@ -300,5 +316,31 @@ public class HazardService {
 
 		}
 		return hasPermission;
+	}
+
+	public List<Hazard_Controls> getOrphanControls(Hazards hazard) {
+		List<Hazard_Controls> orphanControls = Lists.newArrayList();
+		for (Hazard_Controls current : hazard.getHazardControls()) {
+			if (Strings.isNullOrEmpty(current.getDeleteReason())) {
+				Hazard_Causes[] causeforControl = current.getCauses();
+				if (causeforControl == null || causeforControl.length == 0)
+					orphanControls.add(current);
+			}
+		}
+		orphanControls.sort(new ControlNumComparator());
+		return orphanControls;
+	}
+
+	public List<Verifications> getOrphanVerifications(Hazards hazard) {
+		List<Verifications> orphanVerifications = Lists.newArrayList();
+		for (Verifications verification : hazard.getVerifications()) {
+			if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
+				Hazard_Controls[] controlsForVerification = verification.getControls();
+				if (controlsForVerification == null || controlsForVerification.length == 0)
+					orphanVerifications.add(verification);
+			}
+		}
+		orphanVerifications.sort(new VerificationNumberComparator());
+		return orphanVerifications;
 	}
 }

@@ -26,7 +26,6 @@ import org.fraunhofer.plugins.hts.view.model.ControlTransfer;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import net.java.ao.Query;
 
@@ -42,19 +41,6 @@ public class ControlService {
 		this.hazardService = checkNotNull(hazardService);
 		this.transferService = checkNotNull(transferService);
 		this.causeService = hazardCauseService;
-	}
-
-	public List<Hazard_Controls> getOrphanControls(Hazards hazard) {
-		List<Hazard_Controls> orphanControls = Lists.newArrayList();
-		List<Hazard_Controls> controls = getAllNonDeletedControlsWithinAHazard(hazard);
-		for (Hazard_Controls control : controls) {
-			Hazard_Causes[] causes = control.getCauses();
-			if (causes == null || causes.length == 0)
-				orphanControls.add(control);
-		}
-
-		orphanControls.sort(new ControlNumComparator());
-		return orphanControls;
 	}
 
 	public Hazard_Controls add(int hazardID, String description, ControlGroups controlGroup,
@@ -117,19 +103,19 @@ public class ControlService {
 
 			if (currentAssociation != null && associatedCause != currentAssociation)
 				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
-			
+
 			final ControlToCause controlToCause = ao.create(ControlToCause.class);
 			controlToCause.setCause(associatedCause);
 			controlToCause.setControl(control);
 			controlToCause.save();
 		} else {
-			List<Hazard_Controls> orphanControls = getOrphanControls(hazard);
+			List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(hazard);
 			if (!orphanControls.isEmpty() || orphanControls.size() == 1) {
 				Collections.sort(orphanControls, new ControlNumComparator());
 				controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber() + 1;
 			}
-			
-			if(currentAssociation != null)
+
+			if (currentAssociation != null)
 				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
 		}
 		return controlNum;
@@ -138,18 +124,6 @@ public class ControlService {
 	public Hazard_Controls getHazardControlByID(int controlID) {
 		final Hazard_Controls[] control = ao.find(Hazard_Controls.class, Query.select().where("ID=?", controlID));
 		return control.length > 0 ? control[0] : null;
-	}
-
-	public List<Hazard_Controls> getAllNonDeletedControlsWithinAHazard(Hazards hazard) {
-		List<Hazard_Controls> nonDeleted = new ArrayList<Hazard_Controls>();
-		if (hazard != null) {
-			for (Hazard_Controls current : hazard.getHazardControls()) {
-				if (Strings.isNullOrEmpty(current.getDeleteReason())) {
-					nonDeleted.add(current);
-				}
-			}
-		}
-		return nonDeleted;
 	}
 
 	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID, boolean includeTransfers) {
@@ -229,9 +203,15 @@ public class ControlService {
 				transfer.save();
 				control.setTransfer(0);
 			}
+
+			List<Verifications> orphanVerifications = hazardService
+					.getOrphanVerifications(control.getHazard()[0]);
+			int verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber();
 			for (Verifications verification : control.getVerifications()) {
 				ao.delete(ao.find(VerifcToControl.class,
 						Query.select().where("VERIFICATION_ID=? AND CONTROL_ID=?", verification.getID(), controlID)));
+				verification.setVerificationNumber(++verificationNum);
+				verification.save();
 			}
 
 			control.save();

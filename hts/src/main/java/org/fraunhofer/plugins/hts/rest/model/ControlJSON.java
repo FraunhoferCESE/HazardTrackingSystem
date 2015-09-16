@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 import org.fraunhofer.plugins.hts.model.Hazards;
 
@@ -32,8 +33,12 @@ public class ControlJSON {
 		this.hazardId = hazard.getID();
 		this.hazardOwner = hazard.getPreparer() == null ? "N/A" : hazard.getPreparer();
 		this.hazardNumber = hazard.getHazardNumber() == null ? "N/A" : hazard.getHazardNumber();
-		
-		this.fullyQualifiedNumber = control.getCauses() == null ? "Orph." + controlNumber : control.getCauses()[0].getCauseNumber() +"."+controlNumber;
+
+		Hazard_Causes[] causes = control.getCauses();
+		if (causes == null || causes.length == 0) {
+			this.fullyQualifiedNumber = "Orph." + controlNumber;
+		} else
+			this.fullyQualifiedNumber = control.getCauses()[0].getCauseNumber() + "." + controlNumber;
 	}
 
 	public ControlJSON(int controlID, int controlNumber, String text, boolean transfer, boolean active, String type) {
@@ -80,7 +85,7 @@ public class ControlJSON {
 	public String getHazardNumber() {
 		return hazardNumber;
 	}
-	
+
 	public String getFullyQualifiedNumber() {
 		return fullyQualifiedNumber;
 	}
