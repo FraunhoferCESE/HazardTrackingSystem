@@ -19,7 +19,7 @@
 		<select class='select long-field' name='verificationControlAssociation' id='verificationControlAssociation'>
 			<option value=''>-Select Control-</option>
 			#set($length = 50)
-			#foreach($cause in $causes)
+			#foreach($cause in $causesForPrinting)
 				#set( $causeNum = "Orph" )
 				#if($cause)
 					#set( $causeNum = $cause.getCauseNumber() )

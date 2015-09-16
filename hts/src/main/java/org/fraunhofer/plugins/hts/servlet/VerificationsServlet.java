@@ -102,7 +102,7 @@ public class VerificationsServlet extends HttpServlet {
 					} else {
 						context.put("hazard", hazard);
 						context.put("causes", hazard.getHazardCauses());
-						context.put("causesForPrinting", hazard.getHazardCauses());
+						context.put("causesForPrinting", causeService.getAllNonDeletedCausesWithinHazard(hazard));
 						context.put("transferredCauses", causeService.getAllTransferredCauses(hazard));
 						context.put("transferredControls", controlService.getAllTransferredControls(hazard));
 						context.put("orphanControls", hazardService.getOrphanControls(hazard));
