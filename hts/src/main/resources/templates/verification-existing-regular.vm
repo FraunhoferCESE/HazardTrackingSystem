@@ -93,9 +93,9 @@
 						#foreach($control in $cause.getControls())
 							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
 								#if($associatedControl && $control.getID() == $associatedControl.getID())
-								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()" selected>Control $causeNum.$control.getControlNumber() #getControlName($control $length)</option>
 								#else
-								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control $length)</option>
 								#end
 							#end
 						#end
@@ -105,9 +105,9 @@
 						#foreach($control in $orphanControls)
 							#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
 								#if($associatedControl && $control.getID() == $associatedControl.getID())
-								<option value="$control.getID()" selected>Control Orph.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()" selected>Control Orph.$control.getControlNumber() #getControlName($control $length)</option>
 								#else
-								<option value="$control.getID()">Control Orph.$control.getControlNumber() #getControlName($control)</option>
+								<option value="$control.getID()">Control Orph.$control.getControlNumber() #getControlName($control $length)</option>
 								#end
 							#end
 						#end

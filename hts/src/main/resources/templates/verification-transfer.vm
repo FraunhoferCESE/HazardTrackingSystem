@@ -28,7 +28,7 @@
 				<optgroup label="Cause $causeNum #getCauseName($cause $length)">
 				#foreach($control in $cause.getControls())
 					#if(!$control.getDeleteReason() || $control.getDeleteReason().isEmpty())
-						<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control)</option>
+						<option value="$control.getID()">Control $causeNum.$control.getControlNumber() #getControlName($control $length)</option>
 					#end
 				#end
 				</optgroup>
