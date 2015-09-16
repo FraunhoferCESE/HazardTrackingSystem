@@ -224,28 +224,6 @@ function initCausePageClickEvents() {
 		});
 	});
 	
-	AJS.toInit(function () {
-		AJS.$(".renumberButton").click(function () {
-		    AJS.dialog2("#renumber-dialog").show();
-
-			AJS.$("#renumber-close-button").click(function(e) {
-			    AJS.dialog2("#renumber-dialog").hide();
-			});
-			
-			AJS.$("#renumber-submit-button").click(function(e) {
-				AJS.dialog2("#renumber-dialog").hide();
-				AJS.$.get(AJS.params.baseURL+ "/rest/hts/1.0/hazard/" + AJS.$(this).attr("hazardid") + "/renumber", function(data) {
-					JIRA.Messages.showSuccessMsg("Hazard contentes successfully renumbered", {closeable: true});
-					var path = AJS.$.url().data.attr.relative;
-					loadTemplate(path);
-				})
-				.fail( function(data) {
-					JIRA.Messages.showErrorMsg(data.statusText, {closeable: true});
-				});
-			});
-			
-		});
-	});
 }
 
 function serializeExistingCauses() {
