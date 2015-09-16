@@ -36,6 +36,7 @@ import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class VerificationsServlet extends HttpServlet {
@@ -108,13 +109,17 @@ public class VerificationsServlet extends HttpServlet {
 
 						int numVerifications = 0;
 						Verifications[] verifications = hazard.getVerifications();
+						List<Verifications> nonDeletedVerfications = Lists.newArrayList();
 						if (verifications != null) {
 							for (Verifications verification : hazard.getVerifications()) {
-								if (Strings.isNullOrEmpty(verification.getDeleteReason()))
+								if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
+									nonDeletedVerfications.add(verification);
 									numVerifications++;
+								}
 							}
 						}
 						context.put("numVerifications", numVerifications);
+						context.put("verifications", nonDeletedVerfications);
 
 						context.put("transferredVerifications",
 								verificationService.getAllTransferredVerifications(hazard));
