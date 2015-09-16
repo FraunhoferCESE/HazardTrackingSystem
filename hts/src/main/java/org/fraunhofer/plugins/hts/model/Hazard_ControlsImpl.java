@@ -10,9 +10,9 @@ public class Hazard_ControlsImpl {
 		this.control = control;
 	}
 
-	Verifications[] getVerifications() {
+	public Verifications[] getVerifications() {
 		Verifications[] verifications = control.getVerifications();
-		Arrays.sort(verifications,new EntityIdComparator());
+		Arrays.sort(verifications, new VerificationNumComparator());
 		return verifications;
 	}
 }

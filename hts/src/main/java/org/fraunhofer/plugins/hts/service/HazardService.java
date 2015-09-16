@@ -4,13 +4,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
-import org.fraunhofer.plugins.hts.model.EntityIdComparator;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
@@ -162,7 +160,7 @@ public class HazardService {
 		if (hazard != null) {
 			Hazard_Causes[] causes = hazard.getHazardCauses();
 			if (causes != null && causes.length > 0) {
-				Arrays.sort(causes, new EntityIdComparator());
+//				Arrays.sort(causes, new EntityIdComparator());
 				int num = 1;
 				for (Hazard_Causes cause : causes) {
 					if (Strings.isNullOrEmpty(cause.getDeleteReason())) {
@@ -174,9 +172,10 @@ public class HazardService {
 				}
 			}
 
+			// TODO: Don't forget the orphans!
 			Hazard_Controls[] controls = hazard.getHazardControls();
 			if (controls != null && controls.length > 0) {
-				Arrays.sort(controls, new EntityIdComparator());
+//				Arrays.sort(controls, new EntityIdComparator());
 				int num = 1;
 				for (Hazard_Controls control : controls) {
 					if (Strings.isNullOrEmpty(control.getDeleteReason())) {
@@ -190,7 +189,7 @@ public class HazardService {
 
 			Verifications[] verifications = hazard.getVerifications();
 			if (verifications != null && verifications.length > 0) {
-				Arrays.sort(verifications, new EntityIdComparator());
+//				Arrays.sort(verifications, new EntityIdComparator());
 				int num = 1;
 				for(Verifications verification : verifications) {
 					if(Strings.isNullOrEmpty(verification.getDeleteReason())) {

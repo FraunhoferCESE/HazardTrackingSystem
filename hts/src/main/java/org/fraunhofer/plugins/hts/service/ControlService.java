@@ -3,12 +3,15 @@ package org.fraunhofer.plugins.hts.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.fraunhofer.plugins.hts.model.ControlGroups;
+import org.fraunhofer.plugins.hts.model.ControlNumComparator;
 import org.fraunhofer.plugins.hts.model.ControlToCause;
 import org.fraunhofer.plugins.hts.model.ControlToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
@@ -31,14 +34,14 @@ public class ControlService {
 	private final ActiveObjects ao;
 	private final HazardService hazardService;
 	private final TransferService transferService;
-	private final CauseService hazardCauseService;
+	private final CauseService causeService;
 
 	public ControlService(ActiveObjects ao, HazardService hazardService, TransferService transferService,
 			CauseService hazardCauseService) {
 		this.ao = checkNotNull(ao);
 		this.hazardService = checkNotNull(hazardService);
 		this.transferService = checkNotNull(transferService);
-		this.hazardCauseService = hazardCauseService;
+		this.causeService = hazardCauseService;
 	}
 
 	public List<Hazard_Controls> getOrphanControls(Hazards hazard) {
@@ -50,6 +53,7 @@ public class ControlService {
 				orphanControls.add(control);
 		}
 
+		orphanControls.sort(new ControlNumComparator());
 		return orphanControls;
 	}
 
@@ -61,16 +65,16 @@ public class ControlService {
 		control.setTransfer(0);
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
-		if (associatedCause != null) {
-			associateControlToCause(control, associatedCause);
-		}
-
-		control.setControlNumber(control.getID());
+		control.setControlNumber(updateAssociation(hazard, control, associatedCause));
 
 		control.setOriginalDate(new Date());
 		control.setLastUpdated(new Date());
 		control.save();
-		associateControlToHazard(hazard, control);
+
+		final ControlToHazard controlToHazard = ao.create(ControlToHazard.class);
+		controlToHazard.setHazard(hazard);
+		controlToHazard.setControl(control);
+		controlToHazard.save();
 		return control;
 	}
 
@@ -80,10 +84,7 @@ public class ControlService {
 		control.setDescription(description);
 		control.setControlGroup(controlGroup);
 
-		removeAssociationsControlToCause(control.getID());
-		if (associatedCause != null) {
-			associateControlToCause(control, associatedCause);
-		}
+		control.setControlNumber(updateAssociation(control.getHazard()[0], control, associatedCause));
 		control.setLastUpdated(new Date());
 		control.save();
 		return control;
@@ -94,13 +95,44 @@ public class ControlService {
 		Hazard_Controls control = getHazardControlByID(controlID);
 		control.setDescription(transferReason);
 
-		removeAssociationsControlToCause(control.getID());
-		if (associatedCause != null) {
-			associateControlToCause(control, associatedCause);
-		}
+		control.setControlNumber(updateAssociation(control.getHazard()[0], control, associatedCause));
+
 		control.setLastUpdated(new Date());
 		control.save();
 		return control;
+	}
+
+	private int updateAssociation(Hazards hazard, Hazard_Controls control, Hazard_Causes associatedCause) {
+		Hazard_Causes currentAssociation = null;
+		if (control.getCauses() != null && control.getCauses().length > 0)
+			currentAssociation = control.getCauses()[0];
+
+		int controlNum = 1;
+		if (associatedCause != null) {
+			Hazard_Controls[] controlsForCause = associatedCause.getControls();
+			if (controlsForCause != null && controlsForCause.length > 0) {
+				Arrays.sort(controlsForCause, new ControlNumComparator());
+				controlNum = controlsForCause[controlsForCause.length - 1].getControlNumber() + 1;
+			}
+
+			if (currentAssociation != null && associatedCause != currentAssociation)
+				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
+			
+			final ControlToCause controlToCause = ao.create(ControlToCause.class);
+			controlToCause.setCause(associatedCause);
+			controlToCause.setControl(control);
+			controlToCause.save();
+		} else {
+			List<Hazard_Controls> orphanControls = getOrphanControls(hazard);
+			if (!orphanControls.isEmpty() || orphanControls.size() == 1) {
+				Collections.sort(orphanControls, new ControlNumComparator());
+				controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber() + 1;
+			}
+			
+			if(currentAssociation != null)
+				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
+		}
+		return controlNum;
 	}
 
 	public Hazard_Controls getHazardControlByID(int controlID) {
@@ -121,7 +153,7 @@ public class ControlService {
 	}
 
 	public List<ControlJSON> getAllNonDeletedControlsWithinCauseMinimalJson(int causeID, boolean includeTransfers) {
-		Hazard_Causes cause = hazardCauseService.getHazardCauseByID(causeID);
+		Hazard_Causes cause = causeService.getHazardCauseByID(causeID);
 		List<ControlJSON> controls = new ArrayList<ControlJSON>();
 		if (cause != null) {
 			for (Hazard_Controls control : cause.getControls()) {
@@ -138,7 +170,7 @@ public class ControlService {
 							controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
 									targetControl.getDescription(), true, true, "CONTROL"));
 						} else if (transfer.getTargetType().equals("CAUSE")) {
-							Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
+							Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 							controls.add(new ControlJSON(control.getID(), control.getControlNumber(),
 									targetCause.getTitle(), true, true, "CONTROL"));
 						}
@@ -170,7 +202,7 @@ public class ControlService {
 					}
 				} else {
 					// ControlToCause
-					Hazard_Causes targetCause = hazardCauseService.getHazardCauseByID(transfer.getTargetID());
+					Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 					if (targetCause.getHazards()[0].getProjectID() == hazard.getProjectID())
 						transferredControls.put(originControl.getID(),
 								ControlTransfer.createControlToCause(transfer, originControl, targetCause));
@@ -197,11 +229,11 @@ public class ControlService {
 				transfer.save();
 				control.setTransfer(0);
 			}
-			for(Verifications verification : control.getVerifications()) {
+			for (Verifications verification : control.getVerifications()) {
 				ao.delete(ao.find(VerifcToControl.class,
 						Query.select().where("VERIFICATION_ID=? AND CONTROL_ID=?", verification.getID(), controlID)));
 			}
-			
+
 			control.save();
 		}
 		return control;
@@ -209,7 +241,7 @@ public class ControlService {
 
 	public Hazard_Controls addControlTransfer(int originHazardID, int targetControlID, String transferReason,
 			Hazard_Causes associatedCause) {
-		Hazard_Controls control = add(originHazardID, transferReason, null, associatedCause);  
+		Hazard_Controls control = add(originHazardID, transferReason, null, associatedCause);
 		int transferID = createTransfer(control.getID(), "CONTROL", targetControlID, "CONTROL");
 		control.setTransfer(transferID);
 		control.save();
@@ -235,28 +267,6 @@ public class ControlService {
 			}
 			return controlsArr;
 		}
-	}
-
-	private void associateControlToHazard(Hazards hazard, Hazard_Controls control) {
-		final ControlToHazard controlToHazard = ao.create(ControlToHazard.class);
-		controlToHazard.setHazard(hazard);
-		controlToHazard.setControl(control);
-		controlToHazard.save();
-	}
-
-	private void associateControlToCause(Hazard_Controls control, Hazard_Causes cause) {
-		ControlToCause[] find = ao.find(ControlToCause.class,
-				Query.select().where("CONTROL_ID=? AND CAUSE_ID=?", control.getID(), cause.getID()));
-		if (find.length == 0) {
-			final ControlToCause controlToCause = ao.create(ControlToCause.class);
-			controlToCause.setCause(cause);
-			controlToCause.setControl(control);
-			controlToCause.save();
-		}
-	}
-
-	private void removeAssociationsControlToCause(int id) {
-		ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", id)));
 	}
 
 	private int createTransfer(int originID, String originType, int targetID, String targetType) {
