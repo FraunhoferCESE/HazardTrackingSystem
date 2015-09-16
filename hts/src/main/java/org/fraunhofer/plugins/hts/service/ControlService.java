@@ -158,7 +158,7 @@ public class ControlService {
 	public Map<Integer, ControlTransfer> getAllTransferredControls(Hazards hazard) {
 		Map<Integer, ControlTransfer> transferredControls = new HashMap<Integer, ControlTransfer>();
 		for (Hazard_Controls originControl : hazard.getHazardControls()) {
-			if (originControl.getTransfer() != 0) {
+			if (Strings.isNullOrEmpty(originControl.getDeleteReason()) && originControl.getTransfer() != 0) {
 				Transfers transfer = transferService.getTransferByID(originControl.getTransfer());
 				if (transfer.getTargetType().equals("CONTROL")) {
 					// ControlToControl transfer
@@ -206,7 +206,10 @@ public class ControlService {
 
 			List<Verifications> orphanVerifications = hazardService
 					.getOrphanVerifications(control.getHazard()[0]);
-			int verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber();
+			int verificationNum = 0;
+			if(!orphanVerifications.isEmpty())
+				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber();
+			
 			for (Verifications verification : control.getVerifications()) {
 				ao.delete(ao.find(VerifcToControl.class,
 						Query.select().where("VERIFICATION_ID=? AND CONTROL_ID=?", verification.getID(), controlID)));

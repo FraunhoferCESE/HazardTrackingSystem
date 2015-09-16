@@ -434,7 +434,6 @@ function postFormToControlServlet(formElement) {
 	AJS.$(formElement).ajaxSubmit({		
 		async: false,
 		success: function(data) {
-			console.log("SUCCESS");
 			if(data.newControlID) {
 				modifyHTSCookieOpenControls("open", data.newControlID);
 			}
@@ -607,7 +606,6 @@ function postDeleteToControlServlet(controlIDToDelete, reason) {
 		async: false,
 		url: "controls?id=" + controlIDToDelete + "&reason=" + reason,
 		success: function(data) {
-			console.log("SUCCESS");
 			modifyHTSCookieOpenControls("close", controlIDToDelete);
 		},
 		error: function(data) {

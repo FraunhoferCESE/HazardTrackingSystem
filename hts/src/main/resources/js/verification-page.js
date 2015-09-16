@@ -396,7 +396,6 @@ function postFormToVerificationServlet(formElement) {
 	AJS.$(formElement).ajaxSubmit({
 		async : false,
 		success : function(data) {
-			console.log("SUCCESS");
 			if(data.newVerificationID) {
 				console.log(data.newVerificationID);
 				modifyHTSCookieOpenVerifications("open", data.newVerificationID);
@@ -535,7 +534,6 @@ function postDeleteToVerificationServlet(verificationIDToDelete, reason) {
 		async : false,
 		url : "verifications?id=" + verificationIDToDelete + "&reason="	+ reason,
 		success : function(data) {
-			console.log("SUCCESS");
 			modifyHTSCookieOpenVerifications("close", verificationIDToDelete, null);
 		},
 		error : function(data) {

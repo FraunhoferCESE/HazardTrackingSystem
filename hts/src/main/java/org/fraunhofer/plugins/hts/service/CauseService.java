@@ -187,7 +187,10 @@ public class CauseService {
 			}
 
 			List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(cause.getHazards()[0]);
-			int controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber();
+			int controlNum = 0;
+			if(!orphanControls.isEmpty())
+				controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber();
+			
 			for (Hazard_Controls control : cause.getControls()) {
 				ao.delete(ao.find(ControlToCause.class,
 						Query.select().where("CONTROL_ID=? AND CAUSE_ID=?", control.getID(), causeID)));
