@@ -436,13 +436,13 @@ function openDeleteVerificationDialog(verificationIDsToDelete, result) {
 				+ verificationIDsToDelete[i]);
 		html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr>";
 		html3 += "<tr><td class='ConfirmDialogTableNoBorder'>"
-				+ verificationFirstRow.children(":nth-child(2)").text()
+				+ verificationFirstRow.children(".verificationNumber").text()
 						.replace("Verification ", "") + "</td>";
 		html3 += "<td class='ConfirmDialogTableNoBorder'><div class='ConfirmDialogDescriptionText'>"
-				+ verificationFirstRow.children(":nth-child(3)").text()
+				+ verificationFirstRow.children(".verificationDescription").text()
 				+ "</div></td>";
 		html3 += "<td class='ConfirmDialogTableNoBorder'>"
-				+ verificationFirstRow.children(":nth-child(4)").text()
+				+ verificationFirstRow.children(".verificationStatus").text()
 				+ "</td>";
 		html3 += "</tr>";
 

@@ -465,17 +465,16 @@ function openDeleteControlDialog(controlIDsToDelete, result) {
 					"<thead>" +
 						"<tr>" +
 							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellOne'>#</th>" +
-							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwo'>Description</th>" +
-							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellThree'>Control group</th>" +
+							"<th class='ConfirmDialogTableHeader ConfirmDialogTableCellTwo' style=\"width:590px;\">Description</th>" +
 						"</tr>" +
 					"</thead>" +
 					"<tbody>";
 	for (var i = 0; i < controlIDsToDelete.length; i++) {
 		var controlFirstRow = AJS.$("#ControlTableEntryID" + controlIDsToDelete[i]);
 		html3 += "<tr><td colspan='100%' class='ConfirmDialogTableNoBorder'><div class='ConformDialogEmptyRow'></div></td></tr>";
-		html3 += "<tr><td class='ConfirmDialogTableNoBorder'>" + controlFirstRow.children(":nth-child(2)").text().replace("Control ", "") + "</td>";
-		html3 += "<td class='ConfirmDialogTableNoBorder'><div class='ConfirmDialogDescriptionText'>" + controlFirstRow.children(":nth-child(3)").text() + "</div></td>";
-		html3 += "<td class='ConfirmDialogTableNoBorder'>" + controlFirstRow.children(":nth-child(4)").text() + "</td></tr>";
+		html3 += "<tr><td class='ConfirmDialogTableNoBorder'>" + controlFirstRow.children(".controlNumber").text().replace("Control ", "") + "</td>";
+		html3 += "<td class='ConfirmDialogTableNoBorder'><div class='ConfirmDialogDescriptionText'>" + controlFirstRow.children(".controlDescription").text() + "</div></td>";
+		html3 += "</tr>";
 
 		if (i === 0 && controlIDsToDelete.length > 1) {
 			html3 += "<tr>" +
