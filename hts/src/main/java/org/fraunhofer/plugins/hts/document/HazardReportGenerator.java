@@ -6,13 +6,9 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -527,54 +523,6 @@ public class HazardReportGenerator {
 		}
 	}
 
-	private void printVerificationsForControl(XWPFDocument doc, Hazard_Causes cause, Hazard_Controls controls) {
-		Verifications[] verifications = controls.getVerifications();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM F yyyy");
-
-		if (verifications == null || verifications.length == 0) {
-			XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc)
-					.getRow(0);
-			XWPFTableCell cell = row.getCell(0);
-			setColSpan(cell, 4);
-			new ParagraphBuilder().text("No verifications").topMargin(50).leftMargin(450).hangingIndent(450).createCellText(cell);
-		} else {
-			Arrays.sort(verifications, new VerificationNumberComparator());
-
-			for (int i = 1; i < verifications.length; i++) {
-				Verifications verification = verifications[i];
-				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
-					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
-							: verification.getVerificationStatus().getLabel();
-					String verificationType = verification.getVerificationType() == null ? ""
-							: " (" + verification.getVerificationType().getLabel() + ")";
-					String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
-							: verification.getResponsibleParty();
-					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> "
-							: sdf.format(verification.getEstCompletionDate());
-
-					XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
-							.createTable(doc).getRow(0);
-					XWPFTableCell cell = row.getCell(0);
-					setColSpan(cell, 4);
-					System.err.println(cause.getCauseNumber()+"."+controls.getControlNumber()+"."+verification.getVerificationNumber());
-					new ParagraphBuilder()
-							.text("Verification " + cause.getCauseNumber() + "." + controls.getControlNumber() + "."
-									+verification.getVerificationNumber() + verificationType + " - "
-									+ verificationStatus)
-							.bold(true).topMargin(150).leftMargin(650).hangingIndent(400).createCellText(cell);
-					new ParagraphBuilder().text("Responsible party: " + verificationRespParty
-							+ ", Estimated Completion Date: " + estCompDate).leftMargin(650).hangingIndent(400)
-							.createCellText(cell);
-
-					new ParagraphBuilder().text("Description: " + verification.getVerificationDesc()).leftMargin(650)
-							.hangingIndent(400).createCellText(cell);
-				}
-			}
-		}
-
-	}
-
 	private void printControlsForCause(XWPFDocument doc, Hazard_Causes cause) {
 
 		Hazard_Controls[] controls = cause.getControls();
@@ -584,17 +532,23 @@ public class HazardReportGenerator {
 		XWPFTableCell cell;
 
 		// "Controls:"
-		row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
+		XWPFTable controlsTable = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc);
+		row = controlsTable.getRow(0);
 		cell = row.getCell(0);
-		cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
 		setColSpan(cell, 4);
-		new CellHeaderBuilder().text("Controls: ").bold().createCellHeader(cell);
+		new CellHeaderBuilder().text("Controls: ").bold().afterSpacing(0).createCellHeader(cell);
 
 		if (controls.length == 0) {
-			new ParagraphBuilder().text("None").leftMargin(450).hangingIndent(400).createCellText(cell);
+			new ParagraphBuilder().text("None").leftMargin(450).topMargin(150).hangingIndent(400).createCellText(cell);
 		} else {
-			for (Hazard_Controls control : controls) {
+			for (int i = 0; i < controls.length; i++) {
+				Hazard_Controls control = controls[i];
 				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
+					row = controlsTable.createRow();
+//					row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
+					cell = row.getCell(0);
+					setColSpan(cell, 4);
+
 					if (control.getTransfer() != 0) {
 						Transfers transfer = transferService.getTransferByID(control.getTransfer());
 
@@ -610,7 +564,7 @@ public class HazardReportGenerator {
 									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
 											+ " (TRANSFER): " + hazardNumber + " \u2013 " + hazardTitle + ", Control "
 											+ targetControl.getControlNumber())
-									.leftMargin(350).hangingIndent(300).createCellText(cell);
+									.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
 
 						} else if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
@@ -621,7 +575,7 @@ public class HazardReportGenerator {
 									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
 											+ " (TRANSFER): " + hazardNumber + ", Cause " + targetCause.getCauseNumber()
 											+ " \u2013 " + targetCause.getTitle())
-									.leftMargin(350).hangingIndent(300).createCellText(cell);
+									.leftMargin(350).topMargin(150).hangingIndent(300).createCellText(cell);
 						}
 					} else {
 						ControlGroups controlGroup = control.getControlGroup();
@@ -631,19 +585,68 @@ public class HazardReportGenerator {
 							new ParagraphBuilder()
 									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber() + " ("
 											+ controlGroup.getLabel() + ")" + " - " + control.getDescription())
-									.leftMargin(450).hangingIndent(400).createCellText(cell);
+									.topMargin(150).leftMargin(450).hangingIndent(400).createCellText(cell);
 						} else {
 							new ParagraphBuilder()
 									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber() + " - "
 											+ control.getDescription())
-									.leftMargin(450).hangingIndent(300).createCellText(cell);
+									.topMargin(150).leftMargin(450).hangingIndent(300).createCellText(cell);
 						}
 					}
+					printVerificationsForControl(doc, cause, control, controlsTable);
 				}
-
-				printVerificationsForControl(doc, cause, control);
 			}
 		}
+	}
+
+	private void printVerificationsForControl(XWPFDocument doc, Hazard_Causes cause, Hazard_Controls controls, XWPFTable controlsTable) {
+		Verifications[] verifications = controls.getVerifications();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM F yyyy");
+
+		if (verifications == null || verifications.length == 0) {
+			XWPFTableRow row = controlsTable.createRow();
+//			XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc)
+//					.getRow(0);
+			XWPFTableCell cell = row.getCell(0);
+			setColSpan(cell, 4);
+			new ParagraphBuilder().text("No verifications").topMargin(50).leftMargin(450).hangingIndent(450)
+					.createCellText(cell);
+		} else {
+			Arrays.sort(verifications, new VerificationNumberComparator());
+
+			for (int i = 1; i < verifications.length; i++) {
+				Verifications verification = verifications[i];
+				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
+					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
+							: verification.getVerificationStatus().getLabel();
+					String verificationType = verification.getVerificationType() == null ? ""
+							: " (" + verification.getVerificationType().getLabel() + ")";
+					String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
+							: verification.getResponsibleParty();
+					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> "
+							: sdf.format(verification.getEstCompletionDate());
+
+					XWPFTableRow row = controlsTable.createRow();
+//					XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
+//							.createTable(doc).getRow(0);
+					XWPFTableCell cell = row.getCell(0);
+					setColSpan(cell, 4);
+					new ParagraphBuilder()
+							.text("Verification " + cause.getCauseNumber() + "." + controls.getControlNumber() + "."
+									+ verification.getVerificationNumber() + verificationType + " - "
+									+ verificationStatus)
+							.bold(true).topMargin(150).leftMargin(650).hangingIndent(400).createCellText(cell);
+					new ParagraphBuilder().text("Responsible party: " + verificationRespParty
+							+ ", Estimated Completion Date: " + estCompDate).leftMargin(650).hangingIndent(400)
+							.createCellText(cell);
+
+					new ParagraphBuilder().text("Description: " + verification.getVerificationDesc()).leftMargin(650)
+							.hangingIndent(400).createCellText(cell);
+				}
+			}
+		}
+
 	}
 
 	/**

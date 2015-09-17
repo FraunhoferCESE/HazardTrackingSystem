@@ -222,9 +222,9 @@ public class HazardReportGeneratorTest {
 		when(deletedVerification.getControls()).thenReturn(new Hazard_Controls[] {mockControl1, mockControlToCause, mockControlToControl});
 		when(deletedVerification.getDeleteReason()).thenReturn("Remove because it no longer applies.");
 		
-		when(mockControl1.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
-		when(mockControlToCause.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
-		when(mockControlToControl.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification2, deletedVerification});
+		when(mockControl1.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification1, mockVerification2, deletedVerification});
+		when(mockControlToCause.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification1, mockVerification2, deletedVerification});
+		when(mockControlToControl.getVerifications()).thenReturn(new Verifications[] {mockVerification1, mockVerification1, mockVerification2, deletedVerification});
 	}
 
 	private void initializeTransfers() {

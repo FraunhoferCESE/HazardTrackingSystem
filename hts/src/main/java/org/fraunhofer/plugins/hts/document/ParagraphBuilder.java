@@ -23,9 +23,11 @@ public class ParagraphBuilder {
 	private int fontSize = 8;
 	private String text = "";
 	private boolean bottomBorder = false;
+	private boolean topBorder = false;
 	private int leftMargin = 50;
 	private int topMargin = 0;
 	private int hangingIndent = 0;
+	private Borders borderType = Borders.SINGLE;
 
 	public ParagraphBuilder() {
 	}
@@ -50,9 +52,16 @@ public class ParagraphBuilder {
 		paragraph.setIndentationRight(50);
 		paragraph.setIndentationHanging(hangingIndent);
 		if (bottomBorder)
-			paragraph.setBorderBottom(Borders.SINGLE);
+			paragraph.setBorderBottom(borderType);
+		if(topBorder)
+			paragraph.setBorderTop(borderType);
 	}
 
+	public ParagraphBuilder borderType(Borders borderType) {
+		this.borderType = borderType;
+		return this;
+	}
+	
 	public ParagraphBuilder text(String text) {
 		this.text = text;
 		return this;
@@ -75,6 +84,11 @@ public class ParagraphBuilder {
 
 	public ParagraphBuilder bottomBorder() {
 		this.bottomBorder = true;
+		return this;
+	}
+	
+	public ParagraphBuilder topBorder(boolean topBorder) {
+		this.topBorder = topBorder;
 		return this;
 	}
 

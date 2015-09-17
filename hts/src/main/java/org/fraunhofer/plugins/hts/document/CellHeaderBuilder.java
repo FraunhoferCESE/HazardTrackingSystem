@@ -11,6 +11,7 @@ public class CellHeaderBuilder {
 	private boolean isBold = false;
 	private ParagraphAlignment alignment = ParagraphAlignment.LEFT;
 	private int beforeSpacing = 70;
+	private int afterSpacing = 100;
 
 	public CellHeaderBuilder() {
 	}
@@ -25,7 +26,7 @@ public class CellHeaderBuilder {
 		p.setAlignment(alignment);
 		p.setSpacingBefore(beforeSpacing);
 		p.setIndentationLeft(20);
-		p.setSpacingAfter(100);
+		p.setSpacingAfter(afterSpacing);
 		XWPFRun rHeading = p.createRun();
 		rHeading.setText(text.toUpperCase());
 		rHeading.setFontFamily("Arial");
@@ -50,6 +51,11 @@ public class CellHeaderBuilder {
 
 	public CellHeaderBuilder beforeSpacing(int beforeSpacing) {
 		this.beforeSpacing = beforeSpacing;
+		return this;
+	}
+	
+	public CellHeaderBuilder afterSpacing(int afterSpacing) {
+		this.afterSpacing = afterSpacing;
 		return this;
 	}
 
