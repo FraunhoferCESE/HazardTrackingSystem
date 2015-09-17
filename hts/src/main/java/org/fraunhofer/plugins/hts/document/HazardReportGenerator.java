@@ -38,6 +38,7 @@ import org.fraunhofer.plugins.hts.service.CauseService;
 import org.fraunhofer.plugins.hts.service.ControlService;
 import org.fraunhofer.plugins.hts.service.HazardService;
 import org.fraunhofer.plugins.hts.service.TransferService;
+import org.fraunhofer.plugins.hts.service.VerificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class HazardReportGenerator {
 	private final HazardService hazardService;
 	private final CauseService causeService;
 	private final ControlService controlService;
+	private final VerificationService verificationService;
 	private final TransferService transferService;
 	private final ProjectManager projectManager;
 
@@ -77,12 +79,14 @@ public class HazardReportGenerator {
 	 * @param transferService
 	 */
 	public HazardReportGenerator(HazardService hazardService, CauseService causeService,
-			TransferService transferService, ProjectManager projectManager, ControlService controlService) {
+			TransferService transferService, ProjectManager projectManager, ControlService controlService,
+			VerificationService verificationService) {
 		this.hazardService = hazardService;
 		this.causeService = causeService;
 		this.transferService = transferService;
 		this.projectManager = projectManager;
 		this.controlService = controlService;
+		this.verificationService = verificationService;
 	}
 
 	/**
@@ -545,7 +549,8 @@ public class HazardReportGenerator {
 				Hazard_Controls control = controls[i];
 				if (Strings.isNullOrEmpty(control.getDeleteReason())) {
 					row = controlsTable.createRow();
-//					row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
+					// row = new TableBuilder().size(1,
+					// 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc).getRow(0);
 					cell = row.getCell(0);
 					setColSpan(cell, 4);
 
@@ -599,54 +604,119 @@ public class HazardReportGenerator {
 		}
 	}
 
-	private void printVerificationsForControl(XWPFDocument doc, Hazard_Causes cause, Hazard_Controls controls, XWPFTable controlsTable) {
+	private void printVerificationsForControl(XWPFDocument doc, Hazard_Causes cause, Hazard_Controls controls,
+			XWPFTable controlsTable) {
 		Verifications[] verifications = controls.getVerifications();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM F yyyy");
 
 		if (verifications == null || verifications.length == 0) {
 			XWPFTableRow row = controlsTable.createRow();
-//			XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc)
-//					.getRow(0);
+			// XWPFTableRow row = new TableBuilder().size(1,
+			// 1).setInnerHBorder(XWPFBorderType.NONE).createTable(doc)
+			// .getRow(0);
 			XWPFTableCell cell = row.getCell(0);
 			setColSpan(cell, 4);
 			new ParagraphBuilder().text("No verifications").topMargin(50).leftMargin(450).hangingIndent(450)
 					.createCellText(cell);
 		} else {
 			Arrays.sort(verifications, new VerificationNumberComparator());
-
 			for (int i = 1; i < verifications.length; i++) {
 				Verifications verification = verifications[i];
 				if (Strings.isNullOrEmpty(verification.getDeleteReason())) {
-					String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
-							: verification.getVerificationStatus().getLabel();
-					String verificationType = verification.getVerificationType() == null ? ""
-							: " (" + verification.getVerificationType().getLabel() + ")";
-					String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
-							: verification.getResponsibleParty();
-					String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> "
-							: sdf.format(verification.getEstCompletionDate());
+					if (verification.getTransfer() == 0) {
+						String verificationStatus = verification.getVerificationStatus() == null ? "<STATUS TBD>"
+								: verification.getVerificationStatus().getLabel();
+						String verificationType = verification.getVerificationType() == null ? ""
+								: " (" + verification.getVerificationType().getLabel() + ")";
+						String verificationRespParty = verification.getResponsibleParty() == null ? " <TBD> "
+								: verification.getResponsibleParty();
+						String estCompDate = verification.getEstCompletionDate() == null ? " <TBD> "
+								: sdf.format(verification.getEstCompletionDate());
 
-					XWPFTableRow row = controlsTable.createRow();
-//					XWPFTableRow row = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
-//							.createTable(doc).getRow(0);
-					XWPFTableCell cell = row.getCell(0);
-					setColSpan(cell, 4);
-					new ParagraphBuilder()
-							.text("Verification " + cause.getCauseNumber() + "." + controls.getControlNumber() + "."
-									+ verification.getVerificationNumber() + verificationType + " - "
-									+ verificationStatus)
-							.bold(true).topMargin(150).leftMargin(650).hangingIndent(400).createCellText(cell);
-					new ParagraphBuilder().text("Responsible party: " + verificationRespParty
-							+ ", Estimated Completion Date: " + estCompDate).leftMargin(650).hangingIndent(400)
-							.createCellText(cell);
+						XWPFTableRow row = controlsTable.createRow();
+						// XWPFTableRow row = new TableBuilder().size(1,
+						// 1).setInnerHBorder(XWPFBorderType.NONE)
+						// .createTable(doc).getRow(0);
+						XWPFTableCell cell = row.getCell(0);
+						setColSpan(cell, 4);
+						new ParagraphBuilder()
+								.text("Verification " + cause.getCauseNumber() + "." + controls.getControlNumber() + "."
+										+ verification.getVerificationNumber() + verificationType + " - "
+										+ verificationStatus)
+								.bold(true).topMargin(150).leftMargin(650).hangingIndent(400).createCellText(cell);
+						new ParagraphBuilder().text("Responsible party: " + verificationRespParty
+								+ ", Estimated Completion Date: " + estCompDate).leftMargin(650).hangingIndent(400)
+								.createCellText(cell);
 
-					new ParagraphBuilder().text("Description: " + verification.getVerificationDesc()).leftMargin(650)
-							.hangingIndent(400).createCellText(cell);
+						new ParagraphBuilder().text("Description: " + verification.getVerificationDesc())
+								.leftMargin(650).hangingIndent(400).createCellText(cell);
+					} else {
+						Transfers transfer = transferService.getTransferByID(verification.getTransfer());
+						if (transfer == null || !transfer.getTargetType().equals("VERIFICATION")) {
+							log.warn("Unsupported Verification transfer target type");
+						} else {
+							Verifications target = verificationService.getVerificationByID(transfer.getTargetID());
+							if (target == null) {
+								log.warn("Unknown verification transfer target id: " + transfer.getTargetID());
+							} else {
+								String targetStatus = target.getVerificationStatus() == null ? "<STATUS TBD>"
+										: target.getVerificationStatus().getLabel();
+								String targetType = target.getVerificationType() == null ? ""
+										: " (" + target.getVerificationType().getLabel() + ")";
+								String targetRespParty = target.getResponsibleParty() == null ? " <TBD> "
+										: target.getResponsibleParty();
+								String targetEstCompDate = target.getEstCompletionDate() == null ? " <TBD> "
+										: sdf.format(target.getEstCompletionDate());
+
+								XWPFTableRow row = controlsTable.createRow();
+								XWPFTableCell cell = row.getCell(0);
+								setColSpan(cell, 4);
+								ParagraphBuilder vTitle = new ParagraphBuilder()
+										.text("Verification " + getVerificationNumber(verification)
+												+ " (TRANSFER): ")
+										.bold(true).topMargin(150).leftMargin(650).hangingIndent(400);
+								RunBuilder run = new RunBuilder().text("Verification " + getVerificationNumber(target)
+												+ targetType + " - " + targetStatus);
+								if (!Strings.isNullOrEmpty(target.getDeleteReason())) {
+									run = run.strikethrough();
+								}
+								vTitle.addRun(run);
+								vTitle.createCellText(cell);
+								new ParagraphBuilder()
+										.text("Responsible party: " + targetRespParty + ", Estimated Completion Date: "
+												+ targetEstCompDate)
+										.leftMargin(650).hangingIndent(400).createCellText(cell);
+
+								new ParagraphBuilder().text("Transfer reason: " + verification.getVerificationDesc())
+										.leftMargin(650).hangingIndent(400).createCellText(cell);
+							}
+						}
+					}
 				}
 			}
 		}
 
+	}
+
+	private String getVerificationNumber(Verifications v) {
+		String result = "";
+		if (v != null) {
+			Hazard_Controls[] controls = v.getControls();
+			if (controls == null || controls.length == 0) {
+				result = "Orph." + v.getVerificationNumber();
+			} else {
+				Hazard_Causes[] causes = controls[0].getCauses();
+				if (causes == null || causes.length == 0) {
+					result = "Orph." + controls[0].getControlNumber() + "." + v.getVerificationNumber();
+				} else {
+					result = causes[0].getCauseNumber() + "." + controls[0].getControlNumber() + "."
+							+ v.getVerificationNumber();
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/**

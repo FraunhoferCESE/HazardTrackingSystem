@@ -23,6 +23,7 @@ import org.fraunhofer.plugins.hts.service.ReviewPhaseService;
 import org.fraunhofer.plugins.hts.service.RiskCategoryService;
 import org.fraunhofer.plugins.hts.service.RiskLikelihoodsService;
 import org.fraunhofer.plugins.hts.service.TransferService;
+import org.fraunhofer.plugins.hts.service.VerificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +41,12 @@ public final class ReportGenerationServlet extends HttpServlet {
 	private final TransferService transferService;
 
 	Logger log = LoggerFactory.getLogger(ReportGenerationServlet.class);
+	private VerificationService verificationService;
 
 	public ReportGenerationServlet(HazardService hazardService, ReviewPhaseService reviewPhaseService,
 			RiskCategoryService riskCategoryService, RiskLikelihoodsService riskLikelihoodsService,
-			CauseService causeService, TransferService transferService, ControlService controlService) {
+			CauseService causeService, TransferService transferService, ControlService controlService,
+			VerificationService verificationService) {
 		this.hazardService = hazardService;
 		this.reviewPhaseService = reviewPhaseService;
 		this.riskCategoryService = riskCategoryService;
@@ -51,6 +54,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 		this.causeService = causeService;
 		this.transferService = transferService;
 		this.controlService = controlService;
+		this.verificationService = verificationService;
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public final class ReportGenerationServlet extends HttpServlet {
 		List<Risk_Likelihoods> riskLikelihoodsList = new ArrayList<Risk_Likelihoods>(riskLikelihoodsService.all());
 
 		HazardReportGenerator reportGenerator = new HazardReportGenerator(hazardService, causeService, transferService,
-				ComponentAccessor.getProjectManager(), controlService);
+				ComponentAccessor.getProjectManager(), controlService, verificationService);
 
 		ServletOutputStream stream = null;
 		try {
@@ -73,7 +77,8 @@ public final class ReportGenerationServlet extends HttpServlet {
 
 			stream = response.getOutputStream();
 			response.setContentType("application/msword");
-			String fileName = currentHazard.getHazardNumber() == null ? "Unnamed_Hazard" : currentHazard.getHazardNumber();
+			String fileName = currentHazard.getHazardNumber() == null ? "Unnamed_Hazard"
+					: currentHazard.getHazardNumber();
 			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".docx");
 			stream.write(results.get(0));
 		} catch (IOException | XmlException ioe) {

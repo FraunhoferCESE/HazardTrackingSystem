@@ -1,10 +1,14 @@
 package org.fraunhofer.plugins.hts.document;
 
+import java.util.List;
+
 import org.apache.poi.xwpf.usermodel.Borders;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+
+import com.google.common.collect.Lists;
 
 /**
  * Helper class which for generating and formatting the Paragraph elements of a
@@ -28,6 +32,8 @@ public class ParagraphBuilder {
 	private int topMargin = 0;
 	private int hangingIndent = 0;
 	private Borders borderType = Borders.SINGLE;
+	private boolean strikethrough = false;
+	private List<RunBuilder> customRuns = Lists.newArrayList();
 
 	public ParagraphBuilder() {
 	}
@@ -45,6 +51,17 @@ public class ParagraphBuilder {
 		run.setText(text);
 		run.setFontFamily(fontFamily);
 		run.setFontSize(fontSize);
+		run.setStrike(strikethrough);
+		
+		for (RunBuilder xwpfRun : customRuns) {
+			XWPFRun newrun = paragraph.createRun();
+			newrun.setBold(xwpfRun.isBold);
+			newrun.setText(xwpfRun.text);
+			newrun.setFontFamily(xwpfRun.fontFamily);
+			newrun.setFontSize(xwpfRun.fontSize);
+			newrun.setStrike(xwpfRun.strikethrough);
+		}
+		
 		paragraph.setAlignment(alignment);
 		paragraph.setSpacingAfter(10);
 		paragraph.setSpacingBefore(topMargin);
@@ -57,11 +74,20 @@ public class ParagraphBuilder {
 			paragraph.setBorderTop(borderType);
 	}
 
+	public ParagraphBuilder addRun(RunBuilder run) {
+		this.customRuns.add(run);
+		return this;
+	}
+	
 	public ParagraphBuilder borderType(Borders borderType) {
 		this.borderType = borderType;
 		return this;
 	}
 	
+	public ParagraphBuilder strikethrough() {
+		this.strikethrough = true;
+		return this;
+	}
 	public ParagraphBuilder text(String text) {
 		this.text = text;
 		return this;
