@@ -12,7 +12,7 @@ public class Hazard_ControlsImpl {
 
 	public Verifications[] getVerifications() {
 		Verifications[] verifications = control.getVerifications();
-		Arrays.sort(verifications, new VerificationNumComparator());
+		Arrays.sort(verifications, new VerificationNumberComparator());
 		return verifications;
 	}
 }

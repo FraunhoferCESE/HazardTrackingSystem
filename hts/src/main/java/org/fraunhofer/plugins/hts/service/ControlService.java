@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.fraunhofer.plugins.hts.model.ControlGroups;
-import org.fraunhofer.plugins.hts.model.ControlNumComparator;
+import org.fraunhofer.plugins.hts.model.ControlNumberComparator;
 import org.fraunhofer.plugins.hts.model.ControlToCause;
 import org.fraunhofer.plugins.hts.model.ControlToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
@@ -97,7 +97,7 @@ public class ControlService {
 		if (associatedCause != null) {
 			Hazard_Controls[] controlsForCause = associatedCause.getControls();
 			if (controlsForCause != null && controlsForCause.length > 0) {
-				Arrays.sort(controlsForCause, new ControlNumComparator());
+				Arrays.sort(controlsForCause, new ControlNumberComparator());
 				controlNum = controlsForCause[controlsForCause.length - 1].getControlNumber() + 1;
 			}
 
@@ -111,7 +111,7 @@ public class ControlService {
 		} else {
 			List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(hazard);
 			if (!orphanControls.isEmpty() || orphanControls.size() == 1) {
-				Collections.sort(orphanControls, new ControlNumComparator());
+				Collections.sort(orphanControls, new ControlNumberComparator());
 				controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber() + 1;
 			}
 

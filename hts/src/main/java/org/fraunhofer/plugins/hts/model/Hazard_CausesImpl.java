@@ -16,7 +16,7 @@ public class Hazard_CausesImpl {
 
 	public Hazard_Controls[] getControls() {
 		Hazard_Controls[] controls = cause.getControls();
-		Arrays.sort(controls, new ControlNumComparator());
+		Arrays.sort(controls, new ControlNumberComparator());
 		return controls;
 	}
 	

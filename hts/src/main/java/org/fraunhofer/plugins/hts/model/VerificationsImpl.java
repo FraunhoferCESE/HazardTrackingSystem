@@ -12,7 +12,7 @@ public class VerificationsImpl {
 
 	Hazard_Controls[] getControls() {
 		Hazard_Controls[] controls = verification.getControls();
-		Arrays.sort(controls, new ControlNumComparator());
+		Arrays.sort(controls, new ControlNumberComparator());
 		return controls;
 	}
 }

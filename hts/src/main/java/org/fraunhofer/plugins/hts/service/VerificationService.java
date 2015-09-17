@@ -14,7 +14,7 @@ import org.fraunhofer.plugins.hts.model.Hazards;
 import org.fraunhofer.plugins.hts.model.Transfers;
 import org.fraunhofer.plugins.hts.model.VerifcToControl;
 import org.fraunhofer.plugins.hts.model.VerifcToHazard;
-import org.fraunhofer.plugins.hts.model.VerificationNumComparator;
+import org.fraunhofer.plugins.hts.model.VerificationNumberComparator;
 import org.fraunhofer.plugins.hts.model.VerificationStatus;
 import org.fraunhofer.plugins.hts.model.VerificationType;
 import org.fraunhofer.plugins.hts.model.Verifications;
@@ -116,7 +116,7 @@ public class VerificationService {
 		if (associatedControl != null) {
 			Verifications[] verificationsForControl = associatedControl.getVerifications();
 			if (verificationsForControl != null && verificationsForControl.length > 0) {
-				Arrays.sort(verificationsForControl, new VerificationNumComparator());
+				Arrays.sort(verificationsForControl, new VerificationNumberComparator());
 				verificationNum = verificationsForControl[verificationsForControl.length - 1].getVerificationNumber()
 						+ 1;
 			}
@@ -131,7 +131,7 @@ public class VerificationService {
 		} else {
 			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
 			if (!orphanVerifications.isEmpty()) {
-				Collections.sort(orphanVerifications, new VerificationNumComparator());
+				Collections.sort(orphanVerifications, new VerificationNumberComparator());
 				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber() + 1;
 			}
 			if(currentAssociation != null)

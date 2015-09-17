@@ -9,9 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.fraunhofer.plugins.hts.document.VerificationNumberComparator;
 import org.fraunhofer.plugins.hts.issues.PluginCustomization;
-import org.fraunhofer.plugins.hts.model.ControlNumComparator;
+import org.fraunhofer.plugins.hts.model.ControlNumberComparator;
 import org.fraunhofer.plugins.hts.model.GroupToHazard;
 import org.fraunhofer.plugins.hts.model.Hazard_Causes;
 import org.fraunhofer.plugins.hts.model.Hazard_Controls;
@@ -22,6 +21,7 @@ import org.fraunhofer.plugins.hts.model.PhaseToHazard;
 import org.fraunhofer.plugins.hts.model.Review_Phases;
 import org.fraunhofer.plugins.hts.model.SubsystemToHazard;
 import org.fraunhofer.plugins.hts.model.Subsystems;
+import org.fraunhofer.plugins.hts.model.VerificationNumberComparator;
 import org.fraunhofer.plugins.hts.model.Verifications;
 import org.ofbiz.core.entity.GenericEntityException;
 
@@ -327,7 +327,7 @@ public class HazardService {
 					orphanControls.add(current);
 			}
 		}
-		orphanControls.sort(new ControlNumComparator());
+		orphanControls.sort(new ControlNumberComparator());
 		return orphanControls;
 	}
 

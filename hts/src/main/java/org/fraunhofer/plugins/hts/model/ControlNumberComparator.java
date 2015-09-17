@@ -1,8 +1,6 @@
-package org.fraunhofer.plugins.hts.document;
+package org.fraunhofer.plugins.hts.model;
 
 import java.util.Comparator;
-
-import org.fraunhofer.plugins.hts.model.Hazard_Controls;
 
 public class ControlNumberComparator implements Comparator<Hazard_Controls> {
 

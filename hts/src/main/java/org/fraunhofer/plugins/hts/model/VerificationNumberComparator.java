@@ -1,8 +1,6 @@
-package org.fraunhofer.plugins.hts.document;
+package org.fraunhofer.plugins.hts.model;
 
 import java.util.Comparator;
-
-import org.fraunhofer.plugins.hts.model.Verifications;
 
 public class VerificationNumberComparator implements Comparator<Verifications> {
 
