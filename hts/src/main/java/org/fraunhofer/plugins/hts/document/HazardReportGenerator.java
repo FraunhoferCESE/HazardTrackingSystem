@@ -565,22 +565,31 @@ public class HazardReportGenerator {
 							String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> "
 									: hazard.getHazardNumber();
 
-							new ParagraphBuilder()
-									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
-											+ " (TRANSFER): " + hazardNumber + " \u2013 " + hazardTitle + ", Control "
-											+ targetControl.getControlNumber())
-									.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
+							ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
+									+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
+									.leftMargin(350).hangingIndent(300).topMargin(150);
+
+							RunBuilder run = new RunBuilder().text(hazardNumber + " \u2013 " + hazardTitle
+									+ ", Control " + targetControl.getControlNumber());
+							if (!hazard.getActive() || !Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
+								run = run.strikethrough();
+							}
+							controlTitle.addRun(run).createCellText(cell);
 
 						} else if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 							Hazards hazard = targetCause.getHazards()[0];
 							String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> "
 									: hazard.getHazardNumber();
-							new ParagraphBuilder()
-									.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
-											+ " (TRANSFER): " + hazardNumber + ", Cause " + targetCause.getCauseNumber()
-											+ " \u2013 " + targetCause.getTitle())
-									.leftMargin(350).topMargin(150).hangingIndent(300).createCellText(cell);
+							ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
+									+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
+									.leftMargin(350).hangingIndent(300).topMargin(150);
+							RunBuilder run = new RunBuilder().text(hazardNumber + ", Cause "
+									+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+							if (!hazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+								run = run.strikethrough();
+							}
+							controlTitle.addRun(run).createCellText(cell);
 						}
 					} else {
 						ControlGroups controlGroup = control.getControlGroup();
@@ -673,16 +682,14 @@ public class HazardReportGenerator {
 								XWPFTableCell cell = row.getCell(0);
 								setColSpan(cell, 4);
 								ParagraphBuilder vTitle = new ParagraphBuilder()
-										.text("Verification " + getVerificationNumber(verification)
-												+ " (TRANSFER): ")
+										.text("Verification " + getVerificationNumber(verification) + " (TRANSFER): ")
 										.bold(true).topMargin(150).leftMargin(650).hangingIndent(400);
 								RunBuilder run = new RunBuilder().text("Verification " + getVerificationNumber(target)
-												+ targetType + " - " + targetStatus);
+										+ targetType + " - " + targetStatus);
 								if (!Strings.isNullOrEmpty(target.getDeleteReason())) {
 									run = run.strikethrough();
 								}
-								vTitle.addRun(run);
-								vTitle.createCellText(cell);
+								vTitle.addRun(run).createCellText(cell);
 								new ParagraphBuilder()
 										.text("Responsible party: " + targetRespParty + ", Estimated Completion Date: "
 												+ targetEstCompDate)
@@ -733,17 +740,30 @@ public class HazardReportGenerator {
 
 		if (transfer.getTargetType().equals("HAZARD")) {
 			Hazards hazard = hazardService.getHazardById(Integer.toString(transfer.getTargetID()));
-			new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + " \u2013 "
-							+ hazard.getHazardTitle())
-					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
+			ParagraphBuilder causeTitle = new ParagraphBuilder()
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " )
+					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300);
+			RunBuilder run = new RunBuilder().text(hazard.getHazardNumber() + " \u2013 "
+					+ hazard.getHazardTitle());
+			if (!hazard.getActive()) {
+				run = run.strikethrough();
+			}
+			causeTitle.addRun(run).createCellText(cell);
+			
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
 			Hazards hazard = targetCause.getHazards()[0];
-			new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " + hazard.getHazardNumber() + ", Cause "
-							+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle())
-					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
+			ParagraphBuilder causeTitle = new ParagraphBuilder()
+					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " )
+					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300);
+			
+			RunBuilder run = new RunBuilder().text(hazard.getHazardNumber() + ", Cause "
+					+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+			
+			if(!hazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+				run.strikethrough();
+			}
+			causeTitle.addRun(run).createCellText(cell);
 		}
 
 	}
