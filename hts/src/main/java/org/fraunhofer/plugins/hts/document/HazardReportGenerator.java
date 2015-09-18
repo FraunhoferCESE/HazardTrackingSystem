@@ -559,37 +559,62 @@ public class HazardReportGenerator {
 
 						if (transfer.getTargetType().equals("CONTROL")) {
 							Hazard_Controls targetControl = controlService.getHazardControlByID(transfer.getTargetID());
-							Hazards hazard = targetControl.getHazard()[0];
+							Hazards targetHazard = targetControl.getHazard()[0];
 
-							String hazardTitle = hazard.getHazardTitle() == null ? "<TBD> " : hazard.getHazardTitle();
-							String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> "
-									: hazard.getHazardNumber();
+							if (targetHazard.getProjectID() != control.getHazard()[0].getProjectID()) {
+								String targetHazNum = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "N/A"
+										: targetHazard.getHazardNumber();
+								new ParagraphBuilder()
+										.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
+												+ " (TRANSFER) WARNING: This control transfers to a hazard not in the current project. Hazard number: "
+												+ targetHazNum)
+										.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
+							} else {
 
-							ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
-									+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
-									.leftMargin(350).hangingIndent(300).topMargin(150);
+								String hazardTitle = targetHazard.getHazardTitle() == null ? "<TBD> "
+										: targetHazard.getHazardTitle();
+								String hazardNumber = targetHazard.getHazardNumber() == null ? "<TBD> "
+										: targetHazard.getHazardNumber();
 
-							RunBuilder run = new RunBuilder().text(hazardNumber + " \u2013 " + hazardTitle
-									+ ", Control " + targetControl.getControlNumber());
-							if (!hazard.getActive() || !Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
-								run = run.strikethrough();
+								ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
+										+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
+										.leftMargin(350).hangingIndent(300).topMargin(150);
+
+								RunBuilder run = new RunBuilder().text(hazardNumber + " \u2013 " + hazardTitle
+										+ ", Control " + targetControl.getControlNumber());
+								if (!targetHazard.getActive()
+										|| !Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
+									run = run.strikethrough();
+								}
+								controlTitle.addRun(run).createCellText(cell);
 							}
-							controlTitle.addRun(run).createCellText(cell);
 
 						} else if (transfer.getTargetType().equals("CAUSE")) {
 							Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
-							Hazards hazard = targetCause.getHazards()[0];
-							String hazardNumber = hazard.getHazardNumber() == null ? "<TBD> "
-									: hazard.getHazardNumber();
-							ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
-									+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
-									.leftMargin(350).hangingIndent(300).topMargin(150);
-							RunBuilder run = new RunBuilder().text(hazardNumber + ", Cause "
-									+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
-							if (!hazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
-								run = run.strikethrough();
+							Hazards targetHazard = targetCause.getHazards()[0];
+
+							if (targetHazard.getProjectID() != control.getHazard()[0].getProjectID()) {
+								String targetHazNum = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "N/A"
+										: targetHazard.getHazardNumber();
+								new ParagraphBuilder()
+										.text("Control " + cause.getCauseNumber() + "." + control.getControlNumber()
+												+ " (TRANSFER) WARNING: This control transfers to a hazard not in the current project. Hazard number: "
+												+ targetHazNum)
+										.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
+							} else {
+								String hazardNumber = targetHazard.getHazardNumber() == null ? "<TBD> "
+										: targetHazard.getHazardNumber();
+								ParagraphBuilder controlTitle = new ParagraphBuilder().text("Control "
+										+ cause.getCauseNumber() + "." + control.getControlNumber() + " (TRANSFER): ")
+										.leftMargin(350).hangingIndent(300).topMargin(150);
+								RunBuilder run = new RunBuilder().text(hazardNumber + ", Cause "
+										+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+								if (!targetHazard.getActive()
+										|| !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+									run = run.strikethrough();
+								}
+								controlTitle.addRun(run).createCellText(cell);
 							}
-							controlTitle.addRun(run).createCellText(cell);
 						}
 					} else {
 						ControlGroups controlGroup = control.getControlGroup();
@@ -739,31 +764,52 @@ public class HazardReportGenerator {
 		Transfers transfer = transferService.getTransferByID(cause.getTransfer());
 
 		if (transfer.getTargetType().equals("HAZARD")) {
-			Hazards hazard = hazardService.getHazardById(Integer.toString(transfer.getTargetID()));
-			ParagraphBuilder causeTitle = new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " )
-					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300);
-			RunBuilder run = new RunBuilder().text(hazard.getHazardNumber() + " \u2013 "
-					+ hazard.getHazardTitle());
-			if (!hazard.getActive()) {
-				run = run.strikethrough();
+			Hazards targetHazard = hazardService.getHazardById(Integer.toString(transfer.getTargetID()));
+			if (targetHazard.getProjectID() != cause.getHazards()[0].getProjectID()) {
+				String targetHazNum = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "N/A"
+						: targetHazard.getHazardNumber();
+				new ParagraphBuilder()
+						.text("Cause " + cause.getCauseNumber()
+								+ " (TRANSFER) WARNING: This cause transfers to a hazard not in the current project. Hazard number: "
+								+ targetHazNum)
+						.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
+			} else {
+				ParagraphBuilder causeTitle = new ParagraphBuilder()
+						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): ").topMargin(50).bold(inSpecificCause)
+						.leftMargin(350).hangingIndent(300);
+				RunBuilder run = new RunBuilder()
+						.text(targetHazard.getHazardNumber() + " \u2013 " + targetHazard.getHazardTitle());
+				if (!targetHazard.getActive()) {
+					run = run.strikethrough();
+				}
+				causeTitle.addRun(run).createCellText(cell);
 			}
-			causeTitle.addRun(run).createCellText(cell);
-			
+
 		} else if (transfer.getTargetType().equals("CAUSE")) {
 			Hazard_Causes targetCause = causeService.getHazardCauseByID(transfer.getTargetID());
-			Hazards hazard = targetCause.getHazards()[0];
-			ParagraphBuilder causeTitle = new ParagraphBuilder()
-					.text("Cause " + cause.getCauseNumber() + " (TRANSFER): " )
-					.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300);
-			
-			RunBuilder run = new RunBuilder().text(hazard.getHazardNumber() + ", Cause "
-					+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
-			
-			if(!hazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
-				run.strikethrough();
+			Hazards targetHazard = targetCause.getHazards()[0];
+
+			if (targetHazard.getProjectID() != cause.getHazards()[0].getProjectID()) {
+				String targetHazNum = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "N/A"
+						: targetHazard.getHazardNumber();
+				new ParagraphBuilder()
+						.text("Cause " + cause.getCauseNumber()
+								+ " (TRANSFER) WARNING: This cause transfers to a hazard not in the current project. Hazard number: "
+								+ targetHazNum)
+						.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
+			} else {
+				ParagraphBuilder causeTitle = new ParagraphBuilder()
+						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): ").topMargin(50).bold(inSpecificCause)
+						.leftMargin(350).hangingIndent(300);
+
+				RunBuilder run = new RunBuilder().text(targetHazard.getHazardNumber() + ", Cause "
+						+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+
+				if (!targetHazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+					run.strikethrough();
+				}
+				causeTitle.addRun(run).createCellText(cell);
 			}
-			causeTitle.addRun(run).createCellText(cell);
 		}
 
 	}

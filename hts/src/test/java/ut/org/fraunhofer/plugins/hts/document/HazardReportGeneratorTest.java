@@ -52,11 +52,87 @@ public class HazardReportGeneratorTest {
 	private ControlService mockHazardControlService;
 	private VerificationService mockVerificationService;
 
+	private Hazards mockHazard, minimalHazard;
+
 	private Hazard_Causes mockCause1, mockCause2, mockCause3, mockCauseToHazard, mockCauseToCause, deletedCause;
 
 	private Hazard_Controls mockControl1, mockControlToCause, mockControlToControl, deletedControl;
 
 	private Verifications mockVerification1, mockVerification2, transferredVerification, deletedVerification;
+
+	private void initializeMockHazards() {
+		// Normal hazard
+		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
+		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
+		when(mockRiskCategories.getID()).thenReturn(11111);
+
+		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
+		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
+		when(mockRiskLikelihoods.getID()).thenReturn(33333);
+
+		Review_Phases testReviewPhase = mock(Review_Phases.class);
+		when(testReviewPhase.getLabel()).thenReturn("Phase I");
+		when(testReviewPhase.getID()).thenReturn(11111);
+
+		Subsystems testSub1 = mock(Subsystems.class);
+		when(testSub1.getLabel()).thenReturn("Propulsion");
+		Subsystems testSub2 = mock(Subsystems.class);
+		when(testSub2.getLabel()).thenReturn("Structure");
+		Subsystems testSub3 = mock(Subsystems.class);
+		when(testSub3.getLabel()).thenReturn("Propellants");
+		Subsystems[] testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
+
+		Hazard_Group testGroup1 = mock(Hazard_Group.class);
+		when(testGroup1.getLabel()).thenReturn("Fire/Explosion");
+		Hazard_Group testGroup2 = mock(Hazard_Group.class);
+		when(testGroup2.getLabel()).thenReturn("Pressure");
+		Hazard_Group[] testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
+
+		mockHazard = mock(Hazards.class);
+		when(mockHazard.getHazardNumber()).thenReturn("MERV-PROP-01");
+		when(mockHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
+		when(mockHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
+		when(mockHazard.getProjectID()).thenReturn(new Long(1111));
+		when(mockHazard.getPreparer()).thenReturn("Lucas Layman");
+		when(mockHazard.getEmail()).thenReturn("lucas.m.layman@nasa.gov");
+		when(mockHazard.getReviewPhase()).thenReturn(testReviewPhase);
+		when(mockHazard.getSubsystems()).thenReturn(testSubsystems);
+		when(mockHazard.getHazardGroups()).thenReturn(testGroups);
+		when(mockHazard.getHazardTitle())
+				.thenReturn("Failures of Upper Stage during USE operations that lead to USE Cavitation/Fire/Explosion");
+		when(mockHazard.getHazardDescription()).thenReturn(
+				"The Upper Stage is responsible for supply of propellants (LH2 and LO2) to the USE during operation. Failures after USE start that result in a decrease or termination of flow to the USE will cause USE turbopump over speed/cavitation/damage leading to an explosion. If Upper Stage fails to command USE shutdown, propellant depletion could occur also leading to cavitation. A decrease in Net Positive Suction Pressure (NPSP) or blockage in the feedlines could decrease flow and inadvertent closure of the prevalve would terminate flow. Ingestion of ullage gas in the feed line will also cause turbopump cavitation. Ullage gas could be ingested if a vortex forms or propellant is depleted. Contaminates that enter the USE inlet could cause significant damage.");
+		
+		
+		
+		minimalHazard = mock(Hazards.class);
+		when(minimalHazard.getHazardNumber()).thenReturn("dfg");
+		when(minimalHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
+		when(minimalHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
+		when(minimalHazard.getProjectID()).thenReturn(new Long(0000));
+		when(minimalHazard.getPreparer()).thenReturn("admin");
+		when(minimalHazard.getEmail()).thenReturn("admin@nasa.gov");
+		when(minimalHazard.getReviewPhase()).thenReturn(testReviewPhase);
+		when(minimalHazard.getSubsystems()).thenReturn(new Subsystems[0]);
+		when(minimalHazard.getHazardGroups()).thenReturn(new Hazard_Group[0]);
+		when(minimalHazard.getHazardTitle()).thenReturn("dfgdfgdfg");
+		// when(testHazard.getHazardDesc())
+		// .thenReturn(
+		// "The Upper Stage is responsible for supply of propellants (LH2 and
+		// LO2) to the USE during operation. Failures after USE start that
+		// result in a decrease or termination of flow to the USE will cause USE
+		// turbopump over speed/cavitation/damage leading to an explosion. If
+		// Upper Stage fails to command USE shutdown, propellant depletion could
+		// occur also leading to cavitation. A decrease in Net Positive Suction
+		// Pressure (NPSP) or blockage in the feedlines could decrease flow and
+		// inadvertent closure of the prevalve would terminate flow. Ingestion
+		// of ullage gas in the feed line will also cause turbopump cavitation.
+		// Ullage gas could be ingested if a vortex forms or propellant is
+		// depleted. Contaminates that enter the USE inlet could cause
+		// significant damage.");
+		when(minimalHazard.getHazardCauses()).thenReturn(new Hazard_Causes[0]);
+		when(minimalHazard.getHazardControls()).thenReturn(new Hazard_Controls[0]);
+	}
 
 	private void initializeMockCauses() {
 		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
@@ -113,6 +189,7 @@ public class HazardReportGeneratorTest {
 		when(mockCauseToHazard.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCauseToHazard.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
 		when(mockCauseToHazard.getControls()).thenReturn(new Hazard_Controls[0]);
+		when(mockCauseToHazard.getHazards()).thenReturn(new Hazards[] { mockHazard });
 
 		mockCauseToCause = mock(Hazard_Causes.class);
 		when(mockCauseToCause.getCauseNumber()).thenReturn(5);
@@ -125,6 +202,7 @@ public class HazardReportGeneratorTest {
 		when(mockCauseToCause.getAdditionalSafetyFeatures()).thenReturn("MECO when POGO is detected.");
 		when(mockCauseToCause.getRiskCategory()).thenReturn(mockRiskCategories);
 		when(mockCauseToCause.getRiskLikelihood()).thenReturn(mockRiskLikelihoods);
+		when(mockCauseToCause.getHazards()).thenReturn(new Hazards[] { mockHazard });
 
 		deletedCause = mock(Hazard_Causes.class);
 		when(deletedCause.getCauseNumber()).thenReturn(6);
@@ -138,6 +216,8 @@ public class HazardReportGeneratorTest {
 		when(deletedCause.getDeleteReason()).thenReturn("This cause is no longer valid. It is handled elsewhere.");
 		when(deletedCause.getControls()).thenReturn(new Hazard_Controls[0]);
 
+		when(mockHazard.getHazardCauses()).thenReturn(new Hazard_Causes[] { mockCause1, mockCause2, mockCause3,
+				mockCauseToHazard, mockCauseToCause, deletedCause });
 	}
 
 	private void initializeMockControls() {
@@ -172,7 +252,8 @@ public class HazardReportGeneratorTest {
 		when(mockControlToCause.getID()).thenReturn(33333);
 		when(mockControlToCause.getTransfer()).thenReturn(934875);
 		when(mockControlToCause.getCauses()).thenReturn(new Hazard_Causes[] { mockCauseToCause });
-		
+		when(mockControlToCause.getHazard()).thenReturn(new Hazards[] { mockHazard });
+
 		mockControlToControl = mock(Hazard_Controls.class);
 		when(mockControlToControl.getControlGroup()).thenReturn(null);
 		when(mockControlToControl.getControlNumber()).thenReturn(4);
@@ -180,10 +261,15 @@ public class HazardReportGeneratorTest {
 		when(mockControlToControl.getDescription()).thenReturn(null);
 		when(mockControlToControl.getID()).thenReturn(44444);
 		when(mockControlToControl.getTransfer()).thenReturn(44447777);
+		when(mockControlToControl.getHazard()).thenReturn(new Hazards[] { mockHazard });
 
 		when(mockCause1.getControls()).thenReturn(new Hazard_Controls[] { mockControl1, mockControlToCause });
 		when(mockCause2.getControls()).thenReturn(new Hazard_Controls[] { mockControlToControl, deletedControl });
 		when(mockCauseToCause.getControls()).thenReturn(new Hazard_Controls[] { mockControlToControl });
+		
+		when(mockHazard.getHazardControls()).thenReturn(
+				new Hazard_Controls[] { mockControl1, mockControlToCause, mockControlToControl, deletedControl });
+
 
 	}
 
@@ -256,6 +342,7 @@ public class HazardReportGeneratorTest {
 		when(transferDestinationHazard.getHazardTitle()).thenReturn(
 				"Failure to Maintain Liquid Hydrogen Propellant Tank Pressure leads to USE operational failure");
 		when(transferDestinationHazard.getActive()).thenReturn(false);
+		when(transferDestinationHazard.getProjectID()).thenReturn(new Long(1111));
 
 		Transfers mockCauseToHazardTransfer = mock(Transfers.class);
 		when(mockCauseToHazardTransfer.getTargetID()).thenReturn(99999);
@@ -268,6 +355,7 @@ public class HazardReportGeneratorTest {
 		// Cause to Cause
 		Hazards transferCauseHazard = mock(Hazards.class);
 		when(transferCauseHazard.getHazardNumber()).thenReturn("MERV-PROP-04");
+		when(transferCauseHazard.getProjectID()).thenReturn(new Long(1111));
 
 		Hazard_Causes transferDestinationCause = mock(Hazard_Causes.class);
 		when(transferDestinationCause.getID()).thenReturn(88888);
@@ -325,6 +413,7 @@ public class HazardReportGeneratorTest {
 		mockHazardControlService = mock(ControlService.class);
 		mockVerificationService = mock(VerificationService.class);
 
+		initializeMockHazards();
 		initializeMockCauses();
 		initializeMockControls();
 		initializeMockVerifications();
@@ -341,52 +430,8 @@ public class HazardReportGeneratorTest {
 
 	@Test
 	public void testCreateWordDocuments() throws IOException, XmlException {
-		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
-		when(mockRiskCategories.getID()).thenReturn(11111);
 
-		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("C - Occassional");
-		when(mockRiskLikelihoods.getID()).thenReturn(33333);
-
-		Review_Phases testReviewPhase = mock(Review_Phases.class);
-		when(testReviewPhase.getLabel()).thenReturn("Phase I");
-		when(testReviewPhase.getID()).thenReturn(11111);
-
-		Subsystems testSub1 = mock(Subsystems.class);
-		when(testSub1.getLabel()).thenReturn("Propulsion");
-		Subsystems testSub2 = mock(Subsystems.class);
-		when(testSub2.getLabel()).thenReturn("Structure");
-		Subsystems testSub3 = mock(Subsystems.class);
-		when(testSub3.getLabel()).thenReturn("Propellants");
-		Subsystems[] testSubsystems = new Subsystems[] { testSub1, testSub2, testSub3 };
-
-		Hazard_Group testGroup1 = mock(Hazard_Group.class);
-		when(testGroup1.getLabel()).thenReturn("Fire/Explosion");
-		Hazard_Group testGroup2 = mock(Hazard_Group.class);
-		when(testGroup2.getLabel()).thenReturn("Pressure");
-		Hazard_Group[] testGroups = new Hazard_Group[] { testGroup1, testGroup2 };
-
-		Hazards testHazard = mock(Hazards.class);
-		when(testHazard.getHazardNumber()).thenReturn("MERV-PROP-01");
-		when(testHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
-		when(testHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
-		when(testHazard.getProjectID()).thenReturn(new Long(1111));
-		when(testHazard.getPreparer()).thenReturn("Lucas Layman");
-		when(testHazard.getEmail()).thenReturn("lucas.m.layman@nasa.gov");
-		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
-		when(testHazard.getSubsystems()).thenReturn(testSubsystems);
-		when(testHazard.getHazardGroups()).thenReturn(testGroups);
-		when(testHazard.getHazardTitle())
-				.thenReturn("Failures of Upper Stage during USE operations that lead to USE Cavitation/Fire/Explosion");
-		when(testHazard.getHazardDescription()).thenReturn(
-				"The Upper Stage is responsible for supply of propellants (LH2 and LO2) to the USE during operation. Failures after USE start that result in a decrease or termination of flow to the USE will cause USE turbopump over speed/cavitation/damage leading to an explosion. If Upper Stage fails to command USE shutdown, propellant depletion could occur also leading to cavitation. A decrease in Net Positive Suction Pressure (NPSP) or blockage in the feedlines could decrease flow and inadvertent closure of the prevalve would terminate flow. Ingestion of ullage gas in the feed line will also cause turbopump cavitation. Ullage gas could be ingested if a vortex forms or propellant is depleted. Contaminates that enter the USE inlet could cause significant damage.");
-		when(testHazard.getHazardCauses()).thenReturn(new Hazard_Causes[] { mockCause1, mockCause2, mockCause3,
-				mockCauseToHazard, mockCauseToCause, deletedCause });
-		when(testHazard.getHazardControls()).thenReturn(
-				new Hazard_Controls[] { mockControl1, mockControlToCause, mockControlToControl, deletedControl });
-
-		List<Hazards> hazardList = Lists.newArrayList(testHazard);
+		List<Hazards> hazardList = Lists.newArrayList(mockHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService, mockProjectManager, mockHazardControlService, mockVerificationService);
 
@@ -408,47 +453,8 @@ public class HazardReportGeneratorTest {
 
 	@Test
 	public void testCreateWordDocMinimalInfo() throws MalformedURLException, XmlException, IOException {
-		Risk_Categories mockRiskCategories = mock(Risk_Categories.class);
-		when(mockRiskCategories.getValue()).thenReturn("I - Catastrophic");
-		when(mockRiskCategories.getID()).thenReturn(11111);
 
-		Risk_Likelihoods mockRiskLikelihoods = mock(Risk_Likelihoods.class);
-		when(mockRiskLikelihoods.getValue()).thenReturn("A - Frequent");
-		when(mockRiskLikelihoods.getID()).thenReturn(11111);
-
-		Review_Phases testReviewPhase = mock(Review_Phases.class);
-		when(testReviewPhase.getLabel()).thenReturn("Phase I");
-		when(testReviewPhase.getID()).thenReturn(11111);
-
-		Hazards testHazard = mock(Hazards.class);
-		when(testHazard.getHazardNumber()).thenReturn("dfg");
-		when(testHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
-		when(testHazard.getRevisionDate()).thenReturn(new Date(System.currentTimeMillis()));
-		when(testHazard.getProjectID()).thenReturn(new Long(0000));
-		when(testHazard.getPreparer()).thenReturn("admin");
-		when(testHazard.getEmail()).thenReturn("admin@nasa.gov");
-		when(testHazard.getReviewPhase()).thenReturn(testReviewPhase);
-		when(testHazard.getSubsystems()).thenReturn(new Subsystems[0]);
-		when(testHazard.getHazardGroups()).thenReturn(new Hazard_Group[0]);
-		when(testHazard.getHazardTitle()).thenReturn("dfgdfgdfg");
-		// when(testHazard.getHazardDesc())
-		// .thenReturn(
-		// "The Upper Stage is responsible for supply of propellants (LH2 and
-		// LO2) to the USE during operation. Failures after USE start that
-		// result in a decrease or termination of flow to the USE will cause USE
-		// turbopump over speed/cavitation/damage leading to an explosion. If
-		// Upper Stage fails to command USE shutdown, propellant depletion could
-		// occur also leading to cavitation. A decrease in Net Positive Suction
-		// Pressure (NPSP) or blockage in the feedlines could decrease flow and
-		// inadvertent closure of the prevalve would terminate flow. Ingestion
-		// of ullage gas in the feed line will also cause turbopump cavitation.
-		// Ullage gas could be ingested if a vortex forms or propellant is
-		// depleted. Contaminates that enter the USE inlet could cause
-		// significant damage.");
-		when(testHazard.getHazardCauses()).thenReturn(new Hazard_Causes[0]);
-		when(testHazard.getHazardControls()).thenReturn(new Hazard_Controls[0]);
-
-		List<Hazards> hazardList = Lists.newArrayList(testHazard);
+		List<Hazards> hazardList = Lists.newArrayList(minimalHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService, mockProjectManager, mockHazardControlService, mockVerificationService);
 
