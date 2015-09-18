@@ -83,6 +83,7 @@ public class VerificationService {
 		verification.setResponsibleParty(responsibleParty);
 		verification.setEstCompletionDate(estimatedCompletionDate);
 		verification.setLastUpdated(new Date());
+
 		verification.setVerificationNumber(
 				updateAssociation(verification.getHazards()[0], associatedControl, verification));
 		verification.save();
@@ -112,30 +113,53 @@ public class VerificationService {
 		if (verification.getControls() != null && verification.getControls().length > 0)
 			currentAssociation = verification.getControls()[0];
 
-		int verificationNum = 1;
-		if (associatedControl != null) {
+		// 1. associated and current are both null
+		// 2. associated not null, current == null
+		// 3. associated == null, current not null
+		// 4. associated not null, current not null and ids are equal
+		// 5. associated not null, current not null and ids are NOT equal
+
+		int verificationNum;
+		if (associatedControl == null && currentAssociation == null) {
+			verificationNum = verification.getVerificationNumber();
+		} else if (associatedControl != null && currentAssociation == null) {
 			Verifications[] verificationsForControl = associatedControl.getVerifications();
+			verificationNum = 1;
 			if (verificationsForControl != null && verificationsForControl.length > 0) {
 				Arrays.sort(verificationsForControl, new VerificationNumberComparator());
 				verificationNum = verificationsForControl[verificationsForControl.length - 1].getVerificationNumber()
 						+ 1;
 			}
-			
-			if (currentAssociation != null && associatedControl != currentAssociation)
-				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verification.getID())));
+
+			final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
+			verifcToControl.setControl(associatedControl);
+			verifcToControl.setVerification(verification);
+			verifcToControl.save();
+		}
+		else if (associatedControl == null && currentAssociation != null) {
+			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
+			verificationNum = 1;
+			if (!orphanVerifications.isEmpty()) {
+				Collections.sort(orphanVerifications, new VerificationNumberComparator());
+				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber() + 1;
+			}
+			ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verification.getID())));
+		} else if (associatedControl.getID() == currentAssociation.getID()) {
+			verificationNum = verification.getVerificationNumber();
+		} else {
+			Verifications[] verificationsForControl = associatedControl.getVerifications();
+			verificationNum = 1;
+			if (verificationsForControl != null && verificationsForControl.length > 0) {
+				Arrays.sort(verificationsForControl, new VerificationNumberComparator());
+				verificationNum = verificationsForControl[verificationsForControl.length - 1].getVerificationNumber()
+						+ 1;
+			}
+			ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verification.getID())));
 			
 			final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
 			verifcToControl.setControl(associatedControl);
 			verifcToControl.setVerification(verification);
 			verifcToControl.save();
-		} else {
-			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
-			if (!orphanVerifications.isEmpty()) {
-				Collections.sort(orphanVerifications, new VerificationNumberComparator());
-				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber() + 1;
-			}
-			if(currentAssociation != null)
-				ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verification.getID())));
 		}
 		return verificationNum;
 	}

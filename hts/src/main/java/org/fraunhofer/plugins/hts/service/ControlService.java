@@ -93,30 +93,51 @@ public class ControlService {
 		if (control.getCauses() != null && control.getCauses().length > 0)
 			currentAssociation = control.getCauses()[0];
 
-		int controlNum = 1;
-		if (associatedCause != null) {
+		// 1. associated and current are both null
+		// 2. associated not null, current == null
+		// 3. associated == null, current not null
+		// 4. associated not null, current not null and ids are equal
+		// 5. associated not null, current not null and ids are NOT equal
+
+		int controlNum;
+		if (associatedCause == null && currentAssociation == null) {
+			controlNum = control.getControlNumber();
+		} else if (associatedCause != null && currentAssociation == null) {
 			Hazard_Controls[] controlsForCause = associatedCause.getControls();
+			controlNum = 1;
 			if (controlsForCause != null && controlsForCause.length > 0) {
 				Arrays.sort(controlsForCause, new ControlNumberComparator());
 				controlNum = controlsForCause[controlsForCause.length - 1].getControlNumber() + 1;
 			}
 
-			if (currentAssociation != null && associatedCause != currentAssociation)
-				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
-
 			final ControlToCause controlToCause = ao.create(ControlToCause.class);
 			controlToCause.setCause(associatedCause);
 			controlToCause.setControl(control);
 			controlToCause.save();
-		} else {
+		} else if (associatedCause == null && currentAssociation != null) {
 			List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(hazard);
+			controlNum = 1;
 			if (!orphanControls.isEmpty() || orphanControls.size() == 1) {
 				Collections.sort(orphanControls, new ControlNumberComparator());
 				controlNum = orphanControls.get(orphanControls.size() - 1).getControlNumber() + 1;
 			}
 
-			if (currentAssociation != null)
-				ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
+			ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
+		} else if (associatedCause.getID() == currentAssociation.getID()) {
+			controlNum = control.getControlNumber();
+		} else {
+			Hazard_Controls[] controlsForCause = associatedCause.getControls();
+			controlNum = 1;
+			if (controlsForCause != null && controlsForCause.length > 0) {
+				Arrays.sort(controlsForCause, new ControlNumberComparator());
+				controlNum = controlsForCause[controlsForCause.length - 1].getControlNumber() + 1;
+			}
+			ao.delete(ao.find(ControlToCause.class, Query.select().where("CONTROL_ID=?", control.getID())));
+
+			final ControlToCause controlToCause = ao.create(ControlToCause.class);
+			controlToCause.setCause(associatedCause);
+			controlToCause.setControl(control);
+			controlToCause.save();
 		}
 		return controlNum;
 	}
@@ -204,12 +225,11 @@ public class ControlService {
 				control.setTransfer(0);
 			}
 
-			List<Verifications> orphanVerifications = hazardService
-					.getOrphanVerifications(control.getHazard()[0]);
+			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(control.getHazard()[0]);
 			int verificationNum = 0;
-			if(!orphanVerifications.isEmpty())
+			if (!orphanVerifications.isEmpty())
 				verificationNum = orphanVerifications.get(orphanVerifications.size() - 1).getVerificationNumber();
-			
+
 			for (Verifications verification : control.getVerifications()) {
 				ao.delete(ao.find(VerifcToControl.class,
 						Query.select().where("VERIFICATION_ID=? AND CONTROL_ID=?", verification.getID(), controlID)));
