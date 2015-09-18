@@ -269,6 +269,10 @@ public class HazardReportGeneratorTest {
 		
 		when(mockHazard.getHazardControls()).thenReturn(
 				new Hazard_Controls[] { mockControl1, mockControlToCause, mockControlToControl, deletedControl });
+		
+		// List<Hazard_Controls> toReturn =
+		// Lists.newArrayList(mockControl1,mockControlToCause,mockControlToControl,deletedControl);
+		// when(mockHazardService.getOrphanControls(mockHazard)).thenReturn(toReturn);
 
 
 	}
@@ -288,7 +292,7 @@ public class HazardReportGeneratorTest {
 		when(mockVerification1.getResponsibleParty()).thenReturn("George Washington (george.washington@nasa.gov)");
 		when(mockVerification1.getEstCompletionDate()).thenReturn(new Date(System.currentTimeMillis()));
 		when(mockVerification1.getControls()).thenReturn(new Hazard_Controls[] { mockControl1 });
-		when(mockVerification1.getDeleteReason()).thenReturn("yep");
+		when(mockVerification1.getDeleteReason()).thenReturn(null);
 
 		mockVerification2 = mock(Verifications.class);
 		when(mockVerification2.getVerificationNumber()).thenReturn(2);
@@ -330,6 +334,9 @@ public class HazardReportGeneratorTest {
 		when(mockControlToCause.getVerifications())
 				.thenReturn(new Verifications[] { mockVerification1, mockVerification2, transferredVerification });
 		when(mockControlToControl.getVerifications()).thenReturn(new Verifications[] {});
+		
+//		List<Verifications> toReturn = Lists.newArrayList(mockVerification1,  mockVerification2, transferredVerification,deletedVerification);
+//		when(mockHazardService.getOrphanVerifications(mockHazard)).thenReturn(toReturn);
 	}
 
 	private void initializeTransfers() {
