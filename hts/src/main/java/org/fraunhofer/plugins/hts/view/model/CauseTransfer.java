@@ -69,7 +69,7 @@ public class CauseTransfer {
 			instance.setTargetCauseRiskLikelihoodTitle(targetCause.getRiskLikelihood().getValue());
 		}
 		
-		if (Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+		if (Strings.isNullOrEmpty(targetCause.getDeleteReason()) && targetCause.getHazards()[0].getActive()) {
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);

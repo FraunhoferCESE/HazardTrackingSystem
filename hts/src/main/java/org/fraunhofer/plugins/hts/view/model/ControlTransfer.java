@@ -59,7 +59,7 @@ public class ControlTransfer {
 			instance.setTargetControlControlGroup(targetControl.getControlGroup().getLabel());
 		}
 
-		if (Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
+		if (Strings.isNullOrEmpty(targetControl.getDeleteReason()) && targetControl.getHazard()[0].getActive()) {
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);
@@ -83,7 +83,7 @@ public class ControlTransfer {
 		instance.setTargetCauseTitle(targetCause.getTitle());
 		instance.setTargetCauseNumber(targetCause.getCauseNumber());
 
-		if (Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
+		if (Strings.isNullOrEmpty(targetCause.getDeleteReason()) && targetCause.getHazards()[0].getActive()) {
 			instance.setDeleted(false);
 		} else {
 			instance.setDeleted(true);
