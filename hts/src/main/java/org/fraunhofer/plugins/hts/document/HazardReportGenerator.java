@@ -612,11 +612,11 @@ public class HazardReportGenerator {
 							new ParagraphBuilder()
 									.text("Control " + getControlNumber(control) + " (" + controlGroup.getLabel() + ")"
 											+ " - " + control.getDescription())
-									.topMargin(150).leftMargin(450).hangingIndent(400).createCellText(cell);
+									.topMargin(150).leftMargin(350).hangingIndent(300).createCellText(cell);
 						} else {
 							new ParagraphBuilder()
 									.text("Control " + getControlNumber(control) + " - " + control.getDescription())
-									.topMargin(150).leftMargin(450).hangingIndent(300).createCellText(cell);
+									.topMargin(150).leftMargin(350).hangingIndent(300).createCellText(cell);
 						}
 					}
 
