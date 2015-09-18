@@ -93,9 +93,8 @@ public class HazardReportGenerator {
 	 * Creates byte arrays containing Word .docx files representing hazards in a
 	 * list.
 	 * 
-	 * @param hazardList
-	 *            the list of {@link Hazards} objects for which the files will
-	 *            be created.
+	 * @param hazards
+	 *            a {@link Hazards} objects for which a report will be created.
 	 * @param reviewPhases
 	 *            a list of all unique {@link Review_Phases} in the order in
 	 *            which they will be displayed.
@@ -109,60 +108,53 @@ public class HazardReportGenerator {
 	 *            - Word document template containing desired header and footer.
 	 *            Cannot create a footer from scratch per
 	 *            https://issues.apache.org/bugzilla/show_bug.cgi?id=53009.
-	 * @return a List of byte[]. Each entry in the list is the byte[]
-	 *         representation of a Word .docx file. One byte[] is generated per
-	 *         hazard report. <code>null</code> is returned if the hazardList or
-	 *         inputStream is empty or <code>null</code>
+	 * @return a byte[] representation of a Word .docx file. One byte[] is
+	 *         generated per hazard report. <code>null</code> is returned if the
+	 *         hazardList or inputStream is empty or <code>null</code>
 	 * @throws IOException
 	 * @throws XmlException
 	 */
-	public List<byte[]> createWordDocument(List<Hazards> hazardList, List<Review_Phases> reviewPhases,
+	public byte[] createWordDocument(Hazards hazard, List<Review_Phases> reviewPhases,
 			List<Risk_Categories> riskCategories, List<Risk_Likelihoods> riskLikelihoods, InputStream inputStream)
 					throws XmlException, IOException {
 
-		if (hazardList == null || hazardList.isEmpty())
-			return null;
+		byte[] results = null;
 
-		List<byte[]> results = Lists.newArrayList();
-		try {
-			for (Hazards hazard : hazardList) {
-				// Create a new Word docx using Apache POI. The inputStream is a
-				// .dot file that serves as a template. All hazard data is
-				// subsequently added to this template in order to create the
-				// full document.
-				//
-				// Given how POI works, any changes to the doc (e.g., adding
-				// text) modify the existing object in memory. Thus, you do not
-				// need to return the doc object, but merely make changes to it.
-				XWPFDocument doc = new XWPFDocument(inputStream);
+		if (hazard != null) {
+			// Create a new Word docx using Apache POI. The inputStream is a
+			// .dot file that serves as a template. All hazard data is
+			// subsequently added to this template in order to create the
+			// full document.
+			//
+			// Given how POI works, any changes to the doc (e.g., adding
+			// text) modify the existing object in memory. Thus, you do not
+			// need to return the doc object, but merely make changes to it.
+			XWPFDocument doc = new XWPFDocument(inputStream);
 
-				// Set the default zoom to 125%
-				List<POIXMLDocumentPart> relations = doc.getPart().getRelations();
-				for (Iterator<POIXMLDocumentPart> iterator = relations.iterator(); iterator.hasNext();) {
-					POIXMLDocumentPart docPart = iterator.next();
-					if (docPart.getClass().getName().equals("org.apache.poi.xwpf.usermodel.XWPFSettings")) {
-						XWPFSettings settings = (XWPFSettings) docPart;
-						settings.setZoomPercent(125);
-						break;
-					}
+			// Set the default zoom to 125%
+			List<POIXMLDocumentPart> relations = doc.getPart().getRelations();
+			for (Iterator<POIXMLDocumentPart> iterator = relations.iterator(); iterator.hasNext();) {
+				POIXMLDocumentPart docPart = iterator.next();
+				if (docPart.getClass().getName().equals("org.apache.poi.xwpf.usermodel.XWPFSettings")) {
+					XWPFSettings settings = (XWPFSettings) docPart;
+					settings.setZoomPercent(125);
+					break;
 				}
-
-				// Add content to the document
-				createHeader(doc, hazard, reviewPhases);
-				createHazardDescription(doc, hazard, riskCategories, riskLikelihoods);
-				createCauses(doc, hazard);
-				printOrphanControls(doc, hazard);
-				printOrphanVerifications(doc, hazard);
-
-				// Create the return object
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				doc.write(out);
-				results.add(out.toByteArray());
-				log.info("Writing byte array for " + hazard.getHazardNumber());
 			}
-		} finally {
-			if (inputStream != null)
-				inputStream.close();
+
+			// Add content to the document
+			createHeader(doc, hazard, reviewPhases);
+			createHazardDescription(doc, hazard, riskCategories, riskLikelihoods);
+			createCauses(doc, hazard);
+			printOrphanControls(doc, hazard);
+			printOrphanVerifications(doc, hazard);
+
+			// Create the return object
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				doc.write(out);
+				results = out.toByteArray();
+			}
+			log.info("Writing byte array for " + hazard.getHazardNumber());
 		}
 
 		return results;

@@ -60,6 +60,7 @@
 											<th class="MissionPageTableCell4">Last Revision</th>
 											<th class="MissionPageTableCell5">Actions</th>
 											<th class="MissionPageTableCell6">JIRA Sub-Task</th>
+											<th><input type="checkbox" id="selectAll"></th>
 										</tr>
 									</thead>
 									<tbody id="MissionPageTableBody">
@@ -112,10 +113,14 @@
 												<td>
 													<a href="$!hazard.getJiraSubtaskURL()">$hazard.getJiraSubtaskSummary()</a>
 												</td>
+												<td>
+													<input type="checkbox" class="selectHazard" value=$hazard.getHazardID()>
+												</td>
 											</tr>
 										#end
 									</tbody>
 								</table>
+								<input class="aui-button" type="button" value="Print Selected Hazards" id="PrintHazards">
 							#end
 						</div>
 					</div>

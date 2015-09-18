@@ -37,7 +37,6 @@ import org.junit.Test;
 
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
-import com.google.common.collect.Lists;
 
 public class HazardReportGeneratorTest {
 
@@ -437,7 +436,6 @@ public class HazardReportGeneratorTest {
 	@Test
 	public void testCreateWordDocuments() throws IOException, XmlException {
 
-		List<Hazards> hazardList = Lists.newArrayList(mockHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService, mockProjectManager, mockHazardControlService, mockVerificationService);
 
@@ -445,22 +443,21 @@ public class HazardReportGeneratorTest {
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
 				+ System.getProperty("file.separator") + "Template.docx");
 
-		List<byte[]> results = test.createWordDocument(hazardList, validReviewPhases, validRiskCategories,
+		byte[] results = test.createWordDocument(mockHazard, validReviewPhases, validRiskCategories,
 				validRiskLikelihoods, template.toURI().toURL().openStream());
 
 		File outputDirectory = new File(
 				System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
-		File reportFile = new File(outputDirectory + File.separator + hazardList.get(0).getHazardNumber() + ".docx");
+		File reportFile = new File(outputDirectory + File.separator + mockHazard.getHazardNumber() + ".docx");
 
 		FileOutputStream out = new FileOutputStream(reportFile);
-		out.write(results.get(0));
+		out.write(results);
 		out.close();
 	}
 
 	@Test
 	public void testCreateWordDocMinimalInfo() throws MalformedURLException, XmlException, IOException {
 
-		List<Hazards> hazardList = Lists.newArrayList(minimalHazard);
 		HazardReportGenerator test = new HazardReportGenerator(mockHazardService, mockHazardCauseService,
 				mockTransferService, mockProjectManager, mockHazardControlService, mockVerificationService);
 
@@ -468,15 +465,15 @@ public class HazardReportGeneratorTest {
 				+ System.getProperty("file.separator") + "main" + System.getProperty("file.separator") + "resources"
 				+ System.getProperty("file.separator") + "Template.docx");
 
-		List<byte[]> results = test.createWordDocument(hazardList, validReviewPhases, validRiskCategories,
+		byte[] results = test.createWordDocument(minimalHazard, validReviewPhases, validRiskCategories,
 				validRiskLikelihoods, template.toURI().toURL().openStream());
 
 		File outputDirectory = new File(
 				System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out");
-		File reportFile = new File(outputDirectory + File.separator + hazardList.get(0).getHazardNumber() + ".docx");
+		File reportFile = new File(outputDirectory + File.separator + minimalHazard.getHazardNumber() + ".docx");
 
 		FileOutputStream out = new FileOutputStream(reportFile);
-		out.write(results.get(0));
+		out.write(results);
 		out.close();
 
 	}
