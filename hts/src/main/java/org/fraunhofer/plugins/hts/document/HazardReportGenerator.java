@@ -334,12 +334,16 @@ public class HazardReportGenerator {
 		// --------------------------------------
 		row = new TableBuilder().size(1, 1).createTable(doc).getRow(0);
 
-		// TODO: Applicable Safety Requirements
 		cell = row.getCell(0);
 		setColSpan(cell, 4);
 
 		new CellHeaderBuilder().text("8. Applicable Safety Requirements: ").createCellHeader(cell);
-		new ParagraphBuilder().text("N/A").createCellText(cell);
+		if(Strings.isNullOrEmpty(h.getHazardSafetyRequirements()))
+			new ParagraphBuilder().text("N/A").createCellText(cell);
+		else {
+			new ParagraphBuilder().text(h.getHazardSafetyRequirements()).createCellText(cell);
+		}
+		
 	}
 
 	/**

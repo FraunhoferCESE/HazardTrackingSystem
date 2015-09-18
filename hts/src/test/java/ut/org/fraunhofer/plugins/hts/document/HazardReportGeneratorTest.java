@@ -102,9 +102,8 @@ public class HazardReportGeneratorTest {
 				.thenReturn("Failures of Upper Stage during USE operations that lead to USE Cavitation/Fire/Explosion");
 		when(mockHazard.getHazardDescription()).thenReturn(
 				"The Upper Stage is responsible for supply of propellants (LH2 and LO2) to the USE during operation. Failures after USE start that result in a decrease or termination of flow to the USE will cause USE turbopump over speed/cavitation/damage leading to an explosion. If Upper Stage fails to command USE shutdown, propellant depletion could occur also leading to cavitation. A decrease in Net Positive Suction Pressure (NPSP) or blockage in the feedlines could decrease flow and inadvertent closure of the prevalve would terminate flow. Ingestion of ullage gas in the feed line will also cause turbopump cavitation. Ullage gas could be ingested if a vortex forms or propellant is depleted. Contaminates that enter the USE inlet could cause significant damage.");
-		
-		
-		
+		when(mockHazard.getHazardSafetyRequirements()).thenReturn("NASA-STD-8719.6\nThis other specific requirements.");
+						
 		minimalHazard = mock(Hazards.class);
 		when(minimalHazard.getHazardNumber()).thenReturn("dfg");
 		when(minimalHazard.getInitiationDate()).thenReturn(new Date(System.currentTimeMillis() - (60 * 413)));
