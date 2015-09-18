@@ -83,7 +83,7 @@
 			#break
 		#end
 	#end
-	$_causeNum$_separator$_controlNum.$verification.getVerificationNumber()
+	$_causeNum$_separator$_controlNum.$_verification.getVerificationNumber()
 #end
 
 #macro( getVerificationName $_verification $_length)
