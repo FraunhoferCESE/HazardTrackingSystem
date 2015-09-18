@@ -287,12 +287,12 @@ public class HazardReportGenerator {
 		setColSpan(cell, 4);
 
 		new CellHeaderBuilder().text("8. Applicable Safety Requirements: ").createCellHeader(cell);
-		if(Strings.isNullOrEmpty(h.getHazardSafetyRequirements()))
+		if (Strings.isNullOrEmpty(h.getHazardSafetyRequirements()))
 			new ParagraphBuilder().text("N/A").createCellText(cell);
 		else {
 			new ParagraphBuilder().text(h.getHazardSafetyRequirements()).createCellText(cell);
 		}
-		
+
 	}
 
 	/**
@@ -559,17 +559,19 @@ public class HazardReportGenerator {
 										.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
 							} else {
 
-								String hazardTitle = targetHazard.getHazardTitle() == null ? "<TBD> "
-										: targetHazard.getHazardTitle();
-								String hazardNumber = targetHazard.getHazardNumber() == null ? "<TBD> "
+								String hazardNumber = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "<TBD> "
 										: targetHazard.getHazardNumber();
+
+								String targetControlDescription = targetControl.getDescription().length() > 75
+										? targetControl.getDescription().substring(0, 74)
+										: targetControl.getDescription();
 
 								ParagraphBuilder controlTitle = new ParagraphBuilder()
 										.text("Control " + getControlNumber(control) + " (TRANSFER): ").leftMargin(350)
 										.hangingIndent(300).topMargin(150);
 
-								RunBuilder run = new RunBuilder().text(hazardNumber + " \u2013 " + hazardTitle
-										+ ", Control " + getControlNumber(targetControl));
+								RunBuilder run = new RunBuilder().text(hazardNumber + ", Control "
+										+ getControlNumber(targetControl) + " \u2013 " + targetControlDescription);
 								if (!targetHazard.getActive()
 										|| !Strings.isNullOrEmpty(targetControl.getDeleteReason())) {
 									run = run.strikethrough();
@@ -590,13 +592,15 @@ public class HazardReportGenerator {
 												+ targetHazNum)
 										.leftMargin(350).hangingIndent(300).topMargin(150).createCellText(cell);
 							} else {
-								String hazardNumber = targetHazard.getHazardNumber() == null ? "<TBD> "
+								String hazardNumber = Strings.isNullOrEmpty(targetHazard.getHazardNumber()) ? "<TBD> "
 										: targetHazard.getHazardNumber();
+								String targetCauseTitle = targetCause.getTitle().length() > 75
+										? targetCause.getTitle().substring(0, 74) : targetCause.getTitle();
 								ParagraphBuilder controlTitle = new ParagraphBuilder()
 										.text("Control " + getControlNumber(control) + " (TRANSFER): ").leftMargin(350)
 										.hangingIndent(300).topMargin(150);
 								RunBuilder run = new RunBuilder().text(hazardNumber + ", Cause "
-										+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+										+ targetCause.getCauseNumber() + " \u2013 " + targetCauseTitle);
 								if (!targetHazard.getActive()
 										|| !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
 									run = run.strikethrough();
@@ -625,7 +629,7 @@ public class HazardReportGenerator {
 					if (verifications != null) {
 						List<Verifications> toPrint = Lists.newArrayList();
 						for (int j = 0; j < verifications.length; j++) {
-							if(verifications[j].getID() != 0)
+							if (verifications[j].getID() != 0)
 								toPrint.add(verifications[j]);
 						}
 						verifications = toPrint.toArray(new Verifications[toPrint.size()]);
@@ -780,11 +784,12 @@ public class HazardReportGenerator {
 								+ targetHazNum)
 						.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
 			} else {
+				String hazardTitle = Strings.isNullOrEmpty(targetHazard.getHazardTitle()) ? "<TBD>"
+						: targetHazard.getHazardTitle();
 				ParagraphBuilder causeTitle = new ParagraphBuilder()
 						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): ").topMargin(50).bold(inSpecificCause)
 						.leftMargin(350).hangingIndent(300);
-				RunBuilder run = new RunBuilder()
-						.text(targetHazard.getHazardNumber() + " \u2013 " + targetHazard.getHazardTitle());
+				RunBuilder run = new RunBuilder().text(targetHazard.getHazardNumber() + " \u2013 " + hazardTitle);
 				if (!targetHazard.getActive()) {
 					run = run.strikethrough();
 				}
@@ -804,12 +809,14 @@ public class HazardReportGenerator {
 								+ targetHazNum)
 						.topMargin(50).bold(inSpecificCause).leftMargin(350).hangingIndent(300).createCellText(cell);
 			} else {
+				String targetCauseTitle = targetCause.getTitle().length() > 75 ? targetCause.getTitle().substring(0, 74)
+						: targetCause.getTitle();
 				ParagraphBuilder causeTitle = new ParagraphBuilder()
 						.text("Cause " + cause.getCauseNumber() + " (TRANSFER): ").topMargin(50).bold(inSpecificCause)
 						.leftMargin(350).hangingIndent(300);
 
 				RunBuilder run = new RunBuilder().text(targetHazard.getHazardNumber() + ", Cause "
-						+ targetCause.getCauseNumber() + " \u2013 " + targetCause.getTitle());
+						+ targetCause.getCauseNumber() + " \u2013 " + targetCauseTitle);
 
 				if (!targetHazard.getActive() || !Strings.isNullOrEmpty(targetCause.getDeleteReason())) {
 					run.strikethrough();
@@ -819,7 +826,7 @@ public class HazardReportGenerator {
 		}
 
 	}
-	
+
 	private void printOrphanVerifications(XWPFDocument doc, Hazards hazard) {
 		List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
 
