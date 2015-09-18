@@ -100,7 +100,7 @@
 			</div>
 			<div class="field-group">
 				<label for="transferReason">Transfer Reason</label>
-				<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$!theVerification.getTransferReason()</textarea>
+				<textarea class="textarea long-field" rows="4" cols="10" name="transferReason" id="transferReason">$!verification.getVerificationDesc()</textarea>
 			</div>
 		</form>
 	</div>
