@@ -53,6 +53,7 @@
 								</table>
 								<div class="HazardPropertyTableButtonsContainer">
 									<input class="aui-button CausePageSaveAllChanges" type="button" value="Save All Changes" data-ops="all">
+									<input class="aui-button" type="button" value="Print Hazard" id="HazardPagePrint" onClick="window.location.href = 'report-generation?hazardToDownload=$hazard.getID()';">
 									<input class="aui-button" type="button" value="Renumber &amp; Save" style="margin: 0" id="renumberButton" onclick="renumberHazard($hazard.getID())">
 									<input class="aui-button" type="button" value="Expand All" id="CausePageExpandAllButton" style="margin: 0">
 								</div>

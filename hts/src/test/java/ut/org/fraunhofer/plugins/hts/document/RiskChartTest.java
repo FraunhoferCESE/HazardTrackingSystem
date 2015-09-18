@@ -139,8 +139,10 @@ public class RiskChartTest {
 		RiskChart test = new RiskChart(5, 5);
 
 		for (int i = 1; i <= 5; i++)
-			for (int j = 1; j <= 5; j++)
+			for (int j = 1; j <= 5; j++) {
 				test.addToChart(i, j, "Cause " + Integer.toString(i * j));
+				test.addToChart(i, j, "Cause " + Integer.toString(i * j));
+			}
 
 		test.saveComponentAsJPEG(System.getProperty("user.dir") + System.getProperty("file.separator") + "test_out"
 				+ System.getProperty("file.separator") + "test.jpg");

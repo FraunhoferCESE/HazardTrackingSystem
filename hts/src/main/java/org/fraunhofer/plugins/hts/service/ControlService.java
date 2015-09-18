@@ -101,7 +101,7 @@ public class ControlService {
 
 		int controlNum;
 		if (associatedCause == null && currentAssociation == null) {
-			controlNum = control.getControlNumber();
+			controlNum = control.getControlNumber() == 0 ? 1 : control.getControlNumber();
 		} else if (associatedCause != null && currentAssociation == null) {
 			Hazard_Controls[] controlsForCause = associatedCause.getControls();
 			controlNum = 1;

@@ -168,57 +168,6 @@ public class HazardReportGenerator {
 		return results;
 	}
 
-	private void printOrphanVerifications(XWPFDocument doc, Hazards hazard) {
-		List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
-
-		if (!orphanVerifications.isEmpty()) {
-			// "Orhpan Verifications"
-			XWPFTable tableHeader = new TableBuilder().size(1, 1).createTable(doc);
-			XWPFTableCell cell = tableHeader.getRow(0).getCell(0);
-			cell.setColor("BBBBBB");
-			cell.setVerticalAlignment(XWPFVertAlign.CENTER);
-			// Set table width to page width
-			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
-			setColSpan(cell, 4);
-			new CellHeaderBuilder().text("Orphan Verifications").bold().alignment(ParagraphAlignment.CENTER)
-					.beforeSpacing(50).createCellHeader(cell);
-
-			XWPFTable verificationsTable = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
-					.createTable(doc);
-			cell = verificationsTable.getRow(0).getCell(0);
-			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
-			setColSpan(cell, 4);
-
-			printVerifications(doc, orphanVerifications.toArray(new Verifications[orphanVerifications.size()]),
-					verificationsTable);
-		}
-	}
-
-	private void printOrphanControls(XWPFDocument doc, Hazards hazard) {
-		List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(hazard);
-
-		if (!orphanControls.isEmpty()) {
-			// "Orhpan Controls"
-			XWPFTable controlTableHeader = new TableBuilder().size(1, 1).createTable(doc);
-			XWPFTableCell cell = controlTableHeader.getRow(0).getCell(0);
-			cell.setColor("BBBBBB");
-			cell.setVerticalAlignment(XWPFVertAlign.CENTER);
-			// Set table width to page width
-			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
-			setColSpan(cell, 4);
-			new CellHeaderBuilder().text("Orphan Controls").bold().alignment(ParagraphAlignment.CENTER)
-					.beforeSpacing(50).createCellHeader(cell);
-
-			XWPFTable controlsTable = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
-					.createTable(doc);
-			cell = controlsTable.getRow(0).getCell(0);
-			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
-			setColSpan(cell, 4);
-
-			printControls(doc, orphanControls.toArray(new Hazard_Controls[orphanControls.size()]), controlsTable);
-		}
-	}
-
 	// private void createFooter(XWPFDocument doc, Hazards h) throws
 	// IOException, XmlException {
 	// //
@@ -869,6 +818,57 @@ public class HazardReportGenerator {
 			}
 		}
 
+	}
+	
+	private void printOrphanVerifications(XWPFDocument doc, Hazards hazard) {
+		List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
+
+		if (!orphanVerifications.isEmpty()) {
+			// "Orhpan Verifications"
+			XWPFTable tableHeader = new TableBuilder().size(1, 1).createTable(doc);
+			XWPFTableCell cell = tableHeader.getRow(0).getCell(0);
+			cell.setColor("BBBBBB");
+			cell.setVerticalAlignment(XWPFVertAlign.CENTER);
+			// Set table width to page width
+			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
+			setColSpan(cell, 4);
+			new CellHeaderBuilder().text("Orphan Verifications").bold().alignment(ParagraphAlignment.CENTER)
+					.beforeSpacing(50).createCellHeader(cell);
+
+			XWPFTable verificationsTable = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
+					.createTable(doc);
+			cell = verificationsTable.getRow(0).getCell(0);
+			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
+			setColSpan(cell, 4);
+
+			printVerifications(doc, orphanVerifications.toArray(new Verifications[orphanVerifications.size()]),
+					verificationsTable);
+		}
+	}
+
+	private void printOrphanControls(XWPFDocument doc, Hazards hazard) {
+		List<Hazard_Controls> orphanControls = hazardService.getOrphanControls(hazard);
+
+		if (!orphanControls.isEmpty()) {
+			// "Orhpan Controls"
+			XWPFTable controlTableHeader = new TableBuilder().size(1, 1).createTable(doc);
+			XWPFTableCell cell = controlTableHeader.getRow(0).getCell(0);
+			cell.setColor("BBBBBB");
+			cell.setVerticalAlignment(XWPFVertAlign.CENTER);
+			// Set table width to page width
+			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
+			setColSpan(cell, 4);
+			new CellHeaderBuilder().text("Orphan Controls").bold().alignment(ParagraphAlignment.CENTER)
+					.beforeSpacing(50).createCellHeader(cell);
+
+			XWPFTable controlsTable = new TableBuilder().size(1, 1).setInnerHBorder(XWPFBorderType.NONE)
+					.createTable(doc);
+			cell = controlsTable.getRow(0).getCell(0);
+			cell.getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(730150));
+			setColSpan(cell, 4);
+
+			printControls(doc, orphanControls.toArray(new Hazard_Controls[orphanControls.size()]), controlsTable);
+		}
 	}
 
 	/**

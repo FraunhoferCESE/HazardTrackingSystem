@@ -121,7 +121,7 @@ public class VerificationService {
 
 		int verificationNum;
 		if (associatedControl == null && currentAssociation == null) {
-			verificationNum = verification.getVerificationNumber();
+			verificationNum = verification.getVerificationNumber() == 0 ? 1 : verification.getVerificationNumber();
 		} else if (associatedControl != null && currentAssociation == null) {
 			Verifications[] verificationsForControl = associatedControl.getVerifications();
 			verificationNum = 1;
