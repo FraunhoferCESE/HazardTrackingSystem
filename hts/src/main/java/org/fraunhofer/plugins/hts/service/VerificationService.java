@@ -121,7 +121,7 @@ public class VerificationService {
 
 		int verificationNum;
 		if (associatedControl == null && currentAssociation == null) {
-			verificationNum = verification.getVerificationNumber() == 0 ? 1 : verification.getVerificationNumber();
+			verificationNum = hazardService.getOrphanVerifications(hazard).isEmpty() ? 1 : verification.getVerificationNumber();
 		} else if (associatedControl != null && currentAssociation == null) {
 			Verifications[] verificationsForControl = associatedControl.getVerifications();
 			verificationNum = 1;
@@ -135,8 +135,7 @@ public class VerificationService {
 			verifcToControl.setControl(associatedControl);
 			verifcToControl.setVerification(verification);
 			verifcToControl.save();
-		}
-		else if (associatedControl == null && currentAssociation != null) {
+		} else if (associatedControl == null && currentAssociation != null) {
 			List<Verifications> orphanVerifications = hazardService.getOrphanVerifications(hazard);
 			verificationNum = 1;
 			if (!orphanVerifications.isEmpty()) {
@@ -155,7 +154,7 @@ public class VerificationService {
 						+ 1;
 			}
 			ao.delete(ao.find(VerifcToControl.class, Query.select().where("VERIFICATION_ID=?", verification.getID())));
-			
+
 			final VerifcToControl verifcToControl = ao.create(VerifcToControl.class);
 			verifcToControl.setControl(associatedControl);
 			verifcToControl.setVerification(verification);
