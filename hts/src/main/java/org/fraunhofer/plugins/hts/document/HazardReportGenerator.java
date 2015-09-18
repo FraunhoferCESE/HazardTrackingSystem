@@ -631,7 +631,7 @@ public class HazardReportGenerator {
 						verifications = toPrint.toArray(new Verifications[toPrint.size()]);
 					}
 
-					printVerifications(doc, control.getVerifications(), parentTable);
+					printVerifications(doc, verifications, parentTable);
 				}
 			}
 		}
